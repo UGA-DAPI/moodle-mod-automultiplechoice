@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/automultiplechoice/db" VERSION="20101203" COMMENT="XMLDB file for Moodle mod/automultiplechoice"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="automultiplechoice" COMMENT="global table">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="name of this question set" />
+        <FIELD NAME="description" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="description to display on every printed question sheet" />
+        <FIELD NAME="comment" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="comment for teachers - not to be printed" />
+        <FIELD NAME="qnumber" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="number of questions" />
+        <FIELD NAME="score" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="global score" />
+        <FIELD NAME="amcparams" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="amc parameters, as a json serialized field" />
+        <FIELD NAME="questions" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="question list, as a json serialized field" />
+        <FIELD NAME="author" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="question set author" />
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="author" UNIQUE="false" FIELDS="author"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
