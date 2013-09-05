@@ -42,7 +42,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addHelpButton('name', 'automultiplechoicename', 'automultiplechoice');
 
         // Adding the standard "intro" and "introformat" fields
-        $this->add_intro_editor();
+        //$this->add_intro_editor();
 
         //-------------------------------------------------------------------------------
         // Adding the rest of automultiplechoice settings, spreeading all them into this fieldset

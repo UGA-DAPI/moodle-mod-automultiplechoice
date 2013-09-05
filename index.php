@@ -33,7 +33,8 @@ $PAGE->set_context($coursecontext);
 
 echo $OUTPUT->header();
 
-if (! $automultiplechoices = get_all_instances_in_course('automultiplechoice', $course)) {
+$automultiplechoices = get_all_instances_in_course('automultiplechoice', $course);
+if (! $automultiplechoices) {
     notice(get_string('noautomultiplechoices', 'automultiplechoice'), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 

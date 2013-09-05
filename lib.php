@@ -94,7 +94,8 @@ function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_au
 function automultiplechoice_delete_instance($id) {
     global $DB;
 
-    if (! $automultiplechoice = $DB->get_record('automultiplechoice', array('id' => $id))) {
+    $automultiplechoice = $DB->get_record('automultiplechoice', array('id' => $id));
+    if (! $automultiplechoice) {
         return false;
     }
 
