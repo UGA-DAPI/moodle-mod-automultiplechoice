@@ -8,7 +8,7 @@
  * in the previous 1.9 NEWMODULE.
  *
  * @package    mod_automultiplechoice
- * @copyright  2013 Silecs <your@email.adress>
+ * @copyright  2013 Silecs <contact@silecs.info>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
