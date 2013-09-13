@@ -13,12 +13,31 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/* @var $DB \moodle_database */
+global $DB;
+
 /**
- * Does something really useful with the passed things
+ * Return the list of questions available to a given user.
  *
- * @param array $things
- * @return object
+ * @param integer $userid
+ * @return array assoc array with fields: id, coursename, categoryname, title
  */
-//function automultiplechoice_do_something_useful(array $things) {
-//    return new stdClass();
-//}
+function autocomplete_list_questions($userid) {
+    global $DB;
+
+    /**
+     * TODO
+     *
+     * - which capabilities :
+     *     * moodle/question:viewall?
+     *     * moodle/question:viewmine?
+     *     * moodle/question:usemine?
+     *     * moodle/question:useall?
+     *
+     * - find the contexts where the user has one of these capabilities
+     *
+     * - find the questions that are in a q_category under one of these contexts.
+     */
+
+    return array();
+}
