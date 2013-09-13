@@ -33,7 +33,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-    'mod/automultiplechoice:update' => array(
+    'mod/automultiplechoice:addinstance' => array( // required capability, or Moodle complains
             'captype' => 'write',
             'contextlevel' => CONTEXT_COURSE,
             'archetypes' => array(
