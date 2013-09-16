@@ -41,16 +41,25 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'automultiplechoicename', 'automultiplechoice');
 
-        // Adding the standard "intro" and "introformat" fields
-        //$this->add_intro_editor();
+        $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'));
+        $mform->setType('description', PARAM_TEXT);
+        $mform->addHelpButton('description', 'descriptionhelp', 'automultiplechoice');
 
-        //-------------------------------------------------------------------------------
-        // Adding the rest of automultiplechoice settings, spreeading all them into this fieldset
-        // or adding more fieldsets ('header' elements) if needed for better logic
-        $mform->addElement('static', 'label1', 'automultiplechoicesetting1', 'Your automultiplechoice fields go here. Replace me!');
+        $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'));
+        $mform->setType('comment', PARAM_TEXT);
+        $mform->addHelpButton('comment', 'commenthelp', 'automultiplechoice');
 
-        $mform->addElement('header', 'automultiplechoicefieldset', get_string('automultiplechoicefieldset', 'automultiplechoice'));
-        $mform->addElement('static', 'label2', 'automultiplechoicesetting2', 'Your automultiplechoice fields go here. Replace me!');
+        $mform->addElement('text', 'qnumber', get_string('qnumber', 'automultiplechoice'));
+        $mform->setType('qnumber', PARAM_INTEGER);
+        $mform->addHelpButton('qnumber', 'qnumberhelp', 'automultiplechoice');
+
+        $mform->addElement('text', 'score', get_string('score', 'automultiplechoice'));
+        $mform->setType('score', PARAM_INTEGER);
+        $mform->addHelpButton('score', 'scorehelp', 'automultiplechoice');
+
+        /**
+         * @todo AMC params in the form
+         */
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
