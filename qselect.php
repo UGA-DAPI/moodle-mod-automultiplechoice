@@ -34,6 +34,10 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 $PAGE->set_cacheable(false);
 
+$PAGE->requires->jquery();
+$PAGE->requires->js(new moodle_url('assets/dataTables/jquery.dataTables.min.js'));
+$PAGE->requires->css(new moodle_url('assets/dataTables/css/jquery.dataTables.css'));
+
 $questions = automultiplechoice_list_questions($USER, $COURSE);
 
 echo $OUTPUT->header();
@@ -61,5 +65,10 @@ echo $OUTPUT->header();
 </table>
 
 <?php
+
+$PAGE->requires->js_init_code('
+$(document).ready(function() {
+    $("#questionslist").dataTable();
+} );');
 
 echo $OUTPUT->footer();
