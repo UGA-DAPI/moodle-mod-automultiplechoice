@@ -14,30 +14,34 @@
 defined('MOODLE_INTERNAL') || die();
 
 /* @var $DB \moodle_database */
-global $DB;
+
+global $COURSE, $DB;
 
 /**
  * Return the list of questions available to a given user.
  *
- * @param integer $userid
- * @return array assoc array with fields: id, coursename, categoryname, title
+ * This function ignore the permissions set in Moodle, except for 'moodle/question:useall'.
+ * Then it lists all the questions defined in the current course.
+ *
+ * @todo Check if the current user has access to "system", then add its questions.
+ *
+ * @param object $user User record
+ * @param object $course Course record
+ * @return array List of objects with fields: id, categoryname, title, timemodified
  */
-function autocomplete_list_questions($userid) {
-    global $DB;
+function automultiplechoice_list_questions($user, $course) {
+    global $COURSE, $DB;
 
-    /**
-     * TODO
-     *
-     * - which capabilities :
-     *     * moodle/question:viewall?
-     *     * moodle/question:viewmine?
-     *     * moodle/question:usemine?
-     *     * moodle/question:useall?
-     *
-     * - find the contexts where the user has one of these capabilities
-     *
-     * - find the questions that are in a q_category under one of these contexts.
-     */
+    $course_context = context_course::instance($course->id);
 
-    return array();
+    if (!has_capability('moodle/question:useall', $course_context, $user)) {
+        return array();
+    }
+
+    $sql = "SELECT q.id, qc.name AS categoryname, q.name AS title, q.timemodified "
+            . "FROM {question} q JOIN {question_categories} qc ON q.category = qc.id "
+            . "WHERE qc.contextid = " . $course_context->id
+            . " ORDER BY qc.sortorder, q.name";
+    $records = $DB->get_records_sql($sql);
+    return $records;
 }

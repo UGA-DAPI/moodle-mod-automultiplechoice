@@ -34,10 +34,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 $PAGE->set_cacheable(false);
 
-$PAGE->requires->jquery();
-$PAGE->requires->js(new moodle_url('js/dataTables/jquery.dataTables.min.js'));
-
-$questions = autocomplete_list_questions($USER->id);
+$questions = automultiplechoice_list_questions($USER, $COURSE);
 
 echo $OUTPUT->header();
 
@@ -45,18 +42,18 @@ echo $OUTPUT->header();
 <table id="questionslist">
     <thead>
         <tr>
-            <th>Course / Course Category</th>
             <th>Question Category</th>
             <th>Title</th>
+            <th>Date</th>
         </tr>
     </thead>
     <tbody>
         <?php
         foreach ($questions as $q) {
-            echo '<tr>'
-                . '<td></td>'
-                . '<td></td>'
-                . '<td></td>'
+            echo '<tr id="q-' . $q->id . '">'
+                . '<td>' . format_string($q->categoryname) . '</td>'
+                . '<td>' . format_string($q->title) . '</td>'
+                . '<td>' . date('Y-m-d', $q->timemodified) . '</td>'
                 . '</tr>';
         }
         ?>
@@ -64,10 +61,5 @@ echo $OUTPUT->header();
 </table>
 
 <?php
-
-$PAGE->requires->js_init_code('
-$(document).ready(function() {
-    $("#questionslist").dataTable();
-} );');
 
 echo $OUTPUT->footer();
