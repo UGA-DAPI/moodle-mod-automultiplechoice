@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 function automultiplechoice_supports($feature) {
     switch($feature) {
-        case FEATURE_MOD_INTRO:         return true;
+        case FEATURE_MOD_INTRO:         return false;
         default:                        return null;
     }
 }
@@ -50,11 +50,14 @@ function automultiplechoice_supports($feature) {
  * @return int The id of the newly inserted automultiplechoice record
  */
 function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null) {
-    global $DB;
+    global $DB, $USER;
 
-    $automultiplechoice->timecreated = time();
+    $automultiplechoice->timecreated = $_SERVER['REQUEST_TIME'];
+    $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
+    $automultiplechoice->author = $USER->id;
+    $automultiplechoice->questions = "";
 
-    # You may have to add extra stuff in here #
+    $automultiplechoice->amcparams = ""; //! @todo Parse and serialize amc params
 
     return $DB->insert_record('automultiplechoice', $automultiplechoice);
 }
@@ -73,7 +76,7 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
 function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null) {
     global $DB;
 
-    $automultiplechoice->timemodified = time();
+    $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->id = $automultiplechoice->instance;
 
     # You may have to add extra stuff in here #
