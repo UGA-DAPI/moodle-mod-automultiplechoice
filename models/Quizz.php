@@ -138,7 +138,7 @@ class Quizz
             $record->amcparams = AmcParams::toJson($this->amcparams);
         }
         if (isset($record->questions)) {
-            $record->questions = QuestionList::fromJson($this->questions);
+            $record->questions = QuestionList::toJson($this->questions);
         }
         return $record;
     }
