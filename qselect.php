@@ -24,20 +24,38 @@ global $DB, $OUTPUT, $PAGE;
 require_once(dirname(dirname(__DIR__)) . '/config.php');
 require_once(__DIR__ . '/lib.php');
 require_once(__DIR__ . '/locallib.php');
+require_once __DIR__ . '/models/Quizz.php';
 
 $a  = required_param('a', PARAM_INT);  // instance ID
 
-$automultiplechoice  = $DB->get_record('automultiplechoice', array('id' => $a), '*', MUST_EXIST);
-$course     = $DB->get_record('course', array('id' => $automultiplechoice->course), '*', MUST_EXIST);
-$cm         = get_coursemodule_from_instance('automultiplechoice', $automultiplechoice->id, $course->id, false, MUST_EXIST);
+//$automultiplechoice  = $DB->get_record('automultiplechoice', array('id' => $a), '*', MUST_EXIST);
+$quizz = \mod\automultiplechoice\Quizz::findById($a);
+$course     = $DB->get_record('course', array('id' => $quizz->course), '*', MUST_EXIST);
+$cm         = get_coursemodule_from_instance('automultiplechoice', $quizz->id, $course->id, false, MUST_EXIST);
 
 require_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-// add_to_log($course->id, 'automultiplechoice', 'view', "qselect.php?id={$cm->id}", $automultiplechoice->name, $cm->id);
+// form submitted?
+$questions = \mod\automultiplechoice\QuestionList::fromForm('question');
+if ($questions) {
+    /**
+     * @todo validate the scores
+     */
+    if (true) {
+        $quizz->questions = $questions;
+        if ($quizz->save()) {
+            redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+        } else {
+            die("Could not save into automultiplechoice");
+        }
+    }
+}
 
-$PAGE->set_url('/mod/automultiplechoice/qselect.php', array('a' => $automultiplechoice->id));
-$PAGE->set_title(format_string($automultiplechoice->name));
+// add_to_log($course->id, 'automultiplechoice', 'view', "qselect.php?id={$cm->id}", $quizz->name, $cm->id);
+
+$PAGE->set_url('/mod/automultiplechoice/qselect.php', array('a' => $quizz->id));
+$PAGE->set_title(format_string($quizz->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 $PAGE->set_cacheable(false);
@@ -91,8 +109,9 @@ echo $OUTPUT->heading("Questions choisies");
 <p>
     Ces questions peuvent être triées en les déplaçant à la souris.
 </p>
-<form name="questions-form" action="validate.php" method="post">
+<form name="questions-form" action="qselect.php" method="post">
 <p>
+    <input name="a" value="<?php echo $quizz->id; ?>" type="hidden" />
     <button type="submit">Enregistrer la sélection</button>
 </p>
 <ul id="questions-selected">
