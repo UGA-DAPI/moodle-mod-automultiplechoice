@@ -55,10 +55,10 @@ class QuestionList
      * @return QuetionList
      */
     public static function fromForm($fieldname) {
-        $new = new self();
         if (!isset($_POST[$fieldname]) || empty($_POST[$fieldname]['id'])) {
-            return $new;
+            return null;
         }
+        $new = new self();
         for ($i = 0; $i < count($_POST[$fieldname]['id']); $i++) {
             $new->questions[] = array(
                 'questionid' => (int) $_POST[$fieldname]['id'][$i],
