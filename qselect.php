@@ -11,6 +11,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * @todo l10n table header
+ * @todo l10n jQuery datatables
+ */
+
+/* @var $PAGE moodle_page */
+
 global $DB, $OUTPUT, $PAGE;
 
 require_once(dirname(dirname(__DIR__)) . '/config.php');
@@ -35,20 +42,25 @@ $PAGE->set_context($context);
 $PAGE->set_cacheable(false);
 
 $PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin('ui');
+$PAGE->requires->jquery_plugin('ui-css');
 $PAGE->requires->js(new moodle_url('assets/dataTables/jquery.dataTables.min.js'));
 $PAGE->requires->css(new moodle_url('assets/dataTables/css/jquery.dataTables.css'));
+$PAGE->requires->js(new moodle_url('assets/qselect.js'));
+
 
 $questions = automultiplechoice_list_questions($USER, $COURSE);
 
 echo $OUTPUT->header();
 
 ?>
-<table id="questionslist">
+<table id="questions-list">
     <thead>
         <tr>
             <th>Question Category</th>
             <th>Title</th>
             <th>Date</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -56,19 +68,27 @@ echo $OUTPUT->header();
         foreach ($questions as $q) {
             echo '<tr id="q-' . $q->id . '">'
                 . '<td>' . format_string($q->categoryname) . '</td>'
-                . '<td>' . format_string($q->title) . '</td>'
+                . '<td class="qtitle">' . format_string($q->title) . '</td>'
                 . '<td>' . date('Y-m-d', $q->timemodified) . '</td>'
+                . '<td><button type="button" data-qid="' . $q->id . '">+</button></td>'
                 . '</tr>';
         }
         ?>
     </tbody>
 </table>
 
-<?php
+<form name="questions-form" action="">
+<ul id="questions-selected">
+    <li style="display: none;" class="ui-state-default">
+        <span class="ui-icon ui-icon-arrowthick-2-n-s">XXX</span>
+        <label></label>
+        <input name="question[id][]" value="" type="hidden" />
+        <input name="question[score][]" value="" type="text" />
+        <button type="button">Enlever</button>
+    </li>
+</ul>
+</form>
 
-$PAGE->requires->js_init_code('
-$(document).ready(function() {
-    $("#questionslist").dataTable();
-} );');
+<?php
 
 echo $OUTPUT->footer();
