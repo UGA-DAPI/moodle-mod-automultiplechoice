@@ -6,10 +6,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod\automultiplechoice;
+
 require __DIR__ . '/AmcParams.php';
 require __DIR__ . '/QuestionList.php';
-
-namespace \mod\automultiplechoice;
 
 global $DB;
 /* @var $DB \moodle_database */
