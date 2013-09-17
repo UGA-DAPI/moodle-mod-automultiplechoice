@@ -1,0 +1,24 @@
+.datatable-end {
+	clear: both;
+	margin-bottom: 1.5ex;
+}
+#questions-selected > li {
+	clear: both;
+	max-width: 120ex;
+	line-height: 21px;
+}
+#questions-selected > li button {
+	float: right;
+}
+#questions-selected > li label {
+	margin-left: 1.5em;
+	margin-right: 2.0em;
+}
+#questions-selected label.qscore {
+	float: right;
+}
+
+.ui-icon {
+	position: absolute;
+	margin-top: 2px;
+}

@@ -15,7 +15,6 @@ $(document).ready(function() {
         add: function(qid, qtitle) {
 			console.log("Adding " + qid);
             var chunk = this.template.clone();
-			console.log(chunk.find("label"));
             chunk.find("input").first().val(qid);
             chunk.find("label").first().html(qtitle);
             chunk.appendTo($("#questions-selected"));

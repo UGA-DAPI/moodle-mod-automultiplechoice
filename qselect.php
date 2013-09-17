@@ -17,6 +17,7 @@
  */
 
 /* @var $PAGE moodle_page */
+/* @var $OUTPUT core_renderer */
 
 global $DB, $OUTPUT, $PAGE;
 
@@ -46,13 +47,17 @@ $PAGE->requires->jquery_plugin('ui');
 $PAGE->requires->jquery_plugin('ui-css');
 $PAGE->requires->js(new moodle_url('assets/dataTables/jquery.dataTables.min.js'));
 $PAGE->requires->css(new moodle_url('assets/dataTables/css/jquery.dataTables.css'));
+
 $PAGE->requires->js(new moodle_url('assets/qselect.js'));
+$PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 
 $questions = automultiplechoice_list_questions($USER, $COURSE);
 
 echo $OUTPUT->header();
 
+echo $OUTPUT->box_start();
+echo $OUTPUT->heading("Sélection des questions");
 ?>
 <table id="questions-list">
     <thead>
@@ -76,19 +81,32 @@ echo $OUTPUT->header();
         ?>
     </tbody>
 </table>
+<div class="datatable-end"></div>
+<?php
+echo $OUTPUT->box_end();
 
+echo $OUTPUT->box_start();
+echo $OUTPUT->heading("Questions choisies");
+?>
+<p>
+    Ces questions peuvent être triées en les déplaçant à la souris.
+</p>
 <form name="questions-form" action="">
 <ul id="questions-selected">
     <li style="display: none;" class="ui-state-default">
         <span class="ui-icon ui-icon-arrowthick-2-n-s">XXX</span>
         <label></label>
         <input name="question[id][]" value="" type="hidden" />
-        <input name="question[score][]" value="" type="text" />
-        <button type="button">Enlever</button>
+        <button type="button">X</button>
+        <label class="qscore">
+            Score :
+            <input name="question[score][]" value="" type="text" />
+        </label>
     </li>
 </ul>
 </form>
 
 <?php
+echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
