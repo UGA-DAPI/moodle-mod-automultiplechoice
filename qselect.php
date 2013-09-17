@@ -14,6 +14,7 @@
 /**
  * @todo l10n table header
  * @todo l10n jQuery datatables
+ * @todo Fill the list and update the table if question are already in the quizz.
  */
 
 /* @var $PAGE moodle_page */
@@ -40,7 +41,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
 if ($questions) {
     /**
-     * @todo validate the scores
+     * @todo validate the scores, add $questions->validate()
      */
     if (true) {
         $quizz->questions = $questions;
@@ -70,7 +71,7 @@ $PAGE->requires->js(new moodle_url('assets/qselect.js'));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 
-$questions = automultiplechoice_list_questions($USER, $COURSE);
+$available_questions = automultiplechoice_list_questions($USER, $COURSE);
 
 echo $OUTPUT->header();
 
@@ -88,7 +89,7 @@ echo $OUTPUT->heading("Sélection des questions");
     </thead>
     <tbody>
         <?php
-        foreach ($questions as $q) {
+        foreach ($available_questions as $q) {
             echo '<tr id="q-' . $q->id . '">'
                 . '<td>' . format_string($q->categoryname) . '</td>'
                 . '<td class="qtitle">' . format_string($q->title) . '</td>'
