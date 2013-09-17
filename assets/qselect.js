@@ -11,16 +11,17 @@ $(document).ready(function() {
         initTemplate: function() {
             this.template = $("#questions-selected > li").first().clone();
             this.template.removeAttr("style");
+			this.template.find('input').removeAttr('disabled');
         },
         add: function(qid, qtitle) {
-			console.log("Adding " + qid);
             var chunk = this.template.clone();
             chunk.find("input").first().val(qid);
             chunk.find("label").first().html(qtitle);
+			chunk.attr("id", "qsel-" + qid);
             chunk.appendTo($("#questions-selected"));
         },
         remove: function(qid) {
-            //
+            $("#qsel-" + qid).remove();
         }
     };
 	Question.initTemplate();
@@ -40,6 +41,7 @@ $(document).ready(function() {
         }
     });
     $("#questions-selected").on("click", "button", function(e) {
-        //
+        var qid = $(this).closest('li').find('input').first().val();
+		Question.remove(qid);
     });
 } );

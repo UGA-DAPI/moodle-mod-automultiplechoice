@@ -91,16 +91,19 @@ echo $OUTPUT->heading("Questions choisies");
 <p>
     Ces questions peuvent être triées en les déplaçant à la souris.
 </p>
-<form name="questions-form" action="">
+<form name="questions-form" action="validate.php" method="post">
+<p>
+    <button type="submit">Enregistrer la sélection</button>
+</p>
 <ul id="questions-selected">
     <li style="display: none;" class="ui-state-default">
         <span class="ui-icon ui-icon-arrowthick-2-n-s">XXX</span>
         <label></label>
-        <input name="question[id][]" value="" type="hidden" />
+        <input name="question[id][]" value="" type="hidden" disabled="disabled" />
         <button type="button">X</button>
         <label class="qscore">
             Score :
-            <input name="question[score][]" value="" type="text" />
+            <input name="question[score][]" value="" type="text" disabled="disabled" />
         </label>
     </li>
 </ul>
