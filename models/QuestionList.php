@@ -18,6 +18,17 @@ class QuestionList
      */
     public $questions = array();
 
+    public function getRecords() {
+        global $DB;
+        if (!$this->questions) {
+            return array();
+        }
+        $ids = $this->getIds();
+        $records = $DB->get_records_list('question', 'id', $ids);
+        $callback = function ($id) use ($records) { return $records[$id]; };
+        return array_map($callback, $ids);
+    }
+
     /**
      * Return the JSON serialization of this instance.
      *
@@ -66,5 +77,18 @@ class QuestionList
             );
         }
         return $new;
+    }
+
+    /**
+     * Return the list oq question.id
+     *
+     * @return array of integers
+     */
+    private function getIds() {
+        $ids = array();
+        foreach ($this->questions as $q) {
+            $ids[] = $q['questionid'];
+        }
+        return $ids;
     }
 }
