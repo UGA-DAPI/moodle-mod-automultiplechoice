@@ -13,7 +13,8 @@ global $DB;
 
 class QuestionList
 {
-    /** @todo Add attributes */
+	/** @var array( array('questionid' => (integer), 'score' => (integer) ) ) */
+    public $questions = array();
 
     public static function fromJson($json)
     {
