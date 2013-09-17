@@ -43,19 +43,19 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'));
         $mform->setType('description', PARAM_TEXT);
-        $mform->addHelpButton('description', 'descriptionhelp', 'automultiplechoice');
+        $mform->addHelpButton('description', 'description', 'automultiplechoice');
 
         $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'));
         $mform->setType('comment', PARAM_TEXT);
-        $mform->addHelpButton('comment', 'commenthelp', 'automultiplechoice');
+        $mform->addHelpButton('comment', 'comment', 'automultiplechoice');
 
         $mform->addElement('text', 'qnumber', get_string('qnumber', 'automultiplechoice'));
         $mform->setType('qnumber', PARAM_INTEGER);
-        $mform->addHelpButton('qnumber', 'qnumberhelp', 'automultiplechoice');
+        $mform->addHelpButton('qnumber', 'qnumber', 'automultiplechoice');
 
         $mform->addElement('text', 'score', get_string('score', 'automultiplechoice'));
         $mform->setType('score', PARAM_INTEGER);
-        $mform->addHelpButton('score', 'scorehelp', 'automultiplechoice');
+        $mform->addHelpButton('score', 'score', 'automultiplechoice');
 
         /**
          * @todo AMC params in the form
