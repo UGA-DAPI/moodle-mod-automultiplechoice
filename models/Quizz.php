@@ -23,6 +23,9 @@ class Quizz
     public $name = '';
 
     /** @var string */
+    public $course = '';
+
+    /** @var string */
     public $description = '';
 
     /** @var string */
@@ -93,7 +96,7 @@ class Quizz
     public static function buildFromRecord(\stdClass $record)
     {
         $quizz = new self();
-        foreach (array('id', 'qnumber', 'score', 'author', 'timecreated', 'timemodified') as $key) {
+        foreach (array('id', 'course', 'qnumber', 'score', 'author', 'timecreated', 'timemodified') as $key) {
             if (isset($record->$key)) {
                 $quizz->$key = (int) $record->$key;
             }
@@ -124,7 +127,7 @@ class Quizz
             'timecreated' => $_SERVER['REQUEST_TIME'],
             'timemodified' => $_SERVER['REQUEST_TIME'],
         );
-        foreach (array('qnumber', 'score', 'author', 'timecreated') as $key) {
+        foreach (array('course', 'qnumber', 'score', 'author', 'timecreated') as $key) {
             if (isset($this->$key)) {
                 $record->$key = (int) $this->$key;
             }
