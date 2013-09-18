@@ -12,7 +12,6 @@
  */
 
 /**
- * @todo l10n table header
  * @todo l10n jQuery datatables
  * @todo Fill the list and update the table if question are already in the quizz.
  */
@@ -40,10 +39,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 // form submitted?
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
 if ($questions) {
-    /**
-     * @todo validate the scores, add $questions->validate()
-     */
-    if (true) {
+    if ($questions->validate($quizz)) {
         $quizz->questions = $questions;
         if ($quizz->save()) {
             redirect(new moodle_url('view.php', array('a' => $quizz->id)));
@@ -75,8 +71,19 @@ $available_questions = automultiplechoice_list_questions($USER, $COURSE);
 
 echo $OUTPUT->header();
 
+
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('questionselect', 'automultiplechoice'));
+if ($questions && $questions->errors) {
+    echo $OUTPUT->box_start('errorbox');
+    echo $OUTPUT->heading(get_string('errors', 'automultiplechoice'), 3);
+    echo '<ul class="errors">';
+    foreach ($questions->errors as $e) {
+        echo '<li>ERROR (to localize, etc): ' . $e . '</li>';
+    }
+    echo '</ul>';
+    echo $OUTPUT->box_end();
+}
 ?>
 <table id="questions-list">
     <thead>

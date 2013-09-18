@@ -18,6 +18,11 @@ class QuestionList implements \Countable
      */
     public $questions = array();
 
+    /**
+     * @var array List of values among: "qnumber", "score", "sum".
+     */
+    public $errors = array();
+
     public function getRecords() {
         global $DB;
         if (!$this->questions) {
@@ -27,6 +32,30 @@ class QuestionList implements \Countable
         $records = $DB->get_records_list('question', 'id', $ids);
         $callback = function ($id) use ($records) { return $records[$id]; };
         return array_map($callback, $ids);
+    }
+
+    /**
+     * Validate the question against the quizz parameters.
+     *
+     * @param \mod\automultiplechoice\Quizz $quizz
+     * @return boolean
+     */
+    public function validate(Quizz $quizz) {
+        $this->errors = array();
+        if (count($this->questions) != $quizz->qnumber) {
+            $this->errors[] = 'qnumber';
+        }
+        $scores = $this->getScores();
+        if (array_sum($scores) != $quizz->score) {
+            $this->errors[] = 'sum';
+        }
+        if (in_array(0, $scores)) {
+            $this->errors[] = 'score';
+        }
+        if ($this->errors) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -63,7 +92,7 @@ class QuestionList implements \Countable
     /**
      * Read $_POST[$fieldname] and return a new instance.
      *
-     * @return QuetionList
+     * @return QuestionList
      */
     public static function fromForm($fieldname) {
         if (!isset($_POST[$fieldname]) || empty($_POST[$fieldname]['id'])) {
@@ -80,7 +109,7 @@ class QuestionList implements \Countable
     }
 
     /**
-     * Return the list oq question.id
+     * Return the list of question.id
      *
      * @return array of integers
      */
@@ -90,6 +119,19 @@ class QuestionList implements \Countable
             $ids[] = $q['questionid'];
         }
         return $ids;
+    }
+
+    /**
+     * Return the list of scores
+     *
+     * @return array of integers
+     */
+    private function getScores() {
+        $scores = array();
+        foreach ($this->questions as $q) {
+            $scores[] = $q['score'];
+        }
+        return $scores;
     }
 
     /**
