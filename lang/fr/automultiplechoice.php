@@ -32,3 +32,10 @@ $string['description_help'] = 'La description qui sera imprimée sur chaque ques
 $string['comment_help'] = 'Un commentaire pour l\'auteur, qui ne sera pas imprimé.';
 $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire, pour validation.';
 $string['score_help'] = 'Le score total du questionnaire (en points), pour validation.';
+
+$string['questionselect'] = 'Sélection des questions';
+$string['questionselected'] = 'Questions choisies';
+$string['sortmsg'] = 'Les questions sélectionnées peuvent être triées en les déplaçant à la souris.';
+$string['savesel'] = 'Enregistrer la sélection';
+$string['qcategory'] = 'Catégorie de question';
+$string['qtitle'] = 'Question';

@@ -76,15 +76,15 @@ $available_questions = automultiplechoice_list_questions($USER, $COURSE);
 echo $OUTPUT->header();
 
 echo $OUTPUT->box_start();
-echo $OUTPUT->heading("Sélection des questions");
+echo $OUTPUT->heading(get_string('questionselect', 'automultiplechoice'));
 ?>
 <table id="questions-list">
     <thead>
         <tr>
-            <th>Question Category</th>
-            <th>Title</th>
-            <th>Date</th>
-            <th>Action</th>
+            <th><?php echo get_string('qcategory', 'automultiplechoice'); ?></th>
+            <th><?php echo get_string('qtitle', 'automultiplechoice'); ?></th>
+            <th><?php echo get_string('date'); ?></th>
+            <th><?php echo get_string('actions'); ?></th>
         </tr>
     </thead>
     <tbody>
@@ -105,15 +105,15 @@ echo $OUTPUT->heading("Sélection des questions");
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->box_start();
-echo $OUTPUT->heading("Questions choisies");
+echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
 ?>
 <p>
-    Ces questions peuvent être triées en les déplaçant à la souris.
+    <?php echo get_string('sortmsg', 'automultiplechoice'); ?>
 </p>
 <form name="questions-form" action="qselect.php" method="post">
 <p>
     <input name="a" value="<?php echo $quizz->id; ?>" type="hidden" />
-    <button type="submit">Enregistrer la sélection</button>
+    <button type="submit"><?php echo get_string('savesel', 'automultiplechoice'); ?></button>
 </p>
 <ul id="questions-selected">
     <li style="display: none;" class="ui-state-default">

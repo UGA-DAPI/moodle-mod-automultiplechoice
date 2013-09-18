@@ -33,3 +33,9 @@ $string['comment_help'] = 'Un commentaire pour l\'auteur, qui ne sera pas imprim
 $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire, pour validation.';
 $string['score_help'] = 'Le score total du questionnaire (en points), pour validation.';
 
+$string['questionselect'] = 'Select questions';
+$string['questionselected'] = 'Selected Questions';
+$string['sortmsg'] = 'You can reorder the selected questions by dragging them with the mouse.';
+$string['savesel'] = 'Save this selection';
+$string['qcategory'] = 'Question Category';
+$string['qtitle'] = 'Question';
