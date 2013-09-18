@@ -11,7 +11,7 @@ namespace mod\automultiplechoice;
 global $DB;
 /* @var $DB \moodle_database */
 
-class QuestionList
+class QuestionList implements \Countable
 {
 	/**
      * @var array array of array('questionid' => (integer), 'score' => (integer)
@@ -90,5 +90,14 @@ class QuestionList
             $ids[] = $q['questionid'];
         }
         return $ids;
+    }
+
+    /**
+     * Number of questions.
+     *
+     * @return int Count
+     */
+    public function count() {
+        return count($this->questions);
     }
 }

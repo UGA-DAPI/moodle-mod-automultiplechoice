@@ -33,6 +33,9 @@ if ($id) {
     error('You must specify a course_module ID or an instance ID');
 }
 
+if ($quizz->questions) {
+    redirect(new moodle_url('qselect.php', array('a' => $quizz->id)));
+}
 require_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
