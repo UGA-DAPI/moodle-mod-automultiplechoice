@@ -11,7 +11,7 @@ namespace mod\automultiplechoice;
 global $DB;
 /* @var $DB \moodle_database */
 
-class QuestionList implements \Countable
+class QuestionList implements \Countable, \ArrayAccess
 {
 	/**
      * @var array array of array('questionid' => (integer), 'score' => (integer)
@@ -141,5 +141,16 @@ class QuestionList implements \Countable
      */
     public function count() {
         return count($this->questions);
+    }
+
+    public function offsetSet($offset, $value) {
+    }
+    public function offsetUnset($offset) {
+    }
+    public function offsetExists($offset) {
+        return isset($this->questions[$offset]);
+    }
+    public function offsetGet($offset) {
+        return isset($this->questions[$offset]) ? $this->questions[$offset] : null;
     }
 }

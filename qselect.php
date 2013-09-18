@@ -13,7 +13,6 @@
 
 /**
  * @todo l10n jQuery datatables
- * @todo Fill the list and update the table if question are already in the quizz.
  */
 
 /* @var $PAGE moodle_page */
@@ -39,8 +38,8 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 // form submitted?
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
 if ($questions) {
+    $quizz->questions = $questions;
     if ($questions->validate($quizz)) {
-        $quizz->questions = $questions;
         if ($quizz->save()) {
             redirect(new moodle_url('view.php', array('a' => $quizz->id)));
         } else {
@@ -124,7 +123,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
 </p>
 <ul id="questions-selected">
     <li style="display: none;" class="ui-state-default">
-        <span class="ui-icon ui-icon-arrowthick-2-n-s">XXX</span>
+        <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
         <label></label>
         <input name="question[id][]" value="" type="hidden" disabled="disabled" />
         <button type="button">X</button>
@@ -133,6 +132,24 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
             <input name="question[score][]" value="" type="text" disabled="disabled" />
         </label>
     </li>
+    <?php
+    if ($quizz->questions) {
+        foreach ($quizz->questions->getRecords() as $rank => $q) {
+            echo '
+    <li class="ui-state-default" id="qsel-' . $q->id . '">
+        <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+        <label>' . format_string($q->name) . '</label>
+        <input name="question[id][]" value="' . $q->id . '" type="hidden" />
+        <button type="button">X</button>
+        <label class="qscore">
+            Score :
+            <input name="question[score][]" value="' . $quizz->questions[$rank]['score'] . '" type="text" />
+        </label>
+    </li>
+                ';
+        }
+    }
+    ?>
 </ul>
 </form>
 
