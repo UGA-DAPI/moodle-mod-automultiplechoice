@@ -66,6 +66,6 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $this->standard_coursemodule_elements();
         //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
-        $this->add_action_buttons();
+        $this->add_action_buttons(true, null, false);
     }
 }
