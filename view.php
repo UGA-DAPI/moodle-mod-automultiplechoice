@@ -63,7 +63,7 @@ var_dump($quizz);
 echo $OUTPUT->heading("Questions", 3);
 echo '<ul>';
 foreach ($quizz->questions->getRecords() as $q) {
-    echo '<li>' . $q->name . '</name>';
+    echo '<li>' . $q->name . '</li>';
 }
 echo '</ul>';
 
