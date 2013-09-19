@@ -38,6 +38,7 @@ if (!$quizz->questions) {
 }
 require_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/automultiplechoice:view', $context);
 
 add_to_log($course->id, 'automultiplechoice', 'view', "view.php?id={$cm->id}", $quizz->name, $cm->id);
 

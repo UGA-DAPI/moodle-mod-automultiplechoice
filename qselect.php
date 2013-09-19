@@ -34,6 +34,7 @@ $cm         = get_coursemodule_from_instance('automultiplechoice', $quizz->id, $
 
 require_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/automultiplechoice:addinstance', $context);
 
 // form submitted?
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
