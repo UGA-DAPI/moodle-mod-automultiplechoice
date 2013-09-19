@@ -57,9 +57,9 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('score', PARAM_INTEGER);
         $mform->addHelpButton('score', 'score', 'automultiplechoice');
 
-        /**
-         * @todo AMC params in the form
-         */
+        // AMC settings
+        $mform->addElement('text', 'amc[copies]', get_string('amc_copies', 'automultiplechoice'));
+        $mform->setType('amc[copies]', PARAM_INTEGER);
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
