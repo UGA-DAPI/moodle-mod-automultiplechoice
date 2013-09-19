@@ -16,6 +16,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once __DIR__ . '/models/Quizz.php';
+
 /** example constant */
 //define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
@@ -57,7 +59,9 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
     $automultiplechoice->author = $USER->id;
     $automultiplechoice->questions = "";
 
-    $automultiplechoice->amcparams = ""; //! @todo Parse and serialize amc params
+    $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
+    unset($automultiplechoice->amc);
+    $automultiplechoice->amcparams = $params->toJson();
 
     return $DB->insert_record('automultiplechoice', $automultiplechoice);
 }
