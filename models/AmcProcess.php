@@ -83,20 +83,20 @@ class AmcProcess
 	protected function questionToFileAmctxt($questionid) {
 		global $DB;
 
-		$res = '';
+		$answerstext = '';
 		$trueanswers = 0;
-		$question = $DB->get_record('question', array('id' => $questionid), MUST_EXIST);
+		$dbquestion = $DB->get_record('question', array('id' => $questionid), '*', MUST_EXIST);		
 		$answers = $DB->get_records('question_answers', array('question' => $questionid));
 		foreach ($answers as $answer) {
 			$trueanswer = (bool) ((int)$answer->fraction > 0.0);
 			$bullet = ($trueanswer ? '+' : '-');
-			$res .= $bullet . " " . $answer->answer . "\n";
+			$answerstext .= $bullet . " " . $answer->answer . "\n";
 			$trueanswers += (int)($trueanswer);
 		}
-		$questiontext = ($truenanswers == 1 ? '*' : '**') . ' ';
-		$questiontext .= $question->name . "\n" . $question->questiontext;
+		$questiontext = ($trueanswers == 1 ? '*' : '**') . ' ';
+		$questiontext .= $dbquestion->name . "\n" . $dbquestion->questiontext . "\n";
 
-		return $questiontext . $res . "\n";
+		return $questiontext . $answerstext . "\n";
 	}
 
 	protected function getHeaderAmctxt() {
@@ -113,10 +113,16 @@ class AmcProcess
 	public function getSourceAmctxt() {
 		$res = $this->getHeaderAmctxt();
 
-		foreach ($questions = $this->quizz->questions as $question) {
+		foreach ($questions = $this->quizz->questions->questions as $question) {
 			$res .= $this->questionToFileAmctxt($question['questionid']);
 
 		}
 		return $res;
+	}
+
+	public function saveAmctxt($filename) {
+		$file = fopen($filename, 'w');
+		fwrite($file, $this->getSourceAmctxt());
+		fclose($file);
 	}
 }

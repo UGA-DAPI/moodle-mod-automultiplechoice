@@ -15,6 +15,7 @@
 global $DB, $OUTPUT, $PAGE;
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once("$CFG->libdir/formslib.php");
 require_once(dirname(__FILE__).'/lib.php');
 require_once __DIR__ . '/models/Quizz.php';
 
@@ -80,11 +81,10 @@ echo html_writer::link(
 );
 echo '</p>';
 
-$form = new html_form();
-$form->url = new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $a));
-$form->button->text = 'Préparer';
-echo $OUTPUT->button($form);
 
+$prepareurl = new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id));
+$button = $OUTPUT->single_button($prepareurl, 'Préparer' , 'post');
+echo $button;
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->box_end();
