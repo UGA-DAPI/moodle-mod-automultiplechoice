@@ -106,10 +106,10 @@ class Quizz
                 $quizz->$key = $record->$key;
             }
         }
-        if (isset($record->amcparams)) {
+        if (isset($record->amcparams) && is_string($record->amcparams)) {
             $quizz->amcparams = AmcParams::fromJson($record->amcparams);
         }
-        if (isset($record->questions)) {
+        if (isset($record->questions) && is_string($record->questions)) {
             $quizz->questions = QuestionList::fromJson($record->questions);
         }
         return $quizz;
@@ -137,11 +137,15 @@ class Quizz
                 $record->$key = $this->$key;
             }
         }
-        if (isset($this->amcparams)) {
-            $record->amcparams = AmcParams::toJson($this->amcparams);
+        if (isset($this->amcparams) && $this->amcparams instanceof AmcParams) {
+            $record->amcparams = $this->amcparams->toJson();
+        } else {
+            $record->amcparams = "";
         }
-        if (isset($this->questions)) {
+        if (isset($this->questions) && $this->questions instanceof QuestionList) {
             $record->questions = $this->questions->toJson();
+        } else {
+            $record->questions = "";
         }
         return $record;
     }

@@ -130,7 +130,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
         </label>
     </li>
     <?php
-    if ($quizz->questions) {
+    if (count($quizz->questions)) {
         foreach ($quizz->questions->getRecords() as $q) {
             echo '
     <li class="ui-state-default" id="qsel-' . $q->id . '">

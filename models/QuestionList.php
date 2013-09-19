@@ -84,6 +84,9 @@ class QuestionList implements \Countable, \ArrayAccess
      */
     public function toJson()
     {
+        if (empty($this->questions)) {
+            return '';
+        }
         return json_encode(array_map('array_values', $this->questions));
     }
 
@@ -91,7 +94,7 @@ class QuestionList implements \Countable, \ArrayAccess
      * Return a new instance from a serialized JSON instance.
      *
      * @param string $json
-     * @return QuetionList
+     * @return QuestionList
      */
     public static function fromJson($json)
     {
