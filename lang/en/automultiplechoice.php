@@ -39,5 +39,6 @@ $string['sortmsg'] = 'You can reorder the selected questions by dragging them wi
 $string['savesel'] = 'Save this selection';
 $string['qcategory'] = 'Question Category';
 $string['qtitle'] = 'Question';
+$string['qscore'] = 'Points';
 
 $string['editselection'] = 'Update this selection';

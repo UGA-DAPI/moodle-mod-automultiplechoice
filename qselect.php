@@ -128,7 +128,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
         <input name="question[id][]" value="" type="hidden" disabled="disabled" />
         <button type="button">X</button>
         <label class="qscore">
-            Score :
+            <?php echo get_string('qscore', 'automultiplechoice'); ?> :
             <input name="question[score][]" value="" type="text" disabled="disabled" />
         </label>
     </li>
@@ -142,7 +142,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
         <input name="question[id][]" value="' . $q->id . '" type="hidden" />
         <button type="button">X</button>
         <label class="qscore">
-            Score :
+            ' . get_string('qscore', 'automultiplechoice') . ' :
             <input name="question[score][]" value="' . $q->score . '" type="text" />
         </label>
     </li>
