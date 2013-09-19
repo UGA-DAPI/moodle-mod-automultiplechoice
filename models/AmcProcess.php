@@ -99,5 +99,12 @@ class AmcProcess
 		return $questiontext . $res . "\n";
 	}
 
+	protected function quizzHeaderAmctxt() {
 
+		$res  = "# AMC-TXT source\n";
+		$res .= "PaperSize: A4\n";
+		$res .= "Lang: FR\n";
+		$res .= "Title: " . $this->quizz->name . "\n\n";
+		$res .= $this->quizz->description . "\n\n";
+	}
 }
