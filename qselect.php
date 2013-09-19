@@ -11,10 +11,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * @todo l10n jQuery datatables
- */
-
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 

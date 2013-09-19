@@ -3,6 +3,11 @@
  */
 
 $(document).ready(function() {
+	var lang = $('html').first().attr('lang');
+	var oLanguage = {};
+	if (lang && lang !== 'en') {
+		oLanguage = { "sUrl": "assets/dataTables/i18n/" + lang + ".json" };
+	}
 	var dataTableConfig = {
 		"iDisplayLength": 20,
 		"bPaginate": true,
@@ -11,7 +16,7 @@ $(document).ready(function() {
 			{ "aTargets": [ 2 ], "sWidth": "12ex" },
 			{ "aTargets": [ 3 ], "bSortable": false, "sWidth": "5ex" }
 		],
-		"oLanguage": {}
+		"oLanguage": oLanguage
 	};
     $("#questions-list").dataTable(dataTableConfig);
 
