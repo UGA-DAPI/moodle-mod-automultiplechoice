@@ -39,3 +39,5 @@ $string['sortmsg'] = 'Les questions sélectionnées peuvent être triées en les
 $string['savesel'] = 'Enregistrer la sélection';
 $string['qcategory'] = 'Catégorie de question';
 $string['qtitle'] = 'Question';
+
+$string['editselection'] = 'Modifier la sélection';

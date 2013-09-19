@@ -55,12 +55,15 @@ echo $OUTPUT->heading($quizz->name);
 
 /**
  * @todo Display the content
- * @todo Links to qselect
  */
 
 var_dump($quizz);
 
 echo $OUTPUT->heading("Questions", 3);
+echo html_writer::link(
+        new moodle_url('qselect.php', array('a' => $quizz->id)),
+        get_string('editselection', 'automultiplechoice')
+);
 echo '<ul>';
 foreach ($quizz->questions->getRecords() as $q) {
     echo '<li>' . $q->name . '</li>';
