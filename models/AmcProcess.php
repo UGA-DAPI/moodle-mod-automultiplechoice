@@ -73,4 +73,31 @@ class AmcProcess
             return false;
         }
     }
+
+
+	/**
+	 * Turns a question into a formatted string, in the AMC-txt (aka plain) format
+	 * @param $questionid questionid from the 'question' table
+	 * @return string
+	 */
+	protected function questionToFileAmctxt($questionid) {
+		global $DB;
+
+		$res = '';
+		$trueanswers = 0;
+		$question = $DB->get_record('question', array('id' => $questionid), MUST_EXIST);
+		$answers = $DB->get_records('question_answers', array('question' => $questionid));
+		foreach ($answers as $answer) {
+			$trueanswer = (bool) ((int)$answer->fraction > 0.0);
+			$bullet = ($trueanswer ? '+' : '-');
+			$res .= $bullet . " " . $answer->answer . "\n";
+			$trueanswers += (int)($trueanswer);
+		}
+		$questiontext = ($truenanswers == 1 ? '*' : '**') . ' ';
+		$questiontext .= $question->name . "\n" . $question->questiontext;
+
+		return $questiontext . $res . "\n";
+	}
+
+
 }
