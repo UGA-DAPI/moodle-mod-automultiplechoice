@@ -134,7 +134,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
     </li>
     <?php
     if ($quizz->questions) {
-        foreach ($quizz->questions->getRecords() as $rank => $q) {
+        foreach ($quizz->questions->getRecords() as $q) {
             echo '
     <li class="ui-state-default" id="qsel-' . $q->id . '">
         <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
@@ -143,7 +143,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
         <button type="button">X</button>
         <label class="qscore">
             Score :
-            <input name="question[score][]" value="' . $quizz->questions[$rank]['score'] . '" type="text" />
+            <input name="question[score][]" value="' . $q->score . '" type="text" />
         </label>
     </li>
                 ';
