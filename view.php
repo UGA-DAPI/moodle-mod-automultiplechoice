@@ -80,6 +80,12 @@ echo html_writer::link(
 );
 echo '</p>';
 
+$form = new html_form();
+$form->url = new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $a));
+$form->button->text = 'Préparer';
+echo $OUTPUT->button($form);
+
+
 echo $OUTPUT->box_end();
 echo $OUTPUT->box_end();
 

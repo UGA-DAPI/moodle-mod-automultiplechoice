@@ -99,12 +99,24 @@ class AmcProcess
 		return $questiontext . $res . "\n";
 	}
 
-	protected function quizzHeaderAmctxt() {
+	protected function getHeaderAmctxt() {
 
 		$res  = "# AMC-TXT source\n";
 		$res .= "PaperSize: A4\n";
 		$res .= "Lang: FR\n";
 		$res .= "Title: " . $this->quizz->name . "\n\n";
 		$res .= $this->quizz->description . "\n\n";
+
+		return $res;
+	}
+
+	public function getSourceAmctxt() {
+		$res = $this->getHeaderAmctxt();
+
+		foreach ($questions = $this->quizz->questions as $question) {
+			$res .= $this->questionToFileAmctxt($question['questionid']);
+
+		}
+		return $res;
 	}
 }
