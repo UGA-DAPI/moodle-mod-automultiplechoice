@@ -11,6 +11,16 @@ namespace mod\automultiplechoice;
 global $DB;
 /* @var $DB \moodle_database */
 
+/**
+ * QuestionList behaves as an array.
+ *
+ * <code>
+ * $ql = \mod\automultiplechoice\QuestionList::fromJson($json);
+ * if ($ql) {
+ *     echo $ql[0]['score'];
+ * }
+ * </code>
+ */
 class QuestionList implements \Countable, \ArrayAccess
 {
 	/**
@@ -23,6 +33,11 @@ class QuestionList implements \Countable, \ArrayAccess
      */
     public $errors = array();
 
+    /**
+     *
+     * @global \moodle_database $DB
+     * @return array of "question" records (objects from the DB) with an additional "score" field
+     */
     public function getRecords() {
         global $DB;
         if (!$this->questions) {
@@ -30,8 +45,12 @@ class QuestionList implements \Countable, \ArrayAccess
         }
         $ids = $this->getIds();
         $records = $DB->get_records_list('question', 'id', $ids);
-        $callback = function ($id) use ($records) { return $records[$id]; };
-        return array_map($callback, $ids);
+        $callback = function ($q) use ($records) {
+            $r = $records[$q['questionid']];
+            $r->score = $q['score'];
+            return $r;
+        };
+        return array_map($callback, $this->questions);
     }
 
     /**
@@ -134,6 +153,7 @@ class QuestionList implements \Countable, \ArrayAccess
         return $scores;
     }
 
+    // Implement Countable
     /**
      * Number of questions.
      *
@@ -143,6 +163,7 @@ class QuestionList implements \Countable, \ArrayAccess
         return count($this->questions);
     }
 
+    // Implement ArrayAccess
     public function offsetSet($offset, $value) {
     }
     public function offsetUnset($offset) {
