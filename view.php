@@ -51,23 +51,35 @@ $PAGE->set_context($context);
 // Output starts here
 echo $OUTPUT->header();
 
+echo $OUTPUT->box_start();
+
 echo $OUTPUT->heading($quizz->name);
+echo '<table class="flexible boxaligncenter generaltable">';
+echo '<tbody>';
+echo '<tr><th>' . get_string('description', 'automultiplechoice') . '</th><td>' . format_string($quizz->description) . '</td></tr>';
+echo '<tr><th>' . get_string('comment', 'automultiplechoice') . '</th><td>' . format_string($quizz->comment) . '</td></tr>';
+echo '</tbody></table>';
 
-/**
- * @todo Display the content
- */
-
-var_dump($quizz);
-
+echo $OUTPUT->box_start();
 echo $OUTPUT->heading("Questions", 3);
+
+echo '<table class="flexible boxaligncenter generaltable">';
+echo '<thead><tr><th>' . get_string('qtitle', 'automultiplechoice') . '</th><th>' . get_string('qscore', 'automultiplechoice') . '</th></tr></thead>';
+echo '<tbody>';
+foreach ($quizz->questions->getRecords() as $q) {
+    echo '<tr><td>' . format_string($q->name) . '</td><td>' . $q->score . '</td></tr>';
+}
+echo '<tr><td></td><th>' . $quizz->score . '</th></tr>';
+echo '</tbody></table>';
+
+echo '<p>';
 echo html_writer::link(
         new moodle_url('qselect.php', array('a' => $quizz->id)),
         get_string('editselection', 'automultiplechoice')
 );
-echo '<ul>';
-foreach ($quizz->questions->getRecords() as $q) {
-    echo '<li>' . $q->name . '</li>';
-}
-echo '</ul>';
+echo '</p>';
+
+echo $OUTPUT->box_end();
+echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
