@@ -52,6 +52,11 @@ class Quizz
     /** @var integer */
     public $timemodified;
 
+    /**
+     * @var array Keys are field names in the form.
+     */
+    public $errors = array();
+
     const TABLENAME = 'automultiplechoice';
 
     /**
@@ -69,6 +74,46 @@ class Quizz
             $this->id = $DB->insert_record(self::TABLENAME, $record);
         }
         return (boolean) $this->id;
+    }
+
+    /**
+     * Validate the instance and update $this->errors.
+     *
+     * @return boolean
+     */
+    public function validate() {
+        $this->errors = array();
+        if ($this->qnumber <= 0) {
+            $this->errors['qnumber'] = '> 0 !';
+        }
+        if ($this->score <= 0) {
+            $this->errors['score'] = '> 0 !';
+        }
+        if (isset($this->amcparams) && $this->amcparams instanceof AmcParams) {
+            if (!$this->amcparams->validate()) {
+                $this->errors = array_merge($this->errors, $this->amcparams->errors);
+            }
+        }
+        if (isset($this->questions) && $this->questions instanceof QuestionList) {
+            if (!$this->questions->validate()) {
+                $this->errors = array_merge($this->errors, $this->questions->errors);
+            }
+        }
+        return empty($this->errors);
+    }
+
+    /**
+     * Return a new instance.
+     *
+     * @return Quizz
+     */
+    public static function fromForm($input) {
+        if (empty($input)) {
+            return null;
+        }
+        $new = self::buildFromRecord((object) $input);
+        $new->amcparams = AmcParams::fromForm($input["amc"]);
+        return $new;
     }
 
     /**

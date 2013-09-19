@@ -13,6 +13,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once __DIR__ . '/models/Quizz.php';
 
 /**
  * Module instance settings form
@@ -67,5 +68,15 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons(true, null, false);
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        $quizz = \mod\automultiplechoice\Quizz::fromForm($data);
+        if (!$quizz->validate()) {
+            $errors = array_merge($errors, $quizz->errors);
+        }
+        return $errors;
     }
 }

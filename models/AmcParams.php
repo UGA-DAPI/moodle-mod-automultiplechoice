@@ -11,6 +11,11 @@ namespace mod\automultiplechoice;
 class AmcParams
 {
     /**
+     * @var array Keys are field names in the form.
+     */
+    public $errors = array();
+
+    /**
      * @var integer Number of copies.
      */
     public $copies;
@@ -21,15 +26,16 @@ class AmcParams
 
 
     /**
-     * Validate the instance.
+     * Validate the instance and update $this->errors.
      *
      * @return boolean
      */
     public function validate() {
+        $this->errors = array();
         if ($this->copies <= 0) {
-            return false;
+            $this->errors['amc[copies]'] = '> 0 !';
         }
-        return true;
+        return empty($this->errors);
     }
 
     /**
