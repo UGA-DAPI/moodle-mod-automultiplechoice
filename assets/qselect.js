@@ -3,7 +3,18 @@
  */
 
 $(document).ready(function() {
-    $("#questions-list").dataTable();
+	var dataTableConfig = {
+		"iDisplayLength": 20,
+		"bPaginate": true,
+		"aaSorting": [], // no initial sorting
+		"aoColumnDefs": [
+			{ "aTargets": [ 2 ], "sWidth": "12ex" },
+			{ "aTargets": [ 3 ], "bSortable": false, "sWidth": "5ex" }
+		],
+		"oLanguage": {}
+	};
+    $("#questions-list").dataTable(dataTableConfig);
+
     $("#questions-selected").sortable();
 
     var Question = {
