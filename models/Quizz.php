@@ -22,7 +22,7 @@ class Quizz
     /** @var string */
     public $name = '';
 
-    /** @var string */
+    /** @var integer */
     public $course = '';
 
     /** @var string */
