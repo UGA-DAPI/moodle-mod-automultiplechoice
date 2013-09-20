@@ -17,6 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once __DIR__ . '/models/Quizz.php';
+require_once __DIR__ . '/models/AmcProcess.php';
 
 /** example constant */
 //define('NEWMODULE_ULTIMATE_ANSWER', 42);
@@ -354,15 +355,13 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     }
 
     require_login($course, true, $cm);
+	require_capability('mod/automultiplechoice:view', $context);
 
-	var_dump($cm);
-	var_dump($context);
-	var_dump($filearea);
-	var_dump($args);
+	$filename = array_pop($args);
+	$quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
+	$process = new \mod\automultiplechoice\AmcProcess($quizz);
 
-	die();
-
-	send_file($args['path'], $args['filename'], 86400, 0, false, true, 'application/pdf') ;
+	send_file($process->workdir .'/'. $filename, $filename, 86400, 0, false, true, 'application/pdf') ;
     //send_file_not_found();
 }
 

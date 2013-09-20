@@ -15,6 +15,7 @@ class AmcProcess
      */
     protected $quizz;
 	public $workdir;
+	public $relworkdir;
 
     /**
      * @var array
@@ -30,8 +31,9 @@ class AmcProcess
 		global $CFG;
         $this->quizz = $quizz;
 
-		$this->workdir = $CFG->dataroot . '/local/automultiplechoice/' .
-			sprintf('automultiplechoice_%05d', $this->quizz->id);
+		$dir = sprintf('automultiplechoice_%05d', $this->quizz->id);
+		$this->workdir = $CFG->dataroot . '/local/automultiplechoice/' . $dir;
+		$this->relworkdir = '/local/automultiplechoice/' . $dir;
     }
 
     /**

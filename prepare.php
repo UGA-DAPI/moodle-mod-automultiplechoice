@@ -58,13 +58,20 @@ if ($diag) {
 
 $diag = $process->createPdf();
 if ($diag) {
-	echo "Fichiers PDF créés.<br />\n";
+	echo "Fichiers PDF créés : ";
+	$url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
+		$process->relworkdir.'/', 'prepare-sujet.pdf');
+	echo html_writer::link($url, 'prepare-sujet.pdf');
+	echo "&nbsp;";
+	
+	$url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
+		$process->relworkdir.'/', 'prepare-corrige.pdf');
+	echo html_writer::link($url, 'prepare-corrige.pdf');
+	echo "<br />\n";
 } else {
 	echo "Erreur sur créationd des fichiers PDF.<br />\n";
 }
 
-$url = moodle_url::make_pluginfile_url($context->id, 'automultiplechoice', 'area', $a, $process->workdir, 'prepare-sujet.pdf');
-echo html_writer::link($url, 'prepare-sujet.pdf');
 
 $url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
 $button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
