@@ -174,11 +174,11 @@ class AmcProcess
 		$answers = $DB->get_records('question_answers', array('question' => $question->id));
 		foreach ($answers as $answer) {
 			$trueanswer = ($answer->fraction > 0);
-			$answerstext .= ($trueanswer ? '+' : '-') . " " . $answer->answer . "\n";
+			$answerstext .= ($trueanswer ? '+' : '-') . " " . strip_tags($answer->answer) . "\n";
 			$trueanswers += (int) $trueanswer;
 		}
 		$questiontext = ($trueanswers == 1 ? '*' : '**') . ' '
-                . $question->name . "\n" . $question->questiontext . "\n";
+                . $question->name . "\n" . strip_tags($question->questiontext) . "\n";
 
 		return $questiontext . $answerstext . "\n";
 	}
@@ -188,7 +188,7 @@ class AmcProcess
 	 * @return string header block of the AMC-TXT file
 	 */
 	protected function getHeaderAmctxt() {
-        $descr = $this->quizz->description;
+        $descr = preg_replace('/\n\s*\n/', "\n", $this->quizz->description);
 
 		$res  = "
 # AMC-TXT source
