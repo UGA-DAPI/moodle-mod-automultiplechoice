@@ -143,4 +143,27 @@ class AmcProcess
 		fclose($file);
 		return true;
 	}
+
+
+	/**
+	 * log processed action
+	 * @param string $action ('prepare'...)
+	 * @param string $msg
+	 */
+	public function log($action, $msg) {
+		$url = '/mod/automultiplechoice/view.php?a='. $this->quizz->id;
+		$cm = get_coursemodule_from_instance('automultiplechoice', $this->quizz->id, $this->quizz->course, false, MUST_EXIST);
+		add_to_log($this->quizz->course, 'automultiplechoice', $action, $url, $msg, $cm->id, 0);
+		return true;
+	}
+
+
+	public function lastlog($action) {
+		global $DB;
+
+		$cm = get_coursemodule_from_instance('automultiplechoice', $this->quizz->id, $this->quizz->course, false, MUST_EXIST);
+		$sql = 'SELECT FROM_UNIXTIME(time) FROM log WHERE action=? AND cmid=? ORDER BY time DESC LIMIT 1';
+		$res = $DB->get_field_sql($sql, array($action, $cm->id), IGNORE_MISSING);
+		return $res;
+	}
 }

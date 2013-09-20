@@ -33,4 +33,6 @@ $process = new \mod\automultiplechoice\AmcProcess($quizz);
 //var_dump($process);
 
 $process->saveAmctxt('/tmp/prepare.txt');
+$process->log('prepare:source', 'source prepare.txt');
 echo "Fichier source enregistré.<br />\n";
+

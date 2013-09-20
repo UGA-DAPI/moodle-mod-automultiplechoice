@@ -18,6 +18,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once("$CFG->libdir/formslib.php");
 require_once(dirname(__FILE__).'/lib.php');
 require_once __DIR__ . '/models/Quizz.php';
+require_once __DIR__ . '/models/AmcProcess.php';
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
@@ -82,6 +83,14 @@ echo html_writer::link(
 echo '</p>';
 
 
+$process = new \mod\automultiplechoice\AmcProcess($quizz);
+$prepared = $process->lastlog('prepare:source');
+if ($prepared) {
+	echo "<p>Un fichier source préparé le " . $prepared . "</p>\n";
+} else {
+	echo "<p>Aucun fichier source préparé.\n";
+}
+
 // Main AMC actions and corresponding GUI labels
 $actions = array(
 	'prepare' => 'Préparation',
@@ -100,6 +109,7 @@ foreach ($actions as $action => $label) {
 	echo $button;
 }
 
+// var_dump($quizz);
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->box_end();
