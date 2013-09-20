@@ -83,7 +83,9 @@ function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_au
     $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->id = $automultiplechoice->instance;
 
-    # You may have to add extra stuff in here #
+    $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
+    unset($automultiplechoice->amc);
+    $automultiplechoice->amcparams = $params->toJson();
 
     return $DB->update_record('automultiplechoice', $automultiplechoice);
 }

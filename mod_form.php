@@ -70,6 +70,25 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $this->add_action_buttons(true, null, false);
     }
 
+    /**
+     * Only available on moodleform_mod.
+     *
+     * @param array $default_values passed by reference
+     */
+    function data_preprocessing(&$default_values){
+        // Convert from JSON to array
+        if (!empty($default_values['amcparams'])) {
+            $default_values['amc'] = (array) \mod\automultiplechoice\AmcParams::fromJson($default_values['amcparams']);
+        }
+    }
+
+    /**
+     * Called by Moodle on form reception.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
