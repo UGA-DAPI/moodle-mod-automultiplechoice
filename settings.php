@@ -13,16 +13,16 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/automultiplechoice/locallib.php');
 
-	$settings->add(new admin_setting_configtext('amctemplate',
-		'Modèle AMC',
+    $settings->add(new admin_setting_configtext('amctemplate',
+        'Modèle AMC',
         'Projet modèle AMC, dont dérivent les projets créés automatiquement (AMC-txt simple)',
-		'',
-		PARAM_TEXT));
+        '',
+        PARAM_TEXT));
 
-	$settings->add(new admin_setting_configtext('amccodelength',
-		'Longueur code',
+    $settings->add(new admin_setting_configtext('amccodelength',
+        'Longueur code',
         'Longueur du code étudiant pour l\'affichage AMC',
-		'10',
-		PARAM_INT));
+        '10',
+        PARAM_INT));
 
 }

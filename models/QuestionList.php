@@ -23,7 +23,7 @@ global $DB;
  */
 class QuestionList implements \Countable, \ArrayAccess
 {
-	/**
+    /**
      * @var array array of array('questionid' => (integer), 'score' => (integer)
      */
     public $questions = array();

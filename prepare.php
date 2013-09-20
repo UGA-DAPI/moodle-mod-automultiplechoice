@@ -51,30 +51,28 @@ $process = new \mod\automultiplechoice\AmcProcess($quizz);
 
 $diag = $process->saveAmctxt();
 if ($diag) {
-	echo "Fichier source enregistré.<br />\n";
+    echo "Fichier source enregistré.<br />\n";
 } else {
-	echo "Erreur sur fichier source.<br />\n";
+    echo "Erreur sur fichier source.<br />\n";
 }
 
 $diag = $process->createPdf();
 if ($diag) {
-	echo "Fichiers PDF créés : ";
-	$url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
-		$process->relworkdir.'/', 'prepare-sujet.pdf');
-	echo html_writer::link($url, 'prepare-sujet.pdf');
-	echo "&nbsp;";
-	
-	$url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
-		$process->relworkdir.'/', 'prepare-corrige.pdf');
-	echo html_writer::link($url, 'prepare-corrige.pdf');
-	echo "<br />\n";
+    echo "Fichiers PDF créés : ";
+    $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
+        $process->relworkdir.'/', 'prepare-sujet.pdf');
+    echo html_writer::link($url, 'prepare-sujet.pdf');
+    echo "&nbsp;";
+
+    $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
+        $process->relworkdir.'/', 'prepare-corrige.pdf');
+    echo html_writer::link($url, 'prepare-corrige.pdf');
+    echo "<br />\n";
 } else {
-	echo "Erreur sur créationd des fichiers PDF.<br />\n";
+    echo "Erreur sur créationd des fichiers PDF.<br />\n";
 }
 
 
 $url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
 $button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
 echo $button;
-
-

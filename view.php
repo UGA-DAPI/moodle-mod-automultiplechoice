@@ -86,35 +86,35 @@ echo '</p>';
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
 $srcprepared = $process->lastlog('prepare:source');
 if ($srcprepared) {
-	echo "<p>Un fichier source préparé le " . $srcprepared . "</p>\n";
+    echo "<p>Un fichier source préparé le " . $srcprepared . "</p>\n";
 } else {
-	echo "<p>Aucun fichier source préparé.\n";
+    echo "<p>Aucun fichier source préparé.\n";
 }
 $pdfprepared = $process->lastlog('prepare:pdf');
 if ($pdfprepared) {
-	echo "<p>Deux fichiers PDF préparés le " . $pdfprepared . "</p>\n";
+    echo "<p>Deux fichiers PDF préparés le " . $pdfprepared . "</p>\n";
 } else {
-	echo "<p>Aucun fichier PDF préparé.\n";
+    echo "<p>Aucun fichier PDF préparé.\n";
 }
 
 // var_dump($process);
 
 // Main AMC actions and corresponding GUI labels
 $actions = array(
-	'prepare' => 'Préparation',
-	'analyse' => 'Saisie',
-	'note' => 'Notation',
-	'export' => 'Rapports'
+    'prepare' => 'Préparation',
+    'analyse' => 'Saisie',
+    'note' => 'Notation',
+    'export' => 'Rapports'
 );
 
 foreach ($actions as $action => $label) {
-	$options = array('disabled' => 'disabled');
-	if ($action == 'prepare') {
-		$options = array();
-	}
-	$url = new moodle_url('/mod/automultiplechoice/' . $action. '.php', array('a' => $quizz->id));
-	$button = $OUTPUT->single_button($url, $label , 'post', $options);
-	echo $button;
+    $options = array('disabled' => 'disabled');
+    if ($action == 'prepare') {
+        $options = array();
+    }
+    $url = new moodle_url('/mod/automultiplechoice/' . $action. '.php', array('a' => $quizz->id));
+    $button = $OUTPUT->single_button($url, $label , 'post', $options);
+    echo $button;
 }
 
 
