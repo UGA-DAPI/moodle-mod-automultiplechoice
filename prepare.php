@@ -51,25 +51,25 @@ $process = new \mod\automultiplechoice\AmcProcess($quizz);
 
 $diag = $process->saveAmctxt();
 if ($diag) {
-    echo "Fichier source enregistré.<br />\n";
+    echo "<p>Fichier source enregistré.</p>\n";
 } else {
-    echo "Erreur sur fichier source.<br />\n";
+    echo "<p>Erreur sur fichier source.</p>\n";
 }
 
 $diag = $process->createPdf();
 if ($diag) {
-    echo "Fichiers PDF créés : ";
+    echo $OUTPUT->heading("Fichiers PDF créés");
+    echo '<ul class="amc-files">';
     $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
         $process->relworkdir.'/', 'prepare-sujet.pdf');
-    echo html_writer::link($url, 'prepare-sujet.pdf');
-    echo "&nbsp;";
+    echo "<li>" . html_writer::link($url, 'prepare-sujet.pdf') . "</li>";
 
     $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
         $process->relworkdir.'/', 'prepare-corrige.pdf');
-    echo html_writer::link($url, 'prepare-corrige.pdf');
-    echo "<br />\n";
+    echo "<li>" . html_writer::link($url, 'prepare-corrige.pdf') . "</li>";
+    echo "</ul>\n";
 } else {
-    echo "Erreur sur créationd des fichiers PDF.<br />\n";
+    echo "<p>Erreur lors de la création des fichiers PDF.</p>\n";
 }
 
 
