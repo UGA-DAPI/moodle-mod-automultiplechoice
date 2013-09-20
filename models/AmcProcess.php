@@ -56,7 +56,6 @@ class AmcProcess
 
 	public function initWorkdir() {
 		global $CFG;
-		echo "initWorkdir";
 		
 		if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
 			// mkdir($this->workdir, 0770);
@@ -126,6 +125,7 @@ class AmcProcess
 		$res  = "# AMC-TXT source\n";
 		$res .= "PaperSize: A4\n";
 		$res .= "Lang: FR\n";
+		$res .= "Code: " . get_config('moodle', 'amccodelength') . "\n";
 		$res .= "Title: " . $this->quizz->name . "\n";
 		$res .= "Presentation: " . $this->quizz->description . "\n\n";
 
