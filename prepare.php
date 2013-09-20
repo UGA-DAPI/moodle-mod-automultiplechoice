@@ -29,13 +29,8 @@ if ($a) {
     error('You must specify an instance ID');
 }
 
-
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
 //var_dump($process);
 
 $process->saveAmctxt('/tmp/prepare.txt');
 echo "Fichier source enregistré.<br />\n";
-
-echo '<pre>';
-echo $process->getSourceAmctxt();
-echo '</pre>';

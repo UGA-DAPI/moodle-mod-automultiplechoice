@@ -82,9 +82,24 @@ echo html_writer::link(
 echo '</p>';
 
 
-$prepareurl = new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id));
-$button = $OUTPUT->single_button($prepareurl, 'Préparer' , 'post');
-echo $button;
+// Main AMC actions and corresponding GUI labels
+$actions = array(
+	'prepare' => 'Préparation',
+	'analyse' => 'Saisie',
+	'note' => 'Notation',
+	'export' => 'Rapports'
+);
+
+foreach ($actions as $action => $label) {
+	$options = array('disabled' => 'disabled');
+	if ($action == 'prepare') {
+		$options = array();
+	}
+	$url = new moodle_url('/mod/automultiplechoice/' . $action. '.php', array('a' => $quizz->id));
+	$button = $OUTPUT->single_button($url, $label , 'post', $options);
+	echo $button;
+}
+
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->box_end();
