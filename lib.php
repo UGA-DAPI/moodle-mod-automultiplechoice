@@ -361,7 +361,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 	$quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
 	$process = new \mod\automultiplechoice\AmcProcess($quizz);
 
-	send_file($process->workdir .'/'. $filename, $filename, 86400, 0, false, true, 'application/pdf') ;
+	send_file($process->workdir .'/'. $filename, $filename, 86400, 0, false, false, 'application/pdf') ;
     //send_file_not_found();
 }
 
