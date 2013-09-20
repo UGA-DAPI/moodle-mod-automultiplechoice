@@ -29,14 +29,45 @@ if ($a) {
     error('You must specify an instance ID');
 }
 
+require_login($course, true, $cm);
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/automultiplechoice:view', $context);
+
+/// Print the page header
+
+$PAGE->set_url('/mod/automultiplechoice/prepare.php', array('id' => $cm->id));
+$PAGE->set_title(format_string($quizz->name . " - préparation des fichiers"));
+$PAGE->set_heading(format_string($course->fullname));
+$PAGE->set_context($context);
+
+// Output starts here
+echo $OUTPUT->header();
+echo $OUTPUT->heading($quizz->name . " - préparation des fichiers");
+
+
+
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
 //var_dump($process);
 
-$process->saveAmctxt('/tmp/prepare.txt');
-$diag = $process->log('prepare:source', 'source prepare.txt');
+$diag = $process->saveAmctxt();
 if ($diag) {
 	echo "Fichier source enregistré.<br />\n";
 } else {
 	echo "Erreur sur fichier source.<br />\n";
 }
+
+$diag = $process->createPdf();
+if ($diag) {
+	echo "Fichiers PDF créés.<br />\n";
+} else {
+	echo "Erreur sur créationd des fichiers PDF.<br />\n";
+}
+
+$url = moodle_url::make_pluginfile_url($context->id, 'automultiplechoice', 'area', $a, $process->workdir, 'prepare-sujet.pdf');
+echo html_writer::link($url, 'prepare-sujet.pdf');
+
+$url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
+$button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
+echo $button;
+
 

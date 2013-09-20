@@ -14,7 +14,7 @@ class AmcProcess
      * @var Quizz Contains notably an 'amcparams' attribute.
      */
     protected $quizz;
-	protected $workdir;
+	public $workdir;
 
     /**
      * @var array
@@ -54,7 +54,7 @@ class AmcProcess
         return $this->errors;
     }
 
-	public function initWorkdir() {
+	protected function initWorkdir() {
 		global $CFG;
 		
 		if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
@@ -155,9 +155,31 @@ class AmcProcess
 		$this->initWorkdir();
 		$filename = $this->workdir . "/prepare-source.txt";
 		$res = file_put_contents($filename, $this->getSourceAmctxt());
+		if ($res) {
+			$diag = $this->log('prepare:source', 'prepare-source.txt');
+		}
 		return $res;
 	}
 
+
+	public function createPdf() {
+		$pre = $this->workdir;
+		$res = $this->shellExec('auto-multiple-choice prepare', array(
+			'--n-copies', (string) $this->quizz->amcparams->copies,
+			'--filter', 'plain',
+			'--mode', 's',
+			'--prefix', $pre,
+			'--out-corrige', $pre . '/prepare-corrige.pdf',
+			'--out-sujet', $pre . '/prepare-sujet.pdf',
+			'--out-calage', $pre . '/prepare-calage.xy',
+			$pre . '/prepare-source.txt'
+			));
+		if ($res) {
+			$diag = $this->log('prepare:pdf', 'prepare-corrige.pdf prepare-sujet.pdf');
+		}
+		return $res;
+
+	}
 
 	/**
 	 * log processed action

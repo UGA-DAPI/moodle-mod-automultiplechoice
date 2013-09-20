@@ -84,12 +84,19 @@ echo '</p>';
 
 
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
-$prepared = $process->lastlog('prepare:source');
-if ($prepared) {
-	echo "<p>Un fichier source préparé le " . $prepared . "</p>\n";
+$srcprepared = $process->lastlog('prepare:source');
+if ($srcprepared) {
+	echo "<p>Un fichier source préparé le " . $srcprepared . "</p>\n";
 } else {
 	echo "<p>Aucun fichier source préparé.\n";
 }
+$pdfprepared = $process->lastlog('prepare:pdf');
+if ($pdfprepared) {
+	echo "<p>Deux fichiers PDF préparés le " . $pdfprepared . "</p>\n";
+} else {
+	echo "<p>Aucun fichier PDF préparé.\n";
+}
+
 // var_dump($process);
 
 // Main AMC actions and corresponding GUI labels
@@ -111,7 +118,8 @@ foreach ($actions as $action => $label) {
 }
 
 
-// var_dump($quizz);
+//var_dump($quizz);
+//var_dump($CFG);
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->box_end();

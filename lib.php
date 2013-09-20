@@ -355,7 +355,15 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 
     require_login($course, true, $cm);
 
-    send_file_not_found();
+	var_dump($cm);
+	var_dump($context);
+	var_dump($filearea);
+	var_dump($args);
+
+	die();
+
+	send_file($args['path'], $args['filename'], 86400, 0, false, true, 'application/pdf') ;
+    //send_file_not_found();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
