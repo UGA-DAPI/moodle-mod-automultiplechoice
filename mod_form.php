@@ -42,11 +42,11 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'automultiplechoicename', 'automultiplechoice');
 
-        $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'));
+        $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'15', 'cols'=>'64'));
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'description', 'automultiplechoice');
 
-        $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'));
+        $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'), array('rows'=>'10', 'cols'=>'64'));
         $mform->setType('comment', PARAM_TEXT);
         $mform->addHelpButton('comment', 'comment', 'automultiplechoice');
 
