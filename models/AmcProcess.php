@@ -99,17 +99,25 @@ class AmcProcess
 		return $questiontext . $answerstext . "\n";
 	}
 
+	/**
+	 * Computes the header block of the source file
+	 * @return string header block of the AMC-TXT file
+	 */
 	protected function getHeaderAmctxt() {
 
 		$res  = "# AMC-TXT source\n";
 		$res .= "PaperSize: A4\n";
 		$res .= "Lang: FR\n";
-		$res .= "Title: " . $this->quizz->name . "\n\n";
-		$res .= $this->quizz->description . "\n\n";
+		$res .= "Title: " . $this->quizz->name . "\n";
+		$res .= "Presentation: " . $this->quizz->description . "\n\n";
 
 		return $res;
 	}
 
+	/**
+	 * Compute the whole source file content, by merging header and questions blocks
+	 * @return string file content
+	 */
 	public function getSourceAmctxt() {
 		$res = $this->getHeaderAmctxt();
 
@@ -120,9 +128,19 @@ class AmcProcess
 		return $res;
 	}
 
+	/**
+	 * Save the source file
+	 * @param type $filename
+	 */
 	public function saveAmctxt($filename) {
 		$file = fopen($filename, 'w');
-		fwrite($file, $this->getSourceAmctxt());
+		if ( ! $file ) {
+			return FALSE;
+		}
+		if ( ! fwrite($file, $this->getSourceAmctxt()) ) {
+			return FALSE;
+		}
 		fclose($file);
+		return true;
 	}
 }
