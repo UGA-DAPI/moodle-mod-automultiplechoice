@@ -12,7 +12,7 @@
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-global $DB, $OUTPUT, $PAGE;
+global $DB, $OUTPUT, $PAGE, $CFG;
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once("$CFG->libdir/formslib.php");
@@ -90,6 +90,7 @@ if ($prepared) {
 } else {
 	echo "<p>Aucun fichier source préparé.\n";
 }
+// var_dump($process);
 
 // Main AMC actions and corresponding GUI labels
 $actions = array(
@@ -108,6 +109,7 @@ foreach ($actions as $action => $label) {
 	$button = $OUTPUT->single_button($url, $label , 'post', $options);
 	echo $button;
 }
+
 
 // var_dump($quizz);
 

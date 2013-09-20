@@ -14,6 +14,7 @@ class AmcProcess
      * @var Quizz Contains notably an 'amcparams' attribute.
      */
     protected $quizz;
+	protected $workdir;
 
     /**
      * @var array
@@ -26,7 +27,11 @@ class AmcProcess
      * @param Quizz $quizz
      */
     public function __construct($quizz) {
+		global $CFG;
         $this->quizz = $quizz;
+
+		$this->workdir = $CFG->dataroot . '/local/automultiplechoice/' .
+			sprintf('automultiplechoice_%05d', $this->quizz->id);
     }
 
     /**
@@ -49,6 +54,18 @@ class AmcProcess
         return $this->errors;
     }
 
+	public function initWorkdir() {
+		global $CFG;
+		echo "initWorkdir";
+		
+		if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
+			// mkdir($this->workdir, 0770);
+			$templatedir = $CFG->dataroot . '/local/automultiplechoice/'
+				. get_config('moodle', 'amctemplate');
+			$diag = $this->shellExec('cp', array('-a', $templatedir, $this->workdir));
+		}
+	}
+
     /**
      *
      * @param string $cmd
@@ -60,6 +77,7 @@ class AmcProcess
         $escapedParams = array_map('escapeshellarg', $params);
         $lines = array();
         $returnVal = 0;
+		//echo "CMD = " . $escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal . "<br /><br />\n\n";
         exec($escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal);
         /**
          * @todo return $lines? or put them in a attr like errors?
@@ -132,16 +150,12 @@ class AmcProcess
 	 * Save the source file
 	 * @param type $filename
 	 */
-	public function saveAmctxt($filename) {
-		$file = fopen($filename, 'w');
-		if ( ! $file ) {
-			return FALSE;
-		}
-		if ( ! fwrite($file, $this->getSourceAmctxt()) ) {
-			return FALSE;
-		}
-		fclose($file);
-		return true;
+	public function saveAmctxt() {
+
+		$this->initWorkdir();
+		$filename = $this->workdir . "/prepare-source.txt";
+		$res = file_put_contents($filename, $this->getSourceAmctxt());
+		return $res;
 	}
 
 
