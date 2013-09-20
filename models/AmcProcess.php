@@ -14,6 +14,9 @@ class AmcProcess
      * @var Quizz Contains notably an 'amcparams' attribute.
      */
     protected $quizz;
+
+    protected $codelength = 0;
+
 	public $workdir;
 	public $relworkdir;
 
@@ -34,17 +37,10 @@ class AmcProcess
 		$dir = sprintf('automultiplechoice_%05d', $this->quizz->id);
 		$this->workdir = $CFG->dataroot . '/local/automultiplechoice/' . $dir;
 		$this->relworkdir = '/local/automultiplechoice/' . $dir;
-    }
 
-    /**
-     * Return the path to a PDF file.
-     *
-     * @return string Path to a PDF file.
-     */
-    public function publish()
-    {
+        $this->codelength = (int) get_config('moodle', 'amccodelength');
         /**
-         * @todo Fill publish()... and rename func?
+         * @todo error if codelength == 0
          */
     }
 
@@ -56,84 +52,6 @@ class AmcProcess
         return $this->errors;
     }
 
-	protected function initWorkdir() {
-		global $CFG;
-		
-		if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
-			// mkdir($this->workdir, 0770);
-			$templatedir = $CFG->dataroot . '/local/automultiplechoice/'
-				. get_config('moodle', 'amctemplate');
-			$diag = $this->shellExec('cp', array('-a', $templatedir, $this->workdir));
-		}
-	}
-
-    /**
-     *
-     * @param string $cmd
-     * @param array $params List of strings.
-     * @return boolean Success?
-     */
-    protected function shellExec($cmd, $params) {
-        $escapedCmd = escapeshellcmd($cmd);
-        $escapedParams = array_map('escapeshellarg', $params);
-        $lines = array();
-        $returnVal = 0;
-		//echo "CMD = " . $escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal . "<br /><br />\n\n";
-        exec($escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal);
-        /**
-         * @todo return $lines? or put them in a attr like errors?
-         */
-        if ($returnVal === 0) {
-            return true;
-        } else {
-            /**
-             * @todo Fill $this->errors
-             */
-            return false;
-        }
-    }
-
-
-	/**
-	 * Turns a question into a formatted string, in the AMC-txt (aka plain) format
-	 * @param $questionid questionid from the 'question' table
-	 * @return string
-	 */
-	protected function questionToFileAmctxt($questionid) {
-		global $DB;
-
-		$answerstext = '';
-		$trueanswers = 0;
-		$dbquestion = $DB->get_record('question', array('id' => $questionid), '*', MUST_EXIST);		
-		$answers = $DB->get_records('question_answers', array('question' => $questionid));
-		foreach ($answers as $answer) {
-			$trueanswer = (bool) ((int)$answer->fraction > 0.0);
-			$bullet = ($trueanswer ? '+' : '-');
-			$answerstext .= $bullet . " " . $answer->answer . "\n";
-			$trueanswers += (int)($trueanswer);
-		}
-		$questiontext = ($trueanswers == 1 ? '*' : '**') . ' ';
-		$questiontext .= $dbquestion->name . "\n" . $dbquestion->questiontext . "\n";
-
-		return $questiontext . $answerstext . "\n";
-	}
-
-	/**
-	 * Computes the header block of the source file
-	 * @return string header block of the AMC-TXT file
-	 */
-	protected function getHeaderAmctxt() {
-
-		$res  = "# AMC-TXT source\n";
-		$res .= "PaperSize: A4\n";
-		$res .= "Lang: FR\n";
-		$res .= "Code: " . get_config('moodle', 'amccodelength') . "\n";
-		$res .= "Title: " . $this->quizz->name . "\n";
-		$res .= "Presentation: " . $this->quizz->description . "\n\n";
-
-		return $res;
-	}
-
 	/**
 	 * Compute the whole source file content, by merging header and questions blocks
 	 * @return string file content
@@ -141,8 +59,8 @@ class AmcProcess
 	public function getSourceAmctxt() {
 		$res = $this->getHeaderAmctxt();
 
-		foreach ($questions = $this->quizz->questions->questions as $question) {
-			$res .= $this->questionToFileAmctxt($question['questionid']);
+		foreach ($questions = $this->quizz->questions->getRecords() as $question) {
+			$res .= $this->questionToFileAmctxt($question);
 
 		}
 		return $res;
@@ -195,13 +113,93 @@ class AmcProcess
 		return true;
 	}
 
-
 	public function lastlog($action) {
 		global $DB;
 
 		$cm = get_coursemodule_from_instance('automultiplechoice', $this->quizz->id, $this->quizz->course, false, MUST_EXIST);
 		$sql = 'SELECT FROM_UNIXTIME(time) FROM log WHERE action=? AND cmid=? ORDER BY time DESC LIMIT 1';
 		$res = $DB->get_field_sql($sql, array($action, $cm->id), IGNORE_MISSING);
+		return $res;
+	}
+
+
+    protected function initWorkdir() {
+		global $CFG;
+		
+		if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
+			// mkdir($this->workdir, 0770);
+			$templatedir = $CFG->dataroot . '/local/automultiplechoice/'
+				. get_config('moodle', 'amctemplate');
+			$diag = $this->shellExec('cp', array('-a', $templatedir, $this->workdir));
+		}
+	}
+
+    /**
+     *
+     * @param string $cmd
+     * @param array $params List of strings.
+     * @return boolean Success?
+     */
+    protected function shellExec($cmd, $params) {
+        $escapedCmd = escapeshellcmd($cmd);
+        $escapedParams = array_map('escapeshellarg', $params);
+        $lines = array();
+        $returnVal = 0;
+		//echo "CMD = " . $escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal . "<br /><br />\n\n";
+        exec($escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal);
+        /**
+         * @todo return $lines? or put them in a attr like errors?
+         */
+        if ($returnVal === 0) {
+            return true;
+        } else {
+            /**
+             * @todo Fill $this->errors
+             */
+            return false;
+        }
+    }
+
+
+	/**
+	 * Turns a question into a formatted string, in the AMC-txt (aka plain) format
+	 * @param object $question record from the 'question' table
+	 * @return string
+	 */
+	protected function questionToFileAmctxt($question) {
+		global $DB;
+
+		$answerstext = '';
+		$trueanswers = 0;
+		$answers = $DB->get_records('question_answers', array('question' => $question->id));
+		foreach ($answers as $answer) {
+			$trueanswer = ($answer->fraction > 0);
+			$answerstext .= ($trueanswer ? '+' : '-') . " " . $answer->answer . "\n";
+			$trueanswers += (int) $trueanswer;
+		}
+		$questiontext = ($trueanswers == 1 ? '*' : '**') . ' '
+                . $question->name . "\n" . $question->questiontext . "\n";
+
+		return $questiontext . $answerstext . "\n";
+	}
+
+	/**
+	 * Computes the header block of the source file
+	 * @return string header block of the AMC-TXT file
+	 */
+	protected function getHeaderAmctxt() {
+        $descr = $this->quizz->description;
+
+		$res  = "
+# AMC-TXT source
+PaperSize: A4
+Lang: FR
+Code: {$this->codelength}
+Title: {$this->quizz->name}
+Presentation: {$descr}
+
+";
+
 		return $res;
 	}
 }
