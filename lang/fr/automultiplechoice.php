@@ -37,6 +37,7 @@ $string['amcparams'] = 'Paramètres AMC';
 $string['amc_copies'] = 'Nombre de copies';
 $string['amc_shuffleq'] = 'Mélanger les questions';
 $string['amc_shufflea'] = 'Mélanger les réponses';
+$string['amc_separatesheet'] = 'Feuille réponses séparée';
 
 $string['questionselect'] = 'Sélection des questions';
 $string['questionselected'] = 'Questions choisies';

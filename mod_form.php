@@ -71,8 +71,10 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('amc[shuffleq]', PARAM_BOOL);
 
 		$mform->addElement('advcheckbox', 'amc[shufflea]', get_string('amc_shufflea', 'automultiplechoice'));
-        $mform->setType('amc[shuffleq]', PARAM_BOOL);
+        $mform->setType('amc[shufflea]', PARAM_BOOL);
 
+		$mform->addElement('advcheckbox', 'amc[separatesheet]', get_string('amc_separatesheet', 'automultiplechoice'));
+        $mform->setType('amc[separatesheet]', PARAM_BOOL);
 
 
         //-------------------------------------------------------------------------------

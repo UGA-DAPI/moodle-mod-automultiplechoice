@@ -24,6 +24,9 @@ class AmcParams
 	/** @var boolean Shuffle answers  */
 	public $shufflea;
 
+	/** @var boolean Separate answer sheet  */
+	public $separatesheet;
+
     /**
      * Validate the instance and update $this->errors.
      *
@@ -48,7 +51,7 @@ class AmcParams
         $new->copies = (int) $input['copies'];
 		$new->shuffleq = (bool) $input['shuffleq'];
 		$new->shufflea = (bool) $input['shufflea'];
-
+		$new->separatesheet = (bool) $input['separatesheet'];
         return $new;
     }
 
