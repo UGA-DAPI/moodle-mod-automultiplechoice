@@ -177,7 +177,8 @@ class AmcProcess
             $answerstext .= ($trueanswer ? '+' : '-') . " " . strip_tags($answer->answer) . "\n";
             $trueanswers += (int) $trueanswer;
         }
-        $questiontext = ($trueanswers == 1 ? '*' : '**') . ' '
+		$ordered = ( $this->quizz->amcparams->shufflea ? '' : '[ordered]');
+        $questiontext = ($trueanswers == 1 ? '*' : '**') . $ordered . ' '
                 . $question->name . "\n" . strip_tags($question->questiontext) . "\n";
 
         return $questiontext . $answerstext . "\n";

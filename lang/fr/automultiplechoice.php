@@ -36,6 +36,7 @@ $string['score_help'] = 'Le score total du questionnaire (en points), pour valid
 $string['amcparams'] = 'Paramètres AMC';
 $string['amc_copies'] = 'Nombre de copies';
 $string['amc_shuffleq'] = 'Mélanger les questions';
+$string['amc_shufflea'] = 'Mélanger les réponses';
 
 $string['questionselect'] = 'Sélection des questions';
 $string['questionselected'] = 'Questions choisies';

@@ -70,6 +70,10 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 		$mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('amc_shuffleq', 'automultiplechoice'));
         $mform->setType('amc[shuffleq]', PARAM_BOOL);
 
+		$mform->addElement('advcheckbox', 'amc[shufflea]', get_string('amc_shufflea', 'automultiplechoice'));
+        $mform->setType('amc[shuffleq]', PARAM_BOOL);
+
+
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules

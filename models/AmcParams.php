@@ -15,15 +15,14 @@ class AmcParams
      */
     public $errors = array();
 
-    /**
-     * @var integer Number of copies.
-     */
+    /** @var integer Number of copies  */
     public $copies;
 
-    /**
-     * @var boolean Shuffle questions
-     */
+    /** @var boolean Shuffle questions  */
 	public $shuffleq;
+
+	/** @var boolean Shuffle answers  */
+	public $shufflea;
 
     /**
      * Validate the instance and update $this->errors.
@@ -48,9 +47,8 @@ class AmcParams
         $new = new self;
         $new->copies = (int) $input['copies'];
 		$new->shuffleq = (bool) $input['shuffleq'];
-        /**
-         * @todo Add other fields
-         */
+		$new->shufflea = (bool) $input['shufflea'];
+
         return $new;
     }
 
