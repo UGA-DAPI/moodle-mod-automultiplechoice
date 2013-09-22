@@ -83,6 +83,8 @@ echo html_writer::link(
 echo '</p>';
 
 
+//***** Affiche les fichiers préparés (source et pdf)
+
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
 $srcprepared = $process->lastlog('prepare:source');
 if ($srcprepared) {
@@ -97,7 +99,8 @@ if ($pdfprepared) {
     echo "<p>Aucun fichier PDF préparé.\n";
 }
 
-// var_dump($process);
+
+//******* Affiche les actions disponibles
 
 // Main AMC actions and corresponding GUI labels
 $actions = array(
@@ -117,9 +120,6 @@ foreach ($actions as $action => $label) {
     echo $button;
 }
 
-
-//var_dump($quizz);
-//var_dump($CFG);
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->box_end();
