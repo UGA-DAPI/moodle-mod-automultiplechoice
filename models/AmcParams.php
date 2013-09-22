@@ -21,9 +21,9 @@ class AmcParams
     public $copies;
 
     /**
-     * @todo Add other fields
+     * @var boolean Shuffle questions
      */
-
+	public $shuffleq;
 
     /**
      * Validate the instance and update $this->errors.
@@ -47,6 +47,7 @@ class AmcParams
     {
         $new = new self;
         $new->copies = (int) $input['copies'];
+		$new->shuffleq = (bool) $input['shuffleq'];
         /**
          * @todo Add other fields
          */

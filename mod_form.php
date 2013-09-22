@@ -58,9 +58,18 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('score', PARAM_INTEGER);
         $mform->addHelpButton('score', 'score', 'automultiplechoice');
 
+
         // AMC settings
+        //-------------------------------------------------------------------------------
+        // Adding the "amcparams" fieldset, parameters specific to printed output
+        $mform->addElement('header', 'amcparameters', get_string('amcparams', 'automultiplechoice'));
+
         $mform->addElement('text', 'amc[copies]', get_string('amc_copies', 'automultiplechoice'));
         $mform->setType('amc[copies]', PARAM_INTEGER);
+
+		$mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('amc_shuffleq', 'automultiplechoice'));
+        $mform->setType('amc[shuffleq]', PARAM_BOOL);
+
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules

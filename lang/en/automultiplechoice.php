@@ -32,7 +32,10 @@ $string['description_help'] = 'La description qui sera imprimée sur chaque ques
 $string['comment_help'] = 'Un commentaire pour l\'auteur, qui ne sera pas imprimé.';
 $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire, pour validation.';
 $string['score_help'] = 'Le score total du questionnaire (en points), pour validation.';
+
+$string['amcparams'] = 'AMC Parameters';
 $string['amc_copies'] = 'Copies Number';
+$string['amc_shuffleq'] = 'Shuffle questions';
 
 $string['questionselect'] = 'Select questions';
 $string['questionselected'] = 'Selected Questions';
