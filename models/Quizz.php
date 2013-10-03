@@ -95,7 +95,7 @@ class Quizz
             }
         }
         if (isset($this->questions) && $this->questions instanceof QuestionList) {
-            if (!$this->questions->validate()) {
+            if (!$this->questions->validate($this)) {
                 $this->errors = array_merge($this->errors, $this->questions->errors);
             }
         }
