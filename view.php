@@ -54,6 +54,17 @@ $PAGE->set_context($context);
 // Output starts here
 echo $OUTPUT->header();
 
+if (!$quizz->validate()) {
+    echo $OUTPUT->box_start('errorbox');
+    echo '<dl>';
+    foreach ($quizz->errors as $field => $error) {
+        echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>\n"
+                . "<dd>" . get_string($error, 'automultiplechoice') . "</dd>\n";
+    }
+    echo "</dl>\n";
+    echo $OUTPUT->box_end();
+}
+
 echo $OUTPUT->box_start();
 
 echo $OUTPUT->heading($quizz->name);
