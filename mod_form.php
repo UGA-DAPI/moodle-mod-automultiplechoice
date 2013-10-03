@@ -104,6 +104,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
      * @param array $files
      * @return array
      */
+    /*
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -113,4 +114,5 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         }
         return $errors;
     }
+     */
 }
