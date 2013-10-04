@@ -83,14 +83,25 @@ echo $OUTPUT->heading(
         3
 );
 
+echo '<form action="qselect.php" method="post" name="qselect">
+<input name="a" value="' . $quizz->id . '" type="hidden" />';
 echo '<table class="flexible boxaligncenter generaltable">';
-echo '<thead><tr><th>' . get_string('qtitle', 'automultiplechoice') . '</th><th>' . get_string('qscore', 'automultiplechoice') . '</th></tr></thead>';
+echo '<thead><tr><th>' . get_string('qscore', 'automultiplechoice') . '</th><th>' . get_string('qtitle', 'automultiplechoice') . '</th></tr></thead>';
 echo '<tbody>';
 foreach ($quizz->questions->getRecords() as $q) {
-    echo '<tr><td>' . format_string($q->name) . '</td><td>' . $q->score . '</td></tr>';
+    echo '<tr>
+        <td>
+            <input name="question[id][]" value="' . $q->id . '" type="hidden" />
+            <label class="qscore">' . get_string('qscore', 'automultiplechoice') . ' :
+                <input name="question[score][]" type="text" value="' . $q->score . '" />
+            </label>
+        </td>
+        <td>' . format_string($q->questiontext) . '</td>
+    </tr>';
 }
-echo '<tr><td></td><th>' . $quizz->score . '</th></tr>';
+echo '<tr><th>' . $quizz->score . '</th><td><button type="submit">OK</button></td></tr>';
 echo '</tbody></table>';
+echo "</form>\n";
 
 echo '<p class="continuebutton">';
 echo html_writer::link(
