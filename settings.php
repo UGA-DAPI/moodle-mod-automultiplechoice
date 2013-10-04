@@ -25,4 +25,13 @@ if ($ADMIN->fulltree) {
         '10',
         PARAM_INT));
 
+    $settings->add(
+            new admin_setting_configtextarea(
+                'scorings',
+                'Scoring strategies',
+                "List of scoring strategies, e.g.<pre>\nNormal (1 pt)    | single  |  1 | e=0,v=0,b=1,m=0\nVicious (1.5pt)  |multiple|1.5|mz=1.5,m=-1,v=-2,p=-5</pre>",
+                "",
+                PARAM_TEXT
+            )
+    );
 }
