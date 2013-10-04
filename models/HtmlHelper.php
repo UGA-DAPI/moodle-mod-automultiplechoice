@@ -14,6 +14,8 @@ require_once __DIR__ . '/Scoring.php';
  */
 class HtmlHelper {
     public static function printFormFullQuestions(\mod\automultiplechoice\Quizz $quizz) {
+        $scoringSystem = mod\automultiplechoice\ScoringSystem::createFromConfig();
+
         echo '<form action="qselect.php" method="post" name="qselect">
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
         echo '<table class="flexible boxaligncenter generaltable">';
@@ -23,7 +25,8 @@ class HtmlHelper {
         foreach ($quizz->questions->getRecords() as $q) {
             echo '<tr>
                 <td>
-                    <input name="question[id][]" value="' . $q->id . '" type="hidden" />
+                    <input name="question[id][]" value="' . $q->id . '" type="hidden" />'
+                    . $scoringSystem->buildHtmlSelect('question[scoring][]', empty($q->single)) . '
                     <label class="qscore">' . get_string('qscore', 'automultiplechoice') . ' :
                         <input name="question[score][]" type="text" value="' . $q->score . '" />
                     </label>
