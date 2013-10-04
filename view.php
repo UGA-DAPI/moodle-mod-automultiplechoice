@@ -19,6 +19,7 @@ require_once("$CFG->libdir/formslib.php");
 require_once(dirname(__FILE__).'/lib.php');
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/AmcProcess.php';
+require_once __DIR__ . '/models/HtmlHelper.php';
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
@@ -83,25 +84,7 @@ echo $OUTPUT->heading(
         3
 );
 
-echo '<form action="qselect.php" method="post" name="qselect">
-<input name="a" value="' . $quizz->id . '" type="hidden" />';
-echo '<table class="flexible boxaligncenter generaltable">';
-echo '<thead><tr><th>' . get_string('qscore', 'automultiplechoice') . '</th><th>' . get_string('qtitle', 'automultiplechoice') . '</th></tr></thead>';
-echo '<tbody>';
-foreach ($quizz->questions->getRecords() as $q) {
-    echo '<tr>
-        <td>
-            <input name="question[id][]" value="' . $q->id . '" type="hidden" />
-            <label class="qscore">' . get_string('qscore', 'automultiplechoice') . ' :
-                <input name="question[score][]" type="text" value="' . $q->score . '" />
-            </label>
-        </td>
-        <td>' . format_string($q->questiontext) . '</td>
-    </tr>';
-}
-echo '<tr><th>' . $quizz->score . '</th><td><button type="submit">OK</button></td></tr>';
-echo '</tbody></table>';
-echo "</form>\n";
+HtmlHelper::printFormFullQuestions($quizz);
 
 echo '<p class="continuebutton">';
 echo html_writer::link(
