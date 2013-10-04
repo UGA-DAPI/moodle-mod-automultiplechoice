@@ -47,15 +47,17 @@ class ScoringSystem
      *
      * @param string $name HTML name.
      * @param boolean $multiple
+     * @param string $value Current value (selected).
      * @return string HTML
      */
-    public function buildHtmlSelect($name, $multiple)
+    public function buildHtmlSelect($name, $multiple, $value)
     {
         $html = '<select name="' . $name . '">'
                 . '<option value=""></option>';
         foreach($this->scorings[$multiple ? 'multiple' : 'single'] as $scoring) {
             /* @var $scoring Scoring */
             $html .= '<option value="' . htmlspecialchars($scoring->formula) . '"'
+                    . ($scoring->formula === $value ? ' selected="selected"' : '')
                     . ' data-score="' . $scoring->score . '">'
                     . htmlspecialchars($scoring->name)
                     . '</option>';

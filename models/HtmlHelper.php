@@ -26,7 +26,7 @@ class HtmlHelper {
             echo '<tr>
                 <td>
                     <input name="question[id][]" value="' . $q->id . '" type="hidden" />'
-                    . $scoringSystem->buildHtmlSelect('question[scoring][]', empty($q->single)) . '
+                    . $scoringSystem->buildHtmlSelect('question[scoring][]', empty($q->single), $q->scoring) . '
                     <label class="qscore">' . get_string('qscore', 'automultiplechoice') . ' :
                         <input name="question[score][]" type="text" value="' . $q->score . '" />
                     </label>
