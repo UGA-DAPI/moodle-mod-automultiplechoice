@@ -41,6 +41,28 @@ class ScoringSystem
         }
         return $system;
     }
+
+    /**
+     * Return the HTML for a select element.
+     *
+     * @param string $name HTML name.
+     * @param boolean $multiple
+     * @return string HTML
+     */
+    public function buildHtmlSelect($name, $multiple)
+    {
+        $html = '<select name="' . $name . '">'
+                . '<option value=""></option>';
+        foreach($this->scorings[$multiple ? 'multiple' : 'single'] as $scoring) {
+            /* @var $scoring Scoring */
+            $html .= '<option value="' . htmlspecialchars($scoring->formula) . '"'
+                    . ' data-score="' . $scoring->score . '">'
+                    . htmlspecialchars($scoring->name)
+                    . '</option>';
+        }
+        $html .= '</select>';
+        return $html;
+    }
 }
 
 class Scoring
