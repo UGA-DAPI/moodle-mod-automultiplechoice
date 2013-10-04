@@ -36,12 +36,10 @@ require_capability('mod/automultiplechoice:addinstance', $context);
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
 if ($questions) {
     $quizz->questions = $questions;
-    if ($questions->validate($quizz)) {
-        if ($quizz->save()) {
-            redirect(new moodle_url('view.php', array('a' => $quizz->id)));
-        } else {
-            die("Could not save into automultiplechoice");
-        }
+    if ($quizz->save()) {
+        redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+    } else {
+        die("Could not save into automultiplechoice");
     }
 }
 
