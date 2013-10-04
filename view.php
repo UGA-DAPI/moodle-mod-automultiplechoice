@@ -52,6 +52,9 @@ $PAGE->set_title(format_string($quizz->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
+$PAGE->requires->jquery();
+$PAGE->requires->js(new moodle_url('assets/scoring.js'));
+
 // Output starts here
 echo $OUTPUT->header();
 
