@@ -18,7 +18,7 @@ class HtmlHelper {
 
         echo '<form action="qselect.php" method="post" name="qselect">
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
-        echo '<table class="flexible boxaligncenter generaltable">';
+        echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
         echo '<thead><tr><th>' . get_string('qscore', 'automultiplechoice')
                 . '</th><th>' . get_string('qtitle', 'automultiplechoice') . '</th></tr></thead>';
         echo '<tbody>';
@@ -28,7 +28,8 @@ class HtmlHelper {
                     <input name="question[id][]" value="' . $q->id . '" type="hidden" />'
                     . $scoringSystem->buildHtmlSelect('question[scoring][]', empty($q->single), $q->scoring) . '
                     <label class="qscore">' . get_string('qscore', 'automultiplechoice') . ' :
-                        <input name="question[score][]" type="text" value="' . $q->score . '" />
+                        <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '"'
+                        . ($q->scoring ? 'readonly="readonly"' : '') . ' />
                     </label>
                 </td>
                 <td>' . format_string($q->questiontext) . '</td>
