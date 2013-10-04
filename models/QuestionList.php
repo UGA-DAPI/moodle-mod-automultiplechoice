@@ -62,14 +62,14 @@ class QuestionList implements \Countable, \ArrayAccess
     public function validate(Quizz $quizz) {
         $this->errors = array();
         if (count($this->questions) != $quizz->qnumber) {
-            $this->errors[] = 'qnumber';
+            $this->errors['qnumber'] = 'validateql_wrong_number';
         }
         $scores = $this->getScores();
         if (array_sum($scores) != $quizz->score) {
-            $this->errors[] = 'sum';
+            $this->errors['sum'] = 'validateql_wrong_sum';
         }
         if (in_array(0, $scores)) {
-            $this->errors[] = 'score';
+            $this->errors['score'] = 'validateql_wrong_score';
         }
         if ($this->errors) {
             return false;
