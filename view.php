@@ -56,6 +56,7 @@ echo $OUTPUT->header();
 
 if (!$quizz->validate()) {
     echo $OUTPUT->box_start('errorbox');
+    echo '<p>' . get_string('someerrorswerefound') . '</p>';
     echo '<dl>';
     foreach ($quizz->errors as $field => $error) {
         echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>\n"
@@ -72,10 +73,15 @@ echo '<table class="flexible boxaligncenter generaltable">';
 echo '<tbody>';
 echo '<tr><th>' . get_string('description', 'automultiplechoice') . '</th><td>' . format_string($quizz->description) . '</td></tr>';
 echo '<tr><th>' . get_string('comment', 'automultiplechoice') . '</th><td>' . format_string($quizz->comment) . '</td></tr>';
+echo '<tr><th>' . get_string('qnumber', 'automultiplechoice') . '</th><td>' . $quizz->qnumber . '</td></tr>';
+echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th><td>' . $quizz->score . '</td></tr>';
 echo '</tbody></table>';
 
 echo $OUTPUT->box_start();
-echo $OUTPUT->heading("Questions", 3);
+echo $OUTPUT->heading(
+        html_writer::link(new moodle_url('qselect.php', array('a' => $quizz->id)), "Questions"),
+        3
+);
 
 echo '<table class="flexible boxaligncenter generaltable">';
 echo '<thead><tr><th>' . get_string('qtitle', 'automultiplechoice') . '</th><th>' . get_string('qscore', 'automultiplechoice') . '</th></tr></thead>';
@@ -86,7 +92,7 @@ foreach ($quizz->questions->getRecords() as $q) {
 echo '<tr><td></td><th>' . $quizz->score . '</th></tr>';
 echo '</tbody></table>';
 
-echo '<p>';
+echo '<p class="continuebutton">';
 echo html_writer::link(
         new moodle_url('qselect.php', array('a' => $quizz->id)),
         get_string('editselection', 'automultiplechoice')
