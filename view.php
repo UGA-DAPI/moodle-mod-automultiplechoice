@@ -99,46 +99,48 @@ echo html_writer::link(
 );
 echo '</p>';
 
+echo $OUTPUT->box_end();
 
-//***** Affiche les fichiers préparés (source et pdf)
+echo $OUTPUT->box_start();
 
+// Display prepared files (source & pdf)
+
+echo "<ul>";
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
 $srcprepared = $process->lastlog('prepare:source');
 if ($srcprepared) {
-    echo "<p>Un fichier source préparé le " . $srcprepared . "</p>\n";
+    echo "<li>Un fichier source préparé le " . $srcprepared . "</li>\n";
 } else {
-    echo "<p>Aucun fichier source préparé.\n";
+    echo "<li>Aucun fichier source préparé.</li>\n";
 }
 $pdfprepared = $process->lastlog('prepare:pdf');
 if ($pdfprepared) {
-    echo "<p>Deux fichiers PDF préparés le " . $pdfprepared . "</p>\n";
+    echo "<li>Deux fichiers PDF préparés le " . $pdfprepared . "</li>\n";
 } else {
-    echo "<p>Aucun fichier PDF préparé.\n";
+    echo "<li>Aucun fichier PDF préparé.</li>\n";
 }
+echo "</ul>";
 
 
-//******* Affiche les actions disponibles
+// Display available actions
 
-// Main AMC actions and corresponding GUI labels
-$actions = array(
-    'prepare' => 'Préparation',
-    'analyse' => 'Saisie',
-    'note' => 'Notation',
-    'export' => 'Rapports'
-);
-
-foreach ($actions as $action => $label) {
+$actions = array('prepare', 'analyse', 'note', 'export');
+if (empty($quizz->errors)) {
+    $options = array();
+} else {
+    echo '<p>' . get_string('functiondisabled') . '</p>';
     $options = array('disabled' => 'disabled');
-    if ($action == 'prepare') {
-        $options = array();
-    }
-    $url = new moodle_url('/mod/automultiplechoice/' . $action. '.php', array('a' => $quizz->id));
-    $button = $OUTPUT->single_button($url, $label , 'post', $options);
-    echo $button;
 }
 
+foreach ($actions as $action) {
+    $url = new moodle_url('/mod/automultiplechoice/' . $action. '.php', array('a' => $quizz->id));
+    echo $OUTPUT->single_button($url, get_string($action, 'automultiplechoice') , 'post', $options);
+    // tmp: disable buttons after the first one
+    $options = array('disabled' => 'disabled');
+}
 
 echo $OUTPUT->box_end();
+
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
