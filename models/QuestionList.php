@@ -66,10 +66,10 @@ class QuestionList implements \Countable, \ArrayAccess
         }
         $scores = $this->getScores();
         if (array_sum($scores) != $quizz->score) {
-            $this->errors['sum'] = 'validateql_wrong_sum';
+            $this->errors['score'] = 'validateql_wrong_sum';
         }
         if (in_array(0, $scores)) {
-            $this->errors['score'] = 'validateql_wrong_score';
+            $this->errors['qscore'] = 'validateql_wrong_score';
         }
         if ($this->errors) {
             return false;
