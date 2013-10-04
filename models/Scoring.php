@@ -13,7 +13,7 @@ namespace mod\automultiplechoice;
  */
 class ScoringSystem
 {
-    private $scorings = array(
+    public $scorings = array(
         'single' => array(),
         'multiple' => array(),
     );
@@ -33,7 +33,7 @@ class ScoringSystem
             if (count($cells) === 4) {
                 $new = new Scoring();
                 $new->name = $cells[0];
-                $new->score = (double) $cells[1];
+                $new->score = (double) $cells[2];
                 $new->multiple = (strcasecmp($cells[1], "multiple") === 0);
                 $new->formula = $cells[3];
                 $system->scorings[$new->multiple ? 'multiple' : 'single'][] = $new;
