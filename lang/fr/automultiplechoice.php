@@ -48,3 +48,7 @@ $string['qtitle'] = 'Question';
 $string['qscore'] = 'Score';
 
 $string['editselection'] = 'Modifier la sélection';
+
+$string['validateql_wrong_number'] = 'Le nombre de questions n\'est pas celui attendu.';
+$string['validateql_wrong_sum'] = 'La somme des scores ne fait pas le total attendu.' ;
+$string['validateql_wrong_score'] = 'Le score d\'au moins une question n\'est pas valide.';
