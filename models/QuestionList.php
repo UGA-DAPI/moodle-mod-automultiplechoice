@@ -37,7 +37,7 @@ class QuestionList implements \Countable, \ArrayAccess
      * Get the DB records with added scor* fields.
      *
      * @global \moodle_database $DB
-     * @return array of "question" records (objects from the DB) with an additional "score", "scoring" fields.
+     * @return array of "question+question_multichoice" records (objects from the DB) with an additional "score", "scoring" fields.
      */
     public function getRecords() {
         global $DB;
@@ -45,7 +45,13 @@ class QuestionList implements \Countable, \ArrayAccess
             return array();
         }
         $ids = $this->getIds();
-        $records = $DB->get_records_list('question', 'id', $ids);
+        list ($cond, $params) = $DB->get_in_or_equal($ids);
+        $records = $DB->get_records_sql(
+                'SELECT q.*, qc.single '
+                . 'FROM {question} q INNER JOIN {question_multichoice} qc ON q.id = qc.question '
+                . 'WHERE q.id ' . $cond,
+                $params
+        );
         $callback = function ($q) use ($records) {
             $r = $records[$q['questionid']];
             $r->score = $q['score'];
