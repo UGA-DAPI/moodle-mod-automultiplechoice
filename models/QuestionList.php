@@ -24,19 +24,20 @@ global $DB;
 class QuestionList implements \Countable, \ArrayAccess
 {
     /**
-     * @var array array of array('questionid' => (integer), 'score' => (integer)
+     * @var array array of array('questionid' => (integer), 'score' => (integer), 'scoring' => "b=1,e=0..."
      */
     public $questions = array();
 
     /**
-     * @var array List of values among: "qnumber", "score", "sum".
+     * @var array List of values among: "qnumber", "score", "qscore".
      */
     public $errors = array();
 
     /**
+     * Get the DB records with added scor* fields.
      *
      * @global \moodle_database $DB
-     * @return array of "question" records (objects from the DB) with an additional "score" field
+     * @return array of "question" records (objects from the DB) with an additional "score", "scoring" fields.
      */
     public function getRecords() {
         global $DB;
@@ -48,6 +49,7 @@ class QuestionList implements \Countable, \ArrayAccess
         $callback = function ($q) use ($records) {
             $r = $records[$q['questionid']];
             $r->score = $q['score'];
+            $r->scoring = $q['scoring'];
             return $r;
         };
         return array_map($callback, $this->questions);
@@ -105,6 +107,7 @@ class QuestionList implements \Countable, \ArrayAccess
                 $new->questions[] = array(
                     'questionid' => (int) $q[0],
                     'score' => (int) $q[1],
+                    'scoring' => (isset($q[2]) ? $q[2] : ''),
                 );
             }
         }
@@ -125,6 +128,7 @@ class QuestionList implements \Countable, \ArrayAccess
             $new->questions[] = array(
                 'questionid' => (int) $_POST[$fieldname]['id'][$i],
                 'score' => (int) $_POST[$fieldname]['score'][$i],
+                'scoring' => $_POST[$fieldname]['scoring'][$i],
             );
         }
         return $new;
