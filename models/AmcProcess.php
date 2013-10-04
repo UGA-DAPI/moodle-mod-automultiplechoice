@@ -76,7 +76,7 @@ class AmcProcess
         $filename = $this->workdir . "/prepare-source.txt";
         $res = file_put_contents($filename, $this->getSourceAmctxt());
         if ($res) {
-            $diag = $this->log('prepare:source', 'prepare-source.txt');
+            $this->log('prepare:source', 'prepare-source.txt');
         }
         return $res;
     }
@@ -95,7 +95,7 @@ class AmcProcess
             $pre . '/prepare-source.txt'
             ));
         if ($res) {
-            $diag = $this->log('prepare:pdf', 'prepare-corrige.pdf prepare-sujet.pdf');
+            $this->log('prepare:pdf', 'prepare-corrige.pdf prepare-sujet.pdf');
         }
         return $res;
 
@@ -177,9 +177,11 @@ class AmcProcess
             $answerstext .= ($trueanswer ? '+' : '-') . " " . strip_tags($answer->answer) . "\n";
             $trueanswers += (int) $trueanswer;
         }
-		$ordered = ( $this->quizz->amcparams->shufflea ? '' : '[ordered]');
-        $questiontext = ($trueanswers == 1 ? '*' : '**') . $ordered . ' '
-                . $question->name . "\n" . strip_tags($question->questiontext) . "\n";
+		$options = ($this->quizz->amcparams->shufflea ? '' : '[ordered]');
+        $questiontext = ($trueanswers == 1 ? '*' : '**')
+                . $options
+                . ($question->scoring ? '[' . $question->scoring . ']' : '')
+                . ' ' . $question->name . "\n" . strip_tags($question->questiontext) . "\n";
 
         return $questiontext . $answerstext . "\n";
     }
@@ -193,7 +195,7 @@ class AmcProcess
 		$shuffleq = (int) $this->quizz->amcparams->shuffleq;
 		$separatesheet = (int) $this->quizz->amcparams->separatesheet;
 
-        $res  = "
+        return "
 # AMC-TXT source
 PaperSize: A4
 Lang: FR
@@ -204,7 +206,5 @@ Title: {$this->quizz->name}
 Presentation: {$descr}
 
 ";
-
-        return $res;
     }
 }
