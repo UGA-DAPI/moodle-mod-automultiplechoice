@@ -38,7 +38,7 @@ class AmcProcess
         $this->workdir = $CFG->dataroot . '/local/automultiplechoice/' . $dir;
         $this->relworkdir = '/local/automultiplechoice/' . $dir;
 
-        $this->codelength = (int) get_config('moodle', 'amccodelength');
+        $this->codelength = (int) get_config('mod_automultiplechoice', 'amccodelength');
         /**
          * @todo error if codelength == 0
          */
@@ -129,7 +129,7 @@ class AmcProcess
         if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
             // mkdir($this->workdir, 0770);
             $templatedir = $CFG->dataroot . '/local/automultiplechoice/'
-                . get_config('moodle', 'amctemplate');
+                . get_config('mod_automultiplechoice', 'amctemplate');
             $diag = $this->shellExec('cp', array('-a', $templatedir, $this->workdir));
         }
     }
