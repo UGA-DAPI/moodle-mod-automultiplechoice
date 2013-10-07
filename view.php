@@ -71,31 +71,22 @@ if (!$quizz->validate()) {
 }
 
 echo $OUTPUT->box_start();
-
 echo $OUTPUT->heading($quizz->name);
-echo '<table class="flexible boxaligncenter generaltable">';
-echo '<tbody>';
-echo '<tr><th>' . get_string('description', 'automultiplechoice') . '</th><td>' . format_string($quizz->description) . '</td></tr>';
-echo '<tr><th>' . get_string('comment', 'automultiplechoice') . '</th><td>' . format_string($quizz->comment) . '</td></tr>';
-echo '<tr><th>' . get_string('qnumber', 'automultiplechoice') . '</th><td>' . $quizz->qnumber . '</td></tr>';
-echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th><td>' . $quizz->score . '</td></tr>';
-echo '</tbody></table>';
+HtmlHelper::printTableQuizz($quizz);
 
+// Questions
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(
         html_writer::link(new moodle_url('qselect.php', array('a' => $quizz->id)), "Questions"),
         3
 );
-
 HtmlHelper::printFormFullQuestions($quizz);
-
 echo '<p class="continuebutton">';
 echo html_writer::link(
         new moodle_url('qselect.php', array('a' => $quizz->id)),
         get_string('editselection', 'automultiplechoice')
 );
 echo '</p>';
-
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->box_start();
@@ -138,6 +129,6 @@ foreach ($actions as $action) {
 
 echo $OUTPUT->box_end();
 
-echo $OUTPUT->box_end();
+echo $OUTPUT->box_end(); // Quizz
 
 echo $OUTPUT->footer();
