@@ -46,6 +46,7 @@ $string['savesel'] = 'Enregistrer la sélection';
 $string['qcategory'] = 'Catégorie de question';
 $string['qtitle'] = 'Question';
 $string['qscore'] = 'Score';
+$string['scoring'] = 'Barême';
 
 $string['editselection'] = 'Modifier la sélection';
 

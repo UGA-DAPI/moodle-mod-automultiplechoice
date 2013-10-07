@@ -46,6 +46,7 @@ $string['savesel'] = 'Save this selection';
 $string['qcategory'] = 'Question Category';
 $string['qtitle'] = 'Question';
 $string['qscore'] = 'Points';
+$string['scoring'] = 'Scoring';
 
 $string['editselection'] = 'Update this selection';
 

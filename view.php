@@ -54,6 +54,7 @@ $PAGE->set_context($context);
 
 $PAGE->requires->jquery();
 $PAGE->requires->js(new moodle_url('assets/scoring.js'));
+$PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 // Output starts here
 echo $OUTPUT->header();

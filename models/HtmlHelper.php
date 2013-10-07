@@ -24,9 +24,12 @@ class HtmlHelper {
         echo '<tbody>';
         foreach ($quizz->questions->getRecords() as $q) {
             echo '<tr>
-                <td>
-                    <input name="question[id][]" value="' . $q->id . '" type="hidden" />'
-                    . $scoringSystem->buildHtmlSelect('question[scoring][]', empty($q->single), $q->scoring) . '
+                <td class="q-score">
+                    <input name="question[id][]" value="' . $q->id . '" type="hidden" />
+                    <label>' . get_string('scoring', 'automultiplechoice')
+                        . ' : '
+                        . $scoringSystem->buildHtmlSelect('question[scoring][]', empty($q->single), $q->scoring) . '
+                    </label>
                     <label class="qscore">' . get_string('qscore', 'automultiplechoice') . ' :
                         <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '"'
                         . ($q->scoring ? 'readonly="readonly"' : '') . ' />
