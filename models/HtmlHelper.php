@@ -22,6 +22,7 @@ class HtmlHelper {
         echo '<thead><tr><th>' . get_string('qscore', 'automultiplechoice')
                 . '</th><th>' . get_string('qtitle', 'automultiplechoice') . '</th></tr></thead>';
         echo '<tbody>';
+
         foreach ($quizz->questions->getRecords() as $q) {
             echo '<tr>
                 <td class="q-score">
@@ -35,7 +36,7 @@ class HtmlHelper {
                         . ($q->scoring ? 'readonly="readonly"' : '') . ' />
                     </label>
                 </td>
-                <td>' . format_string($q->questiontext) . '</td>
+                <td><div><b>' . format_string($q->name) . '</b></div>'. format_string($q->questiontext) . '</td>
             </tr>';
         }
         echo '<tr><th>' . $quizz->score . '</th><td><button type="submit">OK</button></td></tr>';
