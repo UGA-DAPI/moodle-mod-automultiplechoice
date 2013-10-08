@@ -81,7 +81,10 @@ class AmcProcess
         return $res;
     }
 
-
+    /**
+     * Shell-executes 'amc prepare' for creating pdf files
+     * @return bool
+     */
     public function createPdf() {
         $pre = $this->workdir;
         $res = $this->shellExec('auto-multiple-choice prepare', array(
@@ -102,6 +105,24 @@ class AmcProcess
         }
         return $res;
 
+    }
+
+    /**
+     * Shell-executes 'amc meptex'
+     * @return bool
+     */
+    public function makeMeptex() {
+        $pre = $this->workdir;
+        $res = $this->shellExec('auto-multiple-choice meptex', array(
+            '--data', $pre . '/data',
+            '--progression-id', 'MEP',
+            '--progression', '1',
+            '--src', $pre . '/prepare-calage.xy',
+            ));
+        if ($res) {
+            $this->log('meptex', '');
+        }
+        return $res;
     }
 
     /**

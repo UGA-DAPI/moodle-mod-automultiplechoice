@@ -76,6 +76,13 @@ if ($diag) {
     echo "<p>Erreur lors de la création des fichiers PDF.</p>\n";
 }
 
+$diag = $process->makeMeptex();
+if ($diag) {
+    echo $OUTPUT->heading("Mise en page (amc meptex) terminée.");
+} else {
+    echo "<p>Erreur lors du calcul de mise en page (amc meptex).</p>\n";
+}
+
 
 $url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
 $button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
