@@ -117,7 +117,7 @@ class AmcProcess
         global $DB;
 
         $cm = get_coursemodule_from_instance('automultiplechoice', $this->quizz->id, $this->quizz->course, false, MUST_EXIST);
-        $sql = 'SELECT FROM_UNIXTIME(time) FROM log WHERE action=? AND cmid=? ORDER BY time DESC LIMIT 1';
+        $sql = 'SELECT FROM_UNIXTIME(time) FROM {log} WHERE action=? AND cmid=? ORDER BY time DESC LIMIT 1';
         $res = $DB->get_field_sql($sql, array($action, $cm->id), IGNORE_MISSING);
         return $res;
     }
