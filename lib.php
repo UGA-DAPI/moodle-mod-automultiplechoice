@@ -362,7 +362,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     $process = new \mod\automultiplechoice\AmcProcess($quizz);
 
     // whitelist security
-    if (!in_array($filename, array('prepare-sujet.pdf', 'prepare-corrige.pdf'))) {
+    if (!in_array($filename, array('prepare-sujet.pdf', 'prepare-corrige.pdf', 'prepare-catalog.pdf'))) {
         send_file_not_found();
     }
     send_file($process->workdir .'/'. $filename, $filename, 86400, 0, false, false, 'application/pdf') ;

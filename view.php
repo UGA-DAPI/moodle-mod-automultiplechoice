@@ -104,7 +104,7 @@ if ($srcprepared) {
 }
 $pdfprepared = $process->lastlog('prepare:pdf');
 if ($pdfprepared) {
-    echo "<li>Deux fichiers PDF préparés le " . $pdfprepared . "</li>\n";
+    echo "<li>Trois fichiers PDF préparés le " . $pdfprepared . "</li>\n";
 } else {
     echo "<li>Aucun fichier PDF préparé.</li>\n";
 }

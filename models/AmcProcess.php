@@ -86,16 +86,19 @@ class AmcProcess
         $pre = $this->workdir;
         $res = $this->shellExec('auto-multiple-choice prepare', array(
             '--n-copies', (string) $this->quizz->amcparams->copies,
+            '--with', 'xelatex',
             '--filter', 'plain',
-            '--mode', 's',
+            '--mode', 's[sc]',
             '--prefix', $pre,
             '--out-corrige', $pre . '/prepare-corrige.pdf',
             '--out-sujet', $pre . '/prepare-sujet.pdf',
+            '--out-catalog', $pre . '/prepare-catalog.pdf',
             '--out-calage', $pre . '/prepare-calage.xy',
+            '--latex-stdout',
             $pre . '/prepare-source.txt'
             ));
         if ($res) {
-            $this->log('prepare:pdf', 'prepare-corrige.pdf prepare-sujet.pdf');
+            $this->log('prepare:pdf', 'prepare-catalog.pdf prepare-corrige.pdf prepare-sujet.pdf');
         }
         return $res;
 

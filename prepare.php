@@ -67,6 +67,10 @@ if ($diag) {
     $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
         $process->relworkdir.'/', 'prepare-corrige.pdf');
     echo "<li>" . html_writer::link($url, 'prepare-corrige.pdf') . "</li>";
+
+    $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
+        $process->relworkdir.'/', 'prepare-catalog.pdf');
+    echo "<li>" . html_writer::link($url, 'prepare-catalog.pdf') . "</li>";
     echo "</ul>\n";
 } else {
     echo "<p>Erreur lors de la création des fichiers PDF.</p>\n";
