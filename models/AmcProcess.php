@@ -152,6 +152,32 @@ class AmcProcess
         return $res;
     }
 
+    /**
+     * Shell-executes 'amc analyse'
+     * @param bool $multiple (see AMC) if multiple copies of the same sheet are possible
+     * @return bool
+     */
+
+    public function amcAnalyse($multiple = true) {
+        $pre = $this->workdir;
+        $scanlist = $pre . '/scanlist';
+        $parammultiple = '--' . ($multiple ? '' : 'no-') . 'multiple';
+        $res = $this->shellExec('auto-multiple-choice analyse', array(
+            $parammultiple,
+            '--tol-marque', '0.2,0.2',
+            '--prop', '0.8',
+            '--bw-threshold', '0.6',
+            '--progression-id' , 'analyse',
+            '--progression', '1',
+            '--n-procs', '0',
+            '--data', $pre . '/data',
+            '--projet', $pre,
+            '--cr', $pre . '/cr',
+            '--liste-fichiers', $scanlist,
+            '--no-ignore-red',
+            ));
+    }
+
 
     /**
      * log processed action

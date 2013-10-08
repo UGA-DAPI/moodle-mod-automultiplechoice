@@ -62,10 +62,18 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu
 
         $npages = $process->getImages($filename);
         if ($npages) {
-            echo "Pages : " . $npages;
+            echo "Pages : " . $npages ."<br>";
         } else {
-            echo "Erreur découpage scan (amc getimages)";
+            echo "Erreur découpage scan (amc getimages) <br>";
         }
+
+        $analyse = $process->amcAnalyse(true);
+        if ($analyse) {
+            echo "Analyse terminée. <br>";
+        } else {
+            echo "Erreur analyse (amc analyse) <br>.";
+        }
+
     }
 
 } else {
