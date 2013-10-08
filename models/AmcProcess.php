@@ -126,6 +126,34 @@ class AmcProcess
     }
 
     /**
+     * Shell-executes 'amc getimages'
+     * @param string $scanfile name, uploaded by the user
+     * @return bool
+     */
+    public function getImages($scanfile) {
+        $pre = $this->workdir;
+        $scanlist = $pre . '/scanlist';
+        if (file_exists($scanlist)) {
+            unlink($scanlist);
+        }
+        $res = $this->shellExec('auto-multiple-choice getimages', array(
+            '--progression-id', 'analyse',
+            '--vector-density', '250',
+            '--orientation', 'portrait',
+            '--list', $scanlist,
+            '--copy-to', $pre . '/scans/',
+            $scanfile
+            ));
+        if ($res) {
+            $nscans = count(file($scanlist));
+            $this->log('getimages', $nscans . ' pages');
+            return $nscans;
+        }
+        return $res;
+    }
+
+
+    /**
      * log processed action
      * @param string $action ('prepare'...)
      * @param string $msg
