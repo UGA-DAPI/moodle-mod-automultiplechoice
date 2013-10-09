@@ -112,12 +112,15 @@ class AmcProcess
      */
     public function amcMeptex() {
         $pre = $this->workdir;
-        $res = $this->shellExec('auto-multiple-choice meptex', array(
-            '--data', $pre . '/data',
-            '--progression-id', 'MEP',
-            '--progression', '1',
-            '--src', $pre . '/prepare-calage.xy',
-            ), true);
+        $res = $this->shellExec(
+                'auto-multiple-choice meptex',
+                array(
+                    '--data', $pre . '/data',
+                    '--progression-id', 'MEP',
+                    '--progression', '1',
+                    '--src', $pre . '/prepare-calage.xy',
+                )
+        );
         if ($res) {
             $this->log('meptex', '');
         }
