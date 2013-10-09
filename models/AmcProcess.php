@@ -293,9 +293,11 @@ class AmcProcess
         global $CFG;
 
         if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
-            // mkdir($this->workdir, 0770);
-            $templatedir = $CFG->dataroot . '/local/automultiplechoice/'
-                . get_config('mod_automultiplechoice', 'amctemplate');
+            $srcdir = get_config('mod_automultiplechoice', 'amctemplate');
+            if (!$srcdir || !is_dir($srcdir) || !is_readable($srcdir)) {
+                throw new \Exception("The plugin is not configured correctly. Please contact the Moodle administrator.");
+            }
+            $templatedir = $CFG->dataroot . '/local/automultiplechoice/' . $scrdir;
             $diag = $this->shellExec('cp', array('-r', $templatedir, $this->workdir));
         }
     }
