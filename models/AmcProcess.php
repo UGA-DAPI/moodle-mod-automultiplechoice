@@ -135,9 +135,8 @@ class AmcProcess
         if (file_exists($scanlist)) {
             unlink($scanlist);
         }
-        $mask = $pre . "/*.ppm"; // delete all previous ppm files
-        array_map( "unlink", glob( $mask ) );
-        // FIXME unlink glob marche pas
+        $mask = $pre . "/scans/*.ppm"; // delete all previous ppm files
+        array_map('unlink', glob( $mask ));
 
         $res = $this->shellExec('auto-multiple-choice getimages', array(
             '--progression-id', 'analyse',

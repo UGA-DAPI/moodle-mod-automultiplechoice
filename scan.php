@@ -60,6 +60,14 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu
         echo "Emplacement : " . $filename;
         echo "<br><br>\n";
 
+        /** @todo ce bloc meptex est-il nécessaire ? **/
+        $diag = $process->amcMeptex();
+        if ($diag) {
+            echo $OUTPUT->heading("Mise en page / initialisation sqlite (amc meptex) terminée.");
+        } else {
+            echo "<p>Erreur lors du calcul de mise en page (amc meptex).</p>\n";
+        }
+
         $npages = $process->amcGetimages($filename);
         if ($npages) {
             echo "Pages : " . $npages ."<br>";
