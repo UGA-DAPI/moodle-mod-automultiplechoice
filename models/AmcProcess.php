@@ -104,21 +104,20 @@ class AmcProcess
             $this->log('prepare:pdf', 'prepare-catalog.pdf prepare-corrige.pdf prepare-sujet.pdf');
         }
         return $res;
-
     }
 
     /**
      * Shell-executes 'amc meptex'
      * @return bool
      */
-    public function makeMeptex() {
+    public function amcMeptex() {
         $pre = $this->workdir;
         $res = $this->shellExec('auto-multiple-choice meptex', array(
             '--data', $pre . '/data',
             '--progression-id', 'MEP',
             '--progression', '1',
             '--src', $pre . '/prepare-calage.xy',
-            ));
+            ), true);
         if ($res) {
             $this->log('meptex', '');
         }
@@ -130,12 +129,16 @@ class AmcProcess
      * @param string $scanfile name, uploaded by the user
      * @return bool
      */
-    public function getImages($scanfile) {
+    public function amcGetimages($scanfile) {
         $pre = $this->workdir;
         $scanlist = $pre . '/scanlist';
         if (file_exists($scanlist)) {
             unlink($scanlist);
         }
+        $mask = $pre . "/*.ppm"; // delete all previous ppm files
+        array_map( "unlink", glob( $mask ) );
+        // FIXME unlink glob marche pas
+
         $res = $this->shellExec('auto-multiple-choice getimages', array(
             '--progression-id', 'analyse',
             '--vector-density', '250',
@@ -143,7 +146,7 @@ class AmcProcess
             '--list', $scanlist,
             '--copy-to', $pre . '/scans/',
             $scanfile
-            ));
+            ), true);
         if ($res) {
             $nscans = count(file($scanlist));
             $this->log('getimages', $nscans . ' pages');
@@ -162,7 +165,7 @@ class AmcProcess
         $pre = $this->workdir;
         $scanlist = $pre . '/scanlist';
         $parammultiple = '--' . ($multiple ? '' : 'no-') . 'multiple';
-        $res = $this->shellExec('auto-multiple-choice analyse', array(
+        $parameters = array(
             $parammultiple,
             '--tol-marque', '0.2,0.2',
             '--prop', '0.8',
@@ -175,7 +178,93 @@ class AmcProcess
             '--cr', $pre . '/cr',
             '--liste-fichiers', $scanlist,
             '--no-ignore-red',
-            ));
+            );
+        //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
+        $res = $this->shellExec('auto-multiple-choice analyse', $parameters, true);
+        if ($res) {
+            $this->log('analyse', 'OK.');
+        }
+        return $res;
+    }
+
+
+    /**
+     * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
+     * @return bool
+     */
+    public function amcPrepareBareme() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--n-copies', (string) $this->quizz->amcparams->copies,
+            '--with', 'xelatex',
+            '--filter', 'plain',
+            '--mode', 'b',
+            '--data', $pre . '/data',
+            '--filtered-source', $pre . '/prepare-source_filtered.tex',
+            '--progression-id', 'bareme',
+            '--progression', '1',
+            $pre . '/prepare-source.txt'
+            );
+        $res = $this->shellExec('auto-multiple-choice prepare', $parameters, true);
+        if ($res) {
+            $this->log('prepare:bareme', 'OK.');
+        }
+        return $res;
+    }
+
+    /**
+     * Shell-executes 'amc note'
+     * @return bool
+     */
+    public function amcNote() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--data', $pre . '/data',
+            '--progression-id', 'notation',
+            '--progression', '1',
+            '--seuil', '0.5',
+            '--grain', '0.5',
+            '--arrondi', 'inf',
+            '--notemax', '20',
+            '--plafond',
+            '--notemin', '',
+            '--postcorrect-student', '', //FIXME inutile ?
+            '--postcorrect-copy', '',    //FIXME inutile ?
+            );
+        $res = $this->shellExec('auto-multiple-choice note', $parameters, true);
+        if ($res) {
+            $this->log('note', 'OK.');
+        }
+        return $res;
+    }
+
+    /**
+     * Shell-executes 'amc export' to get a csv file
+     * @return bool
+     */
+    public function amcExport() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--module', 'CSV',
+            '--data', $pre . '/data',
+            '--useall', '',
+            '--sort', 'n',
+            '--fich-noms', '%PROJET/',
+            '--noms-encodage', 'UTF-8',
+            '--csv-build-name', '(nom|surname) (prenom|name)',
+            '--no-rtl',
+            '--output', $pre . '/exports/scoring.csv',
+            '--option-out', 'encodage=UTF-8',
+            '--option-out', 'columns=student.copy,student.key,student.name',
+            '--option-out', 'decimal=,',
+            '--option-out', 'ticked=',
+            '--option-out', 'separateur=;',
+            );
+        $res = $this->shellExec('auto-multiple-choice export', $parameters, true);
+        if ($res) {
+            $this->log('export', 'scoring.csv');
+        }
+        return $res;
     }
 
 
@@ -218,16 +307,20 @@ class AmcProcess
      * @param array $params List of strings.
      * @return boolean Success?
      */
-    protected function shellExec($cmd, $params) {
+    protected function shellExec($cmd, $params, $output=false) {
         $escapedCmd = escapeshellcmd($cmd);
         $escapedParams = array_map('escapeshellarg', $params);
         $lines = array();
         $returnVal = 0;
-        //echo "CMD = " . $escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal . "<br /><br />\n\n";
+// echo "CMD = " . $escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal . "<br /><br />\n\n";
         exec($escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal);
         /**
          * @todo return $lines? or put them in a attr like errors?
          */
+
+        if ($output) {
+            $this->shellOutput($returnVal, $lines);
+        }
         if ($returnVal === 0) {
             return true;
         } else {
@@ -238,6 +331,21 @@ class AmcProcess
         }
     }
 
+    /**
+     * Displays a foldable <div> containing the shell output
+     * @param integer $returnVal shell return value
+     * @param array(string) $lines output lines to be displayed
+     */
+    protected function shellOutput($returnVal, $lines) {
+        echo '<div style="margin:2px; padding:2px; border:1px solid grey;">' . " \n";
+        echo "Return value = <b>" . $returnVal. "</b><br />\n";
+        $i=0;
+        foreach ($lines as $line) {
+            $i++;
+            echo sprintf("%03d.", $i) . " " .$line . "<br />";
+        }
+        echo "</div> \n";
+    }
 
     /**
      * Turns a question into a formatted string, in the AMC-txt (aka plain) format

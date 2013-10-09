@@ -60,7 +60,7 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu
         echo "Emplacement : " . $filename;
         echo "<br><br>\n";
 
-        $npages = $process->getImages($filename);
+        $npages = $process->amcGetimages($filename);
         if ($npages) {
             echo "Pages : " . $npages ."<br>";
         } else {

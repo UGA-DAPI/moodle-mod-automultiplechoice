@@ -76,7 +76,7 @@ if ($diag) {
     echo "<p>Erreur lors de la création des fichiers PDF.</p>\n";
 }
 
-$diag = $process->makeMeptex();
+$diag = $process->amcMeptex();
 if ($diag) {
     echo $OUTPUT->heading("Mise en page (amc meptex) terminée.");
 } else {
