@@ -331,6 +331,9 @@ class AmcProcess
      * @param array(string) $lines output lines to be displayed
      */
     protected function shellOutput($returnVal, $lines) {
+        if (get_config('core', 'debugdisplay') == 0) {
+            return false;
+        }
         echo '<div style="margin:2px; padding:2px; border:1px solid grey;">' . " \n";
         echo "Return value = <b>" . $returnVal. "</b><br />\n";
         $i=0;
