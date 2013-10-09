@@ -134,7 +134,7 @@ class QuestionList implements \Countable, \ArrayAccess
             $new->questions[] = array(
                 'questionid' => (int) $_POST[$fieldname]['id'][$i],
                 'score' => (int) $_POST[$fieldname]['score'][$i],
-                'scoring' => $_POST[$fieldname]['scoring'][$i],
+                'scoring' => isset($_POST[$fieldname]['scoring']) ? $_POST[$fieldname]['scoring'][$i] : '',
             );
         }
         return $new;
