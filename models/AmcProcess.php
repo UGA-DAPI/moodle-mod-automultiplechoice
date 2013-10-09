@@ -311,11 +311,7 @@ class AmcProcess
         $escapedParams = array_map('escapeshellarg', $params);
         $lines = array();
         $returnVal = 0;
-// echo "CMD = " . $escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal . "<br /><br />\n\n";
         exec($escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal);
-        /**
-         * @todo return $lines? or put them in a attr like errors?
-         */
 
         if ($output) {
             $this->shellOutput($returnVal, $lines);
@@ -326,6 +322,7 @@ class AmcProcess
             /**
              * @todo Fill $this->errors
              */
+            debugging("<pre>$escapedCmd " . join(" ", $escapedParams) . "\n" . join("\n", $lines) . "</pre>", DEBUG_NORMAL);
             return false;
         }
     }
