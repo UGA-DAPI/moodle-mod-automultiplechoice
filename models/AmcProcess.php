@@ -296,7 +296,7 @@ class AmcProcess
             // mkdir($this->workdir, 0770);
             $templatedir = $CFG->dataroot . '/local/automultiplechoice/'
                 . get_config('mod_automultiplechoice', 'amctemplate');
-            $diag = $this->shellExec('cp', array('-a', $templatedir, $this->workdir));
+            $diag = $this->shellExec('cp', array('-r', $templatedir, $this->workdir));
         }
     }
 
