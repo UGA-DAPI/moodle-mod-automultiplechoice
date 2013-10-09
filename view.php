@@ -132,22 +132,16 @@ if ( file_exists($process->workdir.'/data/layout.sqlite') ) {
 $url = new moodle_url('/mod/automultiplechoice/' . 'scan.php', array('a' => $quizz->id));
 echo $OUTPUT->single_button($url, get_string('analyse', 'automultiplechoice') , 'post', $options);
 
-$options = array('disabled' => 'disabled');
+// $options = array('disabled' => 'disabled');
 
 $url = new moodle_url('/mod/automultiplechoice/' . 'note.php', array('a' => $quizz->id));
 echo $OUTPUT->single_button($url, get_string('note', 'automultiplechoice') , 'post', $options);
 
+/*
 $url = new moodle_url('/mod/automultiplechoice/' . 'export.php', array('a' => $quizz->id));
 echo $OUTPUT->single_button($url, get_string('export', 'automultiplechoice') , 'post', $options);
+*/
 
-/*
-foreach ($actions as $action) {
-    $url = new moodle_url('/mod/automultiplechoice/' . $action. '.php', array('a' => $quizz->id));
-    echo $OUTPUT->single_button($url, get_string($action, 'automultiplechoice') , 'post', $options);
-    // tmp: disable buttons after the first one
-    $options = array('disabled' => 'disabled');
-}
- */
 
 echo $OUTPUT->box_end();
 
