@@ -13,13 +13,12 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/automultiplechoice/locallib.php');
 
-    $settings = new admin_settingpage('mod_automultiplechoice', get_string('pluginname', 'mod_automultiplechoice'));
-
+    $defaulttpl = __DIR__ . '/amctemplate';
     $s = new admin_setting_configtext(
         'amctemplate',
         'Modèle AMC',
-        'Projet modèle AMC, dont dérivent les projets créés automatiquement (AMC-txt simple)',
-        '',
+        'Modèle d\'arborescence AMC pour les nouveaux projets',
+        $defaulttpl,
         PARAM_TEXT
     );
     $s->plugin = 'mod_automultiplechoice';
