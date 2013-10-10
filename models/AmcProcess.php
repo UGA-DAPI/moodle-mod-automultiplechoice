@@ -314,7 +314,9 @@ class AmcProcess
         $lines = array();
         $returnVal = 0;
         exec($shellCmd, $lines, $returnVal);
-
+            if ($output) {
+                $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_DEVELOPER);
+            }
         if ($returnVal === 0) {
             return true;
         } else {
@@ -322,7 +324,7 @@ class AmcProcess
              * @todo Fill $this->errors
              */
             if ($output) {
-                $this->shellOutput($shellCmd, $returnVal, $lines);
+                $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_NORMAL);
             }
             return false;
         }
@@ -335,7 +337,7 @@ class AmcProcess
      * @param integer $returnVal shell return value
      * @param array $lines output lines to be displayed
      */
-    protected function shellOutput($cmd, $returnVal, $lines) {
+    protected function shellOutput($cmd, $returnVal, $lines, $debuglevel) {
         if (get_config('core', 'debugdisplay') == 0) {
             return false;
         }
@@ -348,7 +350,7 @@ class AmcProcess
         }
         $html .= "Return value = <b>" . $returnVal. "</b\n";
         $html .= "</pre> \n";
-        debugging($html, DEBUG_NORMAL);
+        debugging($html, $debuglevel);
     }
 
     /**
