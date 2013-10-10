@@ -310,41 +310,45 @@ class AmcProcess
     protected function shellExec($cmd, $params, $output=false) {
         $escapedCmd = escapeshellcmd($cmd);
         $escapedParams = array_map('escapeshellarg', $params);
+        $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
         $lines = array();
         $returnVal = 0;
-        exec($escapedCmd . " " . join(" ", $escapedParams), $lines, $returnVal);
+        exec($shellCmd, $lines, $returnVal);
 
-        if ($output) {
-            $this->shellOutput($returnVal, $lines);
-        }
         if ($returnVal === 0) {
             return true;
         } else {
             /**
              * @todo Fill $this->errors
              */
-            debugging("<pre>$escapedCmd " . join(" ", $escapedParams) . "\n" . join("\n", $lines) . "</pre>", DEBUG_NORMAL);
+            if ($output) {
+                $this->shellOutput($shellCmd, $returnVal, $lines);
+            }
             return false;
         }
     }
 
     /**
-     * Displays a foldable <div> containing the shell output
+     * Displays a block containing the shell output
+     *
+     * @param string $cmd
      * @param integer $returnVal shell return value
-     * @param array(string) $lines output lines to be displayed
+     * @param array $lines output lines to be displayed
      */
-    protected function shellOutput($returnVal, $lines) {
+    protected function shellOutput($cmd, $returnVal, $lines) {
         if (get_config('core', 'debugdisplay') == 0) {
             return false;
         }
-        echo '<div style="margin:2px; padding:2px; border:1px solid grey;">' . " \n";
-        echo "Return value = <b>" . $returnVal. "</b><br />\n";
+        $html = '<pre style="margin:2px; padding:2px; border:1px solid grey;">' . " \n";
+        $html .= $cmd . " \n";
         $i=0;
         foreach ($lines as $line) {
             $i++;
-            echo sprintf("%03d.", $i) . " " .$line . "<br />";
+            $html .= sprintf("%03d.", $i) . " " . $line . "\n";
         }
-        echo "</div> \n";
+        $html .= "Return value = <b>" . $returnVal. "</b\n";
+        $html .= "</pre> \n";
+        debugging($html, DEBUG_NORMAL);
     }
 
     /**
