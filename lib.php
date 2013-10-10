@@ -366,7 +366,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         send_file($process->workdir .'/'. $filename, $filename, 86400, 0, false, false, 'application/pdf') ;
         return true;
     } elseif (in_array($filename, array('scoring.csv'))) {
-        send_file($process->workdir .'/'. $filename, $filename, 86400, 0, false, false, 'text/csv') ;
+        send_file($process->workdir . '/exports/' . $filename, $filename, 86400, 0, false, false, 'text/csv') ;
         return true;
     }
     send_file_not_found();
