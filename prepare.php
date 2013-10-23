@@ -44,7 +44,7 @@ $PAGE->set_context($context);
 // Output starts here
 echo $OUTPUT->header();
 echo $OUTPUT->heading($quizz->name . " - préparation des fichiers");
-var_dump($_POST);
+//var_dump($_POST);
 
 
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
