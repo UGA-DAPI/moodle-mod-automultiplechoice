@@ -121,7 +121,7 @@ if (empty($quizz->errors)) {
     echo '<p>' . get_string('functiondisabled') . '</p>';
     $options = array('disabled' => 'disabled');
 }
-$url = new moodle_url('/mod/automultiplechoice/' . 'prepare.php', array('a' => $quizz->id));
+$url = new moodle_url('/mod/automultiplechoice/' . 'prepare.php', array('a' => $quizz->id, 'action' => 'prepare'));
 echo $OUTPUT->single_button($url, get_string('prepare', 'automultiplechoice') , 'post', $options);
 
 $options = array('disabled' => 'disabled');

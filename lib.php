@@ -365,6 +365,9 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     if (in_array($filename, array('prepare-sujet.pdf', 'prepare-corrige.pdf', 'prepare-catalog.pdf'))) {
         send_file($process->workdir .'/'. $filename, $filename, 86400, 0, false, false, 'application/pdf') ;
         return true;
+     } elseif (in_array($filename, array('sujets.zip'))) {
+        send_file($process->workdir . '/' . $filename, $filename, 86400, 0, false, false, 'application/zip') ;
+        return true;
     } elseif (in_array($filename, array('scoring.csv'))) {
         send_file($process->workdir . '/exports/' . $filename, $filename, 86400, 0, false, false, 'text/csv') ;
         return true;

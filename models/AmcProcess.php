@@ -107,6 +107,55 @@ class AmcProcess
     }
 
     /**
+     * Shell-executes 'amc imprime'
+     * @param bool $split if true, put answer sheets in separate files
+     * @return bool
+     */
+    public function amcImprime($split) {
+        $pre = $this->workdir;
+        $params = array(
+                    '--data', $pre . '/data',
+                    '--sujet', $pre . '/prepare-sujet.pdf',
+                    '--methode', 'file',
+                    '--output', $pre . '/imprime/sujet-%e.pdf'
+                );
+        if ($split) {
+            $params[] = '--split';
+        }
+        $res = $this->shellExec('auto-multiple-choice imprime', $params, true);
+        if ($res) {
+            $this->log('imprime', '');
+        }
+        return $res;
+    }
+
+    /**
+     * exectuces "amc imprime" then zip the resulting files
+     * @param bool $split if true, put answer sheets in separate files
+     * @return bool
+     */
+    public function printAndZip($split) {
+        $pre = $this->workdir;
+        $mask = $pre . "/imprime/*.pdf";
+        array_map('unlink', glob( $mask ));
+        $this->amcImprime($split);
+
+        $zip = new \ZipArchive();
+        $ret = $zip->open($pre . '/sujets.zip', \ZipArchive::OVERWRITE);
+        if ( ! $ret ) {
+            printf("Echec lors de l'ouverture de l'archive %d", $ret);
+        } else {
+            $options = array('add_path' => 'sujets_amc/', 'remove_all_path' => true);
+            $zip->addGlob($mask, GLOB_BRACE, $options);
+            // echo "Zip status: [" . $zip->status . "]<br />\n";
+            // echo "Zip statusSys: [" . $zip->statusSys . "]<br />\n";
+            echo "Zipped [" . $zip->numFiles . "] files into [" . basename($zip->filename) . "]<br />\n";
+            $zip->close();
+        }
+        return $ret;
+    }
+
+    /**
      * Shell-executes 'amc meptex'
      * @return bool
      */
