@@ -58,3 +58,7 @@ $string['prepare'] = 'Préparation';
 $string['analyse'] = 'Saisie';
 $string['note'] = 'Notation';
 $string['export'] = 'Rapports';
+
+$string['questionoperations'] = 'Avant de sélectionner des questions, vous pouvez...';
+$string['importquestions'] = 'Importer des questions';
+$string['createquestions'] = 'Créer des questions';
