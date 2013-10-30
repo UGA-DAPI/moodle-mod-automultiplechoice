@@ -90,12 +90,17 @@ if ($questions && $questions->errors) {
     </thead>
     <tbody>
         <?php
+        $editicon = $OUTPUT->pix_icon('i/edit', get_string('edit'));
         foreach ($available_questions as $q) {
+            $editurl = new moodle_url('/local/questionssimplified/edit_standard.php', array('questions' => $q->id));
             echo '<tr id="q-' . $q->id . '">'
                 . '<td>' . format_string($q->categoryname) . '</td>'
                 . '<td class="qtitle">' . format_string($q->title) . '</td>'
                 . '<td>' . date('Y-m-d', $q->timemodified) . '</td>'
-                . '<td><button type="button" data-qid="' . $q->id . '">+</button></td>'
+                . '<td>'
+                    . '<button type="button" data-qid="' . $q->id . '">+</button>'
+                    . ' <a href="' . htmlspecialchars($editurl) . '" target="_blank">' . $editicon . '</a>'
+                .'</td>'
                 . '</tr>';
         }
         ?>
