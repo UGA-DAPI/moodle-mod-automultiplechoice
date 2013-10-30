@@ -69,13 +69,13 @@ echo $OUTPUT->header();
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('questionoperations', 'automultiplechoice'));
 echo '<p>' . $OUTPUT->action_link(
-        new moodle_url('/local/questionssimplified/edit_wysiwyg.php', array('course' => $course->id)),
+        new moodle_url('/local/questionssimplified/edit_wysiwyg.php', array('courseid' => $course->id)),
         get_string('importquestions', 'automultiplechoice'),
         null,
         array('target' => '_blank')
     ) . '</p>';
 echo '<p>' . $OUTPUT->action_link(
-        new moodle_url('/local/questionssimplified/edit_standard.php', array('course' => $course->id)),
+        new moodle_url('/local/questionssimplified/edit_standard.php', array('courseid' => $course->id)),
         get_string('createquestions', 'automultiplechoice'),
         null,
         array('target' => '_blank')
