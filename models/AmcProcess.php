@@ -436,8 +436,7 @@ class AmcProcess
 		$shuffleq = (int) $this->quizz->amcparams->shuffleq;
 		$separatesheet = (int) $this->quizz->amcparams->separatesheet;
 
-        return "
-# AMC-TXT source
+        return "# AMC-TXT source
 PaperSize: A4
 Lang: FR
 Code: {$this->codelength}
