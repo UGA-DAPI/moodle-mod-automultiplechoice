@@ -418,7 +418,7 @@ class AmcProcess
             $answerstext .= ($trueanswer ? '+' : '-') . " " . strip_tags($answer->answer) . "\n";
             $trueanswers += (int) $trueanswer;
         }
-		$options = ($this->quizz->amcparams->shufflea ? '' : '[ordered]');
+        $options = ($this->quizz->amcparams->shufflea ? '' : '[ordered]');
         $questiontext = ($trueanswers == 1 ? '*' : '**')
                 . $options
                 . ($question->scoring ? '[' . $question->scoring . ']' : '')

@@ -89,13 +89,13 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('amc[copies]', PARAM_INTEGER);
         $mform->addRule('amc[copies]', null, 'required', null, 'client');
 
-		$mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('amc_shuffleq', 'automultiplechoice'));
+        $mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('amc_shuffleq', 'automultiplechoice'));
         $mform->setType('amc[shuffleq]', PARAM_BOOL);
 
-		$mform->addElement('advcheckbox', 'amc[shufflea]', get_string('amc_shufflea', 'automultiplechoice'));
+        $mform->addElement('advcheckbox', 'amc[shufflea]', get_string('amc_shufflea', 'automultiplechoice'));
         $mform->setType('amc[shufflea]', PARAM_BOOL);
 
-		$mform->addElement('advcheckbox', 'amc[separatesheet]', get_string('amc_separatesheet', 'automultiplechoice'));
+        $mform->addElement('advcheckbox', 'amc[separatesheet]', get_string('amc_separatesheet', 'automultiplechoice'));
         $mform->setType('amc[separatesheet]', PARAM_BOOL);
 
         //-------------------------------------------------------------------------------

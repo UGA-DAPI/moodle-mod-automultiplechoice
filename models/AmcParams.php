@@ -19,13 +19,13 @@ class AmcParams
     public $copies;
 
     /** @var boolean Shuffle questions  */
-	public $shuffleq;
+    public $shuffleq;
 
-	/** @var boolean Shuffle answers  */
-	public $shufflea;
+    /** @var boolean Shuffle answers  */
+    public $shufflea;
 
-	/** @var boolean Separate answer sheet  */
-	public $separatesheet;
+    /** @var boolean Separate answer sheet  */
+    public $separatesheet;
 
     /** @var string */
     public $lstudent;
@@ -55,9 +55,9 @@ class AmcParams
     {
         $new = new self;
         $new->copies = (int) $input['copies'];
-		$new->shuffleq = (bool) $input['shuffleq'];
-		$new->shufflea = (bool) $input['shufflea'];
-		$new->separatesheet = (bool) $input['separatesheet'];
+        $new->shuffleq = (bool) $input['shuffleq'];
+        $new->shufflea = (bool) $input['shufflea'];
+        $new->separatesheet = (bool) $input['separatesheet'];
         $new->lstudent = $input['lstudent'];
         $new->lname = $input['lname'];
         return $new;
