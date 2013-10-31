@@ -22,12 +22,14 @@ $string['pluginname'] = 'QCM papier';
 $string['noautomultiplechoices'] = 'Aucune instance de QCM papier n\'est définie dans ce cours';
 
 $string['automultiplechoicename'] = 'Nom du questionnaire';
+$string['instructions'] = 'Configne prédéfinie';
 $string['description'] = 'Consigne';
 $string['comment'] = 'Commentaire';
 $string['qnumber'] = 'Nb. questions';
 $string['score'] = 'Note totale';
 
 $string['automultiplechoicename_help'] = 'Le nom complet du questionnaire';
+$string['instructions_help'] = 'Le texte associé à cette consigne sera inséré au-dessus de la consigne personnalisée (champ suivant).';
 $string['description_help'] = 'La description qui sera imprimée sur chaque questionnaire, contenant l\'introduction et les consignes.';
 $string['comment_help'] = 'Un commentaire pour l\'auteur, qui ne sera pas imprimé.';
 $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire, pour validation.';

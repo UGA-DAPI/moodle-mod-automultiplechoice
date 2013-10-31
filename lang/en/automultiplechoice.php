@@ -22,12 +22,14 @@ $string['pluginname'] = 'automultiplechoice';
 $string['noautomultiplechoices'] = 'Aucune instance de automultiplechoice n\'est définie dans ce cours';
 
 $string['automultiplechoicename'] = 'Nom du questionnaire';
+$string['instructions'] = 'Top Instructions';
 $string['description'] = 'Instructions';
 $string['comment'] = 'Commentaire';
 $string['qnumber'] = 'Nb. questions';
 $string['score'] = 'Total score';
 
 $string['automultiplechoicename_help'] = 'Le nom complet du questionnaire';
+$string['instructions_help'] = 'The text associated to this will be inserted at the top of the custom instructions.';
 $string['description_help'] = 'La description qui sera imprimée sur chaque questionnaire, contenant l\'introduction et les consignes.';
 $string['comment_help'] = 'Un commentaire pour l\'auteur, qui ne sera pas imprimé.';
 $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire, pour validation.';
