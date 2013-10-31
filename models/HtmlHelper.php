@@ -39,7 +39,9 @@ class HtmlHelper {
                 <td><div><b>' . format_string($q->name) . '</b></div>'. format_string($q->questiontext) . '</td>
             </tr>';
         }
-        echo '<tr><th>' . $quizz->score . '</th><td><button type="submit">OK</button></td></tr>';
+        echo '<tr>'
+            . '<th><span id="computed-total-score">' . $quizz->score . '</span> / ' . $quizz->score . '</th>'
+            . '<td><button type="submit">OK</button></td></tr>';
         echo '</tbody></table>';
         echo "</form>\n";
     }
@@ -51,7 +53,7 @@ class HtmlHelper {
         echo '<tr><th>' . get_string('description', 'automultiplechoice') . '</th><td>' . nl2br(format_string($quizz->description)) . '</td></tr>';
         echo '<tr><th>' . get_string('comment', 'automultiplechoice') . '</th><td>' . format_string($quizz->comment) . '</td></tr>';
         echo '<tr><th>' . get_string('qnumber', 'automultiplechoice') . '</th><td>' . $quizz->qnumber . '</td></tr>';
-        echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th><td>' . $quizz->score . '</td></tr>';
+        echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th><td id="expected-total-score">' . $quizz->score . '</td></tr>';
         echo '</tbody></table>';
     }
 }

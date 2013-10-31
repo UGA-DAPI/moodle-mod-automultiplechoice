@@ -26,3 +26,7 @@
 .q-score label {
 	display: block;
 }
+
+th.score-mismatch {
+	background-color: #FF4040;
+}
