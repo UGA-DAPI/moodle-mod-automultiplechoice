@@ -48,7 +48,7 @@ class HtmlHelper {
     {
         echo '<table class="flexible boxaligncenter generaltable">';
         echo '<tbody>';
-        echo '<tr><th>' . get_string('description', 'automultiplechoice') . '</th><td>' . format_string($quizz->description) . '</td></tr>';
+        echo '<tr><th>' . get_string('description', 'automultiplechoice') . '</th><td>' . nl2br(format_string($quizz->description)) . '</td></tr>';
         echo '<tr><th>' . get_string('comment', 'automultiplechoice') . '</th><td>' . format_string($quizz->comment) . '</td></tr>';
         echo '<tr><th>' . get_string('qnumber', 'automultiplechoice') . '</th><td>' . $quizz->qnumber . '</td></tr>';
         echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th><td>' . $quizz->score . '</td></tr>';
