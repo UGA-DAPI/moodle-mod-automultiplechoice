@@ -45,3 +45,25 @@ function automultiplechoice_list_questions($user, $course) {
     $records = $DB->get_records_sql($sql);
     return $records;
 }
+
+/**
+ * Parses the config setting 'instructions' to convert it into an associative array (instruction => title).
+ * 
+ * @return array
+ */
+function parse_default_instructions() {
+    $raw = get_config('mod_automultiplechoice', 'instructions');
+    if (!$raw) {
+        return array();
+    }
+    $splitted = preg_split('/\n-{3,}\s*\n/s', $raw, -1, PREG_SPLIT_NO_EMPTY);
+    $assoc = array('' => '…');
+    foreach ($splitted as $split) {
+        $lines = explode("\n", $split, 2);
+        $title = trim($lines[0]);
+        if ($title) {
+            $assoc[$lines[1]] = $title;
+        }
+    }
+    return $assoc;
+}
