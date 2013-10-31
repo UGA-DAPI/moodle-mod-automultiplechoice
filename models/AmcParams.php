@@ -35,7 +35,7 @@ class AmcParams
     public function validate() {
         $this->errors = array();
         if ($this->copies <= 0) {
-            $this->errors['amc[copies]'] = '> 0 !';
+            $this->errors['amc[copies]'] = 'validate_positive_int';
         }
         return empty($this->errors);
     }

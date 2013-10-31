@@ -64,6 +64,7 @@ if (!$quizz->validate()) {
     echo '<p>' . get_string('someerrorswerefound') . '</p>';
     echo '<dl>';
     foreach ($quizz->errors as $field => $error) {
+        $field = preg_replace('/^(.+)\[(.+)\]$/', '${1}_${2}', $field);
         echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>\n"
                 . "<dd>" . get_string($error, 'automultiplechoice') . "</dd>\n";
     }
