@@ -27,6 +27,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
     public function definition() {
 
         $mform = $this->_form;
+        $strrequired = get_string('required');
 
         //-------------------------------------------------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
@@ -63,6 +64,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         $mform->addElement('text', 'score', get_string('score', 'automultiplechoice'));
         $mform->setType('score', PARAM_INTEGER);
+        $mform->setDefault('score', 20);
         $mform->addHelpButton('score', 'score', 'automultiplechoice');
 
 
@@ -73,6 +75,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         $mform->addElement('text', 'amc[copies]', get_string('amc_copies', 'automultiplechoice'));
         $mform->setType('amc[copies]', PARAM_INTEGER);
+        $mform->addRule('amc[copies]', null, 'required', null, 'client');
 
 		$mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('amc_shuffleq', 'automultiplechoice'));
         $mform->setType('amc[shuffleq]', PARAM_BOOL);
