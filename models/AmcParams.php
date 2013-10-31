@@ -27,6 +27,12 @@ class AmcParams
 	/** @var boolean Separate answer sheet  */
 	public $separatesheet;
 
+    /** @var string */
+    public $lstudent;
+
+    /** @var string */
+    public $lname;
+
     /**
      * Validate the instance and update $this->errors.
      *
@@ -52,6 +58,8 @@ class AmcParams
 		$new->shuffleq = (bool) $input['shuffleq'];
 		$new->shufflea = (bool) $input['shufflea'];
 		$new->separatesheet = (bool) $input['separatesheet'];
+        $new->lstudent = $input['lstudent'];
+        $new->lname = $input['lname'];
         return $new;
     }
 
