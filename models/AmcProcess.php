@@ -433,17 +433,18 @@ class AmcProcess
      */
     protected function getHeaderAmctxt() {
         $descr = preg_replace('/\n\s*\n/', "\n", $this->quizz->description);
-		$shuffleq = (int) $this->quizz->amcparams->shuffleq;
-		$separatesheet = (int) $this->quizz->amcparams->separatesheet;
+        $params = $this->quizz->amcparams;
 
         return "# AMC-TXT source
 PaperSize: A4
 Lang: FR
 Code: {$this->codelength}
-ShuffleQuestions: {$shuffleq}
-SeparateAnswerSheet: {$separatesheet}
+ShuffleQuestions: {$params->shuffleq}
+SeparateAnswerSheet: {$params->separatesheet}
 Title: {$this->quizz->name}
 Presentation: {$descr}
+L-Name: {$params->lname}
+L-Student: {$params->lstudent}
 
 ";
     }
