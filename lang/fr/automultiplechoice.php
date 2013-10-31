@@ -40,6 +40,12 @@ $string['amc_copies'] = 'Nombre de versions';
 $string['amc_shuffleq'] = 'Mélanger les questions';
 $string['amc_shufflea'] = 'Mélanger les réponses';
 $string['amc_separatesheet'] = 'Feuille réponses séparée';
+$string['amc_lstudent'] = 'Consigne / n° d\'étudiant';
+$string['amc_lname'] = 'Consigne / nom';
+$string['amc_lstudent_help'] = 'Texte affiché à côté de la grille qui permet de saisir son numéro d\'étudiant.';
+$string['amc_lname_help'] = 'Intitulé du cadre affiché en haut à droite de la feuille de réponse, par exemple pour indiquer à l\'étudiant qu\'il doit écrire son nom.';
+$string['amc_lstudent_default'] = "Veuillez coder votre numéro d'étudiant ci-contre, et écrire votre nom dans la case ci-dessous.";
+$string['amc_lname_default'] = 'Nom et prénom';
 
 $string['questionselect'] = 'Sélection des questions';
 $string['questionselected'] = 'Questions choisies';
