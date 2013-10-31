@@ -14,6 +14,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once __DIR__ . '/models/Quizz.php';
+require_once __DIR__ . '/locallib.php';
 
 /**
  * Module instance settings form
@@ -41,6 +42,12 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'automultiplechoicename', 'automultiplechoice');
+
+        if (empty($this->current->id)) { // only when creating an instance
+            $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
+            $mform->setType('instructions', PARAM_TEXT);
+            $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
+        }
 
         $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'15', 'cols'=>'64'));
         $mform->setType('description', PARAM_TEXT);

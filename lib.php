@@ -59,6 +59,9 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
     $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->author = $USER->id;
     $automultiplechoice->questions = "";
+    if (!empty($automultiplechoice->instructions)) {
+        $automultiplechoice->description = $automultiplechoice->instructions . "\n" . $automultiplechoice->description;
+    }
 
     $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
