@@ -43,4 +43,16 @@ if ($ADMIN->fulltree) {
     );
     $s->plugin = 'mod_automultiplechoice';
     $settings->add($s);
+
+    $s = new admin_setting_configtextarea(
+        'instructions',
+        'Default instructions',
+        "Elements are separed by a line of at least 3 dashes. "
+            . "The first line of each block will bethe title displayed in the dropdown list. Example:<pre>"
+            . "Concours\nVous avez 4 heures.\nL'anonymat est garanti.\n---\nFirst Test\nPlease use a pencil and gray each selected case completely.</pre>",
+        "",
+        PARAM_TEXT
+    );
+    $s->plugin = 'mod_automultiplechoice';
+    $settings->add($s);
 }
