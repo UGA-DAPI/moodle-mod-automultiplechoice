@@ -22,10 +22,10 @@ $string['pluginname'] = 'automultiplechoice';
 $string['noautomultiplechoices'] = 'Aucune instance de automultiplechoice n\'est définie dans ce cours';
 
 $string['automultiplechoicename'] = 'Nom du questionnaire';
-$string['description'] = 'Description';
+$string['description'] = 'Instructions';
 $string['comment'] = 'Commentaire';
 $string['qnumber'] = 'Nb. questions';
-$string['score'] = 'Barème global';
+$string['score'] = 'Total score';
 
 $string['automultiplechoicename_help'] = 'Le nom complet du questionnaire';
 $string['description_help'] = 'La description qui sera imprimée sur chaque questionnaire, contenant l\'introduction et les consignes.';
@@ -34,7 +34,7 @@ $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire
 $string['score_help'] = 'Le score total du questionnaire (en points), pour validation.';
 
 $string['amcparams'] = 'AMC Parameters';
-$string['amc_copies'] = 'Copies Number';
+$string['amc_copies'] = 'Versions Number';
 $string['amc_shuffleq'] = 'Shuffle questions';
 $string['amc_shufflea'] = 'Shuffle answers';
 $string['amc_separatesheet'] = 'Separate answer sheet';
@@ -46,7 +46,7 @@ $string['savesel'] = 'Save this selection';
 $string['qcategory'] = 'Question Category';
 $string['qtitle'] = 'Question';
 $string['qscore'] = 'Points';
-$string['scoring'] = 'Scoring';
+$string['scoring'] = 'Scoring method';
 
 $string['editselection'] = 'Update this selection';
 
