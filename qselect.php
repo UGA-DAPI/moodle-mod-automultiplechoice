@@ -106,6 +106,9 @@ if ($questions && $questions->errors) {
     </thead>
     <tbody>
         <?php
+        /**
+         * @todo Mark questions already added
+         */
         $editicon = $OUTPUT->pix_icon('i/edit', get_string('edit'));
         foreach ($available_questions as $q) {
             $editurl = new moodle_url('/local/questionssimplified/edit_standard.php', array('questions' => $q->id));
@@ -145,7 +148,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
         <button type="button">X</button>
         <label class="qscore">
             <?php echo get_string('qscore', 'automultiplechoice'); ?> :
-            <input name="question[score][]" value="" type="text" disabled="disabled" />
+            <input name="question[score][]" value="1" type="text" disabled="disabled" />
         </label>
     </li>
     <?php
@@ -159,7 +162,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
         <button type="button">X</button>
         <label class="qscore">
             ' . get_string('qscore', 'automultiplechoice') . ' :
-            <input name="question[score][]" value="' . $q->score . '" type="text" />
+            <input name="question[score][]" value="' . ($q->score ? $q->score : sprintf('%.2f', $q->defaultmark)) . '" type="text" />
         </label>
     </li>
                 ';
