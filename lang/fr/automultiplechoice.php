@@ -53,8 +53,9 @@ $string['scoring'] = 'Règle de calcul';
 $string['editselection'] = 'Modifier la sélection';
 
 $string['validateql_wrong_number'] = 'Le nombre de questions n\'est pas celui attendu.';
-$string['validateql_wrong_sum'] = 'La somme des scores ne fait pas le total attendu.' ;
-$string['validateql_wrong_score'] = 'Le score d\'au moins une question n\'est pas valide.';
+$string['validateql_wrong_sum'] = 'La somme des points ne fait pas la note totale attendue.' ;
+$string['validateql_wrong_score'] = 'Le nombre de points d\'au moins une question n\'est pas valide.';
+$string['validate_positive_int'] = 'Ceci devrait être un nombre strictement positif.';
 
 $string['prepare'] = 'Préparation';
 $string['analyse'] = 'Saisie';
