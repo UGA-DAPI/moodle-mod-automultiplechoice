@@ -54,9 +54,11 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'description', 'automultiplechoice');
 
-        $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'), array('rows'=>'10', 'cols'=>'64'));
-        $mform->setType('comment', PARAM_TEXT);
-        $mform->addHelpButton('comment', 'comment', 'automultiplechoice');
+        $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'automultiplechoice'), array('size' => 64));
+        $mform->setType('amc[lstudent]', PARAM_TEXT);
+
+        $mform->addElement('text', 'amc[lname]', get_string('amc_lname', 'automultiplechoice'));
+        $mform->setType('amc[lname]', PARAM_TEXT);
 
         $mform->addElement('text', 'qnumber', get_string('qnumber', 'automultiplechoice'));
         $mform->setType('qnumber', PARAM_INTEGER);
@@ -66,6 +68,16 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('score', PARAM_INTEGER);
         $mform->setDefault('score', 20);
         $mform->addHelpButton('score', 'score', 'automultiplechoice');
+
+        $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'), array('rows'=>'10', 'cols'=>'64'));
+        $mform->setType('comment', PARAM_TEXT);
+        $mform->addHelpButton('comment', 'comment', 'automultiplechoice');
+
+        if (empty($this->current->id)) { // only when creating an instance
+            // hack because Moodle gets the priorities wrong with data_preprocessing()
+            $mform->setDefault('amc[lstudent]', get_string('amc_lstudent_default', 'automultiplechoice'));
+            $mform->setDefault('amc[lname]', get_string('amc_lname_default', 'automultiplechoice'));
+        }
 
 
         // AMC settings
@@ -85,7 +97,6 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
 		$mform->addElement('advcheckbox', 'amc[separatesheet]', get_string('amc_separatesheet', 'automultiplechoice'));
         $mform->setType('amc[separatesheet]', PARAM_BOOL);
-
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
