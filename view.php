@@ -75,6 +75,12 @@ if (!$quizz->validate()) {
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading($quizz->name);
 HtmlHelper::printTableQuizz($quizz);
+echo '<p class="continuebutton">';
+echo html_writer::link(
+        new moodle_url('/course/modedit.php', array('update' => $cm->id, 'return' => 1)),
+        get_string('editsettings')
+);
+echo '</p>';
 
 // Questions
 echo $OUTPUT->box_start();
