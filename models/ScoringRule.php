@@ -24,7 +24,7 @@ class ScoringRule
     /**
      * @var string For AMC, e.g. "e=-1,v=0,m=-1,b=SCORE".
      */
-    public $expression = '';
+    private $expression = '';
 
     /**
      * @var array
@@ -67,5 +67,28 @@ class ScoringRule
      */
     public function setExpression($txt) {
         $this->expression = $txt;
+    }
+
+    /**
+     * Gets the scoring expression to include in AMC for a given question.
+     *
+     * @throws \Exception
+     * @param type $question
+     * @return string
+     */
+    public function getExpression($question) {
+        if (!$this->match($question)) {
+            throw new \Exception(join("\n", $this->errors));
+        }
+        if (strpos($this->expression, 'SCORE') !== false) {
+            if ($this->score) {
+                $expression = str_replace('SCORE', $question->score, $this->expression);
+            } else {
+                $expression = str_replace('SCORE', $this->score, $this->expression);
+            }
+        } else {
+            $expression = $this->expression;
+        }
+        return $expression;
     }
 }
