@@ -49,14 +49,17 @@ if ($ADMIN->fulltree) {
     $s = new admin_setting_configtextarea(
         'scoringrules',
         'Scoring rules',
-        "Groups of rules are separed by a line of at least 3 dashes. "
-            . "The first line of each block will be the title displayed in the dropdown list. "
-            . "Eventually, lines of description follow. They will be displayed on the main form of settings. "
-            . "After a eventual blank line, each line should contain a scoring rule like: M|S ; default|[points]... ; [rule]. "
-            . "The question score can be written SCORE in the rule. "
-            . "For each question, the first rule matching on the 2 first columns will be used. "
-            . "Example:<pre>"
-            . "Défaut
+        "Groups of rules are separed by a line of at least 3 dashes.
+<p>
+The first line of each block will be the title displayed in the dropdown list.
+Eventually, lines of description follow. They will be displayed on the main form of settings.
+After a eventual blank line, each line should contain a scoring rule like: <code>M|S ; default|[points] ; [rule]</code>.
+The syntax of each rule is described in <a href=\"http://home.gna.org/auto-qcm/auto-multiple-choice.fr/interface-graphique.shtml#bareme\">AMC's documentation</a>.
+When the question score is not explicit, it can be written <code>SCORE</code> in the rule.
+</p>
+
+Example:
+<pre>Défaut
 Pour une question simple à un point, un point pour une bonne réponse et aucun point dans tous les autres cas.
 Pour une autre question simple, tous les points pour une bonne réponse, 0 si pas de réponse et -1 point dans tous les autres cas.
 Pour une question à multiples bonnes réponses, un point est retiré par réponse incorrecte, sans dépasser -1 par question.
@@ -70,7 +73,10 @@ Tout ou rien
 Pour toute question, tous les points si la réponse est totalement juste, 0 sinon.
 S ; default ; e=0,v=0,m=0,b=SCORE
 M ; default ; e=0,mz=SCORE
-</pre>",
+</pre>
+
+<p>For each question, the first rule matching on the 2 first columns will be used.</p>
+",
         "",
         PARAM_TEXT
     );
