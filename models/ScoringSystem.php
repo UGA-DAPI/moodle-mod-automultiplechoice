@@ -30,7 +30,7 @@ class ScoringSystem
      */
     public function __construct() {
         if (!self::$parsedConfig) {
-            $text = get_config('mod_automultiplechoice', 'scorings');
+            $text = get_config('mod_automultiplechoice', 'scoringrules');
             self::$sets = $this->parseConfig($text);
         }
     }
@@ -43,7 +43,7 @@ class ScoringSystem
     public static function read($forceRead=false) {
         $system = new self;
         if (!self::$parsedConfig || $forceRead) {
-            $text = get_config('mod_automultiplechoice', 'scorings');
+            $text = get_config('mod_automultiplechoice', 'scoringrules');
             self::$sets = $system->parseConfig($text);
         }
         return $system;
