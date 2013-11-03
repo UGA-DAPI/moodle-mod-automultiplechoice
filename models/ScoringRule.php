@@ -56,7 +56,16 @@ class ScoringRule
                 return $new;
         }
         $this->score = (double) $a[1]; // 0.0 if not numeric
-        $this->expression = $a[2];
+        $this->setExpression($a[2]);
         return $new;
+    }
+
+    /**
+     * Setter.
+     *
+     * @param string $txt
+     */
+    public function setExpression($txt) {
+        $this->expression = $txt;
     }
 }
