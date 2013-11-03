@@ -37,7 +37,7 @@ class ScoringRule
      * @param string $text Like "S|M ; score ; expression"
      * @return \mod\automultiplechoice\ScoringRule
      */
-    public static function fillFromArray($text) {
+    public static function buildFromConfig($text) {
         $new = new self;
         $a = explode(';', $text);
         if (count($a) !== 3) {
@@ -46,17 +46,17 @@ class ScoringRule
         }
         switch (strtoupper(trim($a[0]))) {
             case 'S':
-                $this->multiple = false;
+                $new->multiple = false;
                 break;
             case 'M':
-                $this->multiple = true;
+                $new->multiple = true;
                 break;
             default:
-                $this->errors[] = "Invalid first column: 'S' or 'M' expected.";
+                $new->errors[] = "Invalid first column: 'S' or 'M' expected.";
                 return $new;
         }
-        $this->score = (double) $a[1]; // 0.0 if not numeric
-        $this->setExpression($a[2]);
+        $new->score = (double) $a[1]; // 0.0 if not numeric
+        $new->setExpression($a[2]);
         return $new;
     }
 
