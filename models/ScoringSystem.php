@@ -53,7 +53,7 @@ class ScoringSystem
      * Return the HTML for a select element.
      *
      * @param string $name HTML name.
-     * @param string $value Current value (selected).
+     * @param string $value Current value (rank selected).
      * @return string HTML
      */
     public function toHtmlSelect($name, $value) {
@@ -61,7 +61,8 @@ class ScoringSystem
                 . '<option value=""></option>';
         foreach($this->groups as $rank => $scoringGroup) {
             /* @var $scoringGroup ScoringGroup */
-            $html .= '<option value="' . $rank . '">'
+            $html .= '<option value="' . $rank . '"'
+                . ($value !== '' && $value == $rank ? ' selected="selected">' : '>')
                 . htmlspecialchars($scoringGroup->name)
                 . '</option>';
         }
