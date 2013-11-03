@@ -8,6 +8,8 @@
 
 namespace mod\automultiplechoice;
 
+require_once __DIR__ . '/ScoringSystem.php';
+
 global $DB;
 /* @var $DB \moodle_database */
 
@@ -37,9 +39,10 @@ class QuestionList implements \Countable, \ArrayAccess
      * Get the DB records with added score/scoring fields.
      *
      * @global \moodle_database $DB
+     * @param integer $scoringSetId (opt) If given, question will have a 'scoring' field.
      * @return array of "question+question_multichoice" records (objects from the DB) with an additional "score", "scoring" fields.
      */
-    public function getRecords() {
+    public function getRecords($scoringSetId=null) {
         global $DB;
         if (!$this->questions) {
             return array();
@@ -52,10 +55,22 @@ class QuestionList implements \Countable, \ArrayAccess
                 . 'WHERE q.id ' . $cond,
                 $params
         );
-        $callback = function ($q) use ($records) {
+        if (isset($scoringSetId)) {
+            $scoringSet = ScoringSystem::read()->getScoringSet($scoringSetId);
+        } else {
+            $scoringSet = null;
+        }
+        $callback = function ($q) use ($records, $scoringSet) {
             $r = $records[$q['questionid']];
             $r->score = (double) $q['score'];
-            $r->scoring = $q['scoring'];
+            if ($scoringSet) {
+                $rule = $scoringSet->findMatchingRule($r);
+                if ($rule) {
+                    $r->scoring = $rule->getExpression($r);
+                } else {
+                    $r->scoring = ''; // default AMC scoring (incomplete set of rules)
+                }
+            }
             return $r;
         };
         return array_map($callback, $this->questions);
