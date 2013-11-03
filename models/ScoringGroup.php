@@ -26,11 +26,6 @@ class ScoringGroup
     public $rules = array();
 
     /**
-     * @var array
-     */
-    public $errors = array();
-
-    /**
      * Parses a block of the config into a new ScoringGroup instance.
      *
      * @param string $block
@@ -47,5 +42,20 @@ class ScoringGroup
             $new->rules[] = ScoringRule::buildFromConfig($line);
         }
         return $new;
+    }
+
+    /**
+     * Finds a matching rule for a question.
+     *
+     * @param type $question
+     * @return \mod\automultiplechoice\ScoringRule
+     */
+    public function findMatchingRule($question) {
+        foreach ($this->rules as $rule) {
+            if ($rule->match($question)) {
+                return $rule;
+            }
+        }
+        throw new \Exception("No rule matches this question. Incomplete rules set.");
     }
 }
