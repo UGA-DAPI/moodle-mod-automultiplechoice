@@ -5,7 +5,6 @@
  */
 
 require_once __DIR__ . '/Quizz.php';
-require_once __DIR__ . '/Scoring.php';
 
 /**
  * Description of HtmlHelper
@@ -14,8 +13,6 @@ require_once __DIR__ . '/Scoring.php';
  */
 class HtmlHelper {
     public static function printFormFullQuestions(\mod\automultiplechoice\Quizz $quizz) {
-        $scoringSystem = mod\automultiplechoice\ScoringSystem::createFromConfig();
-
         echo '<form action="qselect.php" method="post" name="qselect">
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
         echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
@@ -27,13 +24,8 @@ class HtmlHelper {
             echo '<tr>
                 <td class="q-score">
                     <input name="question[id][]" value="' . $q->id . '" type="hidden" />
-                    <label>' . get_string('scoring', 'automultiplechoice')
-                        . ' : '
-                        . $scoringSystem->buildHtmlSelect('question[scoring][]', empty($q->single), $q->scoring) . '
-                    </label>
                     <label class="qscore">' . get_string('qscore', 'automultiplechoice') . ' :
-                        <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '"'
-                        . ($q->scoring ? 'readonly="readonly"' : '') . ' />
+                        <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '" />
                     </label>
                 </td>
                 <td><div><b>' . format_string($q->name) . '</b></div>'. format_string($q->questiontext) . '</td>
