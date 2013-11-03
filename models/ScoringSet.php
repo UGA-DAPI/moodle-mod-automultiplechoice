@@ -32,10 +32,10 @@ class ScoringSet
      * @return \mod\automultiplechoice\ScoringSet
      */
     public static function buildFromConfig($block) {
-        $new = self;
+        $new = new self;
         $lines = array_filter(explode("\n", $block));
         $new->name = array_shift($lines);
-        while (!preg_match('/^\s*[SM]\s*;/i', $lines[0])) {
+        while ($lines && !preg_match('/^\s*[SM]\s*;/i', $lines[0])) {
             $new->description .= array_shift($lines) . "\n";
         }
         foreach ($lines as $line) {
