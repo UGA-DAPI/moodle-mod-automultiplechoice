@@ -91,4 +91,27 @@ class ScoringRule
         }
         return $expression;
     }
+
+    /**
+     * Returns true if the scroring rule can be applied to this question.
+     *
+     * @param object $question
+     * @return boolean
+     */
+    public function match($question) {
+        $this->errors = array();
+        if (!isset($question->multiple)) {
+            $this->errors[] = "Cannot apply a rule to a question that has no type single/multiple.";
+        }
+        if (empty($question->score)) {
+            $this->errors[] = "Cannot apply a rule to a question that has no score.";
+        }
+        if ($question->multiple != $this->multiple) {
+            $this->errors[] = "The scoring rule type and the question type do not match.";
+        }
+        if ($this->score && $question->score != $this->score) {
+            $this->errors[] = "The scoring rule score and the question score do not match.";
+        }
+        return empty($this->errors);
+    }
 }
