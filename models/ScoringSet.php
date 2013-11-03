@@ -12,7 +12,7 @@ require_once __DIR__ . '/ScoringRule.php';
  *
  * @author François Gannaz <francois.gannaz@silecs.info>
  */
-class ScoringGroup
+class ScoringSet
 {
     /** @var string */
     public $name = '';
@@ -26,10 +26,10 @@ class ScoringGroup
     public $rules = array();
 
     /**
-     * Parses a block of the config into a new ScoringGroup instance.
+     * Parses a block of the config into a new ScoringSet instance.
      *
      * @param string $block
-     * @return ScoringGroup
+     * @return \mod\automultiplechoice\ScoringSet
      */
     public static function buildFromConfig($block) {
         $new = self;

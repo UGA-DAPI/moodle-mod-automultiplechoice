@@ -6,7 +6,7 @@
 
 namespace mod\automultiplechoice;
 
-require_once __DIR__ . '/ScoringGroup.php';
+require_once __DIR__ . '/ScoringSet.php';
 
 /**
  * Scoring system
@@ -16,7 +16,7 @@ require_once __DIR__ . '/ScoringGroup.php';
 class ScoringSystem
 {
     /**
-     * @var array of ScoringGroup.
+     * @var array of ScoringSet.
      */
     protected static $groups = array();
 
@@ -59,11 +59,11 @@ class ScoringSystem
     public function toHtmlSelect($name, $value) {
         $html = '<select name="' . $name . '">'
                 . '<option value=""></option>';
-        foreach($this->groups as $rank => $scoringGroup) {
-            /* @var $scoringGroup ScoringGroup */
+        foreach($this->groups as $rank => $scoringSet) {
+            /* @var $scoringSet ScoringSet */
             $html .= '<option value="' . $rank . '"'
                 . ($value !== '' && $value == $rank ? ' selected="selected">' : '>')
-                . htmlspecialchars($scoringGroup->name)
+                . htmlspecialchars($scoringSet->name)
                 . '</option>';
         }
         $html .= '</select>';
@@ -71,13 +71,13 @@ class ScoringSystem
     }
 
     /**
-     * Gets a ScoringGroup by its rank in the config.
+     * Gets a ScoringSet by its rank in the config.
      *
      * @param integer $rank
-     * @return ScoringGroup
+     * @return \mod\automultiplechoice\ScoringSet
      * @throws Exception
      */
-    public function getScoringGroup($rank) {
+    public function getScoringSet($rank) {
         if (!isset(self::$groups[$rank])) {
             throw new Exception("This scoring group does not exist.");
         }
@@ -87,14 +87,14 @@ class ScoringSystem
     /**
      * Parses the config text.
      *
-     * @return array of ScoringGroup instances.
+     * @return array of ScoringSet instances.
      */
     protected function parseConfig($rawText) {
         $blocks = preg_split('/\n-{3,}\s*\n/', $rawText);
-        $scoringGroups = array();
+        $scoringSets = array();
         foreach ($blocks as $block) {
-            $scoringGroups[] = ScoringGroup::buildFromConfig($block);
+            $scoringSets[] = ScoringSet::buildFromConfig($block);
         }
-        return $scoringGroups;
+        return $scoringSets;
     }
 }

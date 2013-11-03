@@ -35,7 +35,7 @@ class ScoringRule
      * Creates a new instance of ScoringRule from the parameters of the rule.
      *
      * @param string $text Like "S|M ; score ; expression"
-     * @return ScoringRule
+     * @return \mod\automultiplechoice\ScoringRule
      */
     public static function fillFromArray($text) {
         $new = new self;
