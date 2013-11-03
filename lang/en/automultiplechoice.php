@@ -54,8 +54,8 @@ $string['savesel'] = 'Save this selection';
 $string['qcategory'] = 'Question Category';
 $string['qtitle'] = 'Question';
 $string['qscore'] = 'Points';
-$string['scoring'] = 'Scoring method';
 $string['amc_displaypoints'] = 'Display Scores';
+$string['scoringrules'] = 'Scoring Rules';
 
 $string['editselection'] = 'Update this selection';
 

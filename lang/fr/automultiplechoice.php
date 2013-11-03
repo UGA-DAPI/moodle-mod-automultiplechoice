@@ -54,8 +54,8 @@ $string['savesel'] = 'Enregistrer la sélection';
 $string['qcategory'] = 'Catégorie de question';
 $string['qtitle'] = 'Question';
 $string['qscore'] = 'Note';
-$string['scoring'] = 'Règle de calcul';
 $string['amc_displaypoints'] = 'Montrer les points';
+$string['scoringrules'] = 'Règles de calcul';
 
 $string['editselection'] = 'Modifier la sélection';
 
