@@ -18,7 +18,7 @@ class ScoringSystem
     /**
      * @var array of ScoringSet.
      */
-    protected static $groups = array();
+    protected static $sets = array();
 
     /**
      * @var boolean
@@ -31,7 +31,7 @@ class ScoringSystem
     public function __construct() {
         if (!self::$parsedConfig) {
             $text = get_config('mod_automultiplechoice', 'scorings');
-            self::$groups = $this->parseConfig($text);
+            self::$sets = $this->parseConfig($text);
         }
     }
 
@@ -44,9 +44,22 @@ class ScoringSystem
         $system = new self;
         if (!self::$parsedConfig || $forceRead) {
             $text = get_config('mod_automultiplechoice', 'scorings');
-            self::$groups = $system->parseConfig($text);
+            self::$sets = $system->parseConfig($text);
         }
         return $system;
+    }
+
+    /**
+     * Returns the list of defined rule sets.
+     *
+     * @return array
+     */
+    public function getSetsNames() {
+        $select = array();
+        foreach (self::$sets as $s) {
+            $select[] = $s->name;
+        }
+        return $select;
     }
 
     /**
@@ -59,7 +72,7 @@ class ScoringSystem
     public function toHtmlSelect($name, $value) {
         $html = '<select name="' . $name . '">'
                 . '<option value=""></option>';
-        foreach($this->groups as $rank => $scoringSet) {
+        foreach($this->sets as $rank => $scoringSet) {
             /* @var $scoringSet ScoringSet */
             $html .= '<option value="' . $rank . '"'
                 . ($value !== '' && $value == $rank ? ' selected="selected">' : '>')
@@ -78,10 +91,10 @@ class ScoringSystem
      * @throws Exception
      */
     public function getScoringSet($rank) {
-        if (!isset(self::$groups[$rank])) {
+        if (!isset(self::$sets[$rank])) {
             throw new Exception("This scoring group does not exist.");
         }
-        return self::$groups[$rank];
+        return self::$sets[$rank];
     }
 
     /**
