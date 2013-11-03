@@ -91,6 +91,7 @@ class ScoringSystem
      * @throws Exception
      */
     public function getScoringSet($rank) {
+        $rank = (int) $rank;
         if (!isset(self::$sets[$rank])) {
             throw new Exception("This scoring group does not exist.");
         }
