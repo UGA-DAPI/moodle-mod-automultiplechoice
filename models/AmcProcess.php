@@ -59,8 +59,7 @@ class AmcProcess
      */
     public function getSourceAmctxt() {
         $res = $this->getHeaderAmctxt();
-
-        foreach ($questions = $this->quizz->questions->getRecords() as $question) {
+        foreach ($this->quizz->questions->getRecords($this->quizz->amcparams->scoringset) as $question) {
             $res .= $this->questionToFileAmctxt($question);
 
         }
