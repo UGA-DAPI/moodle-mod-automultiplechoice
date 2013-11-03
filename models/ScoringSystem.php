@@ -60,6 +60,20 @@ class ScoringSystem
     }
 
     /**
+     * Gets a ScoringGroup by its rank in the config.
+     *
+     * @param integer $rank
+     * @return ScoringGroup
+     * @throws Exception
+     */
+    public function getScoringGroup($rank) {
+        if (!isset(self::$groups[$rank])) {
+            throw new Exception("This scoring group does not exist.");
+        }
+        return self::$groups[$rank];
+    }
+
+    /**
      * Parses the config text.
      *
      * @return array of ScoringGroup instances.
