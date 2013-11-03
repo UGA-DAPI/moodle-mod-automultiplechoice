@@ -33,7 +33,7 @@ class HtmlHelper {
         }
         echo '<tr>'
             . '<th><span id="computed-total-score">' . $quizz->score . '</span> / ' . $quizz->score . '</th>'
-            . '<td><button type="submit">OK</button></td></tr>';
+            . '<td><button type="submit">' . get_string('savechanges') . '</button></td></tr>';
         echo '</tbody></table>';
         echo "</form>\n";
     }
@@ -41,6 +41,7 @@ class HtmlHelper {
     public static function printTableQuizz(\mod\automultiplechoice\Quizz $quizz)
     {
         $realQNumber = $quizz->questions->count();
+        $scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
         echo '<table class="flexible boxaligncenter generaltable">';
         echo '<tbody>';
         echo '<tr><th>' . get_string('description', 'automultiplechoice') . '</th><td>' . nl2br(format_string($quizz->description)) . '</td></tr>';
@@ -49,6 +50,10 @@ class HtmlHelper {
                 . ($quizz->qnumber == $realQNumber ? $quizz->qnumber : $realQNumber . " / " . $quizz->qnumber)
                 . '</td></tr>';
         echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th><td id="expected-total-score">' . $quizz->score . '</td></tr>';
+        echo '<tr><th>' . get_string('scoringset', 'automultiplechoice') . '</th><td>'
+                . '<div><strong>' . format_string($scoringSet->name) . '</strong></div>'
+                . '<div>' . nl2br(format_string($scoringSet->description)) . '</div>'
+                . '</td></tr>';
         echo '</tbody></table>';
     }
 }
