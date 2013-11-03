@@ -26,6 +26,16 @@ class ScoringSystem
     protected static $parsedConfig = false;
 
     /**
+     * Constructor. Reads Moodle config if necessary.
+     */
+    public function __construct() {
+        if (!self::$parsedConfig) {
+            $text = get_config('mod_automultiplechoice', 'scorings');
+            self::$groups = $this->parseConfig($text);
+        }
+    }
+
+    /**
      * Creates a new Scoring System from the module configuration in the DB.
      *
      * @return \mod\automultiplechoice\ScoringSystem
