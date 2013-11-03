@@ -56,6 +56,7 @@ $string['qtitle'] = 'Question';
 $string['qscore'] = 'Points';
 $string['amc_displaypoints'] = 'Display Scores';
 $string['scoringrules'] = 'Scoring Rules';
+$string['scoringset'] = 'Scoring strategy';
 
 $string['editselection'] = 'Update this selection';
 

@@ -15,6 +15,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/locallib.php';
+require_once __DIR__ . '/models/ScoringSystem.php';
 
 /**
  * Module instance settings form
@@ -68,6 +69,9 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('score', PARAM_INTEGER);
         $mform->setDefault('score', 20);
         $mform->addHelpButton('score', 'score', 'automultiplechoice');
+
+        $mform->addElement('select', 'amc[scoringset]', get_string('scoringset', 'automultiplechoice'), mod\automultiplechoice\ScoringSystem::read()->getSetsNames());
+        $mform->setType('amc[scoringset]', PARAM_INTEGER);
 
         $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'), array('rows'=>'10', 'cols'=>'64'));
         $mform->setType('comment', PARAM_TEXT);

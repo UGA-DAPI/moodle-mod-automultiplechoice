@@ -40,6 +40,9 @@ class AmcParams
     /** @var string */
     public $lname;
 
+    /** @var integer */
+    public $scoringset;
+
     /**
      * Validate the instance and update $this->errors.
      *
@@ -68,6 +71,7 @@ class AmcParams
         $new->separatesheet = (bool) $input['separatesheet'];
         $new->lstudent = $input['lstudent'];
         $new->lname = $input['lname'];
+        $new->scoringset = $input['scoringset'];
         return $new;
     }
 
