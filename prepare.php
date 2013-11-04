@@ -62,13 +62,13 @@ if ($action == 'prepare') {
     if ($diag) {
         echo $OUTPUT->heading("Fichiers PDF créés");
         echo '<ul class="amc-files">';
-        $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL, $process->relworkdir . '/', 'prepare-sujet.pdf');
+        $url = $process->getFileUrl('prepare-sujet.pdf');
         echo "<li>" . html_writer::link($url, 'prepare-sujet.pdf') . "</li>";
 
-        $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL, $process->relworkdir . '/', 'prepare-corrige.pdf');
+        $url = $url = $process->getFileUrl('prepare-corrige.pdf');
         echo "<li>" . html_writer::link($url, 'prepare-corrige.pdf') . "</li>";
 
-        $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL, $process->relworkdir . '/', 'prepare-catalog.pdf');
+        $url = $url = $process->getFileUrl('prepare-catalog.pdf');
         echo "<li>" . html_writer::link($url, 'prepare-catalog.pdf') . "</li>";
         echo "</ul>\n";
     } else {
@@ -88,7 +88,7 @@ if ( isset($_POST['submit']) && $_POST['submit'] == 'zip' ) {
     $diag = $process->printAndZip(isset($_POST['split']));
     if ($diag) {
         echo "Fichier Zip créé : ";
-        $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL, $process->relworkdir . '/', 'sujets.zip');
+        $url = $url = $process->getFileUrl('sujets.zip');
         echo html_writer::link($url, 'sujets.zip') . "\n";
     } else {
         echo "<p>Erreur lors de la création de l'archive.</p>";

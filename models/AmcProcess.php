@@ -18,7 +18,8 @@ class AmcProcess
     protected $codelength = 0;
 
     public $workdir;
-    public $relworkdir;
+
+    protected $relworkdir;
 
     /**
      * @var array
@@ -259,6 +260,30 @@ class AmcProcess
         return $res;
     }
 
+    /**
+     * Gets the moodle_url that points to a file produced by this instance.
+     *
+     * @global moodle_page $PAGE
+     * @param string $filename Local path and file name.
+     * @param boolean $forcedld (opt, false)
+     * @param integer $contextid (opt)
+     * @return \moodle_url
+     */
+    public function getFileUrl($filename, $forcedld=false, $contextid=null) {
+        global $PAGE;
+        if (!$contextid) {
+            $contextid = $PAGE->context->id;
+        }
+        return \moodle_url::make_pluginfile_url(
+                $contextid,
+                'mod_automultiplechoice',
+                '',
+                NULL,
+                '',
+                $this->relworkdir . '/' . ltrim($filename, '/'),
+                $forcedld
+        );
+    }
 
     protected function initWorkdir() {
         global $CFG;

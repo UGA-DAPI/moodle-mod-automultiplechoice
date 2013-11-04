@@ -67,8 +67,7 @@ $diag = $process->amcExport();
 if ($diag) {
     echo $OUTPUT->heading("Fichier CSV créé");
     echo '<ul class="amc-files">';
-    $url = moodle_url::make_pluginfile_url($context->id, 'mod_automultiplechoice', '', NULL,
-        $process->relworkdir.'/exports/', 'scoring.csv');
+    $url = $process->getFileUrl('scoring.csv', '/exports');
     echo "<li>" . html_writer::link($url, 'scoring.csv') . "</li>";
     echo "</ul>\n";
 } else {
