@@ -371,7 +371,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
      } elseif (in_array($filename, array('sujets.zip'))) {
         send_file($process->workdir . '/' . $filename, $filename, 86400, 0, false, false, 'application/zip') ;
         return true;
-    } elseif (in_array($filename, array('scoring.csv'))) {
+    } elseif (preg_match('/\.csv$/', $filename)) {
         send_file($process->workdir . '/exports/' . $filename, $filename, 86400, 0, false, false, 'text/csv') ;
         return true;
     }
