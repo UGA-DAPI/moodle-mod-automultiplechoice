@@ -98,6 +98,11 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'amc[separatesheet]', get_string('amc_separatesheet', 'automultiplechoice'));
         $mform->setType('amc[separatesheet]', PARAM_BOOL);
 
+        $mform->addElement('select', 'amc[displaypoints]', get_string('amc_displaypoints', 'automultiplechoice'),
+                array("Ne pas afficher", "En début de question", "En fin de question")
+        );
+        $mform->setType('amc[displaypoints]', PARAM_INTEGER);
+
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();

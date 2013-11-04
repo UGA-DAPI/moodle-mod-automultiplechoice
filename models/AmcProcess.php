@@ -362,11 +362,19 @@ class AmcProcess
             $answerstext .= ($trueanswer ? '+' : '-') . " " . strip_tags($answer->answer) . "\n";
             $trueanswers += (int) $trueanswer;
         }
+        $dp = $this->quizz->amcparams->displaypoints;
+        $points = ($question->score == round($question->score) ? $question->score :
+                (abs(round(10*$question->score) - 10*$question->score) < 1 ? sprintf('%.1f', $question->score)
+                    : sprintf('%.2f', $question->score)));
+        $points = $points ? '(' . $points . ' pt' . ($question->score > 1 ? 's' : '') . ')' : '';
         $options = ($this->quizz->amcparams->shufflea ? '' : '[ordered]');
         $questiontext = ($trueanswers == 1 ? '*' : '**')
                 . $options
                 . ($question->scoring ? '[' . $question->scoring . ']' : '')
-                . ' ' . $question->name . "\n" . strip_tags($question->questiontext) . "\n";
+                . ' ' . ($dp == AmcParams::DISPLAY_POINTS_BEGIN ? $points . ' ' : '')
+                . $question->name . "\n" . strip_tags($question->questiontext)
+                . ($dp == AmcParams::DISPLAY_POINTS_END ? ' ' . $points : '')
+                . "\n";
 
         return $questiontext . $answerstext . "\n";
     }

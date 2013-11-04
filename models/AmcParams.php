@@ -10,6 +10,13 @@ namespace mod\automultiplechoice;
 
 class AmcParams
 {
+    const DISPLAY_POINTS_NO = 0;
+    const DISPLAY_POINTS_BEGIN = 1;
+    const DISPLAY_POINTS_END = 2;
+
+    /** @var integer Display the number of points for each question */
+    public $displaypoints;
+
     /**
      * @var array Keys are field names in the form.
      */
@@ -54,6 +61,7 @@ class AmcParams
     public static function fromForm($input)
     {
         $new = new self;
+        $new->displaypoints = (int) $input['displaypoints'];
         $new->copies = (int) $input['copies'];
         $new->shuffleq = (bool) $input['shuffleq'];
         $new->shufflea = (bool) $input['shufflea'];
