@@ -17,7 +17,7 @@ global $DB, $OUTPUT, $PAGE;
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once __DIR__ . '/models/Quizz.php';
-require_once __DIR__ . '/models/AmcProcess.php';
+require_once __DIR__ . '/models/AmcProcessGrade.php';
 
 $a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
 
@@ -46,7 +46,7 @@ echo $OUTPUT->heading($quizz->name . " - notation");
 
 
 
-$process = new \mod\automultiplechoice\AmcProcess($quizz);
+$process = new \mod\automultiplechoice\AmcProcessGrade($quizz);
 //var_dump($process);
 
 $diag = $process->amcPrepareBareme();
