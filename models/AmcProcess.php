@@ -397,6 +397,7 @@ Title: {$this->quizz->name}
 Presentation: {$descr}
 L-Name: {$params->lname}
 L-Student: {$params->lstudent}
+LaTeX-BeginDocument: \def\multiSymbole{}
 
 ";
     }
