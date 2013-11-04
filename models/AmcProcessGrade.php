@@ -9,9 +9,14 @@
 namespace mod\automultiplechoice;
 
 require_once __DIR__ . '/AmcProcess.php';
+require_once dirname(__DIR__) . '/locallib.php';
 
 class AmcProcessGrade extends AmcProcess
 {
+    const PATH_AMC_CSV = '/exports/scores.csv';
+    const PATH_FULL_CSV = '/exports/scores_names.csv';
+    const CSV_SEPARATOR = ';';
+
     /**
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
      * @return bool
@@ -77,17 +82,67 @@ class AmcProcessGrade extends AmcProcess
             '--noms-encodage', 'UTF-8',
             '--csv-build-name', '(nom|surname) (prenom|name)',
             '--no-rtl',
-            '--output', $pre . '/exports/scoring.csv',
+            '--output', $pre . self::PATH_AMC_CSV,
             '--option-out', 'encodage=UTF-8',
             '--option-out', 'columns=student.copy,student.key,student.name',
             '--option-out', 'decimal=,',
             '--option-out', 'ticked=',
-            '--option-out', 'separateur=;',
+            '--option-out', 'separateur=' . self::CSV_SEPARATOR,
             );
         $res = $this->shellExec('auto-multiple-choice export', $parameters);
         if ($res) {
             $this->log('export', 'scoring.csv');
         }
         return $res;
+    }
+
+    /**
+     * Return an array of students with added fields for identified users.
+     *
+     * @return boolean Success?
+     */
+    public function writeFileWithIdentifiedStudents() {
+        $filename = $this->workdir . self::PATH_AMC_CSV;
+        if (!is_readable($filename)) {
+            return false;
+        }
+        $handle = fopen($filename, 'r');
+        if (!$handle) {
+            return false;
+        }
+        $output = fopen($this->workdir . self::PATH_FULL_CSV, 'w');
+        if (!$output) {
+            return false;
+        }
+
+        $header = fgetcsv($handle, 1024, self::CSV_SEPARATOR);
+        if (!$header) {
+            return false;
+        }
+        $getCol = array_flip($header);
+        $header[] = 'firstname';
+        $header[] = 'lastname';
+        fputcsv($output, $header, self::CSV_SEPARATOR);
+
+        while (($data = fgetcsv($handle, 1024, self::CSV_SEPARATOR)) !== FALSE) {
+            $idnumber = $data[$getCol['student.number']];
+            $user = null;
+            if ($idnumber) {
+                $user = getStudentByIdNumber($idnumber);
+            }
+            if ($user) {
+                $data[$getCol['Name']] = fullname($user);
+                $data[] = $user->firstname;
+                $data[] = $user->lastname;
+                //$data[] = $user->email;
+            } else {
+                $data[] = '';
+                $data[] = '';
+            }
+            fputcsv($output, $data, self::CSV_SEPARATOR);
+        }
+        fclose($handle);
+        fclose($output);
+        return true;
     }
 }

@@ -64,16 +64,25 @@ if ($diag) {
 }
 
 $diag = $process->amcExport();
+$urls = array();
 if ($diag) {
     echo $OUTPUT->heading("Fichier CSV créé");
-    echo '<ul class="amc-files">';
-    $url = $process->getFileUrl('scoring.csv', '/exports');
-    echo "<li>" . html_writer::link($url, 'scoring.csv') . "</li>";
-    echo "</ul>\n";
+    $urls['scores.csv'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_AMC_CSV);
 } else {
     echo "<p>Erreur lors de l'export CSV des notes.</p>\n";
 }
 
+if ($process->writeFileWithIdentifiedStudents()) {
+    $urls['scores_names'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_FULL_CSV);
+} else {
+    error("Could not create CSV file with identified students.");
+}
+
+echo '<ul class="amc-files">';
+foreach ($urls as $name => $url) {
+    echo "<li>" . html_writer::link($url, $name) . "</li>";
+}
+echo "</ul>\n";
 
 $url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
 $button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
