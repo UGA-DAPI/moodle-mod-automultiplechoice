@@ -67,3 +67,15 @@ function parse_default_instructions() {
     }
     return $assoc;
 }
+
+/**
+ * Return a user record.
+ *
+ * @global \moodle_database $DB
+ * @param string $idn
+ * @return object Record from the user table.
+ */
+function getStudentByIdNumber($idn) {
+    global $DB;
+    return $DB->get_record('user', array('idnumber' => $idn, 'confirmed' => 1, 'deleted' => 0));
+}
