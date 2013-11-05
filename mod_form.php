@@ -17,6 +17,8 @@ require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/locallib.php';
 require_once __DIR__ . '/models/ScoringSystem.php';
 
+use \mod\automultiplechoice as amc;
+
 /* @var $PAGE moodle_page */
 
 /**
@@ -90,7 +92,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setDefault('score', 20);
         $mform->addHelpButton('score', 'score', 'automultiplechoice');
 
-        $mform->addElement('select', 'amc[scoringset]', get_string('scoringset', 'automultiplechoice'), mod\automultiplechoice\ScoringSystem::read()->getSetsNames());
+        $mform->addElement('select', 'amc[scoringset]', get_string('scoringset', 'automultiplechoice'), amc\ScoringSystem::read()->getSetsNames());
         $mform->setType('amc[scoringset]', PARAM_INTEGER);
         $mform->addElement('static', 'scoringset_desc', get_string('scoringset', 'automultiplechoice'), '<div id="scoringset_desc"></div>');
         $PAGE->requires->js_init_code($this->ajaxScoringSet, true);
@@ -145,7 +147,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
     function data_preprocessing(&$default_values){
         // Convert from JSON to array
         if (!empty($default_values['amcparams'])) {
-            $default_values['amc'] = (array) \mod\automultiplechoice\AmcParams::fromJson($default_values['amcparams']);
+            $default_values['amc'] = (array) amc\AmcParams::fromJson($default_values['amcparams']);
         }
     }
 
