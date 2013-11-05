@@ -302,9 +302,7 @@ class AmcProcess
             /**
              * @todo Fill $this->errors
              */
-            if ($output) {
-                $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_NORMAL);
-            }
+            $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_NORMAL);
             return false;
         }
     }
