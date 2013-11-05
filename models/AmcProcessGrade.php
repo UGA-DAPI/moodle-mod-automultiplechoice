@@ -97,6 +97,75 @@ class AmcProcessGrade extends AmcProcess
     }
 
     /**
+     * low-level Shell-executes 'amc annote'
+     * fills the cr/corrections/jpg directory with individual annotated copies
+     * @return bool
+     */
+    public function amcAnnote() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--projet', $pre,
+            '--ch-sign', '4',
+            '--cr', $pre.'/cr',
+            '--data', $pre.'/data',
+            '--id-file',  '',
+            '--taille-max', '1000x1500',
+            '--qualite', '100',
+            '--line-width', '2',
+            '--indicatives', '1',
+            '--symbols', '0-0:none/#000000,0-1:circle/#ff0000,1-0:mark/#ff0000,1-1:mark/#00ff00',
+            '--position', 'marge',
+            '--pointsize-nl', '60',
+            '--verdict', '%(ID) Note: %s/%m (score total : %S/%M)',
+            '--verdict-question', '%s/%m',
+            '--no-rtl',
+            '--changes-only'
+        );
+        $res = $this->shellExec('auto-multiple-choice annote', $parameters, true);
+        if ($res) {
+            $this->log('annote', '');
+        }
+        return $res;
+    }
+
+     /**
+     * lowl-level Shell-executes 'amc regroupe'
+     * fills the cr/corrections/pdf directory with a global pdf file for all copies
+     * @return bool
+     */
+    public function amcRegroupe() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--id-file', "",
+            '--no-compose',
+            '--projet',  $pre,
+            '--sujet', $pre.'/prepare-sujet.pdf',
+            '--data', $pre.'/data',
+            '--tex-src', $pre.'/prepare-source.txt',
+            '--with', 'xelatex',
+            '--filter', 'plain',
+            '--filtered-source', $pre.'/prepare-source_filtered.tex',
+            '--n-copies', (string) $this->quizz->amcparams->copies,
+            '--progression-id', 'regroupe',
+            '--progression', '1',
+            '--modele', '',
+            '--fich-noms', '%PROJET/',
+            '--noms-encodage', 'UTF-8',
+            '--csv-build-name', '(nom|surname) (prenom|name)',
+            '--single-output', 'corrections_tous.pdf',
+            '--sort', 'n',
+            '--register',
+            '--no-force-ascii'
+        );
+        $res = $this->shellExec('auto-multiple-choice regroupe', $parameters, true);
+        if ($res) {
+            $this->log('regroupe', '');
+        }
+        return $res;
+    }
+
+
+    /**
      * Return an array of students with added fields for identified users.
      *
      * @return boolean Success?
