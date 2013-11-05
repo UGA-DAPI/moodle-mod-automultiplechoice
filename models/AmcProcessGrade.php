@@ -164,6 +164,27 @@ class AmcProcessGrade extends AmcProcess
         return $res;
     }
 
+     /**
+     * (high-level) executes "amc annote" then "amc regroupe" to get one or several pdf files
+     * for the moment, only one variant is possible : ONE global file, NO compose
+     * @todo (maybe) manages all variants
+     * @return bool
+     */
+    public function amcAnnotePdf() {
+        $pre = $this->workdir;
+        $mask = $pre . "/cr/corrections/jpg/*.jpg";
+        array_map('unlink', glob( $mask ));
+        $mask = $pre . "/cr/corrections/pdf/*.pdf";
+        array_map('unlink', glob( $mask ));
+
+        $res = $this->amcAnnote();
+        if ( ! $res ) {
+            return false;
+        }
+        $res = $this->amcRegroupe();
+        return $res;
+    }
+
 
     /**
      * Return an array of students with added fields for identified users.

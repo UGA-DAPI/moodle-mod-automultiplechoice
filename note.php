@@ -20,6 +20,7 @@ require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/AmcProcessGrade.php';
 
 $a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
+$action = optional_param('action', '', PARAM_ALPHANUMEXT);
 
 if ($a) {
     $quizz = \mod\automultiplechoice\Quizz::findById($a);
@@ -44,46 +45,69 @@ $PAGE->set_context($context);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($quizz->name . " - notation");
 
-
-
 $process = new \mod\automultiplechoice\AmcProcessGrade($quizz);
 //var_dump($process);
 
-$diag = $process->amcPrepareBareme();
-if ($diag) {
-    echo "<p>Barème extrait.</p>\n";
+if ($action == 'note') { // On arrive de la page générale view.php
+    $diag = $process->amcPrepareBareme();
+    if ($diag) {
+        echo "<p>Barème extrait.</p>\n";
+    } else {
+        echo "<p>Erreur sur l'extraction du barème.</p>\n";
+    }
+
+    $diag = $process->amcNote();
+    if ($diag) {
+        echo "<p>Notes calculées.</p>\n";
+    } else {
+        echo "<p>Erreur sur le calcul des notes.</p>\n";
+    }
+
+    $diag = $process->amcExport();
+    $urls = array();
+    if ($diag) {
+        echo $OUTPUT->heading("Fichier CSV créé");
+        $urls['scores.csv'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_AMC_CSV);
+    } else {
+        echo "<p>Erreur lors de l'export CSV des notes.</p>\n";
+    }
+
+    if ($process->writeFileWithIdentifiedStudents()) {
+        $urls['scores_names'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_FULL_CSV);
+    } else {
+        error("Could not create CSV file with identified students.");
+    }
+
+    echo '<ul class="amc-files">';
+    foreach ($urls as $name => $url) {
+        echo "<li>" . html_writer::link($url, $name) . "</li>";
+    }
+    echo "</ul>\n";
+}
+
+
+if ( isset($_POST['submit']) && $_POST['submit'] == 'Annotations' ) {
+    $diag = $process->amcAnnotePdf();
+    if ($diag) {
+        echo "Fichier PDF créé : ";
+        $url = $url = $process->getFileUrl('cr/corrections/pdf/corrections_tous.pdf');
+        echo html_writer::link($url, 'corrections_tous.pdf') . "\n";
+    } else {
+        echo "<p>Erreur lors de la création du PDF.</p>";
+    }
+
 } else {
-    echo "<p>Erreur sur l'extraction du barème.</p>\n";
+    // Bouton imprimer
+    echo '<form action="note.php?a='. $quizz->id .'" method="post">' . "\n";
+    //echo '<label for="compose">Copies composées</label>'. "\n" ;
+    //echo '<input type="checkbox" name="compose" id="compose">' . "<br />\n" ;
+    echo '<label for="submit">Télécharger copies annotées </label>' ;
+    echo '<input type="submit" name="submit" value="Annotations">'. "\n" ;
+    echo '</form>' . "\n" ;
 }
 
-$diag = $process->amcNote();
-if ($diag) {
-    echo "<p>Notes calculées.</p>\n";
-} else {
-    echo "<p>Erreur sur le calcul des notes.</p>\n";
-}
 
-$diag = $process->amcExport();
-$urls = array();
-if ($diag) {
-    echo $OUTPUT->heading("Fichier CSV créé");
-    $urls['scores.csv'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_AMC_CSV);
-} else {
-    echo "<p>Erreur lors de l'export CSV des notes.</p>\n";
-}
-
-if ($process->writeFileWithIdentifiedStudents()) {
-    $urls['scores_names'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_FULL_CSV);
-} else {
-    error("Could not create CSV file with identified students.");
-}
-
-echo '<ul class="amc-files">';
-foreach ($urls as $name => $url) {
-    echo "<li>" . html_writer::link($url, $name) . "</li>";
-}
-echo "</ul>\n";
-
+echo "<p></p>";
 $url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
 $button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
 echo $button;

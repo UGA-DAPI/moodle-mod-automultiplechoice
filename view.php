@@ -141,7 +141,7 @@ echo $OUTPUT->single_button($url, get_string('analyse', 'automultiplechoice') , 
 
 // $options = array('disabled' => 'disabled');
 
-$url = new moodle_url('/mod/automultiplechoice/' . 'note.php', array('a' => $quizz->id));
+$url = new moodle_url('/mod/automultiplechoice/' . 'note.php', array('a' => $quizz->id, 'action' => 'note'));
 echo $OUTPUT->single_button($url, get_string('note', 'automultiplechoice') , 'post', $options);
 
 /*
