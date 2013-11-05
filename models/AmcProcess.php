@@ -54,19 +54,6 @@ class AmcProcess
     }
 
     /**
-     * Compute the whole source file content, by merging header and questions blocks
-     * @return string file content
-     */
-    public function getSourceAmctxt() {
-        $res = $this->getHeaderAmctxt();
-        foreach ($this->quizz->questions->getRecords($this->quizz->amcparams->scoringset) as $question) {
-            $res .= $this->questionToFileAmctxt($question);
-
-        }
-        return $res;
-    }
-
-    /**
      * Save the source file
      * @param type $filename
      */
@@ -343,6 +330,19 @@ class AmcProcess
         $html .= "Return value = <b>" . $returnVal. "</b\n";
         $html .= "</pre> \n";
         debugging($html, $debuglevel);
+    }
+
+    /**
+     * Compute the whole source file content, by merging header and questions blocks
+     * @return string file content
+     */
+    protected function getSourceAmctxt() {
+        $res = $this->getHeaderAmctxt();
+        foreach ($this->quizz->questions->getRecords($this->quizz->amcparams->scoringset) as $question) {
+            $res .= $this->questionToFileAmctxt($question);
+
+        }
+        return $res;
     }
 
     /**
