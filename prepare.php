@@ -17,7 +17,7 @@ global $DB, $OUTPUT, $PAGE;
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once __DIR__ . '/models/Quizz.php';
-require_once __DIR__ . '/models/AmcProcess.php';
+require_once __DIR__ . '/models/AmcProcessPrepare.php';
 
 $a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
@@ -47,7 +47,7 @@ echo $OUTPUT->heading($quizz->name . " - préparation des fichiers");
 //var_dump($_POST);
 
 
-$process = new \mod\automultiplechoice\AmcProcess($quizz);
+$process = new \mod\automultiplechoice\AmcProcessPrepare($quizz);
 //var_dump($process);
 
 if ($action == 'prepare') {
