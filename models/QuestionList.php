@@ -156,6 +156,26 @@ class QuestionList implements \Countable, \ArrayAccess
     }
 
     /**
+     * Checks if the list contains a given question (or one of the given list).
+     *
+     * @param integer|array $questionids
+     * @return boolean
+     */
+    public function contains($questionids) {
+        if (is_array($questionids)) {
+            $lookup = array_flip($questionids);
+        } else {
+            $lookup = array($questionids => true);
+        }
+        foreach ($this->questions as $q) {
+            if (isset($lookup[$q['questionid']])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return the list of question.id
      *
      * @return array of integers
