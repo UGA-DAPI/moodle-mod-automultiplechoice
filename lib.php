@@ -19,6 +19,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/AmcProcess.php';
 
+/* @var $DB moodle_database */
+
 /** example constant */
 //define('NEWMODULE_ULTIMATE_ANSWER', 42);
 
@@ -408,4 +410,16 @@ function automultiplechoice_extend_navigation(navigation_node $navref, stdclass 
  * @param navigation_node $automultiplechoicenode {@link navigation_node}
  */
 function automultiplechoice_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $automultiplechoicenode=null) {
+}
+
+function automultiplechoice_questions_in_use($questionids) {
+    global $DB;
+    $records = $DB->get_recordset('automultiplechoice');
+    foreach ($records as $record) {
+        $quizz = \mod\automultiplechoice\Quizz::buildFromRecord($record);
+        if ($quizz->questions->contains($questionids)) {
+            return true;
+        }
+    }
+    return false;
 }
