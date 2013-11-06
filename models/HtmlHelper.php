@@ -28,7 +28,9 @@ class HtmlHelper {
                         <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '" />
                     </label>
                 </td>
-                <td><div><b>' . format_string($q->name) . '</b></div>'. format_string($q->questiontext) . '</td>
+                <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
+                    . HtmlHelper::listAnswers($q)
+                    .'</td>
             </tr>';
         }
         echo '<tr>'
@@ -55,5 +57,17 @@ class HtmlHelper {
                 . '<div>' . nl2br(format_string($scoringSet->description)) . '</div>'
                 . '</td></tr>';
         echo '</tbody></table>';
+    }
+
+    protected static function listAnswers($question) {
+        global $DB;
+        $answers = $DB->get_recordset('question_answers', array('question' => $question->id));
+        $html = '<ul class="question-answers">';
+        foreach ($answers as $answer) {
+            $html .= '<li class="answer-' . ($answer->fraction > 0 ? 'right' : 'wrong') . '">'
+                    . format_string($answer->answer) . "</li>\n";
+        }
+        $html .= "</ul>\n";
+        return $html;
     }
 }
