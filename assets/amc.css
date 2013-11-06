@@ -35,9 +35,9 @@ td ul {
 	margin: 2px 4px 2px 2em;
 }
 
-ul.question-answers .answer-right {
+.question-answers li.answer-right {
 	list-style-type: disc;
 }
-ul.question-answers .answer-wrong {
+.question-answers li.answer-wrong {
 	list-style-type: circle;
 }

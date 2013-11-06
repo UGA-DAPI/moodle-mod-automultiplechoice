@@ -17,7 +17,9 @@ class HtmlHelper {
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
         echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
         echo '<thead><tr><th>' . get_string('qscore', 'automultiplechoice')
-                . '</th><th>' . get_string('qtitle', 'automultiplechoice') . '</th></tr></thead>';
+                . '</th><th>' . get_string('qtitle', 'automultiplechoice')
+                . '<div><button type="button" id="toggle-answers">Afficher/masquer les réponses</button></div>'
+                . '</th></tr></thead>';
         echo '<tbody>';
 
         foreach ($quizz->questions->getRecords() as $q) {
@@ -62,12 +64,12 @@ class HtmlHelper {
     protected static function listAnswers($question) {
         global $DB;
         $answers = $DB->get_recordset('question_answers', array('question' => $question->id));
-        $html = '<ul class="question-answers">';
+        $html = '<div class="question-answers"><ul>';
         foreach ($answers as $answer) {
             $html .= '<li class="answer-' . ($answer->fraction > 0 ? 'right' : 'wrong') . '">'
                     . format_string($answer->answer) . "</li>\n";
         }
-        $html .= "</ul>\n";
+        $html .= "</ul></div>\n";
         return $html;
     }
 }

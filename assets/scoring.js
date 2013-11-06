@@ -25,4 +25,10 @@ $(document).ready(function() {
 				.parent().toggleClass("score-mismatch", total !== Math.floor(expectedTotalScore));
     });
 	$("#questions-selected input.qscore").first().keyup();
+
+	function toggleAnswers() {
+		$(".question-answers").toggleClass('hide');
+	}
+	$('#toggle-answers').on('click', toggleAnswers);
+	toggleAnswers();
 } );
