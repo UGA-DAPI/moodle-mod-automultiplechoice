@@ -40,6 +40,7 @@ function automultiplechoice_list_questions($user, $course) {
 
     $sql = "SELECT q.id, qc.name AS categoryname, q.name AS title, q.timemodified "
             . "FROM {question} q JOIN {question_categories} qc ON q.category = qc.id "
+            . " JOIN {question_multichoice} qm ON qm.question=q.id "
             . "WHERE qc.contextid = " . $course_context->id
             . " ORDER BY qc.sortorder, q.name";
     $records = $DB->get_records_sql($sql);
