@@ -161,15 +161,6 @@ class AmcProcess
         );
     }
 
-    protected function initWorkdir() {
-        global $CFG;
-
-        if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
-            $templatedir = get_config('mod_automultiplechoice', 'amctemplate');
-            $diag = $this->shellExec('cp', array('-r', $templatedir, $this->workdir));
-        }
-    }
-
     /**
      *
      * @param string $cmd

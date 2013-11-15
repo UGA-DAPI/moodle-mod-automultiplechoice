@@ -101,6 +101,26 @@ class AmcProcessPrepare extends AmcProcess
 
 
     /**
+     * Initialize the data directory $this->workdir with the template structure.
+     */
+    protected function initWorkdir() {
+        if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
+            $parent = dirname($this->workdir);
+            if (!is_dir($parent)) {
+                if (!mkdir($parent, 0777, true)) {
+                    error("Could not create directory. Please contact the administrator.");
+                }
+            }
+            if (!is_writeable($parent)) {
+                error("Could not write in directory. Please contact the administrator.");
+            } else {
+                $templatedir = get_config('mod_automultiplechoice', 'amctemplate');
+                $this->shellExec('cp', array('-r', $templatedir, $this->workdir));
+            }
+        }
+    }
+
+    /**
      * Shell-executes 'amc imprime'
      * @param bool $split if true, put answer sheets in separate files
      * @return bool
