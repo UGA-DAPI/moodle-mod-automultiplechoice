@@ -43,6 +43,9 @@ class AmcParams
     /** @var integer */
     public $scoringset;
 
+    /** @var boolean */
+    public $markmulti = false;
+
     /**
      * Validate the instance and update $this->errors.
      *
@@ -72,6 +75,7 @@ class AmcParams
         $new->lstudent = $input['lstudent'];
         $new->lname = $input['lname'];
         $new->scoringset = $input['scoringset'];
+        $new->markMulti = (bool) $input['markmulti'];
         return $new;
     }
 

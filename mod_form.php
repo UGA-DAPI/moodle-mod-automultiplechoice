@@ -131,6 +131,9 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         );
         $mform->setType('amc[displaypoints]', PARAM_INTEGER);
 
+        $mform->addElement('advcheckbox', 'amc[markmulti]', get_string('amc_markmulti', 'automultiplechoice'));
+        $mform->setType('amc[markmulti]', PARAM_BOOL);
+
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();

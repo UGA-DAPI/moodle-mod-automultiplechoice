@@ -46,6 +46,8 @@ $string['amc_lstudent_help'] = 'Text displayed aside the grid where a student in
 $string['amc_lname_help'] = 'Title of the frame displayed in the top right column, where the student is asked to input some text, e.g. its name.';
 $string['amc_lstudent_default'] = 'Please code your student number opposite, and write your name in the box below.';
 $string['amc_lname_default'] = 'Name and surname';
+$string['amc_markmulti'] = 'Mark when multiple answers';
+$string['amc_markmulti_help'] = 'A clover leaf will appear when a question has more than one right answer.';
 
 $string['questionselect'] = 'Select questions';
 $string['questionselected'] = 'Selected Questions';

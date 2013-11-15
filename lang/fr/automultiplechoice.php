@@ -46,6 +46,8 @@ $string['amc_lstudent_help'] = 'Texte affiché à côté de la grille qui permet
 $string['amc_lname_help'] = 'Intitulé du cadre affiché en haut à droite de la feuille de réponse, par exemple pour indiquer à l\'étudiant qu\'il doit écrire son nom.';
 $string['amc_lstudent_default'] = "Veuillez coder votre numéro d'étudiant ci-contre, et écrire votre nom dans la case ci-dessous.";
 $string['amc_lname_default'] = 'Nom et prénom';
+$string['amc_markmulti'] = 'Marque pour réponses multiples';
+$string['amc_markmulti_help'] = 'Un trèfle sera affiché quand une question a plusieurs bonnes réponses.';
 
 $string['questionselect'] = 'Sélection des questions';
 $string['questionselected'] = 'Questions choisies';

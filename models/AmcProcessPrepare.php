@@ -196,6 +196,7 @@ class AmcProcessPrepare extends AmcProcess
     protected function getHeaderAmctxt() {
         $descr = preg_replace('/\n\s*\n/', "\n", $this->quizz->description);
         $params = $this->quizz->amcparams;
+        $markMulti = $params->markmulti ? '' : "LaTeX-BeginDocument: \def\multiSymbole{}\n";
 
         return "# AMC-TXT source
 PaperSize: A4
@@ -207,8 +208,7 @@ Title: {$this->quizz->name}
 Presentation: {$descr}
 L-Name: {$params->lname}
 L-Student: {$params->lstudent}
-LaTeX-BeginDocument: \def\multiSymbole{}
-
+$markMulti
 ";
     }
 }
