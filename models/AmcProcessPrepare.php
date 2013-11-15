@@ -165,12 +165,10 @@ class AmcProcessPrepare extends AmcProcess
         global $DB;
 
         $answerstext = '';
-        $trueanswers = 0;
         $answers = $DB->get_records('question_answers', array('question' => $question->id));
         foreach ($answers as $answer) {
             $trueanswer = ($answer->fraction > 0);
             $answerstext .= ($trueanswer ? '+' : '-') . " " . strip_tags($answer->answer) . "\n";
-            $trueanswers += (int) $trueanswer;
         }
         $dp = $this->quizz->amcparams->displaypoints;
         $points = ($question->score == round($question->score) ? $question->score :
@@ -178,7 +176,7 @@ class AmcProcessPrepare extends AmcProcess
                     : sprintf('%.2f', $question->score)));
         $points = $points ? '(' . $points . ' pt' . ($question->score > 1 ? 's' : '') . ')' : '';
         $options = ($this->quizz->amcparams->shufflea ? '' : '[ordered]');
-        $questiontext = ($trueanswers == 1 ? '*' : '**')
+        $questiontext = ($question->single ? '*' : '**')
                 . $options
                 . ($question->scoring ? '[' . $question->scoring . ']' : '')
                 . ' ' . ($dp == AmcParams::DISPLAY_POINTS_BEGIN ? $points . ' ' : '')
