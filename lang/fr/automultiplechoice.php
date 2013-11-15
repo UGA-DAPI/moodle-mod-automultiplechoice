@@ -66,6 +66,7 @@ $string['validateql_wrong_number'] = 'Le nombre de questions n\'est pas celui at
 $string['validateql_wrong_sum'] = 'La somme des points ne fait pas la note totale attendue.' ;
 $string['validateql_wrong_score'] = 'Le nombre de points d\'au moins une question n\'est pas valide.';
 $string['validate_positive_int'] = 'Ceci devrait être un nombre strictement positif.';
+$string['validateql_deletedquestions'] = 'Certaines questions ne sont pas présentes dans Moodle et ont probablement été supprimées.';
 
 $string['prepare'] = 'Préparation';
 $string['analyse'] = 'Saisie';

@@ -43,18 +43,10 @@ class QuestionList implements \Countable, \ArrayAccess
      * @return array of "question+question_multichoice" records (objects from the DB) with an additional "score", "scoring" fields.
      */
     public function getRecords($scoringSetId=null) {
-        global $DB;
         if (!$this->questions) {
             return array();
         }
-        $ids = $this->getIds();
-        list ($cond, $params) = $DB->get_in_or_equal($ids);
-        $records = $DB->get_records_sql(
-                'SELECT q.*, qc.single '
-                . 'FROM {question} q INNER JOIN {question_multichoice} qc ON q.id = qc.question '
-                . 'WHERE q.id ' . $cond,
-                $params
-        );
+        $records = $this->getRawRecords();
         if (isset($scoringSetId)) {
             $scoringSet = ScoringSystem::read()->getScoringSet($scoringSetId);
         } else {
@@ -97,6 +89,18 @@ class QuestionList implements \Countable, \ArrayAccess
         if ($this->errors) {
             return false;
         }
+
+        // deleted questions?
+        $validIds = array();
+        foreach ($this->getRawRecords() as $r) {
+            $validIds[] = $this->getById($r->id);
+        }
+        if (count($validIds) != count($this->questions)) {
+            $this->questions = $validIds;
+            $this->errors['qnumber'] = 'validateql_deletedquestions';
+            return false;
+        }
+
         return true;
     }
 
@@ -173,6 +177,39 @@ class QuestionList implements \Countable, \ArrayAccess
             }
         }
         return false;
+    }
+
+    /**
+     * Find a question by its id.
+     *
+     * @param type $id
+     * @return array
+     */
+    public function getById($id) {
+        foreach ($this->questions as $q) {
+            if ($q['questionid'] == $id) {
+                return $q;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the records from the DB, with get_records_sql().
+     *
+     * @global \moodle_database $DB
+     * @return array
+     */
+    protected function getRawRecords() {
+        global $DB;
+        $ids = $this->getIds();
+        list ($cond, $params) = $DB->get_in_or_equal($ids);
+        return $DB->get_records_sql(
+                'SELECT q.*, qc.single '
+                . 'FROM {question} q INNER JOIN {question_multichoice} qc ON q.id = qc.question '
+                . 'WHERE q.id ' . $cond,
+                $params
+        );
     }
 
     /**

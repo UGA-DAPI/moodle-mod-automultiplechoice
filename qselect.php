@@ -60,6 +60,8 @@ $PAGE->requires->css(new moodle_url('assets/dataTables/css/jquery.dataTables.css
 $PAGE->requires->js(new moodle_url('assets/qselect.js'));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
+// remove deleted questions
+$quizz->validate();
 
 $available_questions = automultiplechoice_list_questions($USER, $COURSE);
 
