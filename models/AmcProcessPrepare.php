@@ -83,14 +83,13 @@ EOL;
 
     /**
      * exectuces "amc imprime" then zip the resulting files
-     * @param bool $split if true, put answer sheets in separate files
      * @return bool
      */
-    public function printAndZip($split) {
+    public function printAndZip() {
         $pre = $this->workdir;
         $mask = $pre . "/imprime/*.pdf";
         array_map('unlink', glob( $mask ));
-        $this->amcImprime($split);
+        $this->amcImprime();
 
         $zip = new \ZipArchive();
         $ret = $zip->open($pre . '/sujets.zip', \ZipArchive::OVERWRITE);
@@ -151,10 +150,9 @@ EOL;
 
     /**
      * Shell-executes 'amc imprime'
-     * @param bool $split if true, put answer sheets in separate files
      * @return bool
      */
-    protected function amcImprime($split) {
+    protected function amcImprime() {
         $pre = $this->workdir;
         $params = array(
                     '--data', $pre . '/data',
@@ -162,7 +160,7 @@ EOL;
                     '--methode', 'file',
                     '--output', $pre . '/imprime/sujet-%e.pdf'
                 );
-        if ($split) {
+        if ($this->quizz->amcparams->separatesheet) {
             $params[] = '--split';
         }
         $res = $this->shellExec('auto-multiple-choice imprime', $params, true);
