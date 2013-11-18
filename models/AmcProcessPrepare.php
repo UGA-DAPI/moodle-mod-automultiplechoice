@@ -125,27 +125,6 @@ EOL;
         return $ret;
     }
 
-    /**
-     * Shell-executes 'amc meptex'
-     * @return bool
-     */
-    public function amcMeptex() {
-        $pre = $this->workdir;
-        $res = $this->shellExec(
-                'auto-multiple-choice meptex',
-                array(
-                    '--data', $pre . '/data',
-                    '--progression-id', 'MEP',
-                    '--progression', '1',
-                    '--src', $pre . '/prepare-calage.xy',
-                )
-        );
-        if ($res) {
-            $this->log('meptex', '');
-        }
-        return $res;
-    }
-
 
     /**
      * Initialize the data directory $this->workdir with the template structure.

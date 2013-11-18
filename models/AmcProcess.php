@@ -54,6 +54,27 @@ class AmcProcess
     }
 
     /**
+     * Shell-executes 'amc meptex'
+     * @return bool
+     */
+    public function amcMeptex() {
+        $pre = $this->workdir;
+        $res = $this->shellExec(
+                'auto-multiple-choice meptex',
+                array(
+                    '--data', $pre . '/data',
+                    '--progression-id', 'MEP',
+                    '--progression', '1',
+                    '--src', $pre . '/prepare-calage.xy',
+                )
+        );
+        if ($res) {
+            $this->log('meptex', '');
+        }
+        return $res;
+    }
+
+    /**
      * Shell-executes 'amc getimages'
      * @param string $scanfile name, uploaded by the user
      * @return bool
