@@ -63,13 +63,16 @@ if ($action == 'prepare') {
         echo $OUTPUT->heading("Fichiers PDF créés");
         echo '<ul class="amc-files">';
         $url = $process->getFileUrl('prepare-sujet.pdf');
-        echo "<li>" . html_writer::link($url, 'prepare-sujet.pdf') . "</li>";
+        echo "<li>" . html_writer::link($url, 'prepare-sujet.pdf')
+            . "<div>Ce fichier contient tous les énoncés à imprimer.</div></li>";
 
         $url = $url = $process->getFileUrl('prepare-corrige.pdf');
-        echo "<li>" . html_writer::link($url, 'prepare-corrige.pdf') . "</li>";
+        echo "<li>" . html_writer::link($url, 'prepare-corrige.pdf')
+            . "<div>Le corrigé, c'est-à-dire le QCM rempli de façon optimale.</div></li>";
 
         $url = $url = $process->getFileUrl('prepare-catalog.pdf');
-        echo "<li>" . html_writer::link($url, 'prepare-catalog.pdf') . "</li>";
+        echo "<li>" . html_writer::link($url, 'prepare-catalog.pdf')
+            . "<div></div></li>";
         echo "</ul>\n";
     } else {
         echo "<p>Erreur lors de la création des fichiers PDF.</p>\n";
@@ -89,7 +92,7 @@ if ( isset($_POST['submit']) && $_POST['submit'] == 'zip' ) {
     if ($diag) {
         echo "Fichier Zip créé : ";
         $url = $url = $process->getFileUrl('sujets.zip');
-        echo html_writer::link($url, 'sujets.zip') . "\n";
+        echo html_writer::link($url, 'sujets.zip') . "<div>Ce fichier contient un PDF par variante de l'énoncé.</div>\n";
     } else {
         echo "<p>Erreur lors de la création de l'archive.</p>";
     }
