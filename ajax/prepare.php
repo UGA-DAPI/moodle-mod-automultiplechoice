@@ -47,6 +47,14 @@ if ($action == 'prepare') {
     } else {
         error("Erreur lors du calcul de mise en page (amc meptex).");
     }
+} else if ($action == 'zip') {
+    if ($process->printAndZip()) {
+        echo "<h3>Fichier Zip créé</h3>";
+        echo html_writer::link($process->getFileUrl('sujets.zip'), 'sujets.zip')
+                . "<div>Ce fichier contient un PDF par variante de l'énoncé.</div>\n";
+    } else {
+        error("Erreur lors de la création de l'archive.");
+    }
 }
 
 if ($redirect) {
