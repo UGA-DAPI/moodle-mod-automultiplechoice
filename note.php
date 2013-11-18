@@ -111,3 +111,5 @@ echo "<p></p>";
 $url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
 $button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
 echo $button;
+
+echo $OUTPUT->footer();
