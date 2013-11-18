@@ -56,8 +56,8 @@ if ($process->isLocked()) {
 } else {
     echo <<<EOL
     <div class="async-load" data-url="ajax/prepare.php">
-        <div class="async-target" data-parameters="{'a': {$quizz->id}, 'action': 'prepare'}"></div>
-        <div class="async-target" data-parameters="{'a': {$quizz->id}, 'action': 'zip'}"></div>
+        <div class="async-target" data-parameters='{"a": {$quizz->id}, "action": "prepare"}'></div>
+        <div class="async-target" data-parameters='{"a": {$quizz->id}, "action": "zip"}'></div>
     </div>
     <noscript>
     TODO : form and submit button that posts to ajax/prepare.php with a redirect option on.
