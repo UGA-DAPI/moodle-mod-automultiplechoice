@@ -13,6 +13,35 @@ require_once __DIR__ . '/AmcProcess.php';
 class AmcProcessPrepare extends AmcProcess
 {
     /**
+     * Return the HTML that lists links to the PDF files.
+     *
+     * @return string
+     */
+    public function htmlPdfLinks() {
+        $links = array(
+            \html_writer::link($this->getFileUrl('prepare-sujet.pdf'), 'prepare-sujet.pdf'),
+            \html_writer::link($this->getFileUrl('prepare-corrige.pdf'), 'prepare-corrige.pdf'),
+            \html_writer::link($this->getFileUrl('prepare-catalog.pdf'), 'prepare-catalog.pdf'),
+        );
+        return <<<EOL
+        <ul class="amc-files">
+            <li>
+                $links[0]
+                <div>Ce fichier contient tous les énoncés à imprimer.</div>
+            </li>
+            <li>
+                $links[1]
+                <div>Le corrigé, c'est-à-dire le QCM rempli de façon optimale.</div>
+            </li>
+            <li>
+                $links[2]
+                <div></div>
+            </li>
+        </ul>
+EOL;
+    }
+
+    /**
      * Save the source file
      * @param type $filename
      */
