@@ -368,16 +368,16 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 
     // whitelist security
     if (in_array($filename, array('prepare-sujet.pdf', 'prepare-corrige.pdf', 'prepare-catalog.pdf'))) {
-        send_file($process->workdir .'/'. $filename, $filename, 86400, 0, false, false, 'application/pdf') ;
+        send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
      } elseif (in_array($filename, array('sujets.zip'))) {
-        send_file($process->workdir . '/' . $filename, $filename, 86400, 0, false, false, 'application/zip') ;
+        send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/zip') ;
         return true;
      } elseif (in_array($filename, array('corrections_tous.pdf'))) {
-        send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 86400, 0, false, false, 'application/pdf') ;
+        send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
     } elseif (preg_match('/\.csv$/', $filename)) {
-        send_file($process->workdir . '/exports/' . $filename, $filename, 86400, 0, false, false, 'text/csv') ;
+        send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
         return true;
     }
     send_file_not_found();
