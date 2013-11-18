@@ -177,7 +177,7 @@ class AmcProcessPrepare extends AmcProcess
         $options = ($this->quizz->amcparams->shufflea ? '' : '[ordered]');
         $questiontext = ($question->single ? '*' : '**')
                 . $options
-                . ($question->scoring ? '[' . $question->scoring . ']' : '') . ' '
+                . ($question->scoring ? '{' . $question->scoring . '}' : '') . ' '
                 . ($dp == AmcParams::DISPLAY_POINTS_BEGIN ? $pointsTxt . ' ' : '')
                 . $question->name . "\n" . strip_tags($question->questiontext)
                 . ($dp == AmcParams::DISPLAY_POINTS_END ? ' ' . $pointsTxt : '')
