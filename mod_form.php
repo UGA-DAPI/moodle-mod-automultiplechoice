@@ -35,7 +35,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             console.log(this.responseText);
             document.getElementById("scoringset_desc").innerHTML = this.responseText;
         }
-        xhr.open("GET", "../mod/automultiplechoice/ajax.php?scoringsetid=" + id);
+        xhr.open("GET", "../mod/automultiplechoice/ajax/scoring.php?scoringsetid=" + id);
         xhr.responseType = "text";
         xhr.send();
     }
