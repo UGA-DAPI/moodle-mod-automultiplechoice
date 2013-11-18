@@ -34,58 +34,36 @@ require_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/automultiplechoice:view', $context);
 
-/// Print the page header
-
+$PAGE->set_context($context);
 $PAGE->set_url('/mod/automultiplechoice/prepare.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($quizz->name . " - préparation des fichiers"));
 $PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_context($context);
-
-// Output starts here
-echo $OUTPUT->header();
-echo $OUTPUT->heading($quizz->name . " - préparation des fichiers");
-//var_dump($_POST);
-
+$PAGE->set_cacheable(false);
 
 $process = new \mod\automultiplechoice\AmcProcessPrepare($quizz);
-//var_dump($process);
-
-if ($action == 'prepare') {
-    $diag = $process->saveAmctxt();
-    if ($diag) {
-        echo "<p>Fichier source enregistré.</p>\n";
-    } else {
-        echo "<p>Erreur sur fichier source.</p>\n";
-    }
-
-    $diag = $process->createPdf();
-    if ($diag) {
-        echo $OUTPUT->heading("Fichiers PDF créés");
-        echo '<ul class="amc-files">';
-        $url = $process->getFileUrl('prepare-sujet.pdf');
-        echo "<li>" . html_writer::link($url, 'prepare-sujet.pdf')
-            . "<div>Ce fichier contient tous les énoncés à imprimer.</div></li>";
-
-        $url = $url = $process->getFileUrl('prepare-corrige.pdf');
-        echo "<li>" . html_writer::link($url, 'prepare-corrige.pdf')
-            . "<div>Le corrigé, c'est-à-dire le QCM rempli de façon optimale.</div></li>";
-
-        $url = $url = $process->getFileUrl('prepare-catalog.pdf');
-        echo "<li>" . html_writer::link($url, 'prepare-catalog.pdf')
-            . "<div></div></li>";
-        echo "</ul>\n";
-    } else {
-        echo "<p>Erreur lors de la création des fichiers PDF.</p>\n";
-    }
-
-    $diag = $process->amcMeptex();
-    if ($diag) {
-        echo $OUTPUT->heading("Mise en page (amc meptex) terminée.");
-    } else {
-        echo "<p>Erreur lors du calcul de mise en page (amc meptex).</p>\n";
-    }
+if (!$process->isLocked()) {
+    $PAGE->requires->jquery();
+    $PAGE->requires->js(new moodle_url('assets/async.js'));
 }
 
+echo $OUTPUT->header();
+echo $OUTPUT->heading($quizz->name . " - fichiers PDF");
+
+
+if ($process->isLocked()) {
+    echo "<h3>Fichiers PDF précédemment créés</h3>";
+    echo $process->htmlPdfLinks();
+} else {
+    echo <<<EOL
+    <div class="async-load" data-url="ajax/prepare.php">
+        <div class="async-target" data-parameters="{'a': {$quizz->id}, 'action': 'prepare'}"></div>
+        <div class="async-target" data-parameters="{'a': {$quizz->id}, 'action': 'zip'}"></div>
+    </div>
+    <noscript>
+    TODO : form and submit button that posts to ajax/prepare.php with a redirect option on.
+    </noscript>
+EOL;
+}
 
 if ( isset($_POST['submit']) && $_POST['submit'] == 'zip' ) {
     $diag = $process->printAndZip(isset($_POST['split']));
