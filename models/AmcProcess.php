@@ -162,6 +162,17 @@ class AmcProcess
     }
 
     /**
+     * Returns true if the Quizz is locked.
+     *
+     * @todo Add conditions for this to happen (file existence, log existence, explicit locking in DB, etc).
+     *
+     * @return boolean
+     */
+    public function isLocked() {
+        return false;
+    }
+
+    /**
      *
      * @param string $cmd
      * @param array $params List of strings.
