@@ -13,9 +13,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $DB;
 /* @var $DB \moodle_database */
-
-global $COURSE, $DB;
 
 /**
  * Return the list of questions available to a given user.
@@ -30,7 +29,7 @@ global $COURSE, $DB;
  * @return array List of objects with fields: id, categoryname, title, timemodified
  */
 function automultiplechoice_list_questions($user, $course) {
-    global $COURSE, $DB;
+    global $DB;
 
     $course_context = context_course::instance($course->id);
 
@@ -43,8 +42,7 @@ function automultiplechoice_list_questions($user, $course) {
             . " JOIN {question_multichoice} qm ON qm.question=q.id "
             . "WHERE qc.contextid = " . $course_context->id
             . " ORDER BY qc.sortorder, q.name";
-    $records = $DB->get_records_sql($sql);
-    return $records;
+    return $DB->get_records_sql($sql);
 }
 
 /**
