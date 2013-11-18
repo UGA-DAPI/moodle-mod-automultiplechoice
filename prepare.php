@@ -16,6 +16,7 @@ global $DB, $OUTPUT, $PAGE;
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/AmcProcessPrepare.php';
 
@@ -72,8 +73,6 @@ if ($process->isLocked()) {
 EOL;
 }
 
-$url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
-$button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
-echo $button;
+echo button_back_to_activity($quizz->id);
 
 echo $OUTPUT->footer();

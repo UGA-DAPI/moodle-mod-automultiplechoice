@@ -78,3 +78,11 @@ function getStudentByIdNumber($idn) {
     global $DB;
     return $DB->get_record('user', array('idnumber' => $idn, 'confirmed' => 1, 'deleted' => 0));
 }
+
+function button_back_to_activity($id) {
+    global $OUTPUT;
+    $url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $id));
+    return '<div class="back-to-activity">'
+            . $OUTPUT->single_button($url, 'Retour au questionnaire', 'get')
+            . '</div>';
+}
