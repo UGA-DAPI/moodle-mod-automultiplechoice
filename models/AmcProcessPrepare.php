@@ -163,7 +163,7 @@ EOL;
         if ($this->quizz->amcparams->separatesheet) {
             $params[] = '--split';
         }
-        $res = $this->shellExec('auto-multiple-choice imprime', $params, true);
+        $res = $this->shellExec('auto-multiple-choice imprime', $params);
         if ($res) {
             $this->log('imprime', '');
         }
