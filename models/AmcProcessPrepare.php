@@ -199,6 +199,7 @@ class AmcProcessPrepare extends AmcProcess
 PaperSize: A4
 Lang: FR
 Code: {$this->codelength}
+CompleteMulti: 0
 ShuffleQuestions: {$params->shuffleq}
 SeparateAnswerSheet: {$params->separatesheet}
 Title: {$this->quizz->name}
