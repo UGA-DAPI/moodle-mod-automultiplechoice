@@ -38,7 +38,8 @@ $PAGE->set_context($context);
 $PAGE->set_url('/mod/automultiplechoice/prepare.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($quizz->name . " - préparation des fichiers"));
 $PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_cacheable(false);
+
+$PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 $process = new \mod\automultiplechoice\AmcProcessPrepare($quizz);
 if (!$process->isLocked()) {
@@ -56,8 +57,12 @@ if ($process->isLocked()) {
 } else {
     echo <<<EOL
     <div class="async-load" data-url="ajax/prepare.php">
-        <div class="async-target" data-parameters='{"a": {$quizz->id}, "action": "prepare"}'></div>
-        <div class="async-target" data-parameters='{"a": {$quizz->id}, "action": "zip"}'></div>
+        <div class="async-target" data-parameters='{"a": {$quizz->id}, "action": "prepare"}'>
+            Préparation des fichiers PDF <span />
+       </div>
+        <div class="async-target" data-parameters='{"a": {$quizz->id}, "action": "zip"}'>
+            Préparation de l'archive ZIP <span />
+       </div>
     </div>
     <noscript>
     TODO : form and submit button that posts to ajax/prepare.php with a redirect option on.

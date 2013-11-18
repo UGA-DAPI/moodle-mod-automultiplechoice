@@ -41,3 +41,16 @@ td ul {
 .question-answers li.answer-wrong {
 	list-style-type: circle;
 }
+
+.async-target {
+	display: none;
+}
+.jsenabled .async-target {
+	display: block;
+}
+ .async-target > span {
+	background-image: url(pix/ajax-loader.gif);
+	float: left;
+	width: 16px;
+	height: 16px;
+}
