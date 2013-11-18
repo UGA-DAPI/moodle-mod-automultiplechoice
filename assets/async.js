@@ -2,7 +2,9 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
  */
 
-console.log("Hello");
+$.ajaxSetup({
+	async: false
+});
 $('.async-load').each(function(){
 	var url = $(this).data('url');
 	console.log(url);
