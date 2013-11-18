@@ -16,8 +16,9 @@ global $DB, $OUTPUT, $PAGE;
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 require_once __DIR__ . '/models/Quizz.php';
-require_once __DIR__ . '/models/AmcProcessPrepare.php';
+require_once __DIR__ . '/models/AmcProcess.php';
 
 $a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
 
@@ -40,11 +41,13 @@ $PAGE->set_title(format_string($quizz->name . " - envoi des scans"));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
+$PAGE->requires->css(new moodle_url('assets/amc.css'));
+
 // Output starts here
 echo $OUTPUT->header();
 echo $OUTPUT->heading($quizz->name . " - envoi des scans");
 
-$process = new \mod\automultiplechoice\AmcProcessPrepare($quizz);
+$process = new \mod\automultiplechoice\AmcProcess($quizz);
 //var_dump($process);
 
 if (isset ($_FILES['scanfile']) ) { // Fichier reçu
@@ -95,9 +98,6 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu
 
 }
 
-echo "<p></p>\n";
-$url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
-$button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
-echo $button;
+echo button_back_to_activity($quizz->id);
 
 echo $OUTPUT->footer();

@@ -16,6 +16,7 @@ global $DB, $OUTPUT, $PAGE;
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
+require_once(dirname(__FILE__).'/locallib.php');
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/AmcProcessGrade.php';
 
@@ -40,6 +41,8 @@ $PAGE->set_url('/mod/automultiplechoice/note.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($quizz->name . " - notation"));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
+
+$PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 // Output starts here
 echo $OUTPUT->header();
@@ -106,10 +109,6 @@ if ( isset($_POST['submit']) && $_POST['submit'] == 'Annotations' ) {
     echo '</form>' . "\n" ;
 }
 
-
-echo "<p></p>";
-$url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
-$button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
-echo $button;
+echo button_back_to_activity($quizz->id);
 
 echo $OUTPUT->footer();
