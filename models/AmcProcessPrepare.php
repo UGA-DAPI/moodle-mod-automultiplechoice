@@ -42,6 +42,25 @@ EOL;
     }
 
     /**
+     * Return the HTML that for the link to the ZIP file.
+     *
+     * @return string
+     */
+    public function htmlZipLink() {
+        $links = array(
+            \html_writer::link($this->getFileUrl('sujets.zip'), 'sujets.zip'),
+        );
+        return <<<EOL
+        <ul class="amc-files">
+            <li>
+                $links[0]
+                <div>Ce fichier contient un PDF par variante de l'énoncé.</div>
+            </li>
+        </ul>
+EOL;
+    }
+
+    /**
      * Save the source file
      * @param type $filename
      */

@@ -54,6 +54,8 @@ echo $OUTPUT->heading($quizz->name . " - fichiers PDF");
 if ($process->isLocked()) {
     echo "<h3>Fichiers PDF précédemment créés</h3>";
     echo $process->htmlPdfLinks();
+    echo "<h3>Fichier ZIP</h3>";
+    echo $process->htmlZipLink();
 } else {
     echo <<<EOL
     <div class="async-load" data-url="ajax/prepare.php">
@@ -70,28 +72,6 @@ if ($process->isLocked()) {
 EOL;
 }
 
-if ( isset($_POST['submit']) && $_POST['submit'] == 'zip' ) {
-    $diag = $process->printAndZip(isset($_POST['split']));
-    if ($diag) {
-        echo "Fichier Zip créé : ";
-        $url = $url = $process->getFileUrl('sujets.zip');
-        echo html_writer::link($url, 'sujets.zip') . "<div>Ce fichier contient un PDF par variante de l'énoncé.</div>\n";
-    } else {
-        echo "<p>Erreur lors de la création de l'archive.</p>";
-    }
-
-} else {
-    // Bouton imprimer
-    echo '<form action="prepare.php?a='. $quizz->id .'" method="post">' . "\n";
-    echo '<label for="split">Feuilles réponses séparées</label>'. "\n" ;
-    echo '<input type="checkbox" name="split" id="split">' . "<br />\n" ;
-    echo '<label for="submit">Télécharger archive zip</label>' ;
-    echo '<input type="submit" name="submit" value="zip">'. "\n" ;
-    echo '</form>' . "\n" ;
-
-}
-
-echo "<p></p>";
 $url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $quizz->id));
 $button = $OUTPUT->single_button($url, 'Retour questionnaire', 'post');
 echo $button;
