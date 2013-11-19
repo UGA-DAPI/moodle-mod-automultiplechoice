@@ -44,6 +44,11 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 })();
 ';
     /**
+     * @var Quizz
+     */
+    protected $current;
+
+    /**
      * Defines forms elements
      */
     public function definition() {
@@ -150,7 +155,16 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
     function data_preprocessing(&$default_values){
         // Convert from JSON to array
         if (!empty($default_values['amcparams'])) {
-            $default_values['amc'] = (array) amc\AmcParams::fromJson($default_values['amcparams']);
+            $params = amc\AmcParams::fromJson($default_values['amcparams']);
+            $default_values['amc'] = (array) $params;
+            if (!empty($this->current->id) && !empty($params->locked)) {
+                $this->_form->freeze(
+                        array(
+                            'qnumber', 'score', 'amc[scoringset]', 'amc[copies]', 'amc[shuffleq]', 'amc[shufflea]',
+                            'amc[separatesheet]', 'amc[displaypoints]', 'amc[markmulti]'
+                        )
+                );
+            }
         }
     }
 
