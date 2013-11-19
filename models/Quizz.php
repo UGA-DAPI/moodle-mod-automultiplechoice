@@ -60,6 +60,17 @@ class Quizz
     const TABLENAME = 'automultiplechoice';
 
     /**
+     * Returns true if the Quizz is locked.
+     *
+     * @todo Add conditions for this to happen (file existence, log existence, explicit locking in DB, etc).
+     *
+     * @return boolean
+     */
+    public function isLocked() {
+        return $this->amcparams->locked;
+    }
+
+    /**
      * Saves the instance into the DB.
      *
      * @global \moodle_database $DB

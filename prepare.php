@@ -43,7 +43,7 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 $process = new \mod\automultiplechoice\AmcProcessPrepare($quizz);
-if (!$process->isLocked()) {
+if (!$quizz->isLocked()) {
     $PAGE->requires->jquery();
     $PAGE->requires->js(new moodle_url('assets/async.js'));
 }
@@ -52,7 +52,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($quizz->name . " - fichiers PDF");
 
 
-if ($process->isLocked()) {
+if ($quizz->isLocked()) {
     echo "<h3>Fichiers PDF précédemment créés</h3>";
     echo $process->htmlPdfLinks();
     echo "<h3>Fichier ZIP</h3>";
