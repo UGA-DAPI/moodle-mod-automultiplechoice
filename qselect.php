@@ -35,6 +35,9 @@ require_capability('mod/automultiplechoice:addinstance', $context);
 // form submitted?
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
 if ($questions) {
+    if ($quizz->isLocked()) { // no modification allowed
+        redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+    }
     $quizz->questions = $questions;
     if ($quizz->save()) {
         redirect(new moodle_url('view.php', array('a' => $quizz->id)));
