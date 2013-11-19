@@ -46,6 +46,9 @@ class AmcParams
     /** @var boolean */
     public $markmulti = false;
 
+    /** @var boolean */
+    public $locked = false;
+
     /**
      * Validate the instance and update $this->errors.
      *
