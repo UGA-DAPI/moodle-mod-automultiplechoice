@@ -52,6 +52,7 @@ $string['amc_markmulti_help'] = 'Un trèfle sera affiché quand une question a p
 $string['questionselect'] = 'Sélection des questions';
 $string['questionselected'] = 'Questions choisies';
 $string['sortmsg'] = 'Les questions sélectionnées peuvent être triées en les déplaçant à la souris.';
+$string['qexpected'] = '{$a} questions attendues.';
 $string['savesel'] = 'Enregistrer la sélection';
 $string['qcategory'] = 'Catégorie de question';
 $string['qtitle'] = 'Question';

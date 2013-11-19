@@ -52,6 +52,7 @@ $string['amc_markmulti_help'] = 'A clover leaf will appear when a question has m
 $string['questionselect'] = 'Select questions';
 $string['questionselected'] = 'Selected Questions';
 $string['sortmsg'] = 'You can reorder the selected questions by dragging them with the mouse.';
+$string['qexpected'] = '{$a} questions expected.';
 $string['savesel'] = 'Save this selection';
 $string['qcategory'] = 'Question Category';
 $string['qtitle'] = 'Question';

@@ -140,6 +140,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
 ?>
 <p>
     <?php echo get_string('sortmsg', 'automultiplechoice'); ?>
+    <strong><?php echo get_string('qexpected', 'automultiplechoice', $quizz->qnumber); ?></strong>
 </p>
 <form name="questions-form" action="qselect.php" method="post">
 <p>
