@@ -63,12 +63,13 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
     $automultiplechoice->questions = "";
     if (!empty($automultiplechoice->instructions)) {
         $automultiplechoice->description = $automultiplechoice->instructions . "\n" . $automultiplechoice->description;
+    } else if (!empty($_POST['instructions'])) {
+        $automultiplechoice->description = $_POST['instructions'] . "\n" . $automultiplechoice->description;
     }
 
     $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
     $automultiplechoice->amcparams = $params->toJson();
-
     return $DB->insert_record('automultiplechoice', $automultiplechoice);
 }
 
