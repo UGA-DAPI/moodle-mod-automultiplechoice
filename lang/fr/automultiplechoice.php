@@ -22,7 +22,7 @@ $string['pluginname'] = 'QCM papier';
 $string['noautomultiplechoices'] = 'Aucune instance de QCM papier n\'est définie dans ce cours';
 
 $string['automultiplechoicename'] = 'Nom du questionnaire';
-$string['instructions'] = 'Configne prédéfinie';
+$string['instructions'] = 'Consigne prédéfinie';
 $string['description'] = 'Consigne';
 $string['comment'] = 'Commentaire';
 $string['qnumber'] = 'Nb. questions';
