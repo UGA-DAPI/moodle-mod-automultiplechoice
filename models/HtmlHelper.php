@@ -16,14 +16,17 @@ class HtmlHelper {
         echo '<form action="qselect.php" method="post" name="qselect">
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
         echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
-        echo '<thead><tr><th>' . get_string('qscore', 'automultiplechoice')
+        echo '<thead><tr><th>#</th>'
+                . '<th>' . get_string('qscore', 'automultiplechoice')
                 . '</th><th>' . get_string('qtitle', 'automultiplechoice')
                 . '<div><button type="button" id="toggle-answers">Afficher/masquer les réponses</button></div>'
                 . '</th></tr></thead>';
         echo '<tbody>';
 
+        $k = 1;
         foreach ($quizz->questions->getRecords() as $q) {
             echo '<tr>
+                <td>' . $k . '</td>
                 <td class="q-score">
                     <input name="question[id][]" value="' . $q->id . '" type="hidden" />
                     <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '" />
@@ -32,6 +35,7 @@ class HtmlHelper {
                     . HtmlHelper::listAnswers($q)
                     .'</td>
             </tr>';
+            $k++;
         }
         echo '<tr>'
             . '<th><span id="computed-total-score">' . $quizz->score . '</span> / ' . $quizz->score . '</th>'
