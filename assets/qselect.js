@@ -38,6 +38,7 @@ $(document).ready(function() {
         },
         remove: function(qid) {
             $("#qsel-" + qid).remove();
+			$("#q-" + qid + " button").data("selected", false).text("+");
         }
     };
 	Question.initTemplate();
