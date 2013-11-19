@@ -70,7 +70,7 @@ $string['validate_positive_int'] = 'This should be a strictly positive number.';
 $string['validateql_deletedquestions'] = 'Some questions could not be found and were probably deleted.';
 
 $string['prepare'] = 'Prepare and visualize';
-$string['analyse'] = 'Analyze';
+$string['analyse'] = 'Submit student copies';
 $string['note'] = 'Grade';
 $string['export'] = 'Reports';
 

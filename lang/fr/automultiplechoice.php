@@ -70,7 +70,7 @@ $string['validate_positive_int'] = 'Ceci devrait être un nombre strictement pos
 $string['validateql_deletedquestions'] = 'Certaines questions ne sont pas présentes dans Moodle et ont probablement été supprimées.';
 
 $string['prepare'] = 'Génération et visualisation';
-$string['analyse'] = 'Saisie';
+$string['analyse'] = 'Dépôt des copies des étudiants';
 $string['note'] = 'Notation';
 $string['export'] = 'Rapports';
 
