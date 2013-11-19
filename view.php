@@ -74,6 +74,11 @@ if (!$quizz->validate()) {
 
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading($quizz->name);
+if ($quizz->isLocked()) {
+    echo '<p class="warning">Le questionnaire est actuellement verrouillé pour éviter les modifications '
+            . "entre l'impression et la correction. Vous pouvez accéder aux documents via le bouton <em>Génération et visualisation</em>."
+            . "</p>";
+}
 HtmlHelper::printTableQuizz($quizz);
 echo '<p class="continuebutton">';
 echo html_writer::link(
@@ -89,12 +94,14 @@ echo $OUTPUT->heading(
         3
 );
 HtmlHelper::printFormFullQuestions($quizz);
-echo '<p class="continuebutton">';
-echo html_writer::link(
-        new moodle_url('qselect.php', array('a' => $quizz->id)),
-        get_string('editselection', 'automultiplechoice')
-);
-echo '</p>';
+if (!$quizz->isLocked()) {
+    echo '<p class="continuebutton">';
+    echo html_writer::link(
+            new moodle_url('qselect.php', array('a' => $quizz->id)),
+            get_string('editselection', 'automultiplechoice')
+    );
+    echo '</p>';
+}
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->box_start();
