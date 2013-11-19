@@ -127,7 +127,7 @@ if ($questions && $questions->errors) {
             echo '<tr id="q-' . $q->id . '">'
                 . '<td>' . format_string($q->categoryname) . '</td>'
                 . '<td class="qtitle">' . format_string($q->title) . '</td>'
-                . '<td>' . date('Y-m-d', $q->timemodified) . '</td>'
+                . '<td>' . date('Y-m-d h:i', $q->timemodified) . '</td>'
                 . '<td>' . $button .'</td>'
                 . '</tr>';
         }
