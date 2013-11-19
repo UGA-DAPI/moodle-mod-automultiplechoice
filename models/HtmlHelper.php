@@ -24,12 +24,14 @@ class HtmlHelper {
         echo '<tbody>';
 
         $k = 1;
+        $disabled = $quizz->isLocked() ? ' disabled="disabled"' : '';
         foreach ($quizz->questions->getRecords() as $q) {
             echo '<tr>
                 <td>' . $k . '</td>
                 <td class="q-score">
                     <input name="question[id][]" value="' . $q->id . '" type="hidden" />
-                    <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '" />
+                    <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '" '
+                    . $disabled . ' />
                 </td>
                 <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
                     . HtmlHelper::listAnswers($q)
@@ -38,8 +40,11 @@ class HtmlHelper {
             $k++;
         }
         echo '<tr>'
+            . '<td></td>'
             . '<th><span id="computed-total-score">' . $quizz->score . '</span> / ' . $quizz->score . '</th>'
-            . '<td><button type="submit">' . get_string('savechanges') . '</button></td></tr>';
+            . '<td>'
+            . ($disabled ? '' : '<button type="submit">' . get_string('savechanges') . '</button>')
+            .'</td></tr>';
         echo '</tbody></table>';
         echo "</form>\n";
     }
