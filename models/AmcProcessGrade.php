@@ -192,20 +192,13 @@ class AmcProcessGrade extends AmcProcess
      * @return boolean Success?
      */
     public function writeFileWithIdentifiedStudents() {
-        $filename = $this->workdir . self::PATH_AMC_CSV;
-        if (!is_readable($filename)) {
-            return false;
-        }
-        $handle = fopen($filename, 'r');
-        if (!$handle) {
-            return false;
-        }
+        $input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
         $output = fopen($this->workdir . self::PATH_FULL_CSV, 'w');
         if (!$output) {
             return false;
         }
 
-        $header = fgetcsv($handle, 1024, self::CSV_SEPARATOR);
+        $header = fgetcsv($input, 1024, self::CSV_SEPARATOR);
         if (!$header) {
             return false;
         }
@@ -214,7 +207,7 @@ class AmcProcessGrade extends AmcProcess
         $header[] = 'lastname';
         fputcsv($output, $header, self::CSV_SEPARATOR);
 
-        while (($data = fgetcsv($handle, 1024, self::CSV_SEPARATOR)) !== FALSE) {
+        while (($data = fgetcsv($input, 1024, self::CSV_SEPARATOR)) !== FALSE) {
             $idnumber = $data[$getCol['student.number']];
             $user = null;
             if ($idnumber) {
@@ -231,8 +224,19 @@ class AmcProcessGrade extends AmcProcess
             }
             fputcsv($output, $data, self::CSV_SEPARATOR);
         }
-        fclose($handle);
+        fclose($input);
         fclose($output);
         return true;
+    }
+
+    static function fopenRead($filename) {
+        if (!is_readable($filename)) {
+            return false;
+        }
+        $handle = fopen($filename, 'r');
+        if (!$handle) {
+            return false;
+        }
+        return $handle;
     }
 }
