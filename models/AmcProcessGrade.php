@@ -229,6 +229,40 @@ class AmcProcessGrade extends AmcProcess
         return true;
     }
 
+    /**
+     * read the Csv file from AMC and returns an array to fill the Moodle grade system
+     * @return array( $grades = array(StdClass), $cnt = array(key=>int))
+     */
+    public function readMarks() {
+        $cnt = array('known' => 0, 'unknown' => 0);
+        $grades = array();
+        $input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
+        
+        $header = fgetcsv($input, 1024, self::CSV_SEPARATOR);
+        if (!$header) {
+            return false;
+        }
+        $getCol = array_flip($header);
+        while (($data = fgetcsv($input, 1024, self::CSV_SEPARATOR)) !== FALSE) {
+            $idnumber = $data[$getCol['student.number']];
+            $user = null;
+            if ($idnumber) {
+                $user = getStudentByIdNumber($idnumber);
+            }
+            if ($user) {
+                $grades[] = (object) array(
+                    'id' => $user->id,
+                    'userid' => $user->id,
+                    'rawgrade' => $data[$getCol['Mark']]);
+                $cnt['known']++;
+            } else {
+                $cnt['unknown']++;
+            }
+        }
+        fclose($input);
+        return array($grades, $cnt);
+    }
+
     static function fopenRead($filename) {
         if (!is_readable($filename)) {
             return false;
