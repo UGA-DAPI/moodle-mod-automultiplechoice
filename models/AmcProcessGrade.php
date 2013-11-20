@@ -51,10 +51,10 @@ class AmcProcessGrade extends AmcProcess
             '--data', $pre . '/data',
             '--progression-id', 'notation',
             '--progression', '1',
-            '--seuil', '0.5',
-            '--grain', '0.5',
+            '--seuil', '0.5', // black ratio threshold
+            '--grain', '0.25',
             '--arrondi', 'inf',
-            '--notemax', '20',
+            '--notemax', $this->quizz->score,
             '--plafond',
             '--notemin', '',
             '--postcorrect-student', '', //FIXME inutile ?
@@ -117,7 +117,7 @@ class AmcProcessGrade extends AmcProcess
             '--position', 'marge',
             '--pointsize-nl', '60',
             '--verdict', '%(ID) Note: %s/%m (score total : %S/%M)',
-            '--verdict-question', '%s/%m',
+            '--verdict-question', '"%s / %m"',
             '--no-rtl',
             '--changes-only'
         );
