@@ -145,6 +145,7 @@ if ( file_exists($process->workdir.'/data/layout.sqlite') ) {
 }
 $url = new moodle_url('/mod/automultiplechoice/' . 'scan.php', array('a' => $quizz->id));
 echo $OUTPUT->single_button($url, get_string('analyse', 'automultiplechoice') , 'post', $options);
+echo $process->statScans();
 
 // $options = array('disabled' => 'disabled');
 
