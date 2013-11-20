@@ -272,14 +272,13 @@ function automultiplechoice_scale_used_anywhere($scaleid) {
 function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $grades=null) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
-    require_once __DIR__ . '/models/AmcProcessGrade.php';
 
     $item = array();
     $item['itemname'] = clean_param($automultiplechoice->name, PARAM_NOTAGS);
     $item['gradetype'] = GRADE_TYPE_VALUE;
     $item['grademax']  = $automultiplechoice->grade;
     $item['grademin']  = 0;
-    
+
     grade_update('mod/automultiplechoice', $automultiplechoice->course, 'mod', 'automultiplechoice',
             $automultiplechoice->id, 0, $grades, $item);
 }
@@ -297,12 +296,12 @@ function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid 
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
     require_once __DIR__ . '/models/AmcProcessGrade.php';
-    
+
     $quizz = \mod\automultiplechoice\Quizz::buildFromRecord($automultiplechoice);
     $process = new \mod\automultiplechoice\AmcProcessGrade($quizz);
     $grades = $process->readMarks();
 
-
+    automultiplechoice_grade_item_update($automultiplechoice, $grades);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
