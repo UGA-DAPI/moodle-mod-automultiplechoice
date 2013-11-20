@@ -38,6 +38,9 @@ require_once __DIR__ . '/models/AmcProcess.php';
 function automultiplechoice_supports($feature) {
     switch($feature) {
         case FEATURE_MOD_INTRO:         return false;
+        case FEATURE_GRADE_HAS_GRADE:   return true;
+        case FEATURE_GRADE_OUTCOMES:    return false;
+
         default:                        return null;
     }
 }
@@ -277,7 +280,8 @@ function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $gra
     $item['grademax']  = $automultiplechoice->grade;
     $item['grademin']  = 0;
 
-    grade_update('mod/automultiplechoice', $automultiplechoice->course, 'mod', 'automultiplechoice', $automultiplechoice->id, 0, null, $item);
+    grade_update('mod/automultiplechoice', $automultiplechoice->course, 'mod', 'automultiplechoice',
+            $automultiplechoice->id, 0, null, $item);
 }
 
 /**
@@ -292,11 +296,13 @@ function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $gra
 function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid = 0) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
+    
+    $quizz = \mod\automultiplechoice\Quizz::findById($automultiplechoice->cmidnumber);
+    $process = new \mod\automultiplechoice\AmcProcess($quizz);
 
-    /** @example */
-    $grades = array(); // populate array of grade objects indexed by userid
-
-    grade_update('mod/automultiplechoice', $automultiplechoice->course, 'mod', 'automultiplechoice', $automultiplechoice->id, 0, $grades);
+    $grades = $process->readMarks();
+    grade_update('mod/automultiplechoice', $automultiplechoice->course, 'mod', 'automultiplechoice',
+            $automultiplechoice->id, 0, $grades);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
