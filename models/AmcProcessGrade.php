@@ -255,7 +255,7 @@ class AmcProcessGrade extends AmcProcess
                 $user = getStudentByIdNumber($idnumber);
             }
             if ($user) {
-                $grades[] = (object) array(
+                $grades[$user->id] = (object) array(
                     'id' => $user->id,
                     'userid' => $user->id,
                     'rawgrade' => $data[$getCol['Mark']]);
