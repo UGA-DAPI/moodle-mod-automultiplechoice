@@ -112,6 +112,9 @@ if ( isset($_POST['submit']) && $_POST['submit'] == 'Annotations' ) {
     echo '</form>' . "\n" ;
 }
 
+
+\automultiplechoice_update_grades($DB->get_record('automultiplechoice', array('id' => $quizz->id), '*'));
+
 echo button_back_to_activity($quizz->id);
 
 echo $OUTPUT->footer();

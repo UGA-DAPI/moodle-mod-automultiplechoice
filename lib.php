@@ -299,7 +299,7 @@ function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid 
 
     $quizz = \mod\automultiplechoice\Quizz::buildFromRecord($automultiplechoice);
     $process = new \mod\automultiplechoice\AmcProcessGrade($quizz);
-    $grades = $process->readMarks();
+    list($grades, $cnt) = $process->readMarks();
 
     automultiplechoice_grade_item_update($automultiplechoice, $grades);
 }
