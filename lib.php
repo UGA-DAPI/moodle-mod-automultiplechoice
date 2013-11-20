@@ -276,7 +276,7 @@ function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $gra
     $item = array();
     $item['itemname'] = clean_param($automultiplechoice->name, PARAM_NOTAGS);
     $item['gradetype'] = GRADE_TYPE_VALUE;
-    $item['grademax']  = $automultiplechoice->grade;
+    $item['grademax']  = $automultiplechoice->score;
     $item['grademin']  = 0;
 
     grade_update('mod/automultiplechoice', $automultiplechoice->course, 'mod', 'automultiplechoice',
