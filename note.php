@@ -49,7 +49,6 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($quizz->name . " - notation");
 
 $process = new \mod\automultiplechoice\AmcProcessGrade($quizz);
-//var_dump($process);
 
 if ($action == 'note') { // On arrive de la page générale view.php
     $diag = $process->amcPrepareBareme();
@@ -79,7 +78,6 @@ if ($action == 'note') { // On arrive de la page générale view.php
         $urls['scores_names'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_FULL_CSV);
         list($grades, $count) = $process->readMarks();
         echo "<p>" . $count['known'] . " copies identifiées et " . $count['unknown'] . " non identifiées. </p>";
-        var_dump($grades);
     } else {
         error("Could not create CSV file with identified students.");
     }
