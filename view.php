@@ -106,8 +106,20 @@ echo $OUTPUT->box_end();
 
 echo $OUTPUT->box_start();
 
-// Display prepared files (source & pdf)
 
+// Display available actions
+echo '<ul id="main-actions">';
+echo "<li>";
+if (empty($quizz->errors)) {
+    $options = array();
+} else {
+    echo '<p>' . get_string('functiondisabled') . '</p>';
+    $options = array('disabled' => 'disabled');
+}
+$url = new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id));
+echo $OUTPUT->single_button($url, get_string('prepare', 'automultiplechoice') , 'get', $options);
+
+// Display prepared files (source & pdf)
 echo "<ul>";
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
 $srcprepared = $process->lastlog('prepare:source');
@@ -123,39 +135,26 @@ if ($pdfprepared) {
     echo "<li>Aucun fichier PDF préparé.</li>\n";
 }
 echo "</ul>";
+echo "</li>";
 
-
-// Display available actions
-
-$actions = array('prepare', 'analyse', 'note', 'export');
-
-if (empty($quizz->errors)) {
-    $options = array();
-} else {
-    echo '<p>' . get_string('functiondisabled') . '</p>';
-    $options = array('disabled' => 'disabled');
-}
-$url = new moodle_url('/mod/automultiplechoice/' . 'prepare.php', array('a' => $quizz->id));
-echo $OUTPUT->single_button($url, get_string('prepare', 'automultiplechoice') , 'get', $options);
 
 $options = array('disabled' => 'disabled');
 
+echo "<li>";
 if ( file_exists($process->workdir.'/data/layout.sqlite') ) {
     $options = array();
 }
-$url = new moodle_url('/mod/automultiplechoice/' . 'scan.php', array('a' => $quizz->id));
+$url = new moodle_url('/mod/automultiplechoice/scan.php', array('a' => $quizz->id));
 echo $OUTPUT->single_button($url, get_string('analyse', 'automultiplechoice') , 'post', $options);
 echo $process->statScans();
+echo "</li>";
 
-// $options = array('disabled' => 'disabled');
-
-$url = new moodle_url('/mod/automultiplechoice/' . 'note.php', array('a' => $quizz->id, 'action' => 'note'));
+echo "<li>";
+$url = new moodle_url('/mod/automultiplechoice/note.php', array('a' => $quizz->id, 'action' => 'note'));
 echo $OUTPUT->single_button($url, get_string('note', 'automultiplechoice') , 'post', $options);
+echo "</li>";
 
-/*
-$url = new moodle_url('/mod/automultiplechoice/' . 'export.php', array('a' => $quizz->id));
-echo $OUTPUT->single_button($url, get_string('export', 'automultiplechoice') , 'post', $options);
-*/
+echo "</ul>";
 
 
 echo $OUTPUT->box_end();

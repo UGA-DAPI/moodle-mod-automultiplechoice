@@ -58,3 +58,10 @@ td ul {
 .back-to-activity {
 	margin-top: 2ex;
 }
+
+#main-actions > li {
+    margin-bottom: 2ex;
+}
+#main-actions ul {
+    margin-top: 0;
+}
