@@ -104,6 +104,10 @@ class AmcProcess
         return $res;
     }
 
+    /**
+     * returns stat() information (number and dates) on scanned (ppm) files already stored
+     * @return string diagnostic message
+     */
     public function statScans() {
         $ppmfiles = glob($this->workdir . '/scans/*.ppm');
         $tsmax = 0;
@@ -119,7 +123,7 @@ class AmcProcess
         }
         if ( $ppmfiles ) {
             // return count($ppmfiles) . "copies scannées déposées entre " . $this->isoDate($tsmin) . " et " . $this->isoDate($tsmax) ;
-            return count($ppmfiles) . " copies scannées déposées le " . $this->isoDate($tsmax) ;
+            return count($ppmfiles) . " copies scannées déposées le " . self::isoDate($tsmax) ;
         } else {
             return 'Aucune copie scannée.';
         }
@@ -256,4 +260,28 @@ class AmcProcess
         $html .= "</pre> \n";
         debugging($html, $debuglevel);
     }
+
+  
+    /**
+     * returns stat() information (number and dates) on prepared files already available
+     * @return string diagnostic message
+     */
+    public function statPrepare() {
+        $txtfiles = glob($this->workdir . '/prepare-*.txt');
+        if ($txtfiles) {
+            $filedata = stat($txtfiles[0]);
+            $msg = count($txtfiles) . " fichier source préparé le " . self::isoDate($filedata['mtime']) . ".  ";
+        } else {
+            $msg = "Aucun fichier source préparé.  ";
+        }
+        $pdffiles = glob($this->workdir . '/prepare-*.pdf');
+        if ( $pdffiles ) {
+            $filedata = stat($pdffiles[0]);
+            $msg .= "<b>" . count($pdffiles) . "</b> fichiers PDF préparés le " . self::isoDate($filedata['mtime']) . ".";
+        } else {
+            $msg .= 'Aucune fichier PDF préparé.';
+        }
+        return $msg;
+    }
+
 }

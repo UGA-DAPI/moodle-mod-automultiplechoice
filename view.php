@@ -120,21 +120,8 @@ $url = new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz
 echo $OUTPUT->single_button($url, get_string('prepare', 'automultiplechoice') , 'get', $options);
 
 // Display prepared files (source & pdf)
-echo "<ul>";
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
-$srcprepared = $process->lastlog('prepare:source');
-if ($srcprepared) {
-    echo "<li>Un fichier source préparé le " . $srcprepared . "</li>\n";
-} else {
-    echo "<li>Aucun fichier source préparé.</li>\n";
-}
-$pdfprepared = $process->lastlog('prepare:pdf');
-if ($pdfprepared) {
-    echo "<li>Trois fichiers PDF préparés le " . $pdfprepared . "</li>\n";
-} else {
-    echo "<li>Aucun fichier PDF préparé.</li>\n";
-}
-echo "</ul>";
+echo $process->statPrepare();
 echo "</li>";
 
 if ($quizz->isLocked()) {
