@@ -19,7 +19,8 @@ if ($a) {
     $course     = $DB->get_record('course', array('id' => $quizz->course), '*', MUST_EXIST);
     $cm         = get_coursemodule_from_instance('automultiplechoice', $quizz->id, $course->id, false, MUST_EXIST);
 } else {
-    error('You must specify an instance ID');
+    echo $OUTPUT->error_text('You must specify an instance ID');
+    exit();
 }
 
 require_login($course, true, $cm);
@@ -32,27 +33,31 @@ if ($action == 'prepare') {
     if ($process->saveAmctxt()) {
         debugging("Fichier source enregistré.", DEBUG_NORMAL);
     } else {
-        error("Erreur sur fichier source.");
+        echo $OUTPUT->error_text("Erreur sur le fichier source.");
+        exit();
     }
 
     if ($process->createPdf()) {
         echo "<h3>Fichiers PDF nouvellement créés</h3>";
         echo $process->htmlPdfLinks();
     } else {
-        error("Erreur lors de la création des fichiers PDF.");
+        echo $OUTPUT->error_text("Erreur lors de la création des fichiers PDF.");
+        exit();
     }
 
     if ($process->amcMeptex()) {
         debugging("Mise en page (amc meptex) terminée.", DEBUG_NORMAL);
     } else {
-        error("Erreur lors du calcul de mise en page (amc meptex).");
+        echo $OUTPUT->error_text("Erreur lors du calcul de mise en page (amc meptex).");
+        exit();
     }
 } else if ($action == 'zip') {
     if ($process->printAndZip()) {
         echo "<h3>Fichier Zip créé</h3>";
         echo $process->htmlZipLink();
     } else {
-        error("Erreur lors de la création de l'archive.");
+        echo $OUTPUT->error_text("Erreur lors de la création de l'archive.");
+        exit();
     }
 }
 
