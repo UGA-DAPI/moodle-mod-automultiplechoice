@@ -154,12 +154,11 @@ if ($quizz->isLocked()) {
 }
 
 
-$options = array('disabled' => 'disabled');
+if (!$quizz->isLocked()) {
+    $options = array('disabled' => 'disabled');
+}
 
 echo "<li>";
-if ( file_exists($process->workdir.'/data/layout.sqlite') ) {
-    $options = array();
-}
 $url = new moodle_url('/mod/automultiplechoice/scan.php', array('a' => $quizz->id));
 echo $OUTPUT->single_button($url, get_string('analyse', 'automultiplechoice') , 'post', $options);
 echo $process->statScans();
