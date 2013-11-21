@@ -225,6 +225,7 @@ PaperSize: A4
 Lang: FR
 Code: {$this->codelength}
 CompleteMulti: 0
+LaTeX-Preambule: \usepackage{amsmath,amssymb}
 ShuffleQuestions: {$params->shuffleq}
 SeparateAnswerSheet: {$params->separatesheet}
 Title: {$this->quizz->name}
