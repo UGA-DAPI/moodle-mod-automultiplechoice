@@ -284,4 +284,26 @@ class AmcProcess
         return $msg;
     }
 
+    /**
+     * returns stat() information on CSV grading files available (the AMC one the enhanced one)
+     * @return string diagnostic message
+     */
+    public function statCorrige() {
+        $csvfiles = glob($this->workdir . '/exports/score*.csv');
+        if ($csvfiles) {
+            $filedata = stat($csvfiles[0]);
+            $msg = count($csvfiles) . " fichier CSV calculés le " . self::isoDate($filedata['mtime']) . ".  ";
+        } else {
+            $msg = "Aucun fichier CSV calculé.  ";
+        }
+        $pdffiles = glob($this->workdir . '/cr/corrections/pdf/corrections_tous.pdf');
+        if ( $pdffiles ) {
+            $filedata = stat($pdffiles[0]);
+            $msg .= "<b>" . count($pdffiles) . "</b> fichier PDF de correction préparé le " . self::isoDate($filedata['mtime']) . ".";
+        } else {
+            $msg .= 'Aucune fichier PDF de correction préparé.';
+        }
+        return $msg;
+    }
+
 }

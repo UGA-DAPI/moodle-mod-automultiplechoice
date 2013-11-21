@@ -154,6 +154,7 @@ echo "</li>";
 echo "<li>";
 $url = new moodle_url('/mod/automultiplechoice/note.php', array('a' => $quizz->id, 'action' => 'note'));
 echo $OUTPUT->single_button($url, get_string('note', 'automultiplechoice') , 'post', $options);
+echo $process->statCorrige();
 echo "</li>";
 
 echo "</ul>";
