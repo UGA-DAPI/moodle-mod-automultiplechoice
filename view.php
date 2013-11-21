@@ -137,6 +137,22 @@ if ($pdfprepared) {
 echo "</ul>";
 echo "</li>";
 
+if ($quizz->isLocked()) {
+    echo '<li>'
+        . $OUTPUT->single_button(
+                new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'unlock' => 1)),
+                'Déverrouiller (permettre les modifications du questionnaire)', 'post'
+        )
+        . '</li>';
+} else {
+    echo '<li>'
+        . $OUTPUT->single_button(
+                new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'lock' => 1)),
+                'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
+        )
+        . '</li>';
+}
+
 
 $options = array('disabled' => 'disabled');
 
