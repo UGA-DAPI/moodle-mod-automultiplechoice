@@ -239,19 +239,22 @@ class AmcProcess
      */
     public function statPrepare() {
         $txtfiles = glob($this->workdir . '/prepare-*.txt');
+        $msg = "<ul>\n<li>";
         if ($txtfiles) {
             $filedata = stat($txtfiles[0]);
-            $msg = count($txtfiles) . " fichier source préparé le " . self::isoDate($filedata['mtime']) . ".  ";
+            $msg .= count($txtfiles) . " fichier source préparé le " . self::isoDate($filedata['mtime']) . ".  ";
         } else {
-            $msg = "Aucun fichier source préparé.  ";
+            $msg .= "Aucun fichier source préparé.  ";
         }
+        $msg .= "</li>\n<li>";
         $pdffiles = glob($this->workdir . '/prepare-*.pdf');
         if ( $pdffiles ) {
             $filedata = stat($pdffiles[0]);
-            $msg .= "<b>" . count($pdffiles) . "</b> fichiers PDF préparés le " . self::isoDate($filedata['mtime']) . ".";
+            $msg .= count($pdffiles) . " fichiers PDF préparés le " . self::isoDate($filedata['mtime']) . ".";
         } else {
             $msg .= 'Aucune fichier PDF préparé.';
         }
+        $msg .= "</li>\n</ul>";
         return $msg;
     }
 
@@ -272,12 +275,14 @@ class AmcProcess
                 $tsmin = $filedata['mtime'];
             }
         }
-        if ( $ppmfiles ) {
-            // return count($ppmfiles) . "copies scannées déposées entre " . $this->isoDate($tsmin) . " et " . $this->isoDate($tsmax) ;
-            return count($ppmfiles) . " copies scannées déposées le " . self::isoDate($tsmax) ;
+        $msg = "<ul>\n<li>";
+        if ( $ppmfiles ) {            
+            $msg .= count($ppmfiles) . " copies scannées déposées le " . self::isoDate($tsmax) ;
         } else {
-            return 'Aucune copie scannée.';
+            $msg .= 'Aucune copie scannée.';
         }
+        $msg .= "</li>\n</ul>";
+        return $msg;
     }
 
     /**
@@ -286,19 +291,22 @@ class AmcProcess
      */
     public function statCorrige() {
         $csvfiles = glob($this->workdir . '/exports/score*.csv');
+        $msg = "<ul>\n<li>";
         if ($csvfiles) {
             $filedata = stat($csvfiles[0]);
-            $msg = count($csvfiles) . " fichier CSV calculés le " . self::isoDate($filedata['mtime']) . ".  ";
+            $msg .= count($csvfiles) . " fichier CSV calculés le " . self::isoDate($filedata['mtime']) . ".  ";
         } else {
-            $msg = "Aucun fichier CSV calculé.  ";
+            $msg .= "Aucun fichier CSV calculé.  ";
         }
+        $msg .= "</li>\n<li>";
         $pdffiles = glob($this->workdir . '/cr/corrections/pdf/corrections_tous.pdf');
         if ( $pdffiles ) {
             $filedata = stat($pdffiles[0]);
-            $msg .= "<b>" . count($pdffiles) . "</b> fichier PDF de correction préparé le " . self::isoDate($filedata['mtime']) . ".";
+            $msg .= count($pdffiles) . " fichier PDF de correction préparé le " . self::isoDate($filedata['mtime']) . ".";
         } else {
             $msg .= 'Aucune fichier PDF de correction préparé.';
         }
+        $msg .= "</li>\n</ul>";
         return $msg;
     }
 
