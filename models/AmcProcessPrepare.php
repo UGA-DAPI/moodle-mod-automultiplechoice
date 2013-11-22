@@ -27,7 +27,7 @@ class AmcProcessPrepare extends AmcProcess
         <ul class="amc-files">
             <li>
                 $links[0]
-                <div>Ce fichier contient tous les énoncés regroupés. <span class="warning">Ne pas utiliser ce fichier pour distribuer au étudiants.</span></div>
+                <div>Ce fichier contient tous les énoncés regroupés. <span class="warning">Ne pas utiliser ce fichier pour distribuer aux étudiants.</span></div>
             </li>
             <li>
                 $links[1]
