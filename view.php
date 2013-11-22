@@ -12,6 +12,8 @@
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
+use \mod\automultiplechoice as amc;
+
 global $DB, $OUTPUT, $PAGE, $CFG;
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
@@ -27,9 +29,9 @@ $a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
 if ($id) {
     $cm         = get_coursemodule_from_id('automultiplechoice', $id, 0, false, MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
+    $quizz = amc\Quizz::findById($cm->instance);
 } elseif ($a) {
-    $quizz = \mod\automultiplechoice\Quizz::findById($a);
+    $quizz = amc\Quizz::findById($a);
     $course     = $DB->get_record('course', array('id' => $quizz->course), '*', MUST_EXIST);
     $cm         = get_coursemodule_from_instance('automultiplechoice', $quizz->id, $course->id, false, MUST_EXIST);
 } else {
@@ -120,8 +122,13 @@ $url = new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz
 echo $OUTPUT->single_button($url, get_string('prepare', 'automultiplechoice') , 'get', $options);
 
 // Display prepared files (source & pdf)
-$process = new \mod\automultiplechoice\AmcProcess($quizz);
-echo $process->statPrepare();
+$process = new amc\AmcProcess($quizz);
+$preparetime = $process->lastlog('prepare:source');
+if ($preparetime) {
+    echo "<div>Dernière préparation des fichiers PDF le " . amc\AmcProcess::isoDate($preparetime) . "</div>\n";
+} else {
+    echo "<div>Aucun fichier PDF préparé.</div>\n";
+}
 echo "</li>";
 
 if ($quizz->isLocked()) {
@@ -148,13 +155,24 @@ if (!$quizz->isLocked()) {
 echo "<li>";
 $url = new moodle_url('/mod/automultiplechoice/scan.php', array('a' => $quizz->id));
 echo $OUTPUT->single_button($url, get_string('analyse', 'automultiplechoice') , 'post', $options);
-echo $process->statScans();
+$scans = $process->statScans();
+if ($scans) {
+    echo "<div>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</div>\n";
+} else {
+    echo "<div>Pas de copies déposées. La notation est donc désactivée.</div>";
+}
 echo "</li>";
 
 echo "<li>";
+if (!$scans) {
+    $options = array('disabled' => 'disabled');
+}
 $url = new moodle_url('/mod/automultiplechoice/note.php', array('a' => $quizz->id, 'action' => 'note'));
 echo $OUTPUT->single_button($url, get_string('note', 'automultiplechoice') , 'post', $options);
-echo $process->statCorrige();
+//$gradetime = $process->lastlog('note');
+//if ($gradetime) {
+    //echo "<div>Correction des copies déjà effectuée le " . amc\AmcProcess::isoDate($gradetime) . "</div>\n";
+//}
 echo "</li>";
 
 echo "</ul>";

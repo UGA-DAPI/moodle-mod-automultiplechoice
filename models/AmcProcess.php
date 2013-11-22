@@ -105,6 +105,32 @@ class AmcProcess
     }
 
     /**
+     * returns stat() information (number and dates) on scanned (ppm) files already stored
+     * @return array with keys: count, time, timefr ; null if nothing was uploaded
+     */
+    public function statScans() {
+        $ppmfiles = glob($this->workdir . '/scans/*.ppm');
+        $tsmax = 0;
+        $tsmin = PHP_INT_MAX;
+        foreach ($ppmfiles as $file) {
+            $filedata = stat($file);
+            if ( $filedata['mtime'] > $tsmax) {
+                $tsmax = $filedata['mtime'];
+            }
+            if ( $filedata['mtime'] < $tsmin) {
+                $tsmin = $filedata['mtime'];
+            }
+        }
+        if ($ppmfiles) {
+            return array(
+                'count' => count($ppmfiles), 'time' => $tsmax, 'timefr' => self::isoDate($tsmax)
+            );
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Shell-executes 'amc analyse'
      * @param bool $multiple (see AMC) if multiple copies of the same sheet are possible
      * @return bool
@@ -135,7 +161,6 @@ class AmcProcess
         return $res;
     }
 
-    
     /**
      * log processed action
      * @param string $action ('prepare'...)
@@ -148,11 +173,17 @@ class AmcProcess
         return true;
     }
 
+    /**
+     * Return the timestamp of the action.
+     *
+     * @param string $action
+     * @return integer
+     */
     public function lastlog($action) {
         global $DB;
 
         $cm = get_coursemodule_from_instance('automultiplechoice', $this->quizz->id, $this->quizz->course, false, MUST_EXIST);
-        $sql = 'SELECT FROM_UNIXTIME(time) FROM {log} WHERE action=? AND cmid=? ORDER BY time DESC LIMIT 1';
+        $sql = 'SELECT time FROM {log} WHERE action=? AND cmid=? ORDER BY time DESC LIMIT 1';
         $res = $DB->get_field_sql($sql, array($action, $cm->id), IGNORE_MISSING);
         return $res;
     }
@@ -232,75 +263,13 @@ class AmcProcess
         debugging($html, $debuglevel);
     }
 
-  
     /**
-     * returns stat() information (number and dates) on prepared files already available
-     * @return string diagnostic message
+     * Format a timestamp into a fr datetime.
+     *
+     * @param integer $timestamp
+     * @return string
      */
-    public function statPrepare() {
-        $txtfiles = glob($this->workdir . '/prepare-*.txt');
-        $msg = "<ul>\n<li>";
-        if ($txtfiles) {
-            $filedata = stat($txtfiles[0]);
-            $msg .= count($txtfiles) . " fichier source préparé le " . self::isoDate($filedata['mtime']) . ".  ";
-        } else {
-            $msg .= "Aucun fichier source préparé.  ";
-        }
-        $msg .= "</li>\n<li>";
-        $pdffiles = glob($this->workdir . '/prepare-*.pdf');
-        if ( $pdffiles ) {
-            $filedata = stat($pdffiles[0]);
-            $msg .= count($pdffiles) . " fichiers PDF préparés le " . self::isoDate($filedata['mtime']) . ".";
-        } else {
-            $msg .= 'Aucune fichier PDF préparé.';
-        }
-        $msg .= "</li>\n</ul>";
-        return $msg;
-    }
-
-    /**
-     * returns stat() information (number and dates) on scanned (ppm) files already stored
-     * @return string diagnostic message
-     */
-    public function statScans() {
-        $ppmfiles = glob($this->workdir . '/scans/*.ppm');
-        $msg = "<ul>\n<li>";
-        if ( $ppmfiles ) {
-            $filedata = stat($ppmfiles[0]);
-            $msg .= count($ppmfiles) . " copies scannées déposées le " . self::isoDate($filedata['mtime']) ;
-        } else {
-            $msg .= 'Aucune copie scannée.';
-        }
-        $msg .= "</li>\n</ul>";
-        return $msg;
-    }
-
-    /**
-     * returns stat() information on CSV grading files available (the AMC one the enhanced one)
-     * @return string diagnostic message
-     */
-    public function statCorrige() {
-        $csvfiles = glob($this->workdir . '/exports/score*.csv');
-        $msg = "<ul>\n<li>";
-        if ($csvfiles) {
-            $filedata = stat($csvfiles[0]);
-            $msg .= count($csvfiles) . " fichier CSV calculés le " . self::isoDate($filedata['mtime']) . ".  ";
-        } else {
-            $msg .= "Aucun fichier CSV calculé.  ";
-        }
-        $msg .= "</li>\n<li>";
-        $pdffiles = glob($this->workdir . '/cr/corrections/pdf/corrections_tous.pdf');
-        if ( $pdffiles ) {
-            $filedata = stat($pdffiles[0]);
-            $msg .= count($pdffiles) . " fichier PDF de correction préparé le " . self::isoDate($filedata['mtime']) . ".";
-        } else {
-            $msg .= 'Aucune fichier PDF de correction préparé.';
-        }
-        $msg .= "</li>\n</ul>";
-        return $msg;
-    }
-
-    static function isoDate($timestamp) {
-        return date('Y-m-d à H:i:s', $timestamp);
+    public static function isoDate($timestamp) {
+        return date('Y-m-d à H:i', $timestamp);
     }
 }

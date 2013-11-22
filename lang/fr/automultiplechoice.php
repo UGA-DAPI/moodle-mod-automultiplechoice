@@ -71,7 +71,7 @@ $string['validateql_deletedquestions'] = 'Certaines questions ne sont pas prése
 
 $string['prepare'] = 'Génération et visualisation';
 $string['analyse'] = 'Dépôt des copies des étudiants';
-$string['note'] = 'Notation';
+$string['note'] = 'Notes et copies corrigées';
 $string['export'] = 'Rapports';
 
 $string['questionoperations'] = 'Avant de sélectionner des questions, vous pouvez...';
