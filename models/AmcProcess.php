@@ -264,20 +264,10 @@ class AmcProcess
      */
     public function statScans() {
         $ppmfiles = glob($this->workdir . '/scans/*.ppm');
-        $tsmax = 0;
-        $tsmin = PHP_INT_MAX;
-        foreach ($ppmfiles as $file) {
-            $filedata = stat($file);
-            if ( $filedata['mtime'] > $tsmax) {
-                $tsmax = $filedata['mtime'];
-            }
-            if ( $filedata['mtime'] < $tsmin) {
-                $tsmin = $filedata['mtime'];
-            }
-        }
         $msg = "<ul>\n<li>";
-        if ( $ppmfiles ) {            
-            $msg .= count($ppmfiles) . " copies scannées déposées le " . self::isoDate($tsmax) ;
+        if ( $ppmfiles ) {
+            $filedata = stat($ppmfiles[0]);
+            $msg .= count($ppmfiles) . " copies scannées déposées le " . self::isoDate($filedata['mtime']) ;
         } else {
             $msg .= 'Aucune copie scannée.';
         }
