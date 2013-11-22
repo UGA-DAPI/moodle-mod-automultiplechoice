@@ -19,9 +19,9 @@ class AmcProcessPrepare extends AmcProcess
      */
     public function htmlPdfLinks() {
         $links = array(
-            \html_writer::link($this->getFileUrl('prepare-sujet.pdf'), 'prepare-sujet.pdf'),
-            \html_writer::link($this->getFileUrl('prepare-corrige.pdf'), 'prepare-corrige.pdf'),
-            \html_writer::link($this->getFileUrl('prepare-catalog.pdf'), 'prepare-catalog.pdf'),
+            \html_writer::link($this->getFileUrl('prepare-sujet.pdf'), 'prepare-sujet.pdf', array('target' => '_blank')),
+            \html_writer::link($this->getFileUrl('prepare-corrige.pdf'), 'prepare-corrige.pdf', array('target' => '_blank')),
+            \html_writer::link($this->getFileUrl('prepare-catalog.pdf'), 'prepare-catalog.pdf', array('target' => '_blank')),
         );
         return <<<EOL
         <ul class="amc-files">
