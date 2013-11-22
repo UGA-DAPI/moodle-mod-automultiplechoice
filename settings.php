@@ -82,4 +82,18 @@ M ; default ; e=0,mz=SCORE
     );
     $s->plugin = 'mod_automultiplechoice';
     $settings->add($s);
+
+    $s = new admin_setting_configtextarea(
+        'idnumberprefixes',
+        "Préfixes du n° d'étudiant",
+        "Préfixes, un par ligne. Attention aux espaces.\n"
+            . "Chacun des préfixes sera inséré au début du numéro d'étudiant de chaque copie, jusqu'à ce que l'étudiant soit identifié"
+            . " parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber)."
+            . " Si aucun préfixe ne permet de trouver l'étudiant, une identification sans préfixe sera ensuite testée.",
+        '',
+        PARAM_TEXT
+    );
+    $s->plugin = 'mod_automultiplechoice';
+    $settings->add($s);
+
 }

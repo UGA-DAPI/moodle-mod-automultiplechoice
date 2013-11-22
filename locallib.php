@@ -70,15 +70,33 @@ function parse_default_instructions() {
 /**
  * Return a user record.
  *
+ * @todo Optimize? One query per user is doable, the difficulty is to sort results according to prefix order.
+ *
  * @global \moodle_database $DB
  * @param string $idn
  * @return object Record from the user table.
  */
 function getStudentByIdNumber($idn) {
     global $DB;
-    return $DB->get_record('user', array('idnumber' => $idn, 'confirmed' => 1, 'deleted' => 0));
+    $prefixestxt = get_config('mod_automultiplechoice', 'idnumberprefixes');
+    $prefixes = array_filter(explode("\n", $prefixestxt));
+    $prefixes[] = "";
+    foreach ($prefixes as $p) {
+        $user = $DB->get_record('user', array('idnumber' => $p . $idn, 'confirmed' => 1, 'deleted' => 0));
+        if ($user) {
+            return $user;
+        }
+    }
+    return null;
 }
 
+/**
+ * Returns a HTML button.
+ *
+ * @global type $OUTPUT
+ * @param integer $id
+ * @return string
+ */
 function button_back_to_activity($id) {
     global $OUTPUT;
     $url = new moodle_url('/mod/automultiplechoice/view.php', array('a' => $id));
