@@ -300,6 +300,9 @@ function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid 
     $quizz = \mod\automultiplechoice\Quizz::buildFromRecord($automultiplechoice);
     $process = new \mod\automultiplechoice\AmcProcessGrade($quizz);
     $grades = $process->readMarks();
+    if ($userid) {
+        $grades = isset($grades[$userid]) ? $grades[$userid] : null;
+    }
 
     automultiplechoice_grade_item_update($automultiplechoice, $grades);
 }
