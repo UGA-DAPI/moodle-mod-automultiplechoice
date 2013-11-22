@@ -17,6 +17,10 @@ class AmcProcessGrade extends AmcProcess
     const PATH_FULL_CSV = '/exports/scores_names.csv';
     const CSV_SEPARATOR = ';';
 
+    protected $grades = array();
+    public $usersknown = 0;
+    public $usersunknown = 0;
+
     /**
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
      * @return bool
@@ -210,6 +214,7 @@ class AmcProcessGrade extends AmcProcess
         $header[] = 'lastname';
         fputcsv($output, $header, self::CSV_SEPARATOR);
 
+        $this->grades = array();
         while (($data = fgetcsv($input, 1024, self::CSV_SEPARATOR)) !== FALSE) {
             $idnumber = $data[$getCol['student.number']];
             $user = null;
@@ -221,9 +226,16 @@ class AmcProcessGrade extends AmcProcess
                 $data[] = $user->firstname;
                 $data[] = $user->lastname;
                 //$data[] = $user->email;
+                $this->grades[$user->id] = (object) array(
+                    'id' => $user->id,
+                    'userid' => $user->id,
+                    'rawgrade' => $data[$getCol['Mark']]
+                );
+                $this->usersknown++;
             } else {
                 $data[] = '';
                 $data[] = '';
+                $this->usersunknown++;
             }
             fputcsv($output, $data, self::CSV_SEPARATOR);
         }
@@ -233,12 +245,17 @@ class AmcProcessGrade extends AmcProcess
     }
 
     /**
-     * read the Csv file from AMC and returns an array to fill the Moodle grade system
-     * @return array ( $grades = array(StdClass), $cnt = array(key=>int))
+     * read the Csv file from AMC and returns an array to fill the Moodle grade system.
+     *
+     * Sets $this->known and $this->unknown.
+     *
+     * @return array grades
      */
     public function readMarks() {
-        $cnt = array('known' => 0, 'unknown' => 0);
-        $grades = array();
+        if ($this->grades) {
+            return $this->grades;
+        }
+        $this->grades = array();
         $input = self::fopenRead($this->workdir . self::PATH_AMC_CSV);
         if ( ! $input) {
             return null;
@@ -255,17 +272,17 @@ class AmcProcessGrade extends AmcProcess
                 $user = getStudentByIdNumber($idnumber);
             }
             if ($user) {
-                $grades[$user->id] = (object) array(
+                $this->grades[$user->id] = (object) array(
                     'id' => $user->id,
                     'userid' => $user->id,
                     'rawgrade' => $data[$getCol['Mark']]);
-                $cnt['known']++;
+                $this->usersknown++;
             } else {
-                $cnt['unknown']++;
+                $this->usersunknown++;
             }
         }
         fclose($input);
-        return array($grades, $cnt);
+        return $this->grades;
     }
 
     protected static function fopenRead($filename) {

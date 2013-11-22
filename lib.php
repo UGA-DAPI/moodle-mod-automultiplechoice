@@ -293,13 +293,13 @@ function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $gra
  * @return void
  */
 function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid = 0) {
-    global $CFG, $DB;
+    global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
     require_once __DIR__ . '/models/AmcProcessGrade.php';
 
     $quizz = \mod\automultiplechoice\Quizz::buildFromRecord($automultiplechoice);
     $process = new \mod\automultiplechoice\AmcProcessGrade($quizz);
-    list($grades, $cnt) = $process->readMarks();
+    $grades = $process->readMarks();
 
     automultiplechoice_grade_item_update($automultiplechoice, $grades);
 }

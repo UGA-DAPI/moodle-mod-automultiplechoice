@@ -76,8 +76,7 @@ if ($action == 'note') { // On arrive de la page générale view.php
 
     if ($process->writeFileWithIdentifiedStudents()) {
         $urls['scores_names'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_FULL_CSV);
-        list($grades, $count) = $process->readMarks();
-        echo "<p>" . $count['known'] . " copies identifiées et " . $count['unknown'] . " non identifiées. </p>";
+        echo "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
     } else {
         error("Could not create CSV file with identified students.");
     }
