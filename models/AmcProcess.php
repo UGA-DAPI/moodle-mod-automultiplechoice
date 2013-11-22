@@ -105,35 +105,6 @@ class AmcProcess
     }
 
     /**
-     * returns stat() information (number and dates) on scanned (ppm) files already stored
-     * @return string diagnostic message
-     */
-    public function statScans() {
-        $ppmfiles = glob($this->workdir . '/scans/*.ppm');
-        $tsmax = 0;
-        $tsmin = PHP_INT_MAX;
-        foreach ($ppmfiles as $file) {
-            $filedata = stat($file);
-            if ( $filedata['mtime'] > $tsmax) {
-                $tsmax = $filedata['mtime'];
-            }
-            if ( $filedata['mtime'] < $tsmin) {
-                $tsmin = $filedata['mtime'];
-            }
-        }
-        if ( $ppmfiles ) {
-            // return count($ppmfiles) . "copies scannées déposées entre " . $this->isoDate($tsmin) . " et " . $this->isoDate($tsmax) ;
-            return count($ppmfiles) . " copies scannées déposées le " . self::isoDate($tsmax) ;
-        } else {
-            return 'Aucune copie scannée.';
-        }
-    }
-
-    static function isoDate($timestamp) {
-        return date('Y-m-d à H:i:s', $timestamp);
-    }
-
-    /**
      * Shell-executes 'amc analyse'
      * @param bool $multiple (see AMC) if multiple copies of the same sheet are possible
      * @return bool
@@ -285,6 +256,31 @@ class AmcProcess
     }
 
     /**
+     * returns stat() information (number and dates) on scanned (ppm) files already stored
+     * @return string diagnostic message
+     */
+    public function statScans() {
+        $ppmfiles = glob($this->workdir . '/scans/*.ppm');
+        $tsmax = 0;
+        $tsmin = PHP_INT_MAX;
+        foreach ($ppmfiles as $file) {
+            $filedata = stat($file);
+            if ( $filedata['mtime'] > $tsmax) {
+                $tsmax = $filedata['mtime'];
+            }
+            if ( $filedata['mtime'] < $tsmin) {
+                $tsmin = $filedata['mtime'];
+            }
+        }
+        if ( $ppmfiles ) {
+            // return count($ppmfiles) . "copies scannées déposées entre " . $this->isoDate($tsmin) . " et " . $this->isoDate($tsmax) ;
+            return count($ppmfiles) . " copies scannées déposées le " . self::isoDate($tsmax) ;
+        } else {
+            return 'Aucune copie scannée.';
+        }
+    }
+
+    /**
      * returns stat() information on CSV grading files available (the AMC one the enhanced one)
      * @return string diagnostic message
      */
@@ -306,4 +302,7 @@ class AmcProcess
         return $msg;
     }
 
+    static function isoDate($timestamp) {
+        return date('Y-m-d à H:i:s', $timestamp);
+    }
 }
