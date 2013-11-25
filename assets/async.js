@@ -2,7 +2,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
  */
 
-$('.async-target > span.loading').addClass('loading');
+$('.async-target > span').addClass('loading');
 
 $.ajaxSetup({
 	async: false
