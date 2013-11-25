@@ -4,14 +4,9 @@
 
 $('.async-target > span').addClass('loading');
 
-$.ajaxSetup({
-	async: false
-});
 $('.async-load').each(function(){
 	var url = $(this).data('url');
-	console.log(url);
 	$(this).children('.async-target').each(function(){
-		console.log($(this).data('parameters'));
 		$(this).load(url, $(this).data('parameters'));
 	});
 });
