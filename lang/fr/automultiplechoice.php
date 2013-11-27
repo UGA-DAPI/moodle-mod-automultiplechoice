@@ -69,7 +69,7 @@ $string['validateql_wrong_score'] = 'Le nombre de points d\'au moins une questio
 $string['validate_positive_int'] = 'Ceci devrait être un nombre strictement positif.';
 $string['validateql_deletedquestions'] = 'Certaines questions ne sont pas présentes dans Moodle et ont probablement été supprimées.';
 
-$string['prepare'] = 'Génération et visualisation';
+$string['prepare'] = 'Télécharger les sujets';
 $string['analyse'] = 'Dépôt des copies des étudiants';
 $string['note'] = 'Notes et copies corrigées';
 $string['export'] = 'Rapports';

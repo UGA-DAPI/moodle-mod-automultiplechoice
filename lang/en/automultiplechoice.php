@@ -69,7 +69,7 @@ $string['validateql_wrong_score'] = 'The score of at least one question is not v
 $string['validate_positive_int'] = 'This should be a strictly positive number.';
 $string['validateql_deletedquestions'] = 'Some questions could not be found and were probably deleted.';
 
-$string['prepare'] = 'Prepare and visualize';
+$string['prepare'] = 'Download question sheets';
 $string['analyse'] = 'Submit student copies';
 $string['note'] = 'Grades and annotated copies';
 $string['export'] = 'Reports';

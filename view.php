@@ -78,8 +78,8 @@ echo $OUTPUT->box_start();
 echo $OUTPUT->heading($quizz->name);
 if ($quizz->isLocked()) {
     echo '<p class="warning">Le questionnaire est actuellement verrouillé pour éviter les modifications '
-            . "entre l'impression et la correction. Vous pouvez accéder aux documents via le bouton <em>Génération et visualisation</em>."
-            . "</p>";
+            . "entre l'impression et la correction. Vous pouvez accéder aux documents via le bouton "
+            . "<em>[" . get_string('prepare', 'automultiplechoice') . "]</em>.</p>";
 }
 HtmlHelper::printTableQuizz($quizz);
 echo '<p class="continuebutton">';
