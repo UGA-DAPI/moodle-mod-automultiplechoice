@@ -131,20 +131,24 @@ if ($preparetime) {
 }
 echo "</li>";
 
-if ($quizz->isLocked()) {
-    echo '<li>'
-        . $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'unlock' => 1)),
-                'Déverrouiller (permettre les modifications du questionnaire)', 'post'
-        )
-        . '</li>';
+if (empty($quizz->errors)) {
+    if ($quizz->isLocked()) {
+        echo '<li>'
+            . $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'unlock' => 1)),
+                    'Déverrouiller (permettre les modifications du questionnaire)', 'post'
+            )
+            . '</li>';
+    } else {
+        echo '<li>'
+            . $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'lock' => 1)),
+                    'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
+            )
+            . '</li>';
+    }
 } else {
-    echo '<li>'
-        . $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'lock' => 1)),
-                'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
-        )
-        . '</li>';
+    echo '<li>' . 'Préparer et verrouiller. ' . get_string('functiondisabled') . '</li>';
 }
 
 
