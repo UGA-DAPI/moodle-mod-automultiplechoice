@@ -158,9 +158,7 @@ EOL;
                     '--methode', 'file',
                     '--output', $pre . '/imprime/sujet-%e.pdf'
                 );
-        if ($this->quizz->amcparams->separatesheet) {
-            $params[] = '--split';
-        }
+        // $params[] = '--split'; // M#2076 a priori jamais nécessaire
         $res = $this->shellExec('auto-multiple-choice imprime', $params);
         if ($res) {
             $this->log('imprime', '');
