@@ -30,7 +30,7 @@ $string['score'] = 'Note totale';
 
 $string['automultiplechoicename_help'] = 'Le nom complet du questionnaire';
 $string['instructions_help'] = 'Le texte associé à cette consigne sera inséré au-dessus de la consigne personnalisée (champ suivant).';
-$string['description_help'] = 'La description qui sera imprimée sur chaque questionnaire, contenant l\'introduction et les consignes.';
+$string['description_help'] = 'Le texte qui sera imprimé sur chaque questionnaire, contenant les consignes et la durée de l\'épreuve.';
 $string['comment_help'] = 'Un commentaire pour l\'auteur, qui ne sera pas imprimé.';
 $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire, pour validation.';
 $string['score_help'] = 'Le score total du questionnaire (en points), pour validation.';
@@ -42,7 +42,7 @@ $string['amc_shuffleq'] = 'Mélanger les questions';
 $string['amc_shufflea'] = 'Mélanger les réponses';
 $string['amc_separatesheet'] = 'Feuille réponses séparée';
 $string['amc_lstudent'] = 'Consigne / n° d\'étudiant';
-$string['amc_lname'] = 'Consigne / nom';
+$string['amc_lname'] = 'Zone d\'identification';
 $string['amc_lstudent_help'] = 'Texte affiché à côté de la grille qui permet de saisir son numéro d\'étudiant.';
 $string['amc_lname_help'] = 'Intitulé du cadre affiché en haut à droite de la feuille de réponse, par exemple pour indiquer à l\'étudiant qu\'il doit écrire son nom.';
 $string['amc_lstudent_default'] = "Veuillez coder votre numéro d'étudiant ci-contre, et écrire votre nom dans la case ci-dessous.";
