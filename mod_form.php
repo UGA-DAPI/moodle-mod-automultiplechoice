@@ -25,24 +25,6 @@ use \mod\automultiplechoice as amc;
  * Module instance settings form
  */
 class mod_automultiplechoice_mod_form extends moodleform_mod {
-    private $ajaxScoringSet = '
-(function(){
-    function updateDescription() {
-        var xhr = new XMLHttpRequest();
-        var id = document.getElementById("id_amc_scoringset").value;
-        console.log(id);
-        xhr.onload = function() {
-            console.log(this.responseText);
-            document.getElementById("scoringset_desc").innerHTML = this.responseText;
-        }
-        xhr.open("GET", "../mod/automultiplechoice/ajax/scoring.php?scoringsetid=" + id);
-        xhr.responseType = "text";
-        xhr.send();
-    }
-    document.getElementById("id_amc_scoringset").addEventListener("click", updateDescription);
-    updateDescription();
-})();
-';
     /**
      * @var Quizz
      */
@@ -53,6 +35,9 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
      */
     public function definition() {
         global $PAGE;
+
+        $PAGE->requires->jquery();
+        $PAGE->requires->js(new moodle_url('/mod/automultiplechoice/assets/mainform.js'));
 
         $mform = $this->_form;
         $strrequired = get_string('required');
@@ -84,7 +69,6 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('select', 'amc[scoringset]', get_string('scoringset', 'automultiplechoice'), amc\ScoringSystem::read()->getSetsNames());
         $mform->setType('amc[scoringset]', PARAM_INTEGER);
         $mform->addElement('static', 'scoringset_desc', get_string('scoringset', 'automultiplechoice'), '<div id="scoringset_desc"></div>');
-        $PAGE->requires->js_init_code($this->ajaxScoringSet, true);
 
         $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'), array('rows'=>'10', 'cols'=>'64'));
         $mform->setType('comment', PARAM_TEXT);
