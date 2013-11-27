@@ -95,12 +95,14 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'description', 'automultiplechoice');
 
-        $mform->addElement(
-                'static',
-                'instructions_scoringset',
-                get_string('description', 'automultiplechoice') . " " . get_string('scoringset', 'automultiplechoice'),
-                '<div id="instructions_scoringset"></div>'
-        );
+        if (empty($this->current->id)) { // only when creating an instance
+            $mform->addElement(
+                    'static',
+                    'instructions_scoringset',
+                    get_string('description', 'automultiplechoice') . " " . get_string('scoringset', 'automultiplechoice'),
+                    '<div id="instructions_scoringset"></div>'
+            );
+        }
 
         $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'automultiplechoice'), array('size' => 64));
         $mform->setType('amc[lstudent]', PARAM_TEXT);
