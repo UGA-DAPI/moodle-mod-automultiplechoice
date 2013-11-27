@@ -21,6 +21,7 @@ $string['pluginadministration'] = 'AutoMultipleChoice administration';
 $string['pluginname'] = 'automultiplechoice';
 $string['noautomultiplechoices'] = 'Aucune instance de automultiplechoice n\'est définie dans ce cours';
 
+$string['instructionsheader'] = 'Instructions';
 $string['automultiplechoicename'] = 'Nom du questionnaire';
 $string['instructions'] = 'Top Instructions';
 $string['description'] = 'Instructions';

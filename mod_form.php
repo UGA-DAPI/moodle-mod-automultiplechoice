@@ -72,22 +72,6 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'automultiplechoicename', 'automultiplechoice');
 
-        if (empty($this->current->id)) { // only when creating an instance
-            $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
-            $mform->setType('instructions', PARAM_TEXT);
-            $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
-        }
-
-        $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'15', 'cols'=>'64'));
-        $mform->setType('description', PARAM_TEXT);
-        $mform->addHelpButton('description', 'description', 'automultiplechoice');
-
-        $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'automultiplechoice'), array('size' => 64));
-        $mform->setType('amc[lstudent]', PARAM_TEXT);
-
-        $mform->addElement('text', 'amc[lname]', get_string('amc_lname', 'automultiplechoice'));
-        $mform->setType('amc[lname]', PARAM_TEXT);
-
         $mform->addElement('text', 'qnumber', get_string('qnumber', 'automultiplechoice'));
         $mform->setType('qnumber', PARAM_INTEGER);
         $mform->addHelpButton('qnumber', 'qnumber', 'automultiplechoice');
@@ -111,6 +95,26 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             $mform->setDefault('amc[lstudent]', get_string('amc_lstudent_default', 'automultiplechoice'));
             $mform->setDefault('amc[lname]', get_string('amc_lname_default', 'automultiplechoice'));
         }
+
+
+        // Instructions
+        $mform->addElement('header', 'general', get_string('instructionsheader', 'automultiplechoice'));
+
+        if (empty($this->current->id)) { // only when creating an instance
+            $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
+            $mform->setType('instructions', PARAM_TEXT);
+            $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
+        }
+
+        $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'15', 'cols'=>'64'));
+        $mform->setType('description', PARAM_TEXT);
+        $mform->addHelpButton('description', 'description', 'automultiplechoice');
+
+        $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'automultiplechoice'), array('size' => 64));
+        $mform->setType('amc[lstudent]', PARAM_TEXT);
+
+        $mform->addElement('text', 'amc[lname]', get_string('amc_lname', 'automultiplechoice'));
+        $mform->setType('amc[lname]', PARAM_TEXT);
 
 
         // AMC settings
