@@ -88,13 +88,19 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
             $mform->setType('instructions', PARAM_TEXT);
             $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
+            $mform->addElement('static', 'instructions_descr', get_string('instructions', 'automultiplechoice'), '<div id="instructions_descr"></div>');
         }
 
         $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'15', 'cols'=>'64'));
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'description', 'automultiplechoice');
 
-        $mform->addElement('static', 'instructions_scoringset', get_string('scoringset', 'automultiplechoice'), '<div id="instructions_scoringset"></div>');
+        $mform->addElement(
+                'static',
+                'instructions_scoringset',
+                get_string('description', 'automultiplechoice') . " " . get_string('scoringset', 'automultiplechoice'),
+                '<div id="instructions_scoringset"></div>'
+        );
 
         $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'automultiplechoice'), array('size' => 64));
         $mform->setType('amc[lstudent]', PARAM_TEXT);

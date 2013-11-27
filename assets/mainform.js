@@ -3,7 +3,7 @@
  */
 
 jQuery(function($) {
-    function updateDescription() {
+    function updateScoringDescription() {
         var id = $("#id_amc_scoringset").val();
         $.ajax({
 			url: "../mod/automultiplechoice/ajax/scoring.php?scoringsetid=" + id,
@@ -14,6 +14,13 @@ jQuery(function($) {
 			}
         });
     }
-    $("#id_amc_scoringset").on("click", updateDescription);
-    updateDescription();
+    $("#id_amc_scoringset").on("click", updateScoringDescription);
+    updateScoringDescription();
+
+    function updateInstrDescr() {
+        var v = $("#id_instructions").val();
+		$("#instructions_descr").html(v);
+    }
+    $("#id_instructions").on("click", updateInstrDescr);
+    updateInstrDescr();
 });
