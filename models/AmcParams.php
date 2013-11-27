@@ -54,10 +54,16 @@ class AmcParams
      *
      * @return boolean
      */
-    public function validate() {
+    public function validate($maxscore) {
         $this->errors = array();
         if ($this->copies <= 0) {
             $this->errors['amc[copies]'] = 'validate_positive_int';
+        }
+        if ($this->minscore <= 0) {
+            $this->errors['amc[minscore]'] = 'validate_positive_int';
+        }
+        if ($this->minscore > $maxscore) {
+            $this->errors['amc[minscore]'] = 'validate_under_maxscore';
         }
         return empty($this->errors);
     }
@@ -72,6 +78,7 @@ class AmcParams
         $new = new self;
         $new->displaypoints = (int) $input['displaypoints'];
         $new->copies = (int) $input['copies'];
+        $new->minscore = (int) $input['minscore'];
         $new->shuffleq = (bool) $input['shuffleq'];
         $new->shufflea = (bool) $input['shufflea'];
         $new->separatesheet = (bool) $input['separatesheet'];

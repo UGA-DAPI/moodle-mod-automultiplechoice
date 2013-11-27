@@ -36,6 +36,7 @@ $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire
 $string['score_help'] = 'Le score total du questionnaire (en points), pour validation.';
 
 $string['amcparams'] = 'AMC Parameters';
+$string['amc_minscore'] = 'Minimal score';
 $string['amc_copies'] = 'Versions Number';
 $string['amc_shuffleq'] = 'Shuffle questions';
 $string['amc_shufflea'] = 'Shuffle answers';
@@ -67,6 +68,7 @@ $string['validateql_wrong_number'] = 'The number of questions is not the number 
 $string['validateql_wrong_sum'] = 'The sum of the questions\' score does not match the expected total score.' ;
 $string['validateql_wrong_score'] = 'The score of at least one question is not valid.';
 $string['validate_positive_int'] = 'This should be a strictly positive number.';
+$string['validate_under_maxscore'] = 'This should be lesser than the total score.';
 $string['validateql_deletedquestions'] = 'Some questions could not be found and were probably deleted.';
 
 $string['prepare'] = 'Download question sheets';

@@ -101,7 +101,7 @@ class Quizz
             $this->errors['score'] = 'validate_positive_int';
         }
         if (isset($this->amcparams) && $this->amcparams instanceof AmcParams) {
-            if (!$this->amcparams->validate()) {
+            if (!$this->amcparams->validate($this->score)) {
                 $this->errors = array_merge($this->errors, $this->amcparams->errors);
             }
         }

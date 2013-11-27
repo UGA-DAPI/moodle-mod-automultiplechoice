@@ -58,13 +58,13 @@ class AmcProcessGrade extends AmcProcess
             '--seuil', '0.5', // black ratio threshold
             '--grain', '0.25',
             '--arrondi', 'inf',
+            '--notemin', $this->quizz->amcparams->minscore,
             '--notemax', $this->quizz->score,
             '--plafond',
-            '--notemin', '',
             '--postcorrect-student', '', //FIXME inutile ?
             '--postcorrect-copy', '',    //FIXME inutile ?
             );
-        $res = $this->shellExec('auto-multiple-choice note', $parameters);
+        $res = $this->shellExec('auto-multiple-choice note', $parameters, true);
         if ($res) {
             $this->log('note', 'OK.');
         }
