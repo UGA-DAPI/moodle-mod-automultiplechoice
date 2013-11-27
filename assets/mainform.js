@@ -10,6 +10,7 @@ jQuery(function($) {
 			method: 'get',
             success: function(data) {
 				$("#scoringset_desc").html(data);
+				$("#instructions_scoringset").html(data);
 			}
         });
     }
