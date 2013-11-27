@@ -68,6 +68,7 @@ $string['validateql_wrong_number'] = 'The number of questions is not the number 
 $string['validateql_wrong_sum'] = 'The sum of the questions\' score does not match the expected total score.' ;
 $string['validateql_wrong_score'] = 'The score of at least one question is not valid.';
 $string['validate_positive_int'] = 'This should be a strictly positive number.';
+$string['validate_poszero_int'] = 'This should be a positive number, or zero.';
 $string['validate_under_maxscore'] = 'This should be lesser than the total score.';
 $string['validateql_deletedquestions'] = 'Some questions could not be found and were probably deleted.';
 

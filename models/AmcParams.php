@@ -59,8 +59,8 @@ class AmcParams
         if ($this->copies <= 0) {
             $this->errors['amc[copies]'] = 'validate_positive_int';
         }
-        if ($this->minscore <= 0) {
-            $this->errors['amc[minscore]'] = 'validate_positive_int';
+        if ($this->minscore < 0) {
+            $this->errors['amc[minscore]'] = 'validate_poszero_int';
         }
         if ($this->minscore > $maxscore) {
             $this->errors['amc[minscore]'] = 'validate_under_maxscore';
