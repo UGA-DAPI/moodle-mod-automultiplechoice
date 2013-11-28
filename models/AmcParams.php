@@ -49,6 +49,9 @@ class AmcParams
     /** @var boolean */
     public $locked = false;
 
+    /** @var integer */
+    public $minscore = 0;
+
     /**
      * Validate the instance and update $this->errors.
      *
