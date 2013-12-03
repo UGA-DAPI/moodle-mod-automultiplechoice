@@ -109,7 +109,7 @@ class AmcProcess
      * @return array with keys: count, time, timefr ; null if nothing was uploaded
      */
     public function statScans() {
-        $ppmfiles = glob($this->workdir . '/scans/*.ppm');
+        $ppmfiles = glob($this->workdir . '/scans/*.p[bp]m');
         $tsmax = 0;
         $tsmin = PHP_INT_MAX;
         foreach ($ppmfiles as $file) {
