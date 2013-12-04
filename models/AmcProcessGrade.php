@@ -251,12 +251,10 @@ class AmcProcessGrade extends AmcProcess
      *
      * @return array grades
      */
-    public function getMarks() {
-        /*
+    public function getMarks() {        
         if ($this->grades) {
             return $this->grades;
         }
-         */
         $this->grades = array();
         $rawmarks = $this->readRawMarks();
         foreach ($rawmarks as $index => $rawmark) {
@@ -277,6 +275,67 @@ class AmcProcessGrade extends AmcProcess
         }
         return $this->grades;
     }
+
+
+    /**
+     * computes and display statistics indicators
+     * @return string html table with statistics indicators
+     */
+    public function computeStats() {
+        $rawmarks = $this->readRawMarks();
+        foreach ($rawmarks as $index => $rawmark) {
+            $mark[] = $rawmark['mark'];
+        }
+
+        $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
+        $out = "<table>\n";
+        foreach ($indics as $indicen => $indicfr) {
+            $out .= '<tr><td>' . $indicfr. '</td><td>' . $this->mmmr($mark, $indicen) . '</td></tr>' . "\n";
+        }
+        $out .= "<table>\n";
+        return $out;
+    }
+
+    /**
+     * computes several statistics indicators from an array
+     * @param int or float $array
+     * @param string $output
+     * @return float
+     */
+    public function mmmr($array, $output = 'mean'){
+    if(!is_array($array)){
+        return FALSE;
+    }else{
+        switch($output){
+            case 'size':
+                $res = count($array);
+            break;
+            case 'mean':
+                $count = count($array);
+                $sum = array_sum($array);
+                $res = $sum / $count;
+            break;
+            case 'median':
+                rsort($array);
+                $middle = round(count($array) / 2);
+                $res = $array[$middle-1];
+            break;
+            case 'mode':
+                $v = array_count_values($array);
+                arsort($v);
+                foreach($v as $k => $v){$res = $k; break;}
+            break;
+            case 'range':
+                sort($array);
+                $sml = $array[0];
+                rsort($array);
+                $lrg = $array[0];
+                $res = $lrg . " - " . $sml;
+            break;
+        }
+        return $res;
+    }
+}
 
     /**
      * read the Csv file from AMC and returns the raw array to compute stats and transform into Moodle format

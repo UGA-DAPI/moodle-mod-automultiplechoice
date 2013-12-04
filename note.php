@@ -61,6 +61,7 @@ if ($action == 'note') { // On arrive de la page générale view.php
     $diag = $process->amcNote();
     if ($diag) {
         echo "<p>Notes calculées.</p>\n";
+        echo $process->computeStats();
     } else {
         echo "<p>Erreur sur le calcul des notes.</p>\n";
     }
