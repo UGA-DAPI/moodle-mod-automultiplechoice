@@ -34,6 +34,36 @@ if ($ADMIN->fulltree) {
     $s->plugin = 'mod_automultiplechoice';
     $settings->add($s);
 
+    $s = new admin_setting_configtext(
+        'instructionslstudent',
+        'Consigne / n° étudiant',
+        'Valeur par défaut du champ homonyme, à la création de questionnaires papier.',
+        "Veuillez coder votre numéro d'étudiant ci-contre, et écrire votre nom dans la case ci-dessous.",
+        PARAM_TEXT
+    );
+    $s->plugin = 'mod_automultiplechoice';
+    $settings->add($s);
+
+    $s = new admin_setting_configtext(
+        'instructionslnamestd',
+        "Zone d'identification / Standard",
+        "Consigne par défaut du champ, à la création d'un questionnaires papier standard.",
+        "Nom et prénom",
+        PARAM_TEXT
+    );
+    $s->plugin = 'mod_automultiplechoice';
+    $settings->add($s);
+
+    $s = new admin_setting_configtext(
+        'instructionslnameanon',
+        "Zone d'identification / Anonyme",
+        "Consigne par défaut du champ, à la création d'un questionnaires papier anonyme.",
+        "",
+        PARAM_TEXT
+    );
+    $s->plugin = 'mod_automultiplechoice';
+    $settings->add($s);
+
     $s = new admin_setting_configtextarea(
         'instructions',
         'Default instructions',
