@@ -27,8 +27,10 @@ jQuery(function($) {
 	$("#id_anonymous").on("click", function(){
 		if ($("#id_anonymous").is(':checked')) {
 			$("#id_amc_lstudent").attr('disabled', 'disabled');
+			$("#id_amc_lname").val($("#id_amc_lname").data('anon'));
 		} else {
 			$("#id_amc_lstudent").removeAttr('disabled');
+			$("#id_amc_lname").val($("#id_amc_lname").data('std'));
 		}
 	});
 });

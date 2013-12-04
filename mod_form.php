@@ -109,7 +109,10 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'automultiplechoice'), array('size' => 64));
         $mform->setType('amc[lstudent]', PARAM_TEXT);
 
-        $mform->addElement('text', 'amc[lname]', get_string('amc_lname', 'automultiplechoice'));
+        $mform->addElement('text', 'amc[lname]', get_string('amc_lname', 'automultiplechoice'), array(
+            'data-std' => get_config('mod_automultiplechoice', 'instructionslnamestd'),
+            'data-anon' => get_config('mod_automultiplechoice', 'instructionslnameanon'),
+        ));
         $mform->setType('amc[lname]', PARAM_TEXT);
 
 
