@@ -76,8 +76,8 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         if (empty($this->current->id)) { // only when creating an instance
             // hack because Moodle gets the priorities wrong with data_preprocessing()
-            $mform->setDefault('amc[lstudent]', get_string('amc_lstudent_default', 'automultiplechoice'));
-            $mform->setDefault('amc[lname]', get_string('amc_lname_default', 'automultiplechoice'));
+            $mform->setDefault('amc[lstudent]', get_config('mod_automultiplechoice', 'instructionslstudent'));
+            $mform->setDefault('amc[lname]', get_config('mod_automultiplechoice', 'instructionslnamestd'));
         }
 
 
