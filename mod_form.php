@@ -122,7 +122,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         $mform->addElement('text', 'amc[minscore]', get_string('amc_minscore', 'automultiplechoice'));
         $mform->setType('amc[minscore]', PARAM_INTEGER);
-        $mform->addRule('amc[minscore]', null, 'required', null, 'client');
+        $mform->setDefault('minscore', 0);
 
         $mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('amc_shuffleq', 'automultiplechoice'));
         $mform->setType('amc[shuffleq]', PARAM_BOOL);
