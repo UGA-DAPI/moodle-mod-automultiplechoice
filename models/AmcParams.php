@@ -34,10 +34,10 @@ class AmcParams
     /** @var boolean Separate answer sheet  */
     public $separatesheet;
 
-    /** @var string */
+    /** @var string Instructions for the student number */
     public $lstudent;
 
-    /** @var string */
+    /** @var string Instructions for the student name */
     public $lname;
 
     /** @var integer */
