@@ -17,7 +17,7 @@ if ($ADMIN->fulltree) {
     $s = new admin_setting_configtext(
         'amctemplate',
         'Modèle AMC',
-        'Modèle d\'arborescence AMC pour les nouveaux projets',
+        'Chemin vers le modèle d\'arborescence AMC pour les nouveaux projets',
         $defaulttpl,
         PARAM_TEXT
     );
