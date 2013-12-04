@@ -245,17 +245,46 @@ class AmcProcessGrade extends AmcProcess
     }
 
     /**
-     * read the Csv file from AMC and returns an array to fill the Moodle grade system.
+     * returns an array to fill the Moodle grade system from the raw marks .
      *
      * Sets $this->known and $this->unknown.
      *
      * @return array grades
      */
-    public function readMarks() {
+    public function getMarks() {
+        /*
         if ($this->grades) {
             return $this->grades;
         }
+         */
         $this->grades = array();
+        $rawmarks = $this->readRawMarks();
+        foreach ($rawmarks as $index => $rawmark) {
+            $idnumber = $rawmark['idnumber'];
+            $user = null;
+            if ($idnumber) {
+                $user = getStudentByIdNumber($idnumber);
+            }
+            if ($user) {
+                $this->grades[$user->id] = (object) array(
+                    'id' => $user->id,
+                    'userid' => $user->id,
+                    'rawgrade' => $rawmark['mark']);
+                $this->usersknown++;
+            } else {
+                $this->usersunknown++;
+            }
+        }
+        return $this->grades;
+    }
+
+    /**
+     * read the Csv file from AMC and returns the raw array to compute stats and transform into Moodle format
+     *
+     * @return array rawgrades
+     */
+    public function readRawMarks() {
+        $rawmarks = array();
         $input = self::fopenRead($this->workdir . self::PATH_AMC_CSV);
         if ( ! $input) {
             return null;
@@ -266,23 +295,13 @@ class AmcProcessGrade extends AmcProcess
         }
         $getCol = array_flip($header);
         while (($data = fgetcsv($input, 1024, self::CSV_SEPARATOR)) !== FALSE) {
-            $idnumber = $data[$getCol['student.number']];
-            $user = null;
-            if ($idnumber) {
-                $user = getStudentByIdNumber($idnumber);
-            }
-            if ($user) {
-                $this->grades[$user->id] = (object) array(
-                    'id' => $user->id,
-                    'userid' => $user->id,
-                    'rawgrade' => $data[$getCol['Mark']]);
-                $this->usersknown++;
-            } else {
-                $this->usersunknown++;
-            }
+            $rawmarks[] = array(
+                'idnumber' => $data[$getCol['student.number']],
+                'mark' => $data[$getCol['Mark']]
+            );
         }
         fclose($input);
-        return $this->grades;
+        return $rawmarks;
     }
 
     protected static function fopenRead($filename) {
