@@ -31,7 +31,9 @@ $string['score'] = 'Note totale';
 
 $string['automultiplechoicename_help'] = 'Le nom complet du questionnaire';
 $string['instructions_help'] = 'Le texte associé à cette consigne sera inséré au-dessus de la consigne personnalisée (champ suivant).';
-$string['description_help'] = 'Le texte qui sera imprimé sur chaque questionnaire, contenant les consignes et la durée de l\'épreuve.';
+$string['description_help'] = 'Le texte qui sera imprimé sur chaque questionnaire, contenant les consignes et la durée de l\'épreuve.
+<br />A la création du questionnaire, le contenu de la consigne prédéfinie (champ précédent) sera inséré au début de la consigne,
+et la consigne Attribution des points sera ajoutée à la fin.';
 $string['comment_help'] = 'Un commentaire pour l\'auteur, qui ne sera pas imprimé.';
 $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire, pour validation.';
 $string['score_help'] = 'Le score total du questionnaire (en points), pour validation.';

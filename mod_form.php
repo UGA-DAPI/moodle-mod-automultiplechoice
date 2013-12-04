@@ -88,7 +88,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
             $mform->setType('instructions', PARAM_TEXT);
             $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
-            $mform->addElement('static', 'instructions_descr', get_string('instructions', 'automultiplechoice'), '<div id="instructions_descr"></div>');
+            $mform->addElement('textarea', 'instructions_descr', get_string('instructions', 'automultiplechoice'), array('rows'=>'5', 'cols'=>'64'));
         }
 
         $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'15', 'cols'=>'64'));

@@ -19,7 +19,7 @@ jQuery(function($) {
 
     function updateInstrDescr() {
         var v = $("#id_instructions").val();
-		$("#instructions_descr").html(v);
+		$("#id_instructions_descr").html(v);
     }
     $("#id_instructions").on("click", updateInstrDescr);
     updateInstrDescr();

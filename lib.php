@@ -17,6 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once __DIR__ . '/models/Quizz.php';
+require_once __DIR__ . '/models/ScoringSystem.php';
 require_once __DIR__ . '/models/AmcProcess.php';
 
 /* @var $DB moodle_database */
@@ -64,10 +65,10 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
     $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->author = $USER->id;
     $automultiplechoice->questions = "";
-    if (!empty($automultiplechoice->instructions)) {
-        $automultiplechoice->description = $automultiplechoice->instructions . "\n" . $automultiplechoice->description;
-    } else if (!empty($_POST['instructions'])) {
-        $automultiplechoice->description = $_POST['instructions'] . "\n" . $automultiplechoice->description;
+    if (!empty($automultiplechoice->instructions_descr)) {
+        $automultiplechoice->description = $automultiplechoice->instructions_descr . "\n" . $automultiplechoice->description;
+    } else if (!empty($_POST['instructions_descr'])) {
+        $automultiplechoice->description = $_POST['instructions_descr'] . "\n" . $automultiplechoice->description;
     }
 
     $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
