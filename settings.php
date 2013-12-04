@@ -28,7 +28,7 @@ if ($ADMIN->fulltree) {
         'amccodelength',
         'Longueur code',
         'Longueur du code étudiant pour l\'affichage AMC',
-        '10',
+        '8',
         PARAM_INT
     );
     $s->plugin = 'mod_automultiplechoice';
