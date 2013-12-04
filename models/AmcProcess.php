@@ -272,4 +272,49 @@ class AmcProcess
     public static function isoDate($timestamp) {
         return date('Y-m-d à H:i', $timestamp);
     }
+
+
+    /**
+     * Returns a normalized text (no accents, spaces...) for use in file names
+     * @param $text string input text
+     * @return (guess what ?)
+     */
+    public function normalizeText($text) {
+        setlocale(LC_ALL, 'fr_FR.utf8');
+        $text = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+        $text = strtr($text, array(' '=>'_', "'"=>'-',
+            '.'=>'-', ','=>'-', ';'=>'-', ':'=>'-', '?'=>'-', '!'=>'-') );
+        $text = strtolower($text);
+        $text = preg_replace('/-+/', '-', $text);
+        $text = trim ($text, '-');
+        $text = preg_replace('/[^\w\d-]/si', '', $text); //remove all illegal chars
+        $text = substr($text, 0, 50);
+        return $text;
+    }
+
+    /**
+     * Returns a normalized filename for teacher downloads
+     * @param string $filetype keyword amongst ('sujet', 'catalog', 'sujets')
+     * @return string normalized filename
+     */
+    public function normalizeFilename($filetype) {
+        switch ($filetype) {
+            case 'sujet':
+                return 'sujet-' . $this->normalizeText($this->quizz->name) . '.pdf';
+                break;
+            case 'corrige':
+                return 'corrige-' . $this->normalizeText($this->quizz->name) . '.pdf';
+                break;
+            case 'catalog':
+                return 'catalog-' . $this->normalizeText($this->quizz->name) . '.pdf';
+                break;
+            case 'sujets': // !!! plural 
+                return 'sujets-' . $this->normalizeText($this->quizz->name) . '.zip';
+                break;
+            case 'corrections':
+                return 'corrections-' . $this->normalizeText($this->quizz->name) . '.pdf';
+                break;
+        }
+    }
+
 }

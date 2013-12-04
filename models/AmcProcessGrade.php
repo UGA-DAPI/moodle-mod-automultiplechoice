@@ -143,7 +143,7 @@ class AmcProcessGrade extends AmcProcess
             '--id-file', "",
             '--no-compose',
             '--projet',  $pre,
-            '--sujet', $pre.'/prepare-sujet.pdf',
+            '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
             '--data', $pre.'/data',
             '--tex-src', $pre.'/prepare-source.txt',
             '--with', 'xelatex',
@@ -156,7 +156,7 @@ class AmcProcessGrade extends AmcProcess
             '--fich-noms', '%PROJET/',
             '--noms-encodage', 'UTF-8',
             '--csv-build-name', '(nom|surname) (prenom|name)',
-            '--single-output', 'corrections_tous.pdf',
+            '--single-output', $this->normalizeFilename('corrections'),
             '--sort', 'n',
             '--register',
             '--no-force-ascii'
@@ -303,9 +303,9 @@ class AmcProcessGrade extends AmcProcess
      * @return float
      */
     public function mmmr($array, $output = 'mean'){
-    if(!is_array($array)){
+    if ( ! is_array($array)) {
         return FALSE;
-    }else{
+    } else {
         switch($output){
             case 'size':
                 $res = count($array);

@@ -18,9 +18,10 @@ class AmcProcessPrepare extends AmcProcess
      * @return string
      */
     public function htmlPdfLinks() {
+        $opts = array('target' => '_blank');
         $links = array(
-            \html_writer::link($this->getFileUrl('prepare-sujet.pdf'), 'prepare-sujet.pdf', array('target' => '_blank')),
-            \html_writer::link($this->getFileUrl('prepare-catalog.pdf'), 'prepare-catalog.pdf', array('target' => '_blank')),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), $this->normalizeFilename('sujet'), $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), $this->normalizeFilename('catalog'), $opts),
         );
         return <<<EOL
         <ul class="amc-files">
@@ -43,7 +44,7 @@ EOL;
      */
     public function htmlZipLink() {
         $links = array(
-            \html_writer::link($this->getFileUrl('sujets.zip'), 'sujets.zip'),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), $this->normalizeFilename('sujets')),
         );
         return <<<EOL
         <ul class="amc-files">
@@ -82,15 +83,15 @@ EOL;
             '--filter', 'plain',
             '--mode', 's[sc]',
             '--prefix', $pre,
-            '--out-corrige', $pre . '/prepare-corrige.pdf',
-            '--out-sujet', $pre . '/prepare-sujet.pdf',
-            '--out-catalog', $pre . '/prepare-catalog.pdf',
+            '--out-corrige', $pre . '/' . $this->normalizeFilename('corrige'),
+            '--out-sujet', $pre . '/' . $this->normalizeFilename('sujet'),
+            '--out-catalog', $pre . '/' . $this->normalizeFilename('catalog'),
             '--out-calage', $pre . '/prepare-calage.xy',
             '--latex-stdout',
             $pre . '/prepare-source.txt'
             ));
         if ($res) {
-            $this->log('prepare:pdf', 'prepare-catalog.pdf prepare-corrige.pdf prepare-sujet.pdf');
+            $this->log('prepare:pdf', 'catalog corrige sujet');
         }
         return $res;
     }
@@ -106,7 +107,7 @@ EOL;
         $this->amcImprime();
 
         $zip = new \ZipArchive();
-        $ret = $zip->open($pre . '/sujets.zip', \ZipArchive::OVERWRITE);
+        $ret = $zip->open($pre . '/' . $this->normalizeFilename('sujets'), \ZipArchive::OVERWRITE);
         if ( ! $ret ) {
             printf("Echec lors de l'ouverture de l'archive %d", $ret);
         } else {
@@ -149,7 +150,7 @@ EOL;
         $pre = $this->workdir;
         $params = array(
                     '--data', $pre . '/data',
-                    '--sujet', $pre . '/prepare-sujet.pdf',
+                    '--sujet', $pre . '/' . $this->normalizeFilename('sujet'),
                     '--methode', 'file',
                     '--output', $pre . '/imprime/sujet-%e.pdf'
                 );

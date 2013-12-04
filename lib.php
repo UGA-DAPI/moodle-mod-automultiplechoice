@@ -381,13 +381,13 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     $process = new \mod\automultiplechoice\AmcProcess($quizz);
 
     // whitelist security
-    if (in_array($filename, array('prepare-sujet.pdf', 'prepare-corrige.pdf', 'prepare-catalog.pdf'))) {
+    if (preg_match('/^(sujet|corrige|catalog)-.*\.pdf$/', $filename)) {
         send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
-     } elseif (in_array($filename, array('sujets.zip'))) {
+     } elseif (preg_match('/^sujets-.*\.zip$/', $filename)) {
         send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/zip') ;
         return true;
-     } elseif (in_array($filename, array('corrections_tous.pdf'))) {
+     } elseif (preg_match('/^corrections-.*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
     } elseif (preg_match('/\.csv$/', $filename)) {

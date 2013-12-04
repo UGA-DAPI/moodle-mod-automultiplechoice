@@ -94,8 +94,8 @@ if ( isset($_POST['submit']) && $_POST['submit'] == 'Annotations' ) {
     $diag = $process->amcAnnotePdf();
     if ($diag) {
         echo "Fichier PDF créé : ";
-        $url = $url = $process->getFileUrl('cr/corrections/pdf/corrections_tous.pdf');
-        echo html_writer::link($url, 'corrections_tous.pdf', array('target' => '_blank')) . "\n";
+        $url = $url = $process->getFileUrl('cr/corrections/pdf/' . $process->normalizeFilename('corrections'));
+        echo html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank')) . "\n";
     } else {
         echo "<p>Erreur lors de la création du PDF.</p>";
     }
