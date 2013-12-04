@@ -102,6 +102,8 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                     get_string('description', 'automultiplechoice') . " " . get_string('scoringset', 'automultiplechoice'),
                     '<div id="instructions_scoringset"></div>'
             );
+
+            $mform->addElement('advcheckbox', 'anonymous', get_string('anonymous', 'automultiplechoice'));
         }
 
         $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'automultiplechoice'), array('size' => 64));

@@ -42,6 +42,7 @@ $string['amc_copies'] = 'Versions Number';
 $string['amc_shuffleq'] = 'Shuffle questions';
 $string['amc_shufflea'] = 'Shuffle answers';
 $string['amc_separatesheet'] = 'Separate answer sheet';
+$string['anonymous'] = 'Anonymous';
 $string['amc_lstudent'] = 'Instructions / student #';
 $string['amc_lname'] = 'Instructions / name';
 $string['amc_lstudent_help'] = 'Text displayed aside the grid where a student inputs his ID number.';

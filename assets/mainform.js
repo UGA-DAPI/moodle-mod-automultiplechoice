@@ -23,4 +23,12 @@ jQuery(function($) {
     }
     $("#id_instructions").on("click", updateInstrDescr);
     updateInstrDescr();
+
+	$("#id_anonymous").on("click", function(){
+		if ($("#id_anonymous").is(':checked')) {
+			$("#id_amc_lstudent").attr('disabled', 'disabled');
+		} else {
+			$("#id_amc_lstudent").removeAttr('disabled');
+		}
+	});
 });
