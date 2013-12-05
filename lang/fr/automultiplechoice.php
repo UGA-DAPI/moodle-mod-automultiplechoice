@@ -76,7 +76,8 @@ $string['validate_poszero_int'] = 'Ceci devrait être un nombre positif ou nul.'
 $string['validate_under_maxscore'] = 'Ceci devrait être inférieur à la note maximale.';
 $string['validateql_deletedquestions'] = 'Certaines questions ne sont pas présentes dans Moodle et ont probablement été supprimées.';
 
-$string['prepare'] = 'Télécharger les sujets';
+$string['prepare_unlocked'] = 'Générer et visualiser les PDF';
+$string['prepare_locked'] = 'Télécharger les sujets';
 $string['analyse'] = 'Dépôt des copies des étudiants';
 $string['note'] = 'Notes et copies corrigées';
 $string['export'] = 'Rapports';

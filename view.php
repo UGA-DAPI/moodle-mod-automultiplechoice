@@ -119,7 +119,8 @@ if (empty($quizz->errors)) {
     $options = array('disabled' => 'disabled');
 }
 $url = new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id));
-echo $OUTPUT->single_button($url, get_string('prepare', 'automultiplechoice') , 'get', $options);
+$preparebutton = get_string('prepare_' . ($quizz->isLocked() ? '' : 'un') . 'locked', 'automultiplechoice');
+echo $OUTPUT->single_button($url, $preparebutton, 'get', $options);
 
 // Display prepared files (source & pdf)
 $process = new amc\AmcProcess($quizz);

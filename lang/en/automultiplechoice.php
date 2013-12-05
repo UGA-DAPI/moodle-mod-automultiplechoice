@@ -74,6 +74,8 @@ $string['validate_poszero_int'] = 'This should be a positive number, or zero.';
 $string['validate_under_maxscore'] = 'This should be lesser than the total score.';
 $string['validateql_deletedquestions'] = 'Some questions could not be found and were probably deleted.';
 
+$string['prepare_unlocked'] = 'Generate and visualize PDF';
+$string['prepare_locked'] = 'Download question files';
 $string['prepare'] = 'Download question sheets';
 $string['analyse'] = 'Submit student copies';
 $string['note'] = 'Grades and annotated copies';
