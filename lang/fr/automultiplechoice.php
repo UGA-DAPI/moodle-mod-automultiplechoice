@@ -66,7 +66,7 @@ $string['amc_displaypoints'] = 'Montrer les points';
 $string['scoringrules'] = 'Règles de calcul';
 $string['scoringset'] = 'Attribution des points';
 
-$string['editselection'] = 'Modifier la sélection';
+$string['editselection'] = 'Modifier la sélection de questions';
 
 $string['validateql_wrong_number'] = 'Le nombre de questions n\'est pas celui attendu.';
 $string['validateql_wrong_sum'] = 'La somme des points ne fait pas la note totale attendue.' ;

@@ -55,8 +55,11 @@ class HtmlHelper {
         $scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
         echo '<table class="flexible boxaligncenter generaltable">';
         echo '<tbody>';
+        echo '<tr><th>' . get_string('instructions', 'automultiplechoice') . '</th><td>' . nl2br(format_string($quizz->amcparams->instructionsprefix)) . '</td></tr>';
         echo '<tr><th>' . get_string('description', 'automultiplechoice') . '</th><td>' . nl2br(format_string($quizz->description)) . '</td></tr>';
-        echo '<tr><th>' . get_string('comment', 'automultiplechoice') . '</th><td>' . format_string($quizz->comment) . '</td></tr>';
+        if ($quizz->comment) {
+            echo '<tr><th>' . get_string('comment', 'automultiplechoice') . '</th><td>' . format_string($quizz->comment) . '</td></tr>';
+        }
         echo '<tr><th>' . get_string('qnumber', 'automultiplechoice') . '</th><td>'
                 . ($quizz->qnumber == $realQNumber ? $quizz->qnumber : $realQNumber . " / " . $quizz->qnumber)
                 . '</td></tr>';
