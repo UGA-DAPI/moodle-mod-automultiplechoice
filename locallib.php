@@ -56,7 +56,7 @@ function parse_default_instructions() {
         return array();
     }
     $splitted = preg_split('/\n-{3,}\s*\n/s', $raw, -1, PREG_SPLIT_NO_EMPTY);
-    $assoc = array('' => 'vide');
+    $assoc = array();
     foreach ($splitted as $split) {
         $lines = explode("\n", $split, 2);
         $title = trim($lines[0]);
@@ -64,6 +64,7 @@ function parse_default_instructions() {
             $assoc[$lines[1]] = $title;
         }
     }
+    $assoc[''] = 'vide';
     return $assoc;
 }
 
