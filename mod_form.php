@@ -70,7 +70,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('amc[scoringset]', PARAM_INTEGER);
         $mform->addElement('static', 'scoringset_desc', get_string('scoringset', 'automultiplechoice'), '<div id="scoringset_desc"></div>');
 
-        $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'), array('rows'=>'10', 'cols'=>'64'));
+        $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'), array('rows'=>'3', 'cols'=>'64'));
         $mform->setType('comment', PARAM_TEXT);
         $mform->addHelpButton('comment', 'comment', 'automultiplechoice');
 
@@ -87,9 +87,9 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
         $mform->setType('instructions', PARAM_TEXT);
         $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
-        $mform->addElement('textarea', 'amc[instructionsprefix]', get_string('instructions', 'automultiplechoice'), array('rows'=>'5', 'cols'=>'64'));
+        $mform->addElement('textarea', 'amc[instructionsprefix]', get_string('instructions', 'automultiplechoice'), array('rows'=>'4', 'cols'=>'64'));
 
-        $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'15', 'cols'=>'64'));
+        $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'6', 'cols'=>'64'));
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'description', 'automultiplechoice');
 
