@@ -210,7 +210,7 @@ EOL;
      * @return string header block of the AMC-TXT file
      */
     protected function getHeaderAmctxt() {
-        $descr = preg_replace('/\n\s*\n/', "\n", $this->quizz->description);
+        $descr = $this->quizz->getInstructions();
         $params = $this->quizz->amcparams;
         $markMulti = $params->markmulti ? '' : "LaTeX-BeginDocument: \def\multiSymbole{}\n";
 

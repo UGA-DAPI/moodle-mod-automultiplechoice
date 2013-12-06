@@ -71,6 +71,23 @@ class Quizz
     }
 
     /**
+     * Concat the 3 instructions fields.
+     *
+     * @return string
+     */
+    public function getInstructions() {
+        $scoringset = ScoringSystem::read()->getScoringSet($this->amcparams->scoringset);
+        if ($scoringset) {
+            $suffix =  "\n\n" . $scoringset->description;
+        } else {
+            $suffix = '';
+        }
+        return rtrim($this->amcparams->instructionsprefix, "\n") . "\n\n"
+                . trim($this->description, "\n")
+                . "\n\n" . ltrim($suffix, "\n");
+    }
+
+    /**
      * Saves the instance into the DB.
      *
      * @global \moodle_database $DB
