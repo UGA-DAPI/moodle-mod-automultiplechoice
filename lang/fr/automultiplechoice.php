@@ -82,6 +82,6 @@ $string['analyse'] = 'Dépôt des copies des étudiants';
 $string['note'] = 'Notes et copies corrigées';
 $string['export'] = 'Rapports';
 
-$string['questionoperations'] = 'Avant de sélectionner des questions, vous pouvez...';
-$string['importquestions'] = 'Importer des questions';
-$string['createquestions'] = 'Créer des questions';
+$string['questionoperations'] = 'Avant de sélectionner des questions, vous pouvez enrichir la banque de questions par…';
+$string['importquestions'] = 'Import/ Création de questions';
+$string['createquestions'] = "Création d'une question par formulaire";
