@@ -88,7 +88,7 @@ class AmcParams
         $new->lstudent = $input['lstudent'];
         $new->lname = $input['lname'];
         $new->scoringset = $input['scoringset'];
-        $new->markMulti = (bool) $input['markmulti'];
+        $new->markmulti = (bool) $input['markmulti'];
         return $new;
     }
 
