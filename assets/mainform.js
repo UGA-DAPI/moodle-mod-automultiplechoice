@@ -17,12 +17,12 @@ jQuery(function($) {
     $("#id_amc_scoringset").on("click", updateScoringDescription);
     updateScoringDescription();
 
-    function updateInstrDescr() {
+    function updateInstrPrefix() {
         var v = $("#id_instructions").val();
-		$("#id_instructions_descr").html(v);
+		$("#id_amc_instructionsprefix").html(v);
     }
-    $("#id_instructions").on("click", updateInstrDescr);
-    updateInstrDescr();
+    $("#id_instructions").on("click", updateInstrPrefix);
+    updateInstrPrefix();
 
 	$("#id_anonymous").on("click", function(){
 		if ($("#id_anonymous").is(':checked')) {
