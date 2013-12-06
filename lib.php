@@ -65,18 +65,9 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
     $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->author = $USER->id;
     $automultiplechoice->questions = "";
-    if (!empty($automultiplechoice->instructions_descr)) {
-        $automultiplechoice->description = $automultiplechoice->instructions_descr . "\n" . $automultiplechoice->description;
-    } else if (!empty($_POST['instructions_descr'])) {
-        $automultiplechoice->description = $_POST['instructions_descr'] . "\n" . $automultiplechoice->description;
-    }
 
     $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
-    $scoringset = \mod\automultiplechoice\ScoringSystem::read()->getScoringSet($params->scoringset);
-    if ($scoringset) {
-        $automultiplechoice->description .=  "\n" . $scoringset->description;
-    }
     $automultiplechoice->amcparams = $params->toJson();
     return $DB->insert_record('automultiplechoice', $automultiplechoice);
 }

@@ -84,27 +84,23 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         // Instructions
         $mform->addElement('header', 'general', get_string('instructionsheader', 'automultiplechoice'));
 
-        if (empty($this->current->id)) { // only when creating an instance
-            $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
-            $mform->setType('instructions', PARAM_TEXT);
-            $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
-            $mform->addElement('textarea', 'instructions_descr', get_string('instructions', 'automultiplechoice'), array('rows'=>'5', 'cols'=>'64'));
-        }
+        $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
+        $mform->setType('instructions', PARAM_TEXT);
+        $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
+        $mform->addElement('textarea', 'amc[instructionsprefix]', get_string('instructions', 'automultiplechoice'), array('rows'=>'5', 'cols'=>'64'));
 
         $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'15', 'cols'=>'64'));
         $mform->setType('description', PARAM_TEXT);
         $mform->addHelpButton('description', 'description', 'automultiplechoice');
 
-        if (empty($this->current->id)) { // only when creating an instance
-            $mform->addElement(
-                    'static',
-                    'instructions_scoringset',
-                    get_string('description', 'automultiplechoice') . " " . get_string('scoringset', 'automultiplechoice'),
-                    '<div id="instructions_scoringset"></div>'
-            );
+        $mform->addElement(
+                'static',
+                'instructions_scoringset',
+                get_string('description', 'automultiplechoice') . " " . get_string('scoringset', 'automultiplechoice'),
+                '<div id="instructions_scoringset"></div>'
+        );
 
-            $mform->addElement('advcheckbox', 'anonymous', get_string('anonymous', 'automultiplechoice'));
-        }
+        $mform->addElement('advcheckbox', 'anonymous', get_string('anonymous', 'automultiplechoice'));
 
         $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'automultiplechoice'), array('size' => 64));
         $mform->setType('amc[lstudent]', PARAM_TEXT);
@@ -172,6 +168,12 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                         )
                 );
             }
+            foreach (parse_default_instructions() as $v) {
+                if ($params->instructionsprefix === $v) {
+                    $this->_form->setDefault('instructions', $v);
+                }
+            }
+
         }
     }
 
