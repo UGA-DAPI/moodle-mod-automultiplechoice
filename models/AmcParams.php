@@ -53,6 +53,11 @@ class AmcParams
     public $minscore = 0;
 
     /**
+     * @var string
+     */
+    public $instructionsprefix = '';
+
+    /**
      * Validate the instance and update $this->errors.
      *
      * @return boolean
@@ -89,6 +94,7 @@ class AmcParams
         $new->lname = $input['lname'];
         $new->scoringset = $input['scoringset'];
         $new->markmulti = (bool) $input['markmulti'];
+        $new->instructionsprefix = $input['instructionsprefix'];
         return $new;
     }
 
