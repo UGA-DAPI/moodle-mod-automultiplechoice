@@ -59,9 +59,23 @@ td ul {
 	margin-top: 2ex;
 }
 
-#main-actions > li {
+#main-actions {
+    text-align: center;
+}
+#main-actions .amc-process {
     margin-bottom: 2ex;
 }
-#main-actions ul {
-    margin-top: 0;
+#main-actions li {
+    margin: 0 2ex;
+	list-style-type: none;
+	display: inline-block;
+	vertical-align: middle;
+	width: 45ex;
+}
+#main-actions .amc-process-next:before {
+	content: "→";
+}
+#main-actions li.amc-process-next {
+	font-size: 200%;
+	width: auto;
 }
