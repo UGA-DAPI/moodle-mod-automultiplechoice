@@ -110,77 +110,64 @@ echo $OUTPUT->box_start();
 
 
 // Display available actions
-echo '<ul id="main-actions">';
-echo "<li>";
-if (empty($quizz->errors)) {
-    $options = array();
-} else {
-    echo '<p>' . get_string('functiondisabled') . '</p>';
-    $options = array('disabled' => 'disabled');
-}
-$url = new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id));
-$preparebutton = get_string('prepare_' . ($quizz->isLocked() ? '' : 'un') . 'locked', 'automultiplechoice');
-echo $OUTPUT->single_button($url, $preparebutton, 'get', $options);
-
-// Display prepared files (source & pdf)
+$optionsNormal = array();
+$optionsDisabled = array('disabled' => 'disabled');
 $process = new amc\AmcProcess($quizz);
-$preparetime = $process->lastlog('prepare:source');
-if ($preparetime) {
-    echo "<div>Dernière préparation des fichiers PDF le " . amc\AmcProcess::isoDate($preparetime) . "</div>\n";
-} else {
-    echo "<div>Aucun fichier PDF préparé.</div>\n";
-}
-echo "</li>";
-
-if (empty($quizz->errors)) {
-    if ($quizz->isLocked()) {
-        echo '<li>'
-            . $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'unlock' => 1)),
-                    'Déverrouiller (permettre les modifications du questionnaire)', 'post'
-            )
-            . '</li>';
-    } else {
-        echo '<li>'
-            . $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'lock' => 1)),
-                    'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
-            )
-            . '</li>';
-    }
-} else {
-    echo '<li>' . 'Préparer et verrouiller. ' . get_string('functiondisabled') . '</li>';
-}
-
-
-if (!$quizz->isLocked()) {
-    $options = array('disabled' => 'disabled');
-}
-
-echo "<li>";
-$url = new moodle_url('/mod/automultiplechoice/scan.php', array('a' => $quizz->id));
-echo $OUTPUT->single_button($url, get_string('analyse', 'automultiplechoice') , 'post', $options);
-$scans = $process->statScans();
-if ($scans) {
-    echo "<div>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</div>\n";
-} else {
-    echo "<div>Pas de copies déposées. La notation est donc désactivée.</div>";
-}
-echo "</li>";
-
-echo "<li>";
-if (!$scans) {
-    $options = array('disabled' => 'disabled');
-}
-$url = new moodle_url('/mod/automultiplechoice/note.php', array('a' => $quizz->id, 'action' => 'note'));
-echo $OUTPUT->single_button($url, get_string('note', 'automultiplechoice') , 'post', $options);
-//$gradetime = $process->lastlog('note');
-//if ($gradetime) {
-    //echo "<div>Correction des copies déjà effectuée le " . amc\AmcProcess::isoDate($gradetime) . "</div>\n";
-//}
-echo "</li>";
-
-echo "</ul>";
+?>
+<div id="main-actions">
+    <ul class="amc-process">
+        <li>
+            <?php
+            echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id)),
+                    get_string('prepare', 'automultiplechoice'),
+                    'get',
+                    empty($quizz->errors) ? $optionsNormal : $optionsDisabled
+            );
+            displayPrepareInfo($quizz, $process);
+            //displayLockButton($quizz);
+            ?>
+        </li>
+        <li class="amc-process-next"></li>
+        <li>
+            <?php
+            echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id)),
+                    get_string('prepare-locked', 'automultiplechoice'),
+                    'get',
+                    empty($quizz->errors) && $quizz->isLocked() ? $optionsNormal : $optionsDisabled
+            );
+            ?>
+        </li>
+    </ul>
+    <ul class="amc-process">
+        <li>
+            <?php
+            echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/scan.php', array('a' => $quizz->id)),
+                    get_string('analyse', 'automultiplechoice') ,
+                    'post',
+                    empty($quizz->errors) && $quizz->isLocked() ? $optionsNormal : $optionsDisabled
+            );
+            $scans = $process->statScans();
+            displayScanInfo($scans);
+            ?>
+        </li>
+        <li class="amc-process-next"></li>
+        <li>
+            <?php
+            echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/note.php', array('a' => $quizz->id, 'action' => 'note')),
+                    get_string('note', 'automultiplechoice'),
+                    'post',
+                    empty($quizz->errors) && $quizz->isLocked() && $scans ? $optionsNormal : $optionsDisabled
+            );
+            //displayGradesInfo();
+            ?>
+        </li>
+    </ul>
+</div>
+<?php
 
 
 echo $OUTPUT->box_end();
@@ -188,3 +175,49 @@ echo $OUTPUT->box_end();
 echo $OUTPUT->box_end(); // Quizz
 
 echo $OUTPUT->footer();
+
+
+// helper functions
+
+function displayPrepareInfo($quizz, $process) {
+    $preparetime = $process->lastlog('prepare:source');
+    if ($preparetime) {
+        echo "<div>Dernière préparation des fichiers PDF le " . amc\AmcProcess::isoDate($preparetime) . "</div>\n";
+    } else {
+        echo "<div>Aucun fichier PDF préparé.</div>\n";
+    }
+}
+
+function displayLockButton($quizz) {
+    global $OUTPUT;
+    if (empty($quizz->errors)) {
+        if ($quizz->isLocked()) {
+            echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'unlock' => 1)),
+                    'Déverrouiller (permettre les modifications du questionnaire)', 'post'
+            );
+        } else {
+            echo $OUTPUT->single_button(
+                        new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'lock' => 1)),
+                        'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
+                );
+        }
+    } else {
+        echo 'Préparer et verrouiller. ' . get_string('functiondisabled');
+    }
+}
+
+function displayScanInfo($scans) {
+    if ($scans) {
+        echo "<div>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</div>\n";
+    } else {
+        echo "<div>Pas de copies déposées. La notation est donc désactivée.</div>";
+    }
+}
+
+function displayGradeInfo() {
+    $gradetime = $process->lastlog('note');
+    if ($gradetime) {
+        echo "<div>Correction des copies déjà effectuée le " . amc\AmcProcess::isoDate($gradetime) . "</div>\n";
+    }
+}
