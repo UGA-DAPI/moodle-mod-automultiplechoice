@@ -68,14 +68,14 @@ if ($action == 'note') { // On arrive de la page générale view.php
 
     $urls = array();
     if ($exportReady) {
-        echo $OUTPUT->heading("Fichier CSV créé");
+        echo $OUTPUT->heading("Export pour tableur : fichier CSV créé");
         $urls['scores.csv'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_AMC_CSV);
     } else {
         echo "<p>Erreur lors de l'export CSV des notes.</p>\n";
     }
 
     if ($csvReady) {
-        $urls['scores_names'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_FULL_CSV);
+        $urls['scores_names.csv'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_FULL_CSV);
         echo "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
     } else {
         error("Could not create CSV file with identified students.");
