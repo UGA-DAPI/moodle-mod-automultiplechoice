@@ -80,7 +80,7 @@ function parse_default_instructions() {
 function getStudentByIdNumber($idn) {
     global $DB;
     $prefixestxt = get_config('mod_automultiplechoice', 'idnumberprefixes');
-    $prefixes = array_filter(explode("\n", $prefixestxt));
+    $prefixes = array_filter(array_map('trim', explode("\n", $prefixestxt)));
     $prefixes[] = "";
     foreach ($prefixes as $p) {
         $user = $DB->get_record('user', array('idnumber' => $p . $idn, 'confirmed' => 1, 'deleted' => 0));
