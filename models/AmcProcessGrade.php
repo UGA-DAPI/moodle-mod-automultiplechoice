@@ -271,7 +271,7 @@ class AmcProcessGrade extends AmcProcess
         }
         $mark = array();
         foreach ($this->grades as $rawmark) {
-            $mark[] = $rawmark['rawgrade'];
+            $mark[] = $rawmark->rawgrade;
         }
 
         $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
