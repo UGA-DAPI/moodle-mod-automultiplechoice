@@ -193,6 +193,8 @@ class AmcProcessGrade extends AmcProcess
     /**
      * Return an array of students with added fields for identified users.
      *
+     * Initialize $this->grades.
+     *
      * @return boolean Success?
      */
     public function writeFileWithIdentifiedStudents() {
@@ -257,7 +259,7 @@ class AmcProcessGrade extends AmcProcess
         }
         $this->grades = array();
         $rawmarks = $this->readRawMarks();
-        foreach ($rawmarks as $index => $rawmark) {
+        foreach ($rawmarks as $rawmark) {
             $idnumber = $rawmark['idnumber'];
             $user = null;
             if ($idnumber) {
@@ -283,7 +285,7 @@ class AmcProcessGrade extends AmcProcess
      */
     public function computeStats() {
         $rawmarks = $this->readRawMarks();
-        foreach ($rawmarks as $index => $rawmark) {
+        foreach ($rawmarks as $rawmark) {
             $mark[] = $rawmark['mark'];
         }
 
@@ -342,7 +344,7 @@ class AmcProcessGrade extends AmcProcess
      *
      * @return array rawgrades
      */
-    public function readRawMarks() {
+    protected function readRawMarks() {
         $rawmarks = array();
         $input = self::fopenRead($this->workdir . self::PATH_AMC_CSV);
         if ( ! $input) {
