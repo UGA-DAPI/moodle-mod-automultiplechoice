@@ -254,26 +254,8 @@ class AmcProcessGrade extends AmcProcess
      * @return array grades
      */
     public function getMarks() {        
-        if ($this->grades) {
-            return $this->grades;
-        }
-        $this->grades = array();
-        $rawmarks = $this->readRawMarks();
-        foreach ($rawmarks as $rawmark) {
-            $idnumber = $rawmark['idnumber'];
-            $user = null;
-            if ($idnumber) {
-                $user = getStudentByIdNumber($idnumber);
-            }
-            if ($user) {
-                $this->grades[$user->id] = (object) array(
-                    'id' => $user->id,
-                    'userid' => $user->id,
-                    'rawgrade' => $rawmark['mark']);
-                $this->usersknown++;
-            } else {
-                $this->usersunknown++;
-            }
+        if (!$this->grades) {
+            $this->writeFileWithIdentifiedStudents();
         }
         return $this->grades;
     }
@@ -284,9 +266,11 @@ class AmcProcessGrade extends AmcProcess
      * @return string html table with statistics indicators
      */
     public function computeStats() {
-        $rawmarks = $this->readRawMarks();
-        foreach ($rawmarks as $rawmark) {
-            $mark[] = $rawmark['mark'];
+        if (!$this->grades) {
+            $this->writeFileWithIdentifiedStudents();
+        }
+        foreach ($this->grades as $rawmark) {
+            $mark[] = $rawmark['rawgrade'];
         }
 
         $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
@@ -338,32 +322,6 @@ class AmcProcessGrade extends AmcProcess
         return $res;
     }
 }
-
-    /**
-     * read the Csv file from AMC and returns the raw array to compute stats and transform into Moodle format
-     *
-     * @return array rawgrades
-     */
-    protected function readRawMarks() {
-        $rawmarks = array();
-        $input = self::fopenRead($this->workdir . self::PATH_AMC_CSV);
-        if ( ! $input) {
-            return null;
-        }
-        $header = fgetcsv($input, 1024, self::CSV_SEPARATOR);
-        if (!$header) {
-            return false;
-        }
-        $getCol = array_flip($header);
-        while (($data = fgetcsv($input, 1024, self::CSV_SEPARATOR)) !== FALSE) {
-            $rawmarks[] = array(
-                'idnumber' => $data[$getCol['student.number']],
-                'mark' => $data[$getCol['Mark']]
-            );
-        }
-        fclose($input);
-        return $rawmarks;
-    }
 
     protected static function fopenRead($filename) {
         if (!is_readable($filename)) {
