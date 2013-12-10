@@ -31,7 +31,7 @@ class AmcProcessPrepare extends AmcProcess
             </li>
             <li>
                 $links[1]
-                <div>Le corrigé, c'est-à-dire le QCM rempli de façon optimale.</div>
+                <div>Le corrigé de référence.</div>
             </li>
         </ul>
 EOL;
@@ -50,7 +50,7 @@ EOL;
         <ul class="amc-files">
             <li>
                 $links[0]
-                <div>Ce fichier contient un PDF par variante de l'énoncé.</div>
+                <div>Cette archive contient un PDF par variante de l'énoncé.</div>
             </li>
         </ul>
 EOL;

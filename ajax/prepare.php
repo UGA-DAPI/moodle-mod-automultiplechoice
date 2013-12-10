@@ -53,7 +53,7 @@ if ($action == 'prepare') {
     }
 } else if ($action == 'zip') {
     if ($process->printAndZip()) {
-        echo "<h3>Fichier Zip créé</h3>";
+        echo "<h3>Archive Zip créée</h3>";
         echo $process->htmlZipLink();
     } else {
         echo $OUTPUT->error_text("Erreur lors de la création de l'archive.");

@@ -21,7 +21,7 @@ $string['pluginadministration'] = 'QCM papier - édition';
 $string['pluginname'] = 'QCM papier';
 $string['noautomultiplechoices'] = 'Aucune instance de QCM papier n\'est définie dans ce cours';
 
-$string['instructionsheader'] = 'Consigne';
+$string['instructionsheader'] = 'Rédaction de la consigne';
 $string['automultiplechoicename'] = 'Nom du questionnaire';
 $string['instructions'] = 'Consigne prédéfinie';
 $string['description'] = 'Consigne';

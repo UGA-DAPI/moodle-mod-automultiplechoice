@@ -66,7 +66,7 @@ if ($quizz->isLocked()) {
         echo <<<EOL
     <div class="async-load" data-url="ajax/prepare.php">
         <div class="async-target" data-parameters='{"a": {$quizz->id}, "action": "zip"}'>
-            Préparation de l'archive ZIP <span />
+            Préparation de l'archive Zip <span />
        </div>
     </div>
     <noscript>
@@ -74,7 +74,7 @@ if ($quizz->isLocked()) {
     </noscript>
 EOL;
     } else {
-        echo "<h3>Fichier ZIP</h3>";
+        echo "<h3>Archive Zip</h3>";
         echo $process->htmlZipLink();
     }
     echo '<div>'
