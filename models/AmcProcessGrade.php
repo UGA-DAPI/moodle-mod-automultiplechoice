@@ -289,39 +289,39 @@ class AmcProcessGrade extends AmcProcess
      * @return float
      */
     public function mmmr($array, $output = 'mean'){
-    if ( ! is_array($array)) {
-        return FALSE;
-    } else {
-        switch($output){
-            case 'size':
-                $res = count($array);
-            break;
-            case 'mean':
-                $count = count($array);
-                $sum = array_sum($array);
-                $res = $sum / $count;
-            break;
-            case 'median':
-                rsort($array);
-                $middle = round(count($array) / 2);
-                $res = $array[$middle-1];
-            break;
-            case 'mode':
-                $v = array_count_values($array);
-                arsort($v);
-                foreach($v as $k => $v){$res = $k; break;}
-            break;
-            case 'range':
-                sort($array);
-                $sml = $array[0];
-                rsort($array);
-                $lrg = $array[0];
-                $res = $lrg . " - " . $sml;
-            break;
+        if ( ! is_array($array)) {
+            return FALSE;
+        } else {
+            switch($output){
+                case 'size':
+                    $res = count($array);
+                break;
+                case 'mean':
+                    $count = count($array);
+                    $sum = array_sum($array);
+                    $res = $sum / $count;
+                break;
+                case 'median':
+                    rsort($array);
+                    $middle = round(count($array) / 2);
+                    $res = $array[$middle-1];
+                break;
+                case 'mode':
+                    $v = array_count_values($array);
+                    arsort($v);
+                    foreach($v as $k => $v){$res = $k; break;}
+                break;
+                case 'range':
+                    sort($array);
+                    $sml = $array[0];
+                    rsort($array);
+                    $lrg = $array[0];
+                    $res = $lrg . " - " . $sml;
+                break;
+            }
+            return $res;
         }
-        return $res;
     }
-}
 
     protected static function fopenRead($filename) {
         if (!is_readable($filename)) {
