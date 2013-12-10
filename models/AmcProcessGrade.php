@@ -64,7 +64,7 @@ class AmcProcessGrade extends AmcProcess
             '--postcorrect-student', '', //FIXME inutile ?
             '--postcorrect-copy', '',    //FIXME inutile ?
             );
-        $res = $this->shellExec('auto-multiple-choice note', $parameters, true);
+        $res = $this->shellExec('auto-multiple-choice note', $parameters);
         if ($res) {
             $this->log('note', 'OK.');
         }
@@ -125,7 +125,7 @@ class AmcProcessGrade extends AmcProcess
             '--no-rtl',
             '--changes-only'
         );
-        $res = $this->shellExec('auto-multiple-choice annote', $parameters, true);
+        $res = $this->shellExec('auto-multiple-choice annote', $parameters);
         if ($res) {
             $this->log('annote', '');
         }
@@ -161,7 +161,7 @@ class AmcProcessGrade extends AmcProcess
             '--register',
             '--no-force-ascii'
         );
-        $res = $this->shellExec('auto-multiple-choice regroupe', $parameters, true);
+        $res = $this->shellExec('auto-multiple-choice regroupe', $parameters);
         if ($res) {
             $this->log('regroupe', '');
         }
