@@ -137,7 +137,7 @@ class AmcProcessGrade extends AmcProcess
      * fills the cr/corrections/pdf directory with a global pdf file for all copies
      * @return bool
      */
-    public function amcRegroupe() {
+    protected function amcRegroupe() {
         $pre = $this->workdir;
         $parameters = array(
             '--id-file', "",
