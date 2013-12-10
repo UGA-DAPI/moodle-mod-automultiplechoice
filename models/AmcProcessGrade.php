@@ -274,22 +274,23 @@ class AmcProcessGrade extends AmcProcess
         }
 
         $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
-        $out = "<table>\n";
+        $out = "<table><tbody>\n";
         foreach ($indics as $indicen => $indicfr) {
             $out .= '<tr><td>' . $indicfr. '</td><td>' . $this->mmmr($mark, $indicen) . '</td></tr>' . "\n";
         }
-        $out .= "<table>\n";
+        $out .= "</tbody></table>\n";
         return $out;
     }
 
     /**
-     * computes several statistics indicators from an array
-     * @param int or float $array
+     * Computes several statistics indicators from an array
+     *
+     * @param array $array
      * @param string $output
      * @return float
      */
     public function mmmr($array, $output = 'mean'){
-        if ( ! is_array($array)) {
+        if (empty($array) || !is_array($array)) {
             return FALSE;
         } else {
             switch($output){
