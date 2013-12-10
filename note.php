@@ -51,31 +51,30 @@ echo $OUTPUT->heading($quizz->name . " - notation");
 $process = new \mod\automultiplechoice\AmcProcessGrade($quizz);
 
 if ($action == 'note') { // On arrive de la page générale view.php
-    $diag = $process->amcPrepareBareme();
-    if ($diag) {
-        echo "<p>Barème extrait.</p>\n";
-    } else {
+    if (!$process->amcPrepareBareme()) {
         echo "<p>Erreur sur l'extraction du barème.</p>\n";
     }
 
-    $diag = $process->amcNote();
-    if ($diag) {
+    $gradeReady = $process->amcNote();
+    $exportReady = $process->amcExport();
+    $csvReady = $process->writeFileWithIdentifiedStudents();
+
+    if ($gradeReady) {
         echo "<p>Notes calculées.</p>\n";
         echo $process->computeStats();
     } else {
         echo "<p>Erreur sur le calcul des notes.</p>\n";
     }
 
-    $diag = $process->amcExport();
     $urls = array();
-    if ($diag) {
+    if ($exportReady) {
         echo $OUTPUT->heading("Fichier CSV créé");
         $urls['scores.csv'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_AMC_CSV);
     } else {
         echo "<p>Erreur lors de l'export CSV des notes.</p>\n";
     }
 
-    if ($process->writeFileWithIdentifiedStudents()) {
+    if ($csvReady) {
         $urls['scores_names'] = $process->getFileUrl(mod\automultiplechoice\AmcProcessGrade::PATH_FULL_CSV);
         echo "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
     } else {
@@ -91,8 +90,7 @@ if ($action == 'note') { // On arrive de la page générale view.php
 
 
 if ( isset($_POST['submit']) && $_POST['submit'] == 'Annotations' ) {
-    $diag = $process->amcAnnotePdf();
-    if ($diag) {
+    if ($process->amcAnnotePdf()) {
         echo "Fichier PDF créé : ";
         $url = $url = $process->getFileUrl('cr/corrections/pdf/' . $process->normalizeFilename('corrections'));
         echo html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank')) . "\n";
