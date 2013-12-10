@@ -269,6 +269,7 @@ class AmcProcessGrade extends AmcProcess
         if (!$this->grades) {
             $this->writeFileWithIdentifiedStudents();
         }
+        $mark = array();
         foreach ($this->grades as $rawmark) {
             $mark[] = $rawmark['rawgrade'];
         }
