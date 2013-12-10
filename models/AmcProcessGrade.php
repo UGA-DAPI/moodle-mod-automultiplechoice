@@ -214,6 +214,7 @@ class AmcProcessGrade extends AmcProcess
         $getCol = array_flip($header);
         $header[] = 'firstname';
         $header[] = 'lastname';
+        $header[] = 'idnumber';
         fputcsv($output, $header, self::CSV_SEPARATOR);
 
         $this->grades = array();
@@ -227,6 +228,7 @@ class AmcProcessGrade extends AmcProcess
                 $data[$getCol['Name']] = fullname($user);
                 $data[] = $user->firstname;
                 $data[] = $user->lastname;
+                $data[] = $user->idnumber;
                 //$data[] = $user->email;
                 $this->grades[$user->id] = (object) array(
                     'id' => $user->id,
