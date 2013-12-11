@@ -110,7 +110,7 @@ if ( isset($_POST['submit']) && $_POST['submit'] == 'Annotations' ) {
 
 
 if ($CFG->debugdisplay) {
-    $DB->set_debug(true)
+    $DB->set_debug(true);
 }
 \automultiplechoice_update_grades($DB->get_record('automultiplechoice', array('id' => $quizz->id), '*'));
 
