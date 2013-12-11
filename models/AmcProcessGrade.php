@@ -239,6 +239,7 @@ class AmcProcessGrade extends AmcProcess
             } else {
                 $data[] = '';
                 $data[] = '';
+                $data[] = '';
                 $this->usersunknown++;
             }
             fputcsv($output, $data, self::CSV_SEPARATOR);
@@ -255,7 +256,7 @@ class AmcProcessGrade extends AmcProcess
      *
      * @return array grades
      */
-    public function getMarks() {        
+    public function getMarks() {
         if (!$this->grades) {
             $this->writeFileWithIdentifiedStudents();
         }
