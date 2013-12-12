@@ -278,7 +278,7 @@ class AmcProcessGrade extends AmcProcess
         }
 
         $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
-        $out = "<table><tbody>\n";
+        $out = "<table class=\"generaltable\"><tbody>\n";
         foreach ($indics as $indicen => $indicfr) {
             $out .= '<tr><td>' . $indicfr. '</td><td>' . $this->mmmr($mark, $indicen) . '</td></tr>' . "\n";
         }
