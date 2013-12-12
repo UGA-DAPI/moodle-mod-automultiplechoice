@@ -233,7 +233,7 @@ class AmcProcessGrade extends AmcProcess
                 $this->grades[$user->id] = (object) array(
                     'id' => $user->id,
                     'userid' => $user->id,
-                    'rawgrade' => $data[$getCol['Mark']]
+                    'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
                 );
                 $this->usersknown++;
             } else {
