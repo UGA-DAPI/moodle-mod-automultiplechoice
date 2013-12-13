@@ -293,7 +293,7 @@ class AmcProcessGrade extends AmcProcess
      * @param string $output
      * @return float
      */
-    public function mmmr($array, $output = 'mean'){
+    protected function mmmr($array, $output = 'mean'){
         if (empty($array) || !is_array($array)) {
             return FALSE;
         } else {
