@@ -350,14 +350,11 @@ class AmcProcessGrade extends AmcProcess
                 case 'mode':
                     $v = array_count_values($array);
                     arsort($v);
-                    foreach($v as $k => $v){$res = $k; break;}
+                    list ($res) = each($v); // read the first key
                 break;
                 case 'range':
-                    sort($array);
-                    $sml = $array[0];
-                    rsort($array);
-                    $lrg = $array[0];
-                    $res = $lrg . " - " . $sml;
+                    sort($array, SORT_NUMERIC);
+                    $res = $array[0] . " - " . $array[count($array) - 1];
                 break;
             }
             return $res;
