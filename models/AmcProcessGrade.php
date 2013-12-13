@@ -173,6 +173,22 @@ class AmcProcessGrade extends AmcProcess
     }
 
      /**
+     * Shell-executes 'amc-ssociation-auto'
+     * @return bool
+     */
+    protected function amcAssociation() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--data', $pre . '/data',
+            '--pre-association',
+            '--liste', $pre . self::PATH_STUDENTLIST_CSV,
+            '--encodage-liste', 'UTF-8',
+            '--liste-key', 'id',
+        );
+        return $this->shellExec('auto-multiple-choice association-auto', $parameters);
+    }
+
+     /**
      * (high-level) executes "amc annote" then "amc regroupe" to get one or several pdf files
      * for the moment, only one variant is possible : ONE global file, NO compose
      * @todo (maybe) manages all variants
