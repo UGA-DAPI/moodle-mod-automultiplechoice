@@ -83,9 +83,6 @@ class AmcProcessGrade extends AmcProcess
             '--data', $pre . '/data',
             '--useall', '',
             '--sort', 'n',
-            '--fich-noms', '%PROJET/',
-            '--noms-encodage', 'UTF-8',
-            '--csv-build-name', '(nom|surname) (prenom|name)',
             '--no-rtl',
             '--output', $pre . self::PATH_AMC_CSV,
             '--option-out', 'encodage=UTF-8',
@@ -93,7 +90,10 @@ class AmcProcessGrade extends AmcProcess
             '--option-out', 'decimal=,',
             '--option-out', 'ticked=',
             '--option-out', 'separateur=' . self::CSV_SEPARATOR,
-            );
+            '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
+            '--noms-encodage', 'UTF-8',
+            '--csv-build-name', '(nom|surname) (prenom|name)',
+        );
         $res = $this->shellExec('auto-multiple-choice export', $parameters);
         if ($res) {
             $this->log('export', 'scoring.csv');
@@ -124,7 +124,10 @@ class AmcProcessGrade extends AmcProcess
             '--verdict', '%(ID) Note: %s/%m (score total : %S/%M)',
             '--verdict-question', '"%s / %m"',
             '--no-rtl',
-            '--changes-only'
+            '--no-changes-only',
+            '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
+            //'--noms-encodage', 'UTF-8',
+            //'--csv-build-name', 'surname name',
         );
         $res = $this->shellExec('auto-multiple-choice annote', $parameters);
         if ($res) {
@@ -154,7 +157,7 @@ class AmcProcessGrade extends AmcProcess
             '--progression-id', 'regroupe',
             '--progression', '1',
             '--modele', '',
-            '--fich-noms', '%PROJET/',
+            '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
             '--noms-encodage', 'UTF-8',
             '--csv-build-name', '(nom|surname) (prenom|name)',
             '--single-output', $this->normalizeFilename('corrections'),
@@ -182,12 +185,10 @@ class AmcProcessGrade extends AmcProcess
         $mask = $pre . "/cr/corrections/pdf/*.pdf";
         array_map('unlink', glob( $mask ));
 
-        $res = $this->amcAnnote();
-        if ( ! $res ) {
+        if (!$this->amcAnnote()) {
             return false;
         }
-        $res = $this->amcRegroupe();
-        return $res;
+        return $this->amcRegroupe();
     }
 
 
