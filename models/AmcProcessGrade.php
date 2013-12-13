@@ -250,23 +250,24 @@ class AmcProcessGrade extends AmcProcess
                 $user = getStudentByIdNumber($idnumber);
             }
             if ($user) {
+                $userid = $user->id;
                 $data[$getCol['Name']] = fullname($user);
                 $data[] = $user->firstname;
                 $data[] = $user->lastname;
                 $data[] = $user->idnumber;
-                $this->grades[$user->id] = (object) array(
-                    'id' => $user->id,
-                    'userid' => $user->id,
-                    'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
-                );
                 $this->usersknown++;
                 fputcsv($studentList, array($user->lastname, $user->firstname, $idnumber, $user->email), self::CSV_SEPARATOR);
             } else {
+                $userid = null;
                 $data[] = '';
                 $data[] = '';
                 $data[] = '';
                 $this->usersunknown++;
             }
+            $this->grades[] = (object) array(
+                'userid' => $userid,
+                'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
+            );
             fputcsv($output, $data, self::CSV_SEPARATOR);
         }
         fclose($input);
@@ -284,7 +285,17 @@ class AmcProcessGrade extends AmcProcess
         if (!$this->grades) {
             $this->writeFileWithIdentifiedStudents();
         }
-        return $this->grades;
+        $namedGrades = array();
+        foreach ($this->grades as $grade) {
+            if ($grade->userid) {
+                $namedGrades[$grade->userid] = (object) array(
+                    'id' => $grade->userid,
+                    'userid' => $grade->userid,
+                    'rawgrade' => $grade->rawgrade,
+                );
+            }
+        }
+        return $namedGrades;
     }
 
 
