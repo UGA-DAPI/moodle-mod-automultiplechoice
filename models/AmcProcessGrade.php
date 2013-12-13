@@ -81,7 +81,7 @@ class AmcProcessGrade extends AmcProcess
         $parameters = array(
             '--module', 'CSV',
             '--data', $pre . '/data',
-            '--useall', '',
+            '--useall', '0',
             '--sort', 'n',
             '--no-rtl',
             '--output', $pre . self::PATH_AMC_CSV,
