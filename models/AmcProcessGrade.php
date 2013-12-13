@@ -273,7 +273,8 @@ class AmcProcessGrade extends AmcProcess
         fclose($input);
         fclose($output);
         fclose($studentList);
-        return true;
+
+        return $this->amcAssociation();
     }
 
     /**
