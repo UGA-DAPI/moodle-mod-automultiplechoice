@@ -102,12 +102,16 @@ EOL;
      */
     public function printAndZip() {
         $pre = $this->workdir;
+        if (!is_dir($pre . '/imprime')) {
+            mkdir($pre . '/imprime');
+        }
+
         $mask = $pre . "/imprime/*.pdf";
-        array_map('unlink', glob( $mask ));
+        array_map('unlink', glob($mask));
         $this->amcImprime();
 
         $zip = new \ZipArchive();
-        $ret = $zip->open($pre . '/' . $this->normalizeFilename('sujets'), \ZipArchive::OVERWRITE);
+        $ret = $zip->open($pre . '/' . $this->normalizeFilename('sujets'), \ZipArchive::CREATE);
         if ( ! $ret ) {
             printf("Echec lors de l'ouverture de l'archive %d", $ret);
         } else {
@@ -117,6 +121,9 @@ EOL;
             // echo "Zip statusSys: [" . $zip->statusSys . "]<br />\n";
             echo "Zipped [" . $zip->numFiles . "] files into [" . basename($zip->filename) . "]<br />\n";
             $zip->close();
+        }
+        if (!file_exists($pre . '/' . $this->normalizeFilename('sujets'))) {
+            echo "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
         }
         return $ret;
     }
