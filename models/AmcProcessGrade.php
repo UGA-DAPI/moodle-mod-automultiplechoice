@@ -15,6 +15,7 @@ class AmcProcessGrade extends AmcProcess
 {
     const PATH_AMC_CSV = '/exports/scores.csv';
     const PATH_FULL_CSV = '/exports/scores_names.csv';
+    const PATH_STUDENTLIST_CSV = '/exports/student_list.csv';
     const CSV_SEPARATOR = ';';
 
     protected $grades = array();
@@ -194,6 +195,8 @@ class AmcProcessGrade extends AmcProcess
      * Return an array of students with added fields for identified users.
      *
      * Initialize $this->grades.
+     * Sets $this->usersknown and $this->usersunknown.
+     *
      *
      * @return boolean Success?
      */
@@ -206,6 +209,11 @@ class AmcProcessGrade extends AmcProcess
         if (!$output) {
             return false;
         }
+        $studentList = fopen($this->workdir . self::PATH_STUDENTLIST_CSV, 'w');
+        if (!$studentList) {
+            return false;
+        }
+        fputcsv($studentList, array('surname', 'name', 'id', 'email'), self::CSV_SEPARATOR);
 
         $header = fgetcsv($input, 1024, self::CSV_SEPARATOR);
         if (!$header) {
@@ -229,13 +237,13 @@ class AmcProcessGrade extends AmcProcess
                 $data[] = $user->firstname;
                 $data[] = $user->lastname;
                 $data[] = $user->idnumber;
-                //$data[] = $user->email;
                 $this->grades[$user->id] = (object) array(
                     'id' => $user->id,
                     'userid' => $user->id,
                     'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
                 );
                 $this->usersknown++;
+                fputcsv($studentList, array($user->lastname, $user->firstname, $idnumber, $user->email), self::CSV_SEPARATOR);
             } else {
                 $data[] = '';
                 $data[] = '';
@@ -246,13 +254,12 @@ class AmcProcessGrade extends AmcProcess
         }
         fclose($input);
         fclose($output);
+        fclose($studentList);
         return true;
     }
 
     /**
      * returns an array to fill the Moodle grade system from the raw marks .
-     *
-     * Sets $this->known and $this->unknown.
      *
      * @return array grades
      */
