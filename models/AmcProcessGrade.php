@@ -180,10 +180,12 @@ class AmcProcessGrade extends AmcProcess
         $pre = $this->workdir;
         $parameters = array(
             '--data', $pre . '/data',
-            '--pre-association',
+            '--no-pre-association',
             '--liste', $pre . self::PATH_STUDENTLIST_CSV,
             '--encodage-liste', 'UTF-8',
             '--liste-key', 'id',
+            '--csv-build-name', '(nom|surname) (prenom|name)',
+            '--notes-id', 'student.number',
         );
         return $this->shellExec('auto-multiple-choice association-auto', $parameters);
     }
