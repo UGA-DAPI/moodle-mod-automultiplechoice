@@ -24,7 +24,7 @@ if ($a) {
 }
 
 require_login($course, true, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/automultiplechoice:view', $context);
 
 $process = new \mod\automultiplechoice\AmcProcessPrepare($quizz);
