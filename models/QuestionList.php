@@ -40,7 +40,7 @@ class QuestionList implements \Countable, \ArrayAccess
      *
      * @global \moodle_database $DB
      * @param integer $scoringSetId (opt) If given, question will have a 'scoring' field.
-     * @return array of "question+question_multichoice" records (objects from the DB) with an additional "score", "scoring" fields.
+     * @return array of "question+multichoice" records (objects from the DB) with an additional "score", "scoring" fields.
      */
     public function getRecords($scoringSetId=null) {
         if (!$this->questions) {
@@ -201,12 +201,19 @@ class QuestionList implements \Countable, \ArrayAccess
      * @return array
      */
     protected function getRawRecords() {
-        global $DB;
+        global $DB, $CFG;
         $ids = $this->getIds();
         list ($cond, $params) = $DB->get_in_or_equal($ids);
+        if ($CFG->version >= 2013111800) {
+            $qtable = 'qtype_multichoice_options';
+            $qfield = 'questionid';
+        } else {
+            $qtable = 'question_multichoice';
+            $qfield = 'question';
+        }
         return $DB->get_records_sql(
                 'SELECT q.*, qc.single '
-                . 'FROM {question} q INNER JOIN {question_multichoice} qc ON q.id = qc.question '
+                . 'FROM {question} q INNER JOIN {' . $qtable . "} qc ON qc.{$qfield}=q.id "
                 . 'WHERE q.id ' . $cond,
                 $params
         );

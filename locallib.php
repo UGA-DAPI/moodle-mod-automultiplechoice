@@ -29,7 +29,7 @@ global $DB;
  * @return array List of objects with fields: id, categoryname, title, timemodified
  */
 function automultiplechoice_list_questions($user, $course) {
-    global $DB;
+    global $DB, $CFG;
 
     $course_context = context_course::instance($course->id);
 
@@ -37,9 +37,16 @@ function automultiplechoice_list_questions($user, $course) {
         return array();
     }
 
+    if ($CFG->version >= 2013111800) {
+        $qtable = 'qtype_multichoice_options';
+        $qfield = 'questionid';
+    } else {
+        $qtable = 'question_multichoice';
+        $qfield = 'question';
+    }
     $sql = "SELECT q.id, qc.name AS categoryname, q.name AS title, q.timemodified "
             . "FROM {question} q JOIN {question_categories} qc ON q.category = qc.id "
-            . " JOIN {question_multichoice} qm ON qm.question=q.id "
+            . " JOIN {" . $qtable . "} qm ON qm.{$qfield}=q.id "
             . "WHERE qc.contextid = " . $course_context->id
             . " ORDER BY qc.sortorder, q.name";
     return $DB->get_records_sql($sql);
