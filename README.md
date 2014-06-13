@@ -9,6 +9,7 @@ while the other module provides a simple interface to type these questions.
 
 It is also recommended to install the filter module moodle-filter-amc.
 
+This module was created for the *service TICE de l'Université Pierre-Mendès-France - Grenoble 2, Sciences sociales et humaines*.
 
 Features
 --------
@@ -64,3 +65,4 @@ Then connect as an admin, and Moodle will complete the installation.
 License
 -------
 GPL v3
+
