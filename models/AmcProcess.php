@@ -85,8 +85,8 @@ class AmcProcess
         if (file_exists($scanlist)) {
             unlink($scanlist);
         }
-        $mask = $pre . "/scans/*.ppm"; // delete all previous ppm files
-        array_map('unlink', glob( $mask ));
+        // delete all previous ppm/... files
+        array_map('unlink', $this->findScannedFiles());
 
         $res = $this->shellExec('auto-multiple-choice getimages', array(
             '--progression-id', 'analyse',
@@ -109,7 +109,7 @@ class AmcProcess
      * @return array with keys: count, time, timefr ; null if nothing was uploaded
      */
     public function statScans() {
-        $ppmfiles = glob($this->workdir . '/scans/*.p[bp]m');
+        $ppmfiles = $this->findScannedFiles();
         $tsmax = 0;
         $tsmin = PHP_INT_MAX;
         foreach ($ppmfiles as $file) {
@@ -317,4 +317,12 @@ class AmcProcess
         }
     }
 
+    /**
+     * Find all the pictures in the scan dir.
+     *
+     * @return array
+     */
+    protected function findScannedFiles() {
+        return  glob($this->workdir . "/scans/*.{pbm,ppm,tif,tiff}", GLOB_BRACE);
+    }
 }
