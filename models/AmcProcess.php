@@ -231,7 +231,9 @@ class AmcProcess
      */
     public function normalizeText($text) {
         setlocale(LC_ALL, 'fr_FR.utf8');
-        $text = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+        if (extension_loaded("iconv")) {
+            $text = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+        }
         $text = strtr(
                 $text,
                 array(' '=>'_', "'"=>'-', '.'=>'-', ','=>'-', ';'=>'-', ':'=>'-', '?'=>'-', '!'=>'-')
