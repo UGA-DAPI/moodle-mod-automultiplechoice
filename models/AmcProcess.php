@@ -214,29 +214,53 @@ class AmcProcess
     }
 
     /**
+     * Format a timestamp into a fr datetime.
      *
-     * @param string $cmd
-     * @param array $params List of strings.
-     * @return boolean Success?
+     * @param integer $timestamp
+     * @return string
      */
-    protected function shellExec($cmd, $params, $output=false) {
-        $escapedCmd = escapeshellcmd($cmd);
-        $escapedParams = array_map('escapeshellarg', $params);
-        $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
-        $lines = array();
-        $returnVal = 0;
-        exec($shellCmd, $lines, $returnVal);
-            if ($output) {
-                $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_DEVELOPER);
-            }
-        if ($returnVal === 0) {
-            return true;
-        } else {
-            /**
-             * @todo Fill $this->errors
-             */
-            $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_NORMAL);
-            return false;
+    public static function isoDate($timestamp) {
+        return date('Y-m-d à H:i', $timestamp);
+    }
+
+
+    /**
+     * Returns a normalized text (no accents, spaces...) for use in file names
+     * @param $text string input text
+     * @return (guess what ?)
+     */
+    public function normalizeText($text) {
+        setlocale(LC_ALL, 'fr_FR.utf8');
+        $text = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+        $text = strtr(
+                $text,
+                array(' '=>'_', "'"=>'-', '.'=>'-', ','=>'-', ';'=>'-', ':'=>'-', '?'=>'-', '!'=>'-')
+        );
+        $text = strtolower($text);
+        $text = preg_replace('/-+/', '-', $text);
+        $text = trim ($text, '-');
+        $text = preg_replace('/[^\w\d-]/si', '', $text); //remove all illegal chars
+        $text = substr($text, 0, 50);
+        return $text;
+    }
+
+    /**
+     * Returns a normalized filename for teacher downloads
+     * @param string $filetype keyword amongst ('sujet', 'catalog', 'sujets')
+     * @return string normalized filename
+     */
+    public function normalizeFilename($filetype) {
+        switch ($filetype) {
+            case 'sujet':
+                return 'sujet-' . $this->normalizeText($this->quizz->name) . '.pdf';
+            case 'corrige':
+                return 'corrige-' . $this->normalizeText($this->quizz->name) . '.pdf';
+            case 'catalog':
+                return 'catalog-' . $this->normalizeText($this->quizz->name) . '.pdf';
+            case 'sujets': // !!! plural 
+                return 'sujets-' . $this->normalizeText($this->quizz->name) . '.zip';
+            case 'corrections':
+                return 'corrections-' . $this->normalizeText($this->quizz->name) . '.pdf';
         }
     }
 
@@ -264,56 +288,29 @@ class AmcProcess
     }
 
     /**
-     * Format a timestamp into a fr datetime.
      *
-     * @param integer $timestamp
-     * @return string
+     * @param string $cmd
+     * @param array $params List of strings.
+     * @return boolean Success?
      */
-    public static function isoDate($timestamp) {
-        return date('Y-m-d à H:i', $timestamp);
-    }
-
-
-    /**
-     * Returns a normalized text (no accents, spaces...) for use in file names
-     * @param $text string input text
-     * @return (guess what ?)
-     */
-    public function normalizeText($text) {
-        setlocale(LC_ALL, 'fr_FR.utf8');
-        $text = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
-        $text = strtr($text, array(' '=>'_', "'"=>'-',
-            '.'=>'-', ','=>'-', ';'=>'-', ':'=>'-', '?'=>'-', '!'=>'-') );
-        $text = strtolower($text);
-        $text = preg_replace('/-+/', '-', $text);
-        $text = trim ($text, '-');
-        $text = preg_replace('/[^\w\d-]/si', '', $text); //remove all illegal chars
-        $text = substr($text, 0, 50);
-        return $text;
-    }
-
-    /**
-     * Returns a normalized filename for teacher downloads
-     * @param string $filetype keyword amongst ('sujet', 'catalog', 'sujets')
-     * @return string normalized filename
-     */
-    public function normalizeFilename($filetype) {
-        switch ($filetype) {
-            case 'sujet':
-                return 'sujet-' . $this->normalizeText($this->quizz->name) . '.pdf';
-                break;
-            case 'corrige':
-                return 'corrige-' . $this->normalizeText($this->quizz->name) . '.pdf';
-                break;
-            case 'catalog':
-                return 'catalog-' . $this->normalizeText($this->quizz->name) . '.pdf';
-                break;
-            case 'sujets': // !!! plural 
-                return 'sujets-' . $this->normalizeText($this->quizz->name) . '.zip';
-                break;
-            case 'corrections':
-                return 'corrections-' . $this->normalizeText($this->quizz->name) . '.pdf';
-                break;
+    protected function shellExec($cmd, $params, $output=false) {
+        $escapedCmd = escapeshellcmd($cmd);
+        $escapedParams = array_map('escapeshellarg', $params);
+        $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
+        $lines = array();
+        $returnVal = 0;
+        exec($shellCmd, $lines, $returnVal);
+            if ($output) {
+                $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_DEVELOPER);
+            }
+        if ($returnVal === 0) {
+            return true;
+        } else {
+            /**
+             * @todo Fill $this->errors
+             */
+            $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_NORMAL);
+            return false;
         }
     }
 
