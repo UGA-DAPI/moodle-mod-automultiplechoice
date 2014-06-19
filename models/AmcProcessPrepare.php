@@ -220,6 +220,7 @@ EOL;
         $descr = $this->quizz->getInstructions();
         $params = $this->quizz->amcparams;
         $markMulti = $params->markmulti ? '' : "LaTeX-BeginDocument: \def\multiSymbole{}\n";
+        $columns = (int) ceil($this->quizz->questions->count() / 28); // empirical guess, should be in config?
 
         return "# AMC-TXT source
 PaperSize: A4
@@ -229,6 +230,7 @@ CompleteMulti: 0
 LaTeX-Preambule: \usepackage{amsmath,amssymb}
 ShuffleQuestions: {$params->shuffleq}
 SeparateAnswerSheet: {$params->separatesheet}
+AnswerSheetColumns: {$columns}
 Title: {$this->quizz->name}
 Presentation: {$descr}
 L-Name: {$params->lname}
