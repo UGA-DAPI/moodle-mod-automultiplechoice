@@ -205,7 +205,7 @@ EOL;
                 . $options
                 . ($question->scoring ? '{' . $question->scoring . '}' : '') . ' '
                 . ($dp == AmcParams::DISPLAY_POINTS_BEGIN ? $pointsTxt . ' ' : '')
-                . $question->name . "\n" . strip_tags($question->questiontext)
+                . str_replace("\n", " ", strip_tags($question->questiontext))
                 . ($dp == AmcParams::DISPLAY_POINTS_END ? ' ' . $pointsTxt : '')
                 . "\n";
 
