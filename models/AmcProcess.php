@@ -54,6 +54,15 @@ class AmcProcess
     }
 
     /**
+     * Return the single error of the last command.
+     *
+     * @return string
+     */
+    public function getLastError() {
+        return end($this->errors);
+    }
+
+    /**
      * Shell-executes 'amc meptex'
      * @return bool
      */

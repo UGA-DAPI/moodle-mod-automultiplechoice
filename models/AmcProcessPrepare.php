@@ -9,6 +9,7 @@
 namespace mod\automultiplechoice;
 
 require_once __DIR__ . '/AmcProcess.php';
+require_once __DIR__ . '/AmcFormat/Api.php';
 
 class AmcProcessPrepare extends AmcProcess
 {
@@ -57,47 +58,54 @@ EOL;
     }
 
     /**
-     * Save the source file
-     * @param type $filename
-     */
-    public function saveAmctxt() {
-
-        $this->initWorkdir();
-        $filename = $this->workdir . "/prepare-source.txt";
-        $res = file_put_contents($filename, $this->getSourceAmctxt());
-        if ($res) {
-            $this->log('prepare:source', 'prepare-source.txt');
-        }
-        return $res;
-    }
-
-    /**
      * Shell-executes 'amc prepare' for creating pdf files
+     *
+     * @param string $formatName
      * @return bool
      */
-    public function createPdf() {
+    public function createPdf($formatName) {
+        $this->errors = array();
+        $this->initWorkdir();
+
+        try {
+            $format = AmcFormat\buildFormat($formatName);
+            $format->quizz = $this->quizz;
+            $format->codelength = $this->codelength;
+            $format->workdir = $this->workdir;
+            $format->save();
+        } catch (\Exception $e) {
+            // error
+            $this->errors[] = $e->getMessage();
+            return false;
+        }
+
         $pre = $this->workdir;
-        $res = $this->shellExec('auto-multiple-choice prepare', array(
-            '--n-copies', (string) $this->quizz->amcparams->copies,
-            '--with', 'xelatex',
-            '--filter', 'plain',
-            '--mode', 's[sc]',
-            '--prefix', $pre,
-            '--out-corrige', $pre . '/' . $this->normalizeFilename('corrige'),
-            '--out-sujet', $pre . '/' . $this->normalizeFilename('sujet'),
-            '--out-catalog', $pre . '/' . $this->normalizeFilename('catalog'),
-            '--out-calage', $pre . '/prepare-calage.xy',
-            '--latex-stdout',
-            $pre . '/prepare-source.txt'
-            ));
+        $res = $this->shellExec(
+            'auto-multiple-choice prepare',
+            array(
+                '--n-copies', (string) $this->quizz->amcparams->copies,
+                '--with', 'xelatex',
+                '--filter', $format->getFiltername(),
+                '--mode', 's[sc]',
+                '--prefix', $pre,
+                '--out-corrige', $pre . '/' . $this->normalizeFilename('corrige'),
+                '--out-sujet', $pre . '/' . $this->normalizeFilename('sujet'),
+                '--out-catalog', $pre . '/' . $this->normalizeFilename('catalog'),
+                '--out-calage', $pre . '/prepare-calage.xy',
+                '--latex-stdout',
+                $pre . '/' . $format->getFilename()
+            )
+        );
         if ($res) {
             $this->log('prepare:pdf', 'catalog corrige sujet');
+        } else {
+            $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
         }
         return $res;
     }
 
     /**
-     * exectuces "amc imprime" then zip the resulting files
+     * Executes "amc imprime" then zip the resulting files
      * @return bool
      */
     public function printAndZip() {
@@ -169,73 +177,4 @@ EOL;
         return $res;
     }
 
-    /**
-     * Compute the whole source file content, by merging header and questions blocks
-     * @return string file content
-     */
-    protected function getSourceAmctxt() {
-        $res = $this->getHeaderAmctxt();
-        foreach ($this->quizz->questions->getRecords($this->quizz->amcparams->scoringset) as $question) {
-            $res .= $this->questionToFileAmctxt($question);
-
-        }
-        return $res;
-    }
-
-    /**
-     * Turns a question into a formatted string, in the AMC-txt (aka plain) format
-     * @param object $question record from the 'question' table
-     * @return string
-     */
-    protected function questionToFileAmctxt($question) {
-        global $DB;
-
-        $answerstext = '';
-        $answers = $DB->get_records('question_answers', array('question' => $question->id));
-        foreach ($answers as $answer) {
-            $answerstext .= ($answer->fraction > 0 ? '+' : '-') . " " . strip_tags($answer->answer) . "\n";
-        }
-        $dp = $this->quizz->amcparams->displaypoints;
-        $points = ($question->score == round($question->score) ? $question->score :
-                (abs(round(10*$question->score) - 10*$question->score) < 1 ? sprintf('%.1f', $question->score)
-                    : sprintf('%.2f', $question->score)));
-        $pointsTxt = $points ? '(' . $points . ' pt' . ($question->score > 1 ? 's' : '') . ')' : '';
-        $options = ($this->quizz->amcparams->shufflea ? '' : '[ordered]');
-        $questiontext = ($question->single ? '*' : '**')
-                . $options
-                . ($question->scoring ? '{' . $question->scoring . '}' : '') . ' '
-                . ($dp == AmcParams::DISPLAY_POINTS_BEGIN ? $pointsTxt . ' ' : '')
-                . str_replace("\n", " ", strip_tags($question->questiontext))
-                . ($dp == AmcParams::DISPLAY_POINTS_END ? ' ' . $pointsTxt : '')
-                . "\n";
-
-        return $questiontext . $answerstext . "\n";
-    }
-
-    /**
-     * Computes the header block of the source file
-     * @return string header block of the AMC-TXT file
-     */
-    protected function getHeaderAmctxt() {
-        $descr = $this->quizz->getInstructions();
-        $params = $this->quizz->amcparams;
-        $markMulti = $params->markmulti ? '' : "LaTeX-BeginDocument: \def\multiSymbole{}\n";
-        $columns = (int) ceil($this->quizz->questions->count() / 28); // empirical guess, should be in config?
-
-        return "# AMC-TXT source
-PaperSize: A4
-Lang: FR
-Code: {$this->codelength}
-CompleteMulti: 0
-LaTeX-Preambule: \usepackage{amsmath,amssymb}
-ShuffleQuestions: {$params->shuffleq}
-SeparateAnswerSheet: {$params->separatesheet}
-AnswerSheetColumns: {$columns}
-Title: {$this->quizz->name}
-Presentation: {$descr}
-L-Name: {$params->lname}
-L-Student: {$params->lstudent}
-$markMulti
-";
-    }
 }

@@ -30,18 +30,11 @@ require_capability('mod/automultiplechoice:view', $context);
 $process = new \mod\automultiplechoice\AmcProcessPrepare($quizz);
 
 if ($action == 'prepare') {
-    if ($process->saveAmctxt()) {
-        debugging("Fichier source enregistré.", DEBUG_NORMAL);
-    } else {
-        echo $OUTPUT->error_text("Erreur sur le fichier source.");
-        exit();
-    }
-
-    if ($process->createPdf()) {
+    if ($process->createPdf("txt")) {
         echo "<h3>Fichiers PDF nouvellement créés</h3>";
         echo $process->htmlPdfLinks();
     } else {
-        echo $OUTPUT->error_text("Erreur lors de la création des fichiers PDF.");
+        echo $OUTPUT->error_text("Erreur lors de la création des fichiers PDF :" . $process->getLastError());
         exit();
     }
 
