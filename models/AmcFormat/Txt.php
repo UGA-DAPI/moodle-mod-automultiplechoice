@@ -10,34 +10,20 @@ namespace mod\automultiplechoice\AmcFormat;
 
 require_once __DIR__ . '/Api.php';
 
-class Txt implements Api
+class Txt extends Api
 {
     const FILENAME = 'prepare-source.txt';
 
     /**
-     * @var Quizz
+     * @return string
      */
-    public $quizz;
-
-    /**
-     * @var integer
-     */
-    public $codelength;
-
-    /**
-     * @var string
-     */
-    public $workdir = '';
-
-    public function __construct($quizz=null, $codelength=10) {
-        $this->quizz = $quizz;
-        $this->codelength = $codelength;
-    }
-
     public function getFilename() {
         return self::FILENAME;
     }
 
+    /**
+     * @return string
+     */
     public function getFilterName() {
         return "plain";
     }
@@ -60,7 +46,8 @@ class Txt implements Api
     }
 
     /**
-     * Turns a question into a formatted string, in the AMC-txt (aka plain) format
+     * Turns a question into a formatted string, in the AMC-txt (aka plain) format.
+     *
      * @param object $question record from the 'question' table
      * @return string
      */
@@ -90,7 +77,8 @@ class Txt implements Api
     }
 
     /**
-     * Computes the header block of the source file
+     * Computes the header block of the source file.
+     *
      * @return string header block of the AMC-TXT file
      */
     protected function getHeader() {
