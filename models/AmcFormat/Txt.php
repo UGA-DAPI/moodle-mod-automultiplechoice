@@ -34,17 +34,6 @@ class Txt implements Api
         $this->codelength = $codelength;
     }
 
-    /**
-     * Save the AmcTXT source file.
-     *
-     * @param type $filename
-     * @return bool Success?
-     */
-    public function save() {
-        $filename = $this->workdir . "/" . self::FILENAME;
-        return file_put_contents($filename, $this->getContent());
-    }
-
     public function getFilename() {
         return self::FILENAME;
     }
@@ -54,10 +43,11 @@ class Txt implements Api
     }
 
     /**
-     * Compute the whole source file content, by merging header and questions blocks
+     * Compute the whole source file content for AMC, by merging header and question blocks.
+     *
      * @return string file content
      */
-    protected function getContent() {
+    public function getContent() {
         if (!$this->quizz) {
             throw new \Exception("No quizz set, cannot convert.");
         }

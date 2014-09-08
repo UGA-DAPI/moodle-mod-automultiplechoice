@@ -26,13 +26,12 @@ function buildFormat($formatName) {
 interface Api
 {
 
-    /**
-     * Save the AmcTXT source file.
+     /**
+     * Compute the whole source file content for AMC, by merging header and question blocks.
      *
-     * @param type $filename
-     * @return bool Success?
+     * @return string file content
      */
-    public function save();
+    public function getContent();
 
     public function getFilename();
 

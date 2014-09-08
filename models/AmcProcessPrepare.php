@@ -58,24 +58,44 @@ EOL;
     }
 
     /**
-     * Shell-executes 'amc prepare' for creating pdf files
+     * Save the AmcTXT source file.
      *
-     * @param string $formatName
-     * @return bool
+     * @param string $formatName "txt" | "latex"
+     * @return AmcFormat\Api
      */
-    public function createPdf($formatName) {
-        $this->errors = array();
+    protected function saveFormat($formatName) {
         $this->initWorkdir();
 
         try {
             $format = AmcFormat\buildFormat($formatName);
             $format->quizz = $this->quizz;
             $format->codelength = $this->codelength;
-            $format->workdir = $this->workdir;
-            $format->save();
         } catch (\Exception $e) {
             // error
             $this->errors[] = $e->getMessage();
+            return null;
+        }
+
+        $filename = $this->workdir . "/" . $format->getFilename();
+        if (file_put_contents($filename, $format->getContent())) {
+            return $format;
+        } else {
+            $this->errors[] = "Could not write the file for AMC. Disk full?";
+            return null;
+        }
+    }
+
+    /**
+     * Shell-executes 'amc prepare' for creating pdf files
+     *
+     * @param string $formatName "txt" | "latex"
+     * @return bool
+     */
+    public function createPdf($formatName) {
+        $this->errors = array();
+
+        $format = $this->saveFormat($formatName);
+        if (!$format) {
             return false;
         }
 
