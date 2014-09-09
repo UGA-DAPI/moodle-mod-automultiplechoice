@@ -30,7 +30,7 @@ require_capability('mod/automultiplechoice:view', $context);
 $process = new \mod\automultiplechoice\AmcProcessPrepare($quizz);
 
 if ($action == 'prepare') {
-    if ($process->createPdf("txt")) {
+    if ($process->createPdf("latex")) {
         echo "<h3>Fichiers PDF nouvellement créés</h3>";
         echo $process->htmlPdfLinks();
     } else {
