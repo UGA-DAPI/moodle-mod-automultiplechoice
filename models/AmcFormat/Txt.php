@@ -103,4 +103,8 @@ L-Student: {$params->lstudent}
 $markMulti
 ";
     }
+
+    protected function getFooter() {
+        return '';
+    }
 }

@@ -54,6 +54,7 @@ abstract class Api
             $res .= $this->convertQuestion($question);
 
         }
+        $res .= $this->getFooter();
         return $res;
     }
 
@@ -70,15 +71,22 @@ abstract class Api
     /**
      * Computes the header block of the source file.
      *
-     * @return string header block of the AMC-TXT file
+     * @return string header block
      */
     abstract protected function getHeader();
 
     /**
-     * Turns a question into a formatted string, in the AMC-txt (aka plain) format.
+     * Turns a question into a formatted string
      *
      * @param object $question record from the 'question' table
      * @return string
      */
     abstract protected function convertQuestion($question);
+
+    /**
+     * Computes the header block of the source file.
+     *
+     * @return string footer block
+     */
+    abstract protected function getFooter();
 }
