@@ -19,6 +19,7 @@ if ($a) {
     $course     = $DB->get_record('course', array('id' => $quizz->course), '*', MUST_EXIST);
     $cm         = get_coursemodule_from_instance('automultiplechoice', $quizz->id, $course->id, false, MUST_EXIST);
 } else {
+    require_login();
     echo $OUTPUT->error_text('You must specify an instance ID');
     exit();
 }
