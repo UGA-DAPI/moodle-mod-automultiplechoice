@@ -25,19 +25,25 @@ class HtmlHelper {
 
         $k = 1;
         $disabled = $quizz->isLocked() ? ' disabled="disabled"' : '';
-        foreach ($quizz->questions->getRecords() as $q) {
-            echo '<tr>
-                <td>' . $k . '</td>
-                <td class="q-score">
-                    <input name="question[id][]" value="' . $q->id . '" type="hidden" />
-                    <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '" '
-                    . $disabled . ' />
-                </td>
-                <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
-                    . HtmlHelper::listAnswers($q)
-                    .'</td>
-            </tr>';
-            $k++;
+        foreach ($quizz->questions->getRecords(null, true) as $q) {
+            if (is_string($q)) {
+                echo '<tr>
+                    <td colspan="3">' . htmlspecialchars($q) . '</td>
+                </tr>';
+            } else {
+                echo '<tr>
+                    <td>' . $k . '</td>
+                    <td class="q-score">
+                        <input name="question[id][]" value="' . $q->id . '" type="hidden" />
+                        <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '" '
+                        . $disabled . ' />
+                    </td>
+                    <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
+                        . HtmlHelper::listAnswers($q)
+                        .'</td>
+                </tr>';
+                $k++;
+            }
         }
         echo '<tr>'
             . '<td></td>'
