@@ -50,7 +50,7 @@ abstract class Api
             throw new \Exception("No quizz set, cannot convert.");
         }
         $res = $this->getHeader();
-        foreach ($this->quizz->questions->getRecords($this->quizz->amcparams->scoringset) as $question) {
+        foreach ($this->quizz->questions->getRecords($this->quizz->amcparams->scoringset, true) as $question) {
             $res .= $this->convertQuestion($question);
 
         }
