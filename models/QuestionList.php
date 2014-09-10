@@ -40,9 +40,10 @@ class QuestionList implements \Countable, \ArrayAccess
      *
      * @global \moodle_database $DB
      * @param integer $scoringSetId (opt) If given, question will have a 'scoring' field.
+     * @param boolean $includeSections (opt)
      * @return array of "question+multichoice" records (objects from the DB) with an additional "score", "scoring" fields.
      */
-    public function getRecords($scoringSetId=null) {
+    public function getRecords($scoringSetId=null, $includeSections=false) {
         if (!$this->questions) {
             return array();
         }
@@ -52,20 +53,26 @@ class QuestionList implements \Countable, \ArrayAccess
         } else {
             $scoringSet = null;
         }
-        $callback = function ($q) use ($records, $scoringSet) {
-            $r = $records[$q['questionid']];
-            $r->score = (double) $q['score'];
-            if ($scoringSet) {
-                $rule = $scoringSet->findMatchingRule($r);
-                if ($rule) {
-                    $r->scoring = $rule->getExpression($r);
-                } else {
-                    $r->scoring = ''; // default AMC scoring (incomplete set of rules)
+        $callback = function ($q) use ($records, $scoringSet, $includeSections) {
+            if (isset($q['questionid'])) {
+                $r = $records[$q['questionid']];
+                $r->score = (double) $q['score'];
+                if ($scoringSet) {
+                    $rule = $scoringSet->findMatchingRule($r);
+                    if ($rule) {
+                        $r->scoring = $rule->getExpression($r);
+                    } else {
+                        $r->scoring = ''; // default AMC scoring (incomplete set of rules)
+                    }
+                }
+                return $r;
+            } else if (is_string($q)) {
+                if ($includeSections) {
+                    return $q;
                 }
             }
-            return $r;
         };
-        return array_map($callback, $this->questions);
+        return array_filter(array_map($callback, $this->questions));
     }
 
     /**
@@ -76,7 +83,7 @@ class QuestionList implements \Countable, \ArrayAccess
      */
     public function validate(Quizz $quizz) {
         $this->errors = array();
-        if (count($this->questions) != $quizz->qnumber) {
+        if (count($this->getIds()) != $quizz->qnumber) {
             $this->errors['qnumber'] = 'validateql_wrong_number';
         }
         $scores = $this->getScores();
@@ -95,7 +102,7 @@ class QuestionList implements \Countable, \ArrayAccess
         foreach ($this->getRawRecords() as $r) {
             $validIds[] = $this->getById($r->id);
         }
-        if (count($validIds) != count($this->questions)) {
+        if (count($validIds) != count($this->getIds())) {
             $this->questions = $validIds;
             $this->errors['qnumber'] = 'validateql_deletedquestions';
             return false;
@@ -114,7 +121,12 @@ class QuestionList implements \Countable, \ArrayAccess
         if (empty($this->questions)) {
             return '';
         }
-        return json_encode(array_map('array_values', $this->questions));
+        return json_encode(
+                array_map(
+                        function ($v) { if (is_array($v)) { return array_values($v); } else { return $v; } },
+                        $this->questions
+                )
+        );
     }
 
     /**
@@ -129,11 +141,15 @@ class QuestionList implements \Countable, \ArrayAccess
         $decoded = json_decode($json);
         if (!empty($decoded) && is_array($decoded)) {
             foreach ($decoded as $q) {
-                $new->questions[] = array(
-                    'questionid' => (int) $q[0],
-                    'score' => (double) $q[1],
-                    'scoring' => (isset($q[2]) ? $q[2] : ''),
-                );
+                if (is_string($q)) {
+                    $new->questions[] = $q;
+                } else {
+                    $new->questions[] = array(
+                        'questionid' => (int) $q[0],
+                        'score' => (double) $q[1],
+                        'scoring' => (isset($q[2]) ? $q[2] : ''),
+                    );
+                }
             }
         }
         return $new;
@@ -150,11 +166,15 @@ class QuestionList implements \Countable, \ArrayAccess
         }
         $new = new self();
         for ($i = 0; $i < count($_POST[$fieldname]['id']); $i++) {
-            $new->questions[] = array(
-                'questionid' => (int) $_POST[$fieldname]['id'][$i],
-                'score' => (double) str_replace(',', '.', $_POST[$fieldname]['score'][$i]),
-                'scoring' => isset($_POST[$fieldname]['scoring']) ? $_POST[$fieldname]['scoring'][$i] : '',
-            );
+            if (ctype_digit($_POST[$fieldname]['id'][$i])) {
+                $new->questions[] = array(
+                    'questionid' => (int) $_POST[$fieldname]['id'][$i],
+                    'score' => (double) str_replace(',', '.', $_POST[$fieldname]['score'][$i]),
+                    'scoring' => isset($_POST[$fieldname]['scoring']) ? $_POST[$fieldname]['scoring'][$i] : '',
+                );
+            } else {
+                $new->questions[] = $_POST[$fieldname]['id'][$i];
+            }
         }
         return $new;
     }
@@ -172,7 +192,7 @@ class QuestionList implements \Countable, \ArrayAccess
             $lookup = array($questionids => true);
         }
         foreach ($this->questions as $q) {
-            if (isset($lookup[$q['questionid']])) {
+            if (isset($q['questionid']) && isset($lookup[$q['questionid']])) {
                 return true;
             }
         }
@@ -187,7 +207,7 @@ class QuestionList implements \Countable, \ArrayAccess
      */
     public function getById($id) {
         foreach ($this->questions as $q) {
-            if ($q['questionid'] == $id) {
+            if (isset($q['questionid']) && $q['questionid'] == $id) {
                 return $q;
             }
         }
@@ -227,7 +247,9 @@ class QuestionList implements \Countable, \ArrayAccess
     private function getIds() {
         $ids = array();
         foreach ($this->questions as $q) {
-            $ids[] = $q['questionid'];
+            if (isset($q['questionid'])) {
+                $ids[] = $q['questionid'];
+            }
         }
         return $ids;
     }
@@ -240,7 +262,9 @@ class QuestionList implements \Countable, \ArrayAccess
     private function getScores() {
         $scores = array();
         foreach ($this->questions as $q) {
-            $scores[] = $q['score'];
+            if (isset($q['questionid'])) {
+                $scores[] = $q['score'];
+            }
         }
         return $scores;
     }
@@ -252,7 +276,7 @@ class QuestionList implements \Countable, \ArrayAccess
      * @return int Count
      */
     public function count() {
-        return count($this->questions);
+        return count($this->getIds());
     }
 
     // Implement ArrayAccess
