@@ -61,4 +61,7 @@ $(document).ready(function() {
         var qid = $(this).closest('li').find('input').first().val();
 		Question.remove(qid);
     });
+	$("#insert-section").on("click", function(e) {
+        $("#questions-selected").append('<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><label>[section]</label><input name="question[id][]" type="text" size="50" /><input name="question[score][]" type="hidden" /><button type="button">X</button></li>');
+    });
 } );

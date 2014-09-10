@@ -65,6 +65,7 @@ $string['qscore'] = 'Note';
 $string['amc_displaypoints'] = 'Montrer les points';
 $string['scoringrules'] = 'Règles de calcul';
 $string['scoringset'] = 'Attribution des points';
+$string['insertsection'] = 'Insérer une nouvelle section';
 
 $string['editselection'] = 'Modifier la sélection de questions';
 

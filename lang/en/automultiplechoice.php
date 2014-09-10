@@ -63,6 +63,7 @@ $string['qscore'] = 'Points';
 $string['amc_displaypoints'] = 'Display Scores';
 $string['scoringrules'] = 'Scoring Rules';
 $string['scoringset'] = 'Scoring strategy';
+$string['insertsection'] = 'Insert a new section';
 
 $string['editselection'] = 'Update this selection';
 
