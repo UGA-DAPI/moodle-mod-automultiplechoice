@@ -11,7 +11,7 @@
  * here will all be database-neutral, using the functions defined in DLL libraries.
  *
  * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
+ * @copyright  2013-2014 Silecs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,6 +27,26 @@ function xmldb_automultiplechoice_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
+
+    if ($oldversion < 2014091100) {
+// cf http://docs.moodle.org/dev/XMLDB_creating_new_DDL_functions
+
+        $table = new xmldb_table('automultiplechoice_log');
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('action', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('actiontime', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'), null, null);
+        $table->add_key('instanceid', XMLDB_KEY_FOREIGN, array('instanceid'), 'automultiplechoice', array('id'));
+
+        $table->add_index('uq_instance_action', XMLDB_INDEX_UNIQUE, array('instanceid', 'action'));
+        $status = $dbman->create_table($table);
+
+        // savepoint reached // @fixme is it necessary ?
+        upgrade_mod_savepoint(true, 2014091100, 'automultiplechoice');
+    }
 
 
 

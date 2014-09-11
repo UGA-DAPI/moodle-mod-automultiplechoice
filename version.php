@@ -7,13 +7,13 @@
  * /admin/index.php
  *
  * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
+ * @copyright  2013-2014 Silecs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2013121000;      // The current module version (Date: YYYYMMDDXX)
+$module->version   = 2014091100;      // The current module version (Date: YYYYMMDDXX)
 $module->requires  = 2012120300;      // Requires this Moodle version
 $module->cron      = 0;               // Period for cron to check this module (secs)
 $module->component = 'mod_automultiplechoice'; // To check on upgrade, that module sits in correct place
