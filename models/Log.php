@@ -81,4 +81,47 @@ class Log {
             $DB->insert_record("automultiplechoice_log", $record, false);
         }
     }
+
+    /**
+     * @param array $actions Array of values among "amc", "pdf", "scoring", "upload".
+     * @return array
+     * @throws Exception
+     */
+    public function check($actions)
+    {
+        $messages = array();
+        foreach ($actions as $action) {
+            switch ($action) {
+                case 'amc':
+                    $amc = $this->read('amc');
+                    if ($amc) {
+                        $minutes = (int) \round(($_SERVER['REQUEST_TIME'] - $amc)/60);
+                        $messages[] = "AMC est déjà en cours d'exécution depuis $minutes minutes.";
+                    }
+                    break;
+                case 'pdf':
+                    $pdf = $this->read('pdf');
+                    if ($this->read('upload') < $pdf) {
+                        $messages[] = "Le PDF du QCM a été modifié après le dépôt des copies.";
+                    }
+                    if ($this->read('scoringsystem') > $pdf) {
+                        $messages[] = "Le PDF du QCM a été modifié après le choix du barème.";
+                    }
+                    break;
+                case 'scoring':
+                    /**
+                     * @todo check scoring
+                     */
+                    break;
+                case 'scoring':
+                    /**
+                     * @todo check upload
+                     */
+                    break;
+                default:
+                    throw new \Exception("Unknown parameter '$action'.");
+            }
+        }
+        return $messages;
+    }
 }
