@@ -70,8 +70,8 @@ class AmcProcess
      */
     public function amcMeptex() {
         $pre = $this->workdir;
-        $log = Log::build($this->quizz->id);
-        $log->write('process');
+        $amclog = Log::build($this->quizz->id);
+        $amclog->write('process');
         $res = $this->shellExec('auto-multiple-choice meptex',
                 array(
                     '--data', $pre . '/data',
@@ -81,7 +81,7 @@ class AmcProcess
                 )
         );
         if ($res) {
-            $log->write('process', 0);
+            $amclog->write('process', 0);
             $this->log('meptex', '');
         }
         return $res;
@@ -101,8 +101,8 @@ class AmcProcess
         // delete all previous ppm/... files
         array_map('unlink', $this->findScannedFiles());
 
-        $log = Log::build($this->quizz->id);
-        $log->write('process');
+        $amclog = Log::build($this->quizz->id);
+        $amclog->write('process');
         $res = $this->shellExec('auto-multiple-choice getimages', array(
             '--progression-id', 'analyse',
             '--vector-density', '250',
@@ -112,7 +112,7 @@ class AmcProcess
             $scanfile
             ), true);
         if ($res) {
-            $log->write('process', 0);
+            $amclog->write('process', 0);
             $nscans = count(file($scanlist));
             $this->log('getimages', $nscans . ' pages');
             return $nscans;
@@ -170,11 +170,11 @@ class AmcProcess
             '--no-ignore-red',
             );
         //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
-        $log = Log::build($this->quizz->id);
-        $log->write('process');
+        $amclog = Log::build($this->quizz->id);
+        $amclog->write('process');
         $res = $this->shellExec('auto-multiple-choice analyse', $parameters, true);
         if ($res) {
-            $log->write('process', 0);
+            $amclog->write('process', 0);
             $this->log('analyse', 'OK.');
         }
         return $res;

@@ -101,6 +101,9 @@ class Quizz
         } else {
             $this->id = $DB->insert_record(self::TABLENAME, $record);
         }
+        /** @TODO
+         * vérifier si la modification impacte le barème (scoringsystem)
+         */
         return (boolean) $this->id;
     }
 
