@@ -1,6 +1,6 @@
 Récapitulatif des processus "automultiplechoice" lancés
 
-createPdf
+amcCreatePdf
   v
 amcMeptex
   v

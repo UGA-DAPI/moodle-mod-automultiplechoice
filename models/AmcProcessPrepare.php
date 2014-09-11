@@ -92,7 +92,7 @@ EOL;
      * @param string $formatName "txt" | "latex"
      * @return bool
      */
-    public function createPdf($formatName) {
+    public function amcCreatePdf($formatName) {
         $this->errors = array();
 
         $format = $this->saveFormat($formatName);
