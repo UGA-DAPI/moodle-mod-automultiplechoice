@@ -29,7 +29,7 @@ class Log {
     public function __construct($instanceId) {
         $this->instanceId = (int) $instanceId;
         if ($this->instanceId <= 0) {
-            throw new Exception("Coding error, invalid instance ID.");
+            throw new \Exception("Coding error, invalid instance ID.");
         }
     }
 
@@ -69,7 +69,7 @@ class Log {
             $timestamp = $_SERVER['REQUEST_TIME'];
         }
         $record = array(
-            'instance_id' => $this->instanceId,
+            'instanceid' => $this->instanceId,
             'action' => $action,
             'actiontime' => $timestamp,
         );

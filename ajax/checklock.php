@@ -9,8 +9,8 @@ global $CFG;
 require_once dirname(dirname(dirname(__DIR__))) . '/config.php';
 require_once dirname(__DIR__) . '/models/Log.php';
 
-$instanceid = required_param('id', null, PARAM_ALPHA);
-$actions = explode(',', required_param('action', null, PARAM_ALPHAEXT));
+$instanceid = required_param('id', PARAM_INT);
+$actions = explode(',', required_param('action', PARAM_ALPHAEXT));
 
 $log = mod\automultiplechoice\Log::build($instanceid);
 
@@ -21,7 +21,7 @@ try {
     $errors = '';
 } catch (Exception $e) {
     $messages = array();
-    $error = $e->getMessage();
+    $errors = $e->getMessage();
 }
 $response = array(
     'lock' => (count($messages) > 0),
