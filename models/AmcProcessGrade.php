@@ -107,6 +107,7 @@ class AmcProcessGrade extends AmcProcess
         if ($res) {
             $log->write('process', 0);
             $this->log('export', 'scoring.csv');
+            $log->write('grading');
         }
         return $res;
     }
@@ -185,6 +186,7 @@ class AmcProcessGrade extends AmcProcess
         if ($res) {
             $this->log('regroup', '');
             $log->write('process', 0);
+            $log->write('correction');
         }
         return $res;
     }

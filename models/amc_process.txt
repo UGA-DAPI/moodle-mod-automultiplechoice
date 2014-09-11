@@ -5,7 +5,12 @@ createPdf
 amcMeptex
   v
 amcImprime
+  v
 
+
+(upload copies)
+  v
+amcMeptex
   v
 amcGetimages
   v

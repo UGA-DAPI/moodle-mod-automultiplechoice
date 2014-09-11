@@ -48,6 +48,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($quizz->name . " - envoi des scans");
 
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
+$amclog = new \mod\automultiplechoice\Log($quizz->id);
 //var_dump($process);
 
 if (isset ($_FILES['scanfile']) ) { // Fichier reçu
@@ -56,6 +57,7 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu
     } else {
         $filename = '/tmp/' . $_FILES['scanfile']['name'];
         rename($_FILES['scanfile']['tmp_name'], $filename);
+        $amclog->write('upload');
 
         echo "Upload : " . $_FILES['scanfile']['name'] . "<br>";
         echo "Type : " . $_FILES['scanfile']['type'] . "<br>";

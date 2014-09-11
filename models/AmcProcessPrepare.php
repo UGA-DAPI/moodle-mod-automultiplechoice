@@ -122,6 +122,7 @@ EOL;
         if ($res) {
             $log->write('process');
             $this->log('prepare:pdf', 'catalog corrige sujet');
+            $log->write('pdf');
         } else {
             $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
             $log->write('process', 0);
