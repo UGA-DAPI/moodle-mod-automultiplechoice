@@ -70,9 +70,7 @@ class AmcProcess
      */
     public function amcMeptex() {
         $pre = $this->workdir;
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        $res = $this->shellExec('auto-multiple-choice meptex',
+        $res = $this->shellExecAmc('meptex',
                 array(
                     '--data', $pre . '/data',
                     '--progression-id', 'MEP',
@@ -81,7 +79,6 @@ class AmcProcess
                 )
         );
         if ($res) {
-            $amclog->write('process', 0);
             $this->log('meptex', '');
         }
         return $res;
@@ -101,9 +98,7 @@ class AmcProcess
         // delete all previous ppm/... files
         array_map('unlink', $this->findScannedFiles());
 
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        $res = $this->shellExec('auto-multiple-choice getimages', array(
+        $res = $this->shellExecAmc('getimages', array(
             '--progression-id', 'analyse',
             '--vector-density', '250',
             '--orientation', 'portrait',
@@ -112,7 +107,6 @@ class AmcProcess
             $scanfile
             ), true);
         if ($res) {
-            $amclog->write('process', 0);
             $nscans = count(file($scanlist));
             $this->log('getimages', $nscans . ' pages');
             return $nscans;
@@ -170,11 +164,8 @@ class AmcProcess
             '--no-ignore-red',
             );
         //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        $res = $this->shellExec('auto-multiple-choice analyse', $parameters, true);
+        $res = $this->shellExecAmc('analyse', $parameters, true);
         if ($res) {
-            $amclog->write('process', 0);
             $this->log('analyse', 'OK.');
         }
         return $res;
@@ -334,6 +325,24 @@ class AmcProcess
             return false;
         }
     }
+
+    /**
+     * Wrapper around shellExec() including lock write
+     * @param string $cmd auto-multiple-choice subcommand
+     * @param array $params List of strings.
+     * @return boolean Success?
+     */
+    protected function shellExecAmc($cmd, $params, $output=false) {
+        $amclog = Log::build($this->quizz->id);
+        $amclog->write('process');
+        $res = $this->shellExec('auto-multiple-choice ' . $cmd,
+            $params,
+            $output
+        );
+        $amclog->write('process', 0);
+        return $res;
+    }
+
 
     /**
      * Find all the pictures in the scan dir.

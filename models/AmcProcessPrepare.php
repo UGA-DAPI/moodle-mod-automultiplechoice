@@ -101,9 +101,7 @@ EOL;
         }
 
         $pre = $this->workdir;
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        $res = $this->shellExec('auto-multiple-choice prepare',
+        $res = $this->shellExecAmc('prepare',
             array(
                 '--n-copies', (string) $this->quizz->amcparams->copies,
                 '--with', 'xelatex',
@@ -119,12 +117,11 @@ EOL;
             )
         );
         if ($res) {
-            $amclog->write('process');
+            $amclog = Log::build($this->quizz->id);
             $this->log('prepare:pdf', 'catalog corrige sujet');
             $amclog->write('pdf');
         } else {
             $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
-            $amclog->write('process', 0);
         }
         return $res;
     }
@@ -195,11 +192,8 @@ EOL;
                     '--output', $pre . '/imprime/sujet-%e.pdf'
                 );
         // $params[] = '--split'; // M#2076 a priori jamais nécessaire
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        $res = $this->shellExec('auto-multiple-choice imprime', $params);
+        $res = $this->shellExecAmc('imprime', $params);
         if ($res) {
-            $amclog->write('process', 0);
             $this->log('imprime', '');
         }
         return $res;

@@ -40,12 +40,9 @@ class AmcProcessGrade extends AmcProcess
             '--progression', '1',
             $pre . '/prepare-source.txt'
             );
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        $res = $this->shellExec('auto-multiple-choice prepare', $parameters);
+        $res = $this->shellExecAmc('prepare', $parameters);
         if ($res) {
             $this->log('prepare:bareme', 'OK.');
-            $amclog->write('process', 0);
         }
         return $res;
     }
@@ -69,12 +66,9 @@ class AmcProcessGrade extends AmcProcess
             '--postcorrect-student', '', //FIXME inutile ?
             '--postcorrect-copy', '',    //FIXME inutile ?
             );
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        $res = $this->shellExec('auto-multiple-choice note', $parameters);
+        $res = $this->shellExecAmc('note', $parameters);
         if ($res) {
             $this->log('note', 'OK.');
-            $amclog->write('process', 0);
         }
         return $res;
     }
@@ -101,12 +95,10 @@ class AmcProcessGrade extends AmcProcess
             '--noms-encodage', 'UTF-8',
             '--csv-build-name', '(nom|surname) (prenom|name)',
         );
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        $res = $this->shellExec('auto-multiple-choice export', $parameters);
+        $res = $this->shellExecAmc('export', $parameters);
         if ($res) {
-            $amclog->write('process', 0);
             $this->log('export', 'scoring.csv');
+            $amclog = Log::build($this->quizz->id);
             $amclog->write('grading');
         }
         return $res;
@@ -141,12 +133,9 @@ class AmcProcessGrade extends AmcProcess
             //'--noms-encodage', 'UTF-8',
             //'--csv-build-name', 'surname name',
         );
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');      
-        $res = $this->shellExec('auto-multiple-choice annote', $parameters);
+        $res = $this->shellExecAmc('annote', $parameters);
         if ($res) {
             $this->log('annote', '');
-            $amclog->write('process', '0');
         }
         return $res;
     }
@@ -180,12 +169,10 @@ class AmcProcessGrade extends AmcProcess
             '--register',
             '--no-force-ascii'
         );
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        $res = $this->shellExec('auto-multiple-choice regroupe', $parameters);
+        $res = $this->shellExecAmc('regroupe', $parameters);
         if ($res) {
             $this->log('regroup', '');
-            $amclog->write('process', 0);
+            $amclog = Log::build($this->quizz->id);
             $amclog->write('correction');
         }
         return $res;
@@ -206,10 +193,7 @@ class AmcProcessGrade extends AmcProcess
             '--csv-build-name', '(nom|surname) (prenom|name)',
             '--notes-id', 'student.number',
         );
-        $amclog = Log::build($this->quizz->id);
-        $amclog->write('process');
-        return $this->shellExec('auto-multiple-choice association-auto', $parameters);
-        $amclog->write('process', 0);
+        return $this->shellExecAmc('association-auto', $parameters);
     }
 
      /**
