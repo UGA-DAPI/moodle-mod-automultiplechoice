@@ -92,10 +92,10 @@ class Log {
         $messages = array();
         foreach ($actions as $action) {
             switch ($action) {
-                case 'amc':
-                    $amc = $this->read('amc');
-                    if ($amc) {
-                        $minutes = (int) \round(($_SERVER['REQUEST_TIME'] - $amc)/60);
+                case 'process':
+                    $process = $this->read('process');
+                    if ($process) {
+                        $minutes = (int) \round(($_SERVER['REQUEST_TIME'] - $process)/60);
                         $messages[] = "AMC est déjà en cours d'exécution depuis $minutes minutes.";
                     }
                     break;
@@ -108,14 +108,14 @@ class Log {
                         $messages[] = "Le PDF du QCM a été modifié après le choix du barème.";
                     }
                     break;
-                case 'scoring':
+                case 'grading':
                     /**
-                     * @todo check scoring
+                     * @todo check grading
                      */
                     break;
-                case 'scoring':
+                case 'correction':
                     /**
-                     * @todo check upload
+                     * @todo check correction/annote
                      */
                     break;
                 default:
