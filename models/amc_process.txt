@@ -1,0 +1,27 @@
+Récapitulatif des processus "automultiplechoice" lancés
+
+createPdf
+  v
+amcMeptex
+  v
+amcImprime
+
+  v
+amcGetimages
+  v
+amcAnalyse
+  v
+
+amcPrepareBareme
+  v
+amcNote
+  v
+(amcAssociation)
+  v
+amcExport         ->  data/scoring.csv
+  v
+amcAnnotePdf
+[ amcAnnote   ]
+[ amcRegroupe ]
+  v
+amcAssociation

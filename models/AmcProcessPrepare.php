@@ -10,6 +10,7 @@ namespace mod\automultiplechoice;
 
 require_once __DIR__ . '/AmcProcess.php';
 require_once __DIR__ . '/AmcFormat/Api.php';
+require_once __DIR__ . '/Log.php';
 
 class AmcProcessPrepare extends AmcProcess
 {
@@ -100,8 +101,10 @@ EOL;
         }
 
         $pre = $this->workdir;
-        $res = $this->shellExec(
-            'auto-multiple-choice prepare',
+        $log = Log::build($this->quizz->id);
+        // $log = Log::build($this->quizz->id);
+        $log->write('process');
+        $res = $this->shellExec('auto-multiple-choice prepare',
             array(
                 '--n-copies', (string) $this->quizz->amcparams->copies,
                 '--with', 'xelatex',
@@ -117,9 +120,11 @@ EOL;
             )
         );
         if ($res) {
+            $log->write('process');
             $this->log('prepare:pdf', 'catalog corrige sujet');
         } else {
             $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
+            $log->write('process', 0);
         }
         return $res;
     }
@@ -190,8 +195,11 @@ EOL;
                     '--output', $pre . '/imprime/sujet-%e.pdf'
                 );
         // $params[] = '--split'; // M#2076 a priori jamais nécessaire
+        $log = Log::build($this->quizz->id);
+        $log->write('process');
         $res = $this->shellExec('auto-multiple-choice imprime', $params);
         if ($res) {
+            $log->write('process', 0);
             $this->log('imprime', '');
         }
         return $res;

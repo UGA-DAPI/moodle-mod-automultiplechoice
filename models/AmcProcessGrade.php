@@ -10,6 +10,7 @@ namespace mod\automultiplechoice;
 
 require_once __DIR__ . '/AmcProcess.php';
 require_once dirname(__DIR__) . '/locallib.php';
+require_once __DIR__ . '/Log.php';
 
 class AmcProcessGrade extends AmcProcess
 {
@@ -39,9 +40,12 @@ class AmcProcessGrade extends AmcProcess
             '--progression', '1',
             $pre . '/prepare-source.txt'
             );
+        $log = Log::build($this->quizz->id);
+        $log->write('process');
         $res = $this->shellExec('auto-multiple-choice prepare', $parameters);
         if ($res) {
             $this->log('prepare:bareme', 'OK.');
+            $log->write('process', 0);
         }
         return $res;
     }
@@ -65,9 +69,12 @@ class AmcProcessGrade extends AmcProcess
             '--postcorrect-student', '', //FIXME inutile ?
             '--postcorrect-copy', '',    //FIXME inutile ?
             );
+        $log = Log::build($this->quizz->id);
+        $log->write('process');
         $res = $this->shellExec('auto-multiple-choice note', $parameters);
         if ($res) {
             $this->log('note', 'OK.');
+            $log->write('process', 0);
         }
         return $res;
     }
@@ -94,8 +101,11 @@ class AmcProcessGrade extends AmcProcess
             '--noms-encodage', 'UTF-8',
             '--csv-build-name', '(nom|surname) (prenom|name)',
         );
+        $log = Log::build($this->quizz->id);
+        $log->write('process');
         $res = $this->shellExec('auto-multiple-choice export', $parameters);
         if ($res) {
+            $log->write('process', 0);
             $this->log('export', 'scoring.csv');
         }
         return $res;
@@ -130,9 +140,12 @@ class AmcProcessGrade extends AmcProcess
             //'--noms-encodage', 'UTF-8',
             //'--csv-build-name', 'surname name',
         );
+        $log = Log::build($this->quizz->id);
+        $log->write('process');      
         $res = $this->shellExec('auto-multiple-choice annote', $parameters);
         if ($res) {
             $this->log('annote', '');
+            $log->write('process', '0');
         }
         return $res;
     }
@@ -166,15 +179,18 @@ class AmcProcessGrade extends AmcProcess
             '--register',
             '--no-force-ascii'
         );
+        $log = Log::build($this->quizz->id);
+        $log->write('process');
         $res = $this->shellExec('auto-multiple-choice regroupe', $parameters);
         if ($res) {
-            $this->log('regroupe', '');
+            $this->log('regroup', '');
+            $log->write('process', 0);
         }
         return $res;
     }
 
      /**
-     * Shell-executes 'amc-ssociation-auto'
+     * Shell-executes 'amc association-auto'
      * @return bool
      */
     protected function amcAssociation() {
@@ -188,7 +204,10 @@ class AmcProcessGrade extends AmcProcess
             '--csv-build-name', '(nom|surname) (prenom|name)',
             '--notes-id', 'student.number',
         );
+        $log = Log::build($this->quizz->id);
+        $log->write('process');
         return $this->shellExec('auto-multiple-choice association-auto', $parameters);
+        $log->write('process', 0);
     }
 
      /**
