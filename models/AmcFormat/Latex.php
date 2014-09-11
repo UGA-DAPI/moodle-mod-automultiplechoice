@@ -150,6 +150,7 @@ EOL;
 
         $output = "} % group\n"
             . "\n% Title\n\\maketitle\n"
+            . ($this->quizz->amcparams->separatesheet ? "" : $this->getStudentBlock())
             . "\n% Instructions\n\\begin{center}\n" . self::htmlToLatex($this->quizz->getInstructions()) . "\n\\end{center}\n"
             . "\\vspace{1ex}\n%%% End of header\n\n";
 
@@ -163,8 +164,10 @@ EOL;
                 . ($columns > 1 ? "\\end{multicols}\n" : "");
         }
         if ($this->quizz->amcparams->separatesheet) {
+            // colums: empirical guess, should be in config?
             $columns = $this->quizz->questions->count() > 22 ? 2 : 0;
             $output .= "\\AMCcleardoublepage\n\AMCformBegin\n\\section*{Feuille de réponse}\n"
+                . $this->getStudentBlock()
                 . ($columns > 1 ? "\\begin{multicols}{"."$columns}\\raggedcolumns\n" : "")
                 . '\vspace*{-3.8ex}' // ugly hack to remove unknown top space (especially so that top lines are aligned)
                 . "\\noindent\\AMCform\n"
@@ -172,6 +175,41 @@ EOL;
         }
         $output .= "\\clearpage\n\\end{document}\n";
         return $output;
+    }
+
+    protected function getStudentBlock() {
+        $namefield = '
+\namefield{
+    \fbox{
+        \begin{minipage}{.9\linewidth}
+            '. self::htmlToLatex($this->quizz->amcparams->lname) . '\\\\[3ex]
+            \null\dotfill\vspace*{3mm}
+        \end{minipage}
+    }
+}
+';
+        if ($this->codelength) {
+            $tex = '
+{
+    \setlength{\parindent}{0pt}
+    \begin{multicols}{2}
+        \raggedcolumns
+        \AMCcode{student.number}{' . $this->codelength . '}
+
+        \columnbreak
+        $\longleftarrow{}$\hspace{0pt plus 1cm}' . self::htmlToLatex($this->quizz->amcparams->lstudent) . '\\\\[3ex]
+        \hfill{}' . $namefield . '\hfill\\\\
+    \end{multicols}
+}
+';
+        } else {
+            $tex = '
+\begin{minipage}{.47\linewidth}
+' . $namefield . '
+\end{minipage}
+';
+        }
+        return $tex . "\n\\vspace{2ex}\n";
     }
 
     /**
@@ -183,6 +221,7 @@ EOL;
         /**
          * @todo Real conversion of the HTML DOM to LaTeX.
          * @todo Keep <tex>...</tex> unchanged.
+         * @todo Images?
          */
         return strip_tags(
             str_replace(
