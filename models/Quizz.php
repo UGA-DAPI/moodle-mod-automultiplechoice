@@ -10,6 +10,7 @@ namespace mod\automultiplechoice;
 
 require __DIR__ . '/AmcParams.php';
 require __DIR__ . '/QuestionList.php';
+require_once __DIR__ . '/Log.php';
 
 global $DB;
 /* @var $DB \moodle_database */
@@ -101,9 +102,13 @@ class Quizz
         } else {
             $this->id = $DB->insert_record(self::TABLENAME, $record);
         }
+        $amclog = Log::build($this->id);
+        $amclog->write('scoringsystem');
+
         /** @TODO
          * vérifier si la modification impacte le barème (scoringsystem)
          */
+        
         return (boolean) $this->id;
     }
 
