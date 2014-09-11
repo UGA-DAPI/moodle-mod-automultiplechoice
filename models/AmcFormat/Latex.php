@@ -14,8 +14,6 @@ class Latex extends Api
 {
     const FILENAME = 'prepare-source.tex';
 
-    protected $columns = 1;
-
     /**
      * @var array List of the groups defined with \element{...}
      */
@@ -41,7 +39,6 @@ class Latex extends Api
      */
     protected function getHeader() {
         $params = $this->quizz->amcparams;
-        $this->columns = (int) ceil($this->quizz->questions->count() / 28); // empirical guess, should be in config?
 
         $options = "lang=FR%\n"
             . ",box% puts every question in a block, so that it cannot be split by a page break\n"
@@ -71,7 +68,7 @@ $options
 EOL;
         return $header
             . ($params->markmulti ? '' : "\\def\\multiSymbole{}\n")
-            . "\\title{" . self::htmlToLatex($this->quizz->name) . "}\n";
+            . "\\date{}\\author{}\n\\title{" . self::htmlToLatex($this->quizz->name) . "}\n";
     }
 
     /**
@@ -148,8 +145,11 @@ EOL;
      * @return string footer block
      */
     protected function getFooter() {
+         // colums: empirical guess, should be in config?
+        $columns = $this->quizz->questions->count() > 5 ? 2 : 0;
+
         $output = "} % group\n"
-            . "\n% Title\n\\begin{center}\n" . self::htmlToLatex($this->quizz->name) . "\n\\end{center}\n"
+            . "\n% Title\n\\maketitle\n"
             . "\n% Instructions\n\\begin{center}\n" . self::htmlToLatex($this->quizz->getInstructions()) . "\n\\end{center}\n"
             . "\\vspace{1ex}\n%%% End of header\n\n";
 
@@ -157,12 +157,19 @@ EOL;
             if ($title) {
                 $output .= sprintf("\\section*{%s}\n", self::htmlToLatex($title));
             }
-            $output .= ($this->columns > 1 ? "\\begin{multicols}{$this->columns}\n" : "")
-            . ($this->quizz->amcparams->shuffleq ? sprintf("\\shufflegroup{%s}\n", $name) : '')
-            . sprintf("\\insertgroup{%s}\n", $name)
-            . ($this->columns > 1 ? "\\end{multicols}\n" : "");
+            $output .= ($columns > 1 ? "\\begin{multicols}{"."$columns}\n" : "")
+                . ($this->quizz->amcparams->shuffleq ? sprintf("\\shufflegroup{%s}\n", $name) : '')
+                . sprintf("\\insertgroup{%s}\n", $name)
+                . ($columns > 1 ? "\\end{multicols}\n" : "");
         }
-        $output .= ($this->quizz->amcparams->separatesheet ? "\\AMCcleardoublepage\AMCformBegin\nANSWER SHEET\n\\AMCform" : "");
+        if ($this->quizz->amcparams->separatesheet) {
+            $columns = $this->quizz->questions->count() > 22 ? 2 : 0;
+            $output .= "\\AMCcleardoublepage\n\AMCformBegin\n\\section*{Feuille de réponse}\n"
+                . ($columns > 1 ? "\\begin{multicols}{"."$columns}\\raggedcolumns\n" : "")
+                . '\vspace*{-3.8ex}' // ugly hack to remove unknown top space (especially so that top lines are aligned)
+                . "\\noindent\\AMCform\n"
+                . ($columns > 1 ? "\\end{multicols}\n" : "");
+        }
         $output .= "\\clearpage\n\\end{document}\n";
         return $output;
     }

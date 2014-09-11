@@ -39,9 +39,7 @@ if ($action == 'prepare') {
         exit();
     }
 
-    if ($process->amcMeptex()) {
-        debugging("Mise en page (amc meptex) terminée.", DEBUG_NORMAL);
-    } else {
+    if (!$process->amcMeptex()) {
         echo $OUTPUT->error_text("Erreur lors du calcul de mise en page (amc meptex).");
         exit();
     }
