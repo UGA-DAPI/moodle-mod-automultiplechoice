@@ -10,7 +10,7 @@ require_once dirname(dirname(dirname(__DIR__))) . '/config.php';
 require_once dirname(__DIR__) . '/models/Log.php';
 
 $instanceid = required_param('id', PARAM_INT);
-$actions = explode(',', required_param('action', PARAM_ALPHAEXT));
+$actions = explode(',', required_param('actions', PARAM_ALPHAEXT));
 
 $log = mod\automultiplechoice\Log::build($instanceid);
 

@@ -31,4 +31,31 @@ $(document).ready(function() {
 	}
 	$('#toggle-answers').on('click', toggleAnswers);
 	toggleAnswers();
+
+	$(".checklock").on("click", 'input[type=submit]', function(){
+		var id = $(this).closest('.checklock').data('checklockid');
+		var check = $(this).closest("li[data-check]").data("check");
+		var propagate = false;
+        $.ajax({
+			url: "ajax/checklock.php",
+			data: { "id": id, "actions": check },
+			method: 'get',
+			async: false,
+            success: function(data) {
+				console.log(data.lock);
+				console.log(data.msg);
+				if (data.error) {
+					propagate = true;
+				}
+				if (data.lock) {
+					propagate = confirm("Attention aux problèmes suivant:\n - " + data.msg.join("\n - ") + "\n\nVoulez-vous continuer malgré tout ?");
+				} else {
+					propagate = true;
+				}
+			}
+        });
+				alert("coucou !");
+		return propagate;
+
+	});
 } );

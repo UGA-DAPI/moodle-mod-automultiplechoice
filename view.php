@@ -114,9 +114,9 @@ $optionsNormal = array();
 $optionsDisabled = array('disabled' => 'disabled');
 $process = new amc\AmcProcess($quizz);
 ?>
-<div id="main-actions">
+<div id="main-actions" class="checklock" data-checklockid="<?php echo $quizz->id; ?>">
     <ul class="amc-process">
-        <li>
+        <li data-check="process">
             <?php
             echo $OUTPUT->single_button(
                     new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id)),
@@ -141,7 +141,7 @@ $process = new amc\AmcProcess($quizz);
         </li>
     </ul>
     <ul class="amc-process">
-        <li>
+        <li data-check="process,pdf">
             <?php
             echo $OUTPUT->single_button(
                     new moodle_url('/mod/automultiplechoice/scan.php', array('a' => $quizz->id)),
@@ -154,7 +154,7 @@ $process = new amc\AmcProcess($quizz);
             ?>
         </li>
         <li class="amc-process-next"></li>
-        <li>
+        <li data-check="process,pdf,upload">
             <?php
             echo $OUTPUT->single_button(
                     new moodle_url('/mod/automultiplechoice/note.php', array('a' => $quizz->id, 'action' => 'note')),
