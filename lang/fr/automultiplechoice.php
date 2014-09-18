@@ -1,7 +1,7 @@
 <?php
 
 /**
- * English strings for automultiplechoice
+ * French strings for automultiplechoice
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
@@ -20,6 +20,10 @@ $string['automultiplechoice'] = 'QCM papier';
 $string['pluginadministration'] = 'QCM papier - édition';
 $string['pluginname'] = 'QCM papier';
 $string['noautomultiplechoices'] = 'Aucune instance de QCM papier n\'est définie dans ce cours';
+
+$string['documents'] = 'Documents';
+$string['uploadscans'] = 'Dépôt des copies';
+$string['grading'] = 'Correction';
 
 $string['instructionsheader'] = 'Rédaction de la consigne';
 $string['automultiplechoicename'] = 'Nom du questionnaire';
@@ -65,6 +69,7 @@ $string['qscore'] = 'Note';
 $string['amc_displaypoints'] = 'Montrer les points';
 $string['scoringrules'] = 'Règles de calcul';
 $string['scoringset'] = 'Attribution des points';
+$string['scoringsystem'] = 'Barème';
 $string['insertsection'] = 'Insérer une nouvelle section';
 
 $string['editselection'] = 'Modifier la sélection de questions';
