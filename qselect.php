@@ -48,10 +48,12 @@ if ($questions) {
 
 // add_to_log($course->id, 'automultiplechoice', 'view', "qselect.php?id={$cm->id}", $quizz->name, $cm->id);
 
+$output = $PAGE->get_renderer('mod_automultiplechoice');
+$output->quizz = $quizz;
+$output->cm = $cm;
+$output->currenttab = 'questions';
+
 $PAGE->set_url('/mod/automultiplechoice/qselect.php', array('a' => $quizz->id));
-$PAGE->set_title(format_string($quizz->name));
-$PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_context($context);
 $PAGE->set_cacheable(false);
 
 $PAGE->requires->jquery();
@@ -68,8 +70,7 @@ $quizz->validate();
 
 $available_questions = automultiplechoice_list_questions($USER, $COURSE);
 
-echo $OUTPUT->header();
-
+echo $output->header();
 
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('questionoperations', 'automultiplechoice'));
@@ -200,4 +201,4 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
 <?php
 echo $OUTPUT->box_end();
 
-echo $OUTPUT->footer();
+echo $output->footer();
