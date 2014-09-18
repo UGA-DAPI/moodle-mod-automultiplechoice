@@ -61,6 +61,40 @@ class Quizz
     const TABLENAME = 'automultiplechoice';
 
     /**
+     * Name of the dir where files will be put.
+     *
+     * @param bool $absolute absolute (default) or relative
+     * @return string
+     */
+    public function getDirName($absolute=true) {
+        global $CFG;
+        $dir = sprintf('automultiplechoice_%05d', $this->id);
+        if ($absolute) {
+            return $CFG->dataroot . '/local/automultiplechoice/' . $dir;
+        } else {
+            return '/local/automultiplechoice/' . $dir;
+        }
+    }
+
+    /**
+     * List the uploaded scans.
+     *
+     * @return array
+     */
+    public function findScannedFiles() {
+        return glob($this->getDirName() . "/scans/*.{pbm,ppm,tif,tiff}", GLOB_BRACE);
+    }
+
+    /**
+     * Return true if some scans were uploaded.
+     *
+     * @return bool
+     */
+    public function hasScans() {
+        return count($this->findScannedFiles()) > 0;
+    }
+
+    /**
      * Returns true if the Quizz is locked.
      *
      * @todo Add conditions for this to happen (file existence, log existence, explicit locking in DB, etc).

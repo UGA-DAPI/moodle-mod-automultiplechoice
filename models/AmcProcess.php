@@ -33,13 +33,11 @@ class AmcProcess
      *
      * @param Quizz $quizz
      */
-    public function __construct($quizz) {
-        global $CFG;
+    public function __construct(Quizz $quizz) {
         $this->quizz = $quizz;
 
-        $dir = sprintf('automultiplechoice_%05d', $this->quizz->id);
-        $this->workdir = $CFG->dataroot . '/local/automultiplechoice/' . $dir;
-        $this->relworkdir = '/local/automultiplechoice/' . $dir;
+        $this->workdir = $quizz->getDirName(true);
+        $this->relworkdir = $quizz->getDirName(false);
 
         $this->codelength = (int) get_config('mod_automultiplechoice', 'amccodelength');
         /**
@@ -343,13 +341,12 @@ class AmcProcess
         return $res;
     }
 
-
     /**
      * Find all the pictures in the scan dir.
      *
      * @return array
      */
     protected function findScannedFiles() {
-        return  glob($this->workdir . "/scans/*.{pbm,ppm,tif,tiff}", GLOB_BRACE);
+        return $this->quizz->findScannedFiles();
     }
 }
