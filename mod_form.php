@@ -26,7 +26,7 @@ use \mod\automultiplechoice as amc;
  */
 class mod_automultiplechoice_mod_form extends moodleform_mod {
     /**
-     * @var Quizz
+     * @var amc\Quizz
      */
     protected $current;
 
@@ -174,6 +174,14 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                 }
             }
 
+        }
+        // Hideous hack to insert a tab bar at the top of the page
+        if (!empty($this->current->id)) {
+            global $PAGE, $OUTPUT;
+            $output = $PAGE->get_renderer('mod_automultiplechoice');
+            $output->quizz = amc\Quizz::buildFromRecord($this->current);
+            $output->currenttab = 'settings';
+            $OUTPUT = $output;
         }
     }
 
