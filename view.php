@@ -125,7 +125,7 @@ $process = new amc\AmcProcess($quizz);
         <li data-check="process">
             <?php
             echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id)),
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id)),
                     get_string('prepare', 'automultiplechoice'),
                     'get',
                     empty($quizz->errors) ? $optionsNormal : $optionsDisabled
@@ -138,7 +138,7 @@ $process = new amc\AmcProcess($quizz);
         <li>
             <?php
             echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id)),
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id)),
                     get_string('prepare-locked', 'automultiplechoice'),
                     'get',
                     empty($quizz->errors) && $quizz->isLocked() ? $optionsNormal : $optionsDisabled

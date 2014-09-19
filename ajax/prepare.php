@@ -54,5 +54,5 @@ if ($action == 'prepare') {
 }
 
 if ($redirect) {
-    redirect('/mod/automultiplechoice/prepare.php?a=' . $quizz->id);
+    redirect('/mod/automultiplechoice/documents.php?a=' . $quizz->id);
 }

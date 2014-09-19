@@ -46,7 +46,7 @@ if ($lock) {
 }
 
 $PAGE->set_context($context);
-$PAGE->set_url('/mod/automultiplechoice/prepare.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($quizz->name . " - préparation des fichiers"));
 $PAGE->set_heading(format_string($course->fullname));
 
@@ -79,7 +79,7 @@ EOL;
     }
     echo '<div>'
         . $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/' . 'prepare.php', array('a' => $quizz->id, 'unlock' => 1)),
+                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'unlock' => 1)),
                 'Déverrouiller (permettre les modifications du questionnaire)', 'post'
         )
         . '</div>';
@@ -96,7 +96,7 @@ EOL;
 EOL;
     echo '<div>'
         . $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/' . 'prepare.php', array('a' => $quizz->id, 'lock' => 1)),
+                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'lock' => 1)),
                 'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
         )
         . '</div>';

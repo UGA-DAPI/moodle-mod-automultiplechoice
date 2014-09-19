@@ -136,12 +136,12 @@ function displayLockButton(amc\Quizz $quizz) {
     if (empty($quizz->errors)) {
         if ($quizz->isLocked()) {
             echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'unlock' => 1)),
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'unlock' => 1)),
                     'Déverrouiller (permettre les modifications du questionnaire)', 'post'
             );
         } else {
             echo $OUTPUT->single_button(
-                        new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'lock' => 1)),
+                        new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'lock' => 1)),
                         'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
                 );
         }
