@@ -23,6 +23,7 @@ $controller = new amc\Controller();
 $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
+$output = $controller->getRenderer('questions');
 
 require_capability('mod/automultiplechoice:addinstance', $controller->getContext());
 
@@ -41,11 +42,6 @@ if ($questions) {
 }
 
 // add_to_log($course->id, 'automultiplechoice', 'view', "qselect.php?id={$cm->id}", $quizz->name, $cm->id);
-
-$output = $PAGE->get_renderer('mod_automultiplechoice');
-$output->quizz = $quizz;
-$output->cm = $cm;
-$output->currenttab = 'questions';
 
 $PAGE->set_url('/mod/automultiplechoice/qselect.php', array('a' => $quizz->id));
 $PAGE->set_cacheable(false);

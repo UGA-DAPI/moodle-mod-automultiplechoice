@@ -22,6 +22,7 @@ $controller = new amc\Controller();
 $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
+$output = $controller->getRenderer('dashboard');
 
 if (!count($quizz->questions)) {
     redirect(new moodle_url('qselect.php', array('a' => $quizz->id)));
@@ -32,11 +33,6 @@ require_capability('mod/automultiplechoice:view', $controller->getContext());
 add_to_log($course->id, 'automultiplechoice', 'view', "view.php?id={$cm->id}", $quizz->name, $cm->id);
 
 // Output starts here
-$output = $PAGE->get_renderer('mod_automultiplechoice');
-$output->quizz = $quizz;
-$output->cm = $cm;
-$output->currenttab = 'dashboard';
-
 $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
 $PAGE->requires->jquery();
 $PAGE->requires->js(new moodle_url('assets/scoring.js'));
@@ -87,7 +83,6 @@ echo $OUTPUT->heading("6. " . get_string('grading', 'automultiplechoice'), 3);
 /**
  * @todo Filter what follows down to the footer.
  */
-echo $OUTPUT->heading($quizz->name);
 if ($quizz->isLocked()) {
     echo '<p class="warning">Le questionnaire est actuellement verrouillé pour éviter les modifications '
             . "entre l'impression et la correction. Vous pouvez accéder aux documents via le bouton "
@@ -183,4 +178,4 @@ $process = new amc\AmcProcess($quizz);
 
 echo $OUTPUT->box_end();
 
-echo $OUTPUT->footer();
+echo $output->footer();
