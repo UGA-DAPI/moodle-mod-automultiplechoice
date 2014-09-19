@@ -24,7 +24,7 @@ $tabs = array(
     ),
     new tabobject(
         'questions',
-        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/qselect.php?a={$quizz->id}"),
+        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/questions.php?a={$quizz->id}"),
         "2. " . get_string('questions', 'question')
     ),
     new tabobject(

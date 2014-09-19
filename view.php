@@ -25,7 +25,7 @@ $course = $controller->getCourse();
 $output = $controller->getRenderer('dashboard');
 
 if (!count($quizz->questions)) {
-    redirect(new moodle_url('qselect.php', array('a' => $quizz->id)));
+    redirect(new moodle_url('questions.php', array('a' => $quizz->id)));
 }
 
 require_capability('mod/automultiplechoice:view', $controller->getContext());
@@ -98,14 +98,14 @@ echo '</p>';
 // Questions
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(
-        html_writer::link(new moodle_url('qselect.php', array('a' => $quizz->id)), "Questions"),
+        html_writer::link(new moodle_url('questions.php', array('a' => $quizz->id)), "Questions"),
         3
 );
 HtmlHelper::printFormFullQuestions($quizz);
 if (!$quizz->isLocked()) {
     echo '<p class="continuebutton">';
     echo html_writer::link(
-            new moodle_url('qselect.php', array('a' => $quizz->id)),
+            new moodle_url('questions.php', array('a' => $quizz->id)),
             get_string('editselection', 'automultiplechoice')
     );
     echo '</p>';

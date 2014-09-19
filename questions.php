@@ -41,9 +41,9 @@ if ($questions) {
     }
 }
 
-// add_to_log($course->id, 'automultiplechoice', 'view', "qselect.php?id={$cm->id}", $quizz->name, $cm->id);
+// add_to_log($course->id, 'automultiplechoice', 'view', "questions.php?id={$cm->id}", $quizz->name, $cm->id);
 
-$PAGE->set_url('/mod/automultiplechoice/qselect.php', array('a' => $quizz->id));
+$PAGE->set_url('/mod/automultiplechoice/questions.php', array('a' => $quizz->id));
 $PAGE->set_cacheable(false);
 
 $PAGE->requires->jquery();
@@ -52,7 +52,7 @@ $PAGE->requires->jquery_plugin('ui-css');
 $PAGE->requires->js(new moodle_url('assets/dataTables/jquery.dataTables.min.js'));
 $PAGE->requires->css(new moodle_url('assets/dataTables/css/jquery.dataTables.css'));
 
-$PAGE->requires->js(new moodle_url('assets/qselect.js'));
+$PAGE->requires->js(new moodle_url('assets/questions.js'));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 // remove deleted questions
@@ -138,7 +138,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
     <?php echo get_string('sortmsg', 'automultiplechoice'); ?>
     <strong><?php echo get_string('qexpected', 'automultiplechoice', $quizz->qnumber); ?></strong>
 </p>
-<form name="questions-form" action="qselect.php" method="post">
+<form name="questions-form" action="questions.php" method="post">
 <p>
     <input name="a" value="<?php echo $quizz->id; ?>" type="hidden" />
     <button type="submit"><?php echo get_string('savesel', 'automultiplechoice'); ?></button>
