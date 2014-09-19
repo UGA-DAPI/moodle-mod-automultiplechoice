@@ -144,7 +144,6 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
 <p>
     <input name="a" value="<?php echo $quizz->id; ?>" type="hidden" />
     <button type="submit"><?php echo get_string('savesel', 'automultiplechoice'); ?></button>
-    <button type="button" id="insert-section"><?php echo get_string('insertsection', 'automultiplechoice'); ?></button>
 </p>
 <ol id="questions-selected">
     <li style="display: none;" class="ui-state-default">
@@ -187,6 +186,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
         }
     }
     ?>
+    <button type="button" id="insert-section"><?php echo get_string('insertsection', 'automultiplechoice'); ?></button>
 </ol>
 </form>
 

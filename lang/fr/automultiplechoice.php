@@ -71,7 +71,7 @@ $string['amc_displaypoints'] = 'Montrer les points';
 $string['scoringrules'] = 'Règles de calcul';
 $string['scoringset'] = 'Attribution des points';
 $string['scoringsystem'] = 'Barème';
-$string['insertsection'] = 'Insérer une nouvelle section';
+$string['insertsection'] = 'Insérer une nouvelle section ici';
 
 $string['editselection'] = 'Modifier la sélection de questions';
 

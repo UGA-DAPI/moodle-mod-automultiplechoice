@@ -71,7 +71,7 @@ $string['amc_displaypoints'] = 'Display Scores';
 $string['scoringrules'] = 'Scoring Rules';
 $string['scoringset'] = 'Scoring strategy';
 $string['scoringsystem'] = 'Scoring system';
-$string['insertsection'] = 'Insert a new section';
+$string['insertsection'] = 'Insert a new section here';
 
 $string['editselection'] = 'Update this selection';
 
