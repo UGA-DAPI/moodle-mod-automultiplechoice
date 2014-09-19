@@ -56,6 +56,9 @@ td ul {
 .async-target {
 	display: none;
 }
+.async-post-load {
+	display: none;
+}
 .jsenabled .async-target {
 	display: block;
 }

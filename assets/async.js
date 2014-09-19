@@ -5,8 +5,11 @@
 $('.async-target > span').addClass('loading');
 
 $('.async-load').each(function(){
+	var container = $(this);
 	var url = $(this).data('url');
-	$(this).children('.async-target').each(function(){
-		$(this).load(url, $(this).data('parameters'));
+	container.children('.async-target').each(function(){
+		$(this).load(url, $(this).data('parameters'), function() {
+			$('.async-post-load', container).show();
+		});
 	});
 });

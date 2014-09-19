@@ -33,7 +33,7 @@ if ($lock) {
 } else if ($unlock) {
     $quizz->amcparams->locked = false;
     $quizz->save();
-    redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+    redirect(new moodle_url('documents.php', array('a' => $quizz->id)));
 }
 
 $PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));
@@ -71,22 +71,22 @@ EOL;
         )
         . '</div>';
 } else {
-    echo <<<EOL
+    ?>
     <div class="async-load" data-url="ajax/prepare.php">
-        <div class="async-target" data-parameters='{"a": {$quizz->id}, "action": "prepare"}'>
+        <div class="async-target" data-parameters='{"a": <?php echo $quizz->id; ?>, "action": "prepare"}'>
             Préparation des fichiers PDF <span />
-       </div>
+        </div>
+        <div class="async-post-load">
+            <?php echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'lock' => 1)),
+                    'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
+            ) ?>
+        </div>
     </div>
     <noscript>
     TODO : form and submit button that posts to ajax/prepare.php with a redirect option on.
     </noscript>
-EOL;
-    echo '<div>'
-        . $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'lock' => 1)),
-                'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
-        )
-        . '</div>';
+    <?php
 }
 
 echo $output->footer();
