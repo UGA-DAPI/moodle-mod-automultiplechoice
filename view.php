@@ -16,12 +16,7 @@ use \mod\automultiplechoice as amc;
 
 global $DB, $OUTPUT, $PAGE, $CFG;
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once("$CFG->libdir/formslib.php");
-require_once(dirname(__FILE__).'/lib.php');
-require_once __DIR__ . '/models/Quizz.php';
-require_once __DIR__ . '/models/AmcProcess.php';
-require_once __DIR__ . '/models/HtmlHelper.php';
+require_once __DIR__ . '/locallib.php';
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
@@ -200,49 +195,3 @@ $process = new amc\AmcProcess($quizz);
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->footer();
-
-
-// helper functions
-
-function displayPrepareInfo($quizz, $process) {
-    $preparetime = $process->lastlog('prepare:source');
-    if ($preparetime) {
-        echo "<div>Dernière préparation des fichiers PDF le " . amc\AmcProcess::isoDate($preparetime) . "</div>\n";
-    } else {
-        echo "<div>Aucun fichier PDF préparé.</div>\n";
-    }
-}
-
-function displayLockButton($quizz) {
-    global $OUTPUT;
-    if (empty($quizz->errors)) {
-        if ($quizz->isLocked()) {
-            echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'unlock' => 1)),
-                    'Déverrouiller (permettre les modifications du questionnaire)', 'post'
-            );
-        } else {
-            echo $OUTPUT->single_button(
-                        new moodle_url('/mod/automultiplechoice/prepare.php', array('a' => $quizz->id, 'lock' => 1)),
-                        'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
-                );
-        }
-    } else {
-        echo 'Préparer et verrouiller. ' . get_string('functiondisabled');
-    }
-}
-
-function displayScanInfo($scans) {
-    if ($scans) {
-        echo "<div>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</div>\n";
-    } else {
-        echo "<div>Pas de copies déposées. La notation est donc désactivée.</div>";
-    }
-}
-
-function displayGradeInfo() {
-    $gradetime = $process->lastlog('note');
-    if ($gradetime) {
-        echo "<div>Correction des copies déjà effectuée le " . amc\AmcProcess::isoDate($gradetime) . "</div>\n";
-    }
-}
