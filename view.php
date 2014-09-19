@@ -73,13 +73,42 @@ if (!$quizz->validate()) {
     echo $OUTPUT->box_end();
 }
 
+echo $OUTPUT->heading("1. " . get_string('settings'), 3);
+HtmlHelper::printTableQuizz($quizz, array('instructions', 'description'));
+
+echo $OUTPUT->heading("2. " . get_string('questions', 'question'), 3);
+HtmlHelper::printTableQuizz($quizz, array('qnumber'));
+
+echo $OUTPUT->heading("3. " . get_string('scoringsystem', 'automultiplechoice'), 3);
+HtmlHelper::printTableQuizz($quizz, array('score', 'scoringset'));
+
+echo $OUTPUT->heading("4. " . get_string('documents', 'automultiplechoice'), 3);
+/**
+ * @todo Fill in
+ */
+
+echo $OUTPUT->heading("5. " . get_string('uploadscans', 'automultiplechoice'), 3);
+/**
+ * @todo Fill in
+ */
+
+echo $OUTPUT->heading("6. " . get_string('grading', 'automultiplechoice'), 3);
+/**
+ * @todo Fill in
+ */
+
+
+
+
+/**
+ * @todo Filter what follows down to the footer.
+ */
 echo $OUTPUT->heading($quizz->name);
 if ($quizz->isLocked()) {
     echo '<p class="warning">Le questionnaire est actuellement verrouillé pour éviter les modifications '
             . "entre l'impression et la correction. Vous pouvez accéder aux documents via le bouton "
             . "<em>[" . get_string('prepare', 'automultiplechoice') . "]</em>.</p>";
 }
-HtmlHelper::printTableQuizz($quizz);
 echo '<p class="continuebutton">';
 echo html_writer::link(
         new moodle_url('/course/modedit.php', array('update' => $cm->id, 'return' => 1)),

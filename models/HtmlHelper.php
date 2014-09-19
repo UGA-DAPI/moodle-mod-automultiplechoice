@@ -55,25 +55,50 @@ class HtmlHelper {
         echo "</form>\n";
     }
 
-    public static function printTableQuizz(\mod\automultiplechoice\Quizz $quizz)
+    public static function printTableQuizz(\mod\automultiplechoice\Quizz $quizz, $rows = array('instructions', 'description', 'comment', 'qnumber', 'score', 'scoringset'))
     {
         $realQNumber = $quizz->questions->count();
         $scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
-        echo '<table class="flexible boxaligncenter generaltable">';
+        echo '<table class="flexible generaltable quizz-summary">';
         echo '<tbody>';
-        echo '<tr><th>' . get_string('instructions', 'automultiplechoice') . '</th><td>' . nl2br(format_string($quizz->amcparams->instructionsprefix)) . '</td></tr>';
-        echo '<tr><th>' . get_string('description', 'automultiplechoice') . '</th><td>' . nl2br(format_string($quizz->description)) . '</td></tr>';
-        if ($quizz->comment) {
-            echo '<tr><th>' . get_string('comment', 'automultiplechoice') . '</th><td>' . format_string($quizz->comment) . '</td></tr>';
+        $rowCount = 0;
+        foreach ($rows as $row) {
+            $rowCount++;
+            $tr = '<tr class="r' . ($rowCount % 2) . '"><th>';
+            switch ($row) {
+                case 'instructions':
+                    echo $tr . get_string('instructions', 'automultiplechoice') . '</th>'
+                        . '<td>' . nl2br(format_string($quizz->amcparams->instructionsprefix)) . '</td></tr>';
+                    break;
+                case 'description':
+                    echo $tr . get_string('description', 'automultiplechoice') . '</th>'
+                        . '<td>' . nl2br(format_string($quizz->description)) . '</td></tr>';
+                    break;
+                case 'comment':
+                    if ($quizz->comment) {
+                        echo $tr . get_string('comment', 'automultiplechoice') . '</th><td>' . format_string($quizz->comment) . '</td></tr>';
+                    } else {
+                        $rowCount--;
+                    }
+                    break;
+                case 'qnumber':
+                    echo $tr . get_string('qnumber', 'automultiplechoice') . '</th><td>'
+                            . ($quizz->qnumber == $realQNumber ? $quizz->qnumber : "<span class=\"score-mismatch\">$realQNumber / {$quizz->qnumber}</span>")
+                            . '</td></tr>';
+                    break;
+                case 'score':
+                    echo $tr . get_string('score', 'automultiplechoice') . '</th><td id="expected-total-score">' . $quizz->score . '</td></tr>';
+                    break;
+                case 'scoringset':
+                    echo $tr . get_string('scoringset', 'automultiplechoice') . '</th><td>'
+                            . '<div><strong>' . format_string($scoringSet->name) . '</strong></div>'
+                            . '<div>' . nl2br(format_string($scoringSet->description)) . '</div>'
+                            . '</td></tr>';
+                    break;
+                default:
+                    throw new Exception("Coding error, unknown row $row.");
+            }
         }
-        echo '<tr><th>' . get_string('qnumber', 'automultiplechoice') . '</th><td>'
-                . ($quizz->qnumber == $realQNumber ? $quizz->qnumber : $realQNumber . " / " . $quizz->qnumber)
-                . '</td></tr>';
-        echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th><td id="expected-total-score">' . $quizz->score . '</td></tr>';
-        echo '<tr><th>' . get_string('scoringset', 'automultiplechoice') . '</th><td>'
-                . '<div><strong>' . format_string($scoringSet->name) . '</strong></div>'
-                . '<div>' . nl2br(format_string($scoringSet->description)) . '</div>'
-                . '</td></tr>';
         echo '</tbody></table>';
     }
 

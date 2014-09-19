@@ -27,10 +27,17 @@
 	display: block;
 }
 
-th.score-mismatch {
+.score-mismatch {
 	background-color: #FF4040;
 }
 
+table.quizz-summary {
+	width: 100%;
+}
+table.quizz-summary th {
+	width: 30ex;
+	text-align: left;
+}
 td ul {
 	margin: 2px 4px 2px 2em;
 }
