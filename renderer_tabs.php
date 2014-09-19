@@ -61,7 +61,7 @@ if (empty($quizz->name)) {
     $inactive = array('documents', 'uploadscans', 'grading');
 } else if (!empty($quizz->errors) || !$quizz->isLocked()) {
     $inactive = array('uploadscans', 'grading');
-} else if (!$process->hasScans()) {
+} else if (!$quizz->hasScans()) {
     $inactive = array('grading');
 }
 if (!isset($currenttab)) {
