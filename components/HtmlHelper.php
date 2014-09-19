@@ -1,10 +1,9 @@
 <?php
-
 /**
- * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
+ * @package    mod_automultiplechoice
+ * @copyright  2013-2014 Silecs
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once __DIR__ . '/Quizz.php';
 
 /**
  * Description of HtmlHelper

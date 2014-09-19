@@ -14,31 +14,20 @@
 
 use \mod\automultiplechoice as amc;
 
-global $DB, $OUTPUT, $PAGE, $CFG;
-
 require_once __DIR__ . '/locallib.php';
 
-$id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
+global $OUTPUT, $PAGE, $CFG;
 
-if ($id) {
-    $cm         = get_coursemodule_from_id('automultiplechoice', $id, 0, false, MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $quizz = amc\Quizz::findById($cm->instance);
-} elseif ($a) {
-    $quizz = amc\Quizz::findById($a);
-    $course     = $DB->get_record('course', array('id' => $quizz->course), '*', MUST_EXIST);
-    $cm         = get_coursemodule_from_instance('automultiplechoice', $quizz->id, $course->id, false, MUST_EXIST);
-} else {
-    error('You must specify a course_module ID or an instance ID');
-}
+$controller = new amc\Controller();
+$quizz = $controller->getQuizz();
+$cm = $controller->getCm();
+$course = $controller->getCourse();
 
 if (!count($quizz->questions)) {
     redirect(new moodle_url('qselect.php', array('a' => $quizz->id)));
 }
-require_login($course, true, $cm);
-$context = context_module::instance($cm->id);
-require_capability('mod/automultiplechoice:view', $context);
+
+require_capability('mod/automultiplechoice:view', $controller->getContext());
 
 add_to_log($course->id, 'automultiplechoice', 'view', "view.php?id={$cm->id}", $quizz->name, $cm->id);
 

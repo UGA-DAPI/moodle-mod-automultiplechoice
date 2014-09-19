@@ -6,7 +6,7 @@
  * logic, should go here. Never include this file from your lib.php!
  *
  * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
+ * @copyright  2013-2014 Silecs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -17,7 +17,8 @@ require_once "$CFG->libdir/formslib.php";
 require_once __DIR__ . '/lib.php';
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/AmcProcess.php';
-require_once __DIR__ . '/models/HtmlHelper.php';
+require_once __DIR__ . '/components/HtmlHelper.php';
+require_once __DIR__ . '/components/Controller.php';
 
 defined('MOODLE_INTERNAL') || die();
 

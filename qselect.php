@@ -11,26 +11,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use \mod\automultiplechoice as amc;
+
+require_once(__DIR__ . '/locallib.php');
+
+global $DB, $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-global $DB, $OUTPUT, $PAGE;
+$controller = new amc\Controller();
+$quizz = $controller->getQuizz();
+$cm = $controller->getCm();
+$course = $controller->getCourse();
 
-require_once(dirname(dirname(__DIR__)) . '/config.php');
-require_once(__DIR__ . '/lib.php');
-require_once(__DIR__ . '/locallib.php');
-require_once __DIR__ . '/models/Quizz.php';
-
-$a  = required_param('a', PARAM_INT);  // instance ID
-
-//$automultiplechoice  = $DB->get_record('automultiplechoice', array('id' => $a), '*', MUST_EXIST);
-$quizz = \mod\automultiplechoice\Quizz::findById($a);
-$course     = $DB->get_record('course', array('id' => $quizz->course), '*', MUST_EXIST);
-$cm         = get_coursemodule_from_instance('automultiplechoice', $quizz->id, $course->id, false, MUST_EXIST);
-
-require_login($course, true, $cm);
-$context = context_module::instance($cm->id);
-require_capability('mod/automultiplechoice:addinstance', $context);
+require_capability('mod/automultiplechoice:addinstance', $controller->getContext());
 
 // form submitted?
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
