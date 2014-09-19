@@ -3,19 +3,16 @@
 /**
  * Selects questions.
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
  * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
+ * @copyright  2013-2014 Silecs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 use \mod\automultiplechoice as amc;
 
-require_once(__DIR__ . '/locallib.php');
+require_once __DIR__ . '/locallib.php';
 
-global $DB, $OUTPUT, $PAGE;
+global $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
@@ -31,6 +28,9 @@ require_capability('mod/automultiplechoice:addinstance', $controller->getContext
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
 if ($questions) {
     if ($quizz->isLocked()) { // no modification allowed
+        /**
+         * @todo warn that modification is not allowed on a locked quizz.
+         */
         redirect(new moodle_url('view.php', array('a' => $quizz->id)));
     }
     $quizz->questions = $questions;
@@ -58,7 +58,7 @@ $PAGE->requires->css(new moodle_url('assets/amc.css'));
 // remove deleted questions
 $quizz->validate();
 
-$available_questions = automultiplechoice_list_questions($USER, $COURSE);
+$available_questions = automultiplechoice_list_questions($USER, $course);
 
 echo $output->header();
 
@@ -80,7 +80,7 @@ echo "<p>Si vos questions récentes n'apparaissent pas, "
         . "pensez à rafraichir la page de votre navigateur (F5) et à trier par date descendante.</p>";
 echo $OUTPUT->box_end();
 
-echo $OUTPUT->box_start();
+echo $OUTPUT->box_start('generalbox', 'questions-part-selecting');
 echo $OUTPUT->heading(get_string('questionselect', 'automultiplechoice'));
 if ($questions && $questions->errors) {
     echo $OUTPUT->box_start('errorbox');
@@ -131,7 +131,7 @@ if ($questions && $questions->errors) {
 <?php
 echo $OUTPUT->box_end();
 
-echo $OUTPUT->box_start();
+echo $OUTPUT->box_start('generalbox', 'questions-part-selected');
 echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
 ?>
 <p>
