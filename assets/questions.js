@@ -47,12 +47,12 @@ $(document).ready(function() {
 		var bton = $(e.target);
 		var qid = $(e.target).data("qid");
         if (bton.data("selected")) {
-			bton.text("+");
+			bton.text(">>");
             bton.removeData("selected");
             Question.remove(qid);
         } else {
 			var qtitle = bton.closest('tr').children('td.qtitle').first().text();
-			bton.text("-");
+			bton.text("<<");
             bton.data("selected", true);
             Question.add(qid, qtitle);
         }
@@ -62,6 +62,6 @@ $(document).ready(function() {
 		Question.remove(qid);
     });
 	$("#insert-section").on("click", function(e) {
-        $("#questions-selected").append('<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><label>[section]</label><input name="question[id][]" type="text" size="50" /><input name="question[score][]" type="hidden" /><button type="button">X</button></li>');
+        $("#questions-selected").append('<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><label>[section]</label><input name="question[id][]" type="text" size="50" /><input name="question[score][]" type="hidden" /><button type="button" title="Enlever cette question">&lt;&lt;</button></li>');
     });
 } );

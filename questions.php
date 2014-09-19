@@ -105,16 +105,18 @@ if ($questions && $questions->errors) {
     <tbody>
         <?php
         $editicon = $OUTPUT->pix_icon('i/edit', get_string('edit'));
+        $stringAdd = format_string(get_string('add'));
+        $stringRemove = format_string(get_string('remove'));
         foreach ($available_questions as $q) {
             $editurl = new moodle_url(
                     '/local/questionssimplified/edit_standard.php',
                     array('questions' => $q->id, 'courseid' => $course->id)
             );
             if ($quizz->questions->contains($q->id)) {
-                $button = '<button type="button" data-qid="' . $q->id . '" data-selected="true">-</button>'
+                $button = '<button type="button" data-qid="' . $q->id . '" data-selected="true" title="' . $stringRemove .'">&lt;&lt;</button>'
                         . ' <a href="' . $editurl->out() . '" target="_blank">' . $editicon . '</a>';
             } else {
-                $button = '<button type="button" data-qid="' . $q->id . '">+</button>'
+                $button = '<button type="button" data-qid="' . $q->id . '" title="' . $stringAdd .'">&gt;&gt;</button>'
                         . ' <a href="' . $editurl->out() . '" target="_blank">' . $editicon . '</a>';
             }
             echo '<tr id="q-' . $q->id . '">'
@@ -149,7 +151,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
         <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
         <label></label>
         <input name="question[id][]" value="" type="hidden" disabled="disabled" />
-        <button type="button">X</button>
+        <button type="button" title="Enlever cette question">&lt;&lt;</button>
         <label class="qscore">
             <?php echo get_string('qscore', 'automultiplechoice'); ?> :
             <input name="question[score][]" value="1" type="text" disabled="disabled" />
@@ -165,7 +167,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
             <label>[section]</label>
             <input name="question[id][]" value="' . htmlspecialchars($q) . '" type="text" size="50" />
             <input name="question[score][]" type="hidden" />
-            <button type="button">X</button>
+            <button type="button" title="' . $stringRemove .'">&lt;&lt;</button>
         </li>
                     ';
             } else {
@@ -174,7 +176,7 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
             <label>' . format_string($q->name) . '</label>
             <input name="question[id][]" value="' . $q->id . '" type="hidden" />
-            <button type="button">X</button>
+            <button type="button" title="' . $stringRemove .'">&lt;&lt;</button>
             <label class="qscore">
                 ' . get_string('qscore', 'automultiplechoice') . ' :
                 <input name="question[score][]" value="' . ($q->score ? $q->score : sprintf('%.2f', $q->defaultmark)) . '" type="text" />
