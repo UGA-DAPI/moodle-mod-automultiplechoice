@@ -4,7 +4,11 @@
 
 $('.async-target > span').addClass('loading');
 
-$('.async-load').each(function(){
+function asyncLoadComponents() {
+	$('.async-load').each(asyncLoadComponent);
+}
+
+function asyncLoadComponent(){
 	var container = $(this);
 	var url = $(this).data('url');
 	container.children('.async-target').each(function(){
@@ -12,4 +16,11 @@ $('.async-load').each(function(){
 			$('.async-post-load', container).show();
 		});
 	});
-});
+}
+
+function asyncReloadComponents() {
+	$('.async-load .async-target').html('<span class="loading" />');
+	asyncLoadComponents();
+}
+
+asyncLoadComponents();

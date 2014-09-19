@@ -77,10 +77,13 @@ EOL;
             Préparation des fichiers PDF <span />
         </div>
         <div class="async-post-load">
-            <?php echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'lock' => 1)),
-                    'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
-            ) ?>
+            <button type="button" onclick="asyncReloadComponents();">Actualiser les documents</button>
+            <?php
+            echo $OUTPUT->single_button(
+                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'lock' => 1)),
+                'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
+            );
+            ?>
         </div>
     </div>
     <noscript>
