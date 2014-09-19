@@ -80,4 +80,19 @@ class Controller
     public function getContext() {
         return \context_module::instance($this->cm->id);
     }
+
+    /**
+     * Get the tabbed renderer that will replace $OUTPUT.
+     *
+     * @param string $currenttab
+     * @return \mod_automultiplechoice_renderer
+     */
+    public function getRenderer($currenttab = '') {
+        global $PAGE;
+        $output = $PAGE->get_renderer('mod_automultiplechoice');
+        $output->quizz = $this->quizz;
+        $output->cm = $this->cm;
+        $output->currenttab = $currenttab;
+        return $output;
+    }
 }
