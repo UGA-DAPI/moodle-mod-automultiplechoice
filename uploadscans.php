@@ -84,6 +84,4 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu
     <?php
 }
 
-echo button_back_to_activity($quizz->id);
-
 echo $output->footer();
