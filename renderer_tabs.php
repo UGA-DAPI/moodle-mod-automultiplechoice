@@ -15,7 +15,7 @@ $tabs = array(
     new tabobject(
         'dashboard',
         new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/view.php?a={$quizz->id}"),
-        "Tableau de bord"
+        get_string('dashboard', 'automultiplechoice')
     ),
     new tabobject(
         'settings',

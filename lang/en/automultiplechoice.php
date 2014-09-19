@@ -21,6 +21,7 @@ $string['pluginadministration'] = 'AutoMultipleChoice administration';
 $string['pluginname'] = 'automultiplechoice';
 $string['noautomultiplechoices'] = 'Aucune instance de automultiplechoice n\'est définie dans ce cours';
 
+$string['dashboard'] = 'Dashboard';
 $string['documents'] = 'Documents';
 $string['uploadscans'] = 'Upload answers';
 $string['grading'] = 'Grading';

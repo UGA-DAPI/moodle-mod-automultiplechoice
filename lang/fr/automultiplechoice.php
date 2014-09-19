@@ -21,7 +21,8 @@ $string['pluginadministration'] = 'QCM papier - édition';
 $string['pluginname'] = 'QCM papier';
 $string['noautomultiplechoices'] = 'Aucune instance de QCM papier n\'est définie dans ce cours';
 
-$string['documents'] = 'Documents';
+$string['dashboard'] = 'Tableau de bord';
+$string['documents'] = 'Sujets';
 $string['uploadscans'] = 'Dépôt des copies';
 $string['grading'] = 'Correction';
 
