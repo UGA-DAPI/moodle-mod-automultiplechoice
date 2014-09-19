@@ -1,3 +1,7 @@
+.region-content h3 {
+	text-align: left;
+}
+
 .datatable-end {
 	clear: both;
 	margin-bottom: 1.5ex;
