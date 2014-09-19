@@ -8,44 +8,29 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/* @var $DB moodle_database */
+use \mod\automultiplechoice as amc;
+
+require_once(__DIR__ . '/locallib.php');
+
+global $DB, $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-global $DB, $OUTPUT, $PAGE;
+$controller = new amc\Controller();
+$quizz = $controller->getQuizz();
+$cm = $controller->getCm();
+$course = $controller->getCourse();
+$output = $controller->getRenderer('uploadscans');
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/locallib.php');
-require_once __DIR__ . '/models/Quizz.php';
-require_once __DIR__ . '/models/AmcProcess.php';
-
-$a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
-
-if ($a) {
-    $quizz = \mod\automultiplechoice\Quizz::findById($a);
-    $course     = $DB->get_record('course', array('id' => $quizz->course), '*', MUST_EXIST);
-    $cm         = get_coursemodule_from_instance('automultiplechoice', $quizz->id, $course->id, false, MUST_EXIST);
-} else {
-    error('You must specify an instance ID');
-}
-
-require_login($course, true, $cm);
-$context = context_module::instance($cm->id);
-require_capability('mod/automultiplechoice:view', $context);
+require_capability('mod/automultiplechoice:view', $controller->getContext());
 
 /// Print the page header
 
 $PAGE->set_url('/mod/automultiplechoice/scan.php', array('id' => $cm->id));
-$PAGE->set_title(format_string($quizz->name . " - envoi des scans"));
-$PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_context($context);
-
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 // Output starts here
-echo $OUTPUT->header();
-echo $OUTPUT->heading($quizz->name . " - envoi des scans");
+echo $output->header();
 
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
 $amclog = new \mod\automultiplechoice\Log($quizz->id);
@@ -67,9 +52,7 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu
 
         /** @todo ce bloc meptex est-il nécessaire ? **/
         $diag = $process->amcMeptex();
-        if ($diag) {
-            echo $OUTPUT->heading("Mise en page / initialisation sqlite (amc meptex) terminée.");
-        } else {
+        if (!$diag) {
             echo "<p>Erreur lors du calcul de mise en page (amc meptex).</p>\n";
         }
 
@@ -81,25 +64,26 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu
         }
 
         $analyse = $process->amcAnalyse(true);
-        if ($analyse) {
-            echo "Analyse terminée. <br>";
-        } else {
-            echo "Erreur analyse (amc analyse) <br>.";
+        if (!$analyse) {
+            echo "Erreur lors de l'analyse (amc analyse) <br>.";
         }
 
     }
-
 } else {
-
     // Upload du fichier
-    echo '<form action="scan.php?a='. $quizz->id .'" method="post" enctype="multipart/form-data">' . "\n";
-    echo '<label for="scanfile">Fichier scan (PDF, TIFF...)</label>'. "\n" ;
-    echo '<input type="file" name="scanfile" id="scanfile"><br>' . "\n" ;
-    echo '<input type="submit" name="submit" value="Envoyer">'. "\n" ;
-    echo '</form>' . "\n" ;
-
+    ?>
+    <form id="form-uploadscans" action="uploadscans.php?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="scanfile">Fichier scan (PDF, TIFF…)</label>
+            <input type="file" name="scanfile" id="scanfile"><br>
+        </div>
+        <div>
+            <input type="submit" name="submit" value="Envoyer">
+        </div>
+    </form>
+    <?php
 }
 
 echo button_back_to_activity($quizz->id);
 
-echo $OUTPUT->footer();
+echo $output->footer();

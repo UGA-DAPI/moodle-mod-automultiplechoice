@@ -90,3 +90,11 @@ td ul {
 	font-size: 200%;
 	width: auto;
 }
+
+#form-uploadscans > div {
+	width: 80ex;
+	text-align: right;
+}
+#form-uploadscans input#scanfile {
+	width: 50ex;
+}
