@@ -26,7 +26,7 @@ function buildFormat($formatName) {
 abstract class Api
 {
     /**
-     * @var Quizz
+     * @var \mod\automultiplechoice\Quizz
      */
     public $quizz;
 
@@ -50,7 +50,7 @@ abstract class Api
             throw new \Exception("No quizz set, cannot convert.");
         }
         $res = $this->getHeader();
-        foreach ($this->quizz->questions->getRecords($this->quizz->amcparams->scoringset, true) as $question) {
+        foreach ($this->quizz->questions as $question) {
             $res .= $this->convertQuestion($question);
 
         }
@@ -78,7 +78,7 @@ abstract class Api
     /**
      * Turns a question into a formatted string
      *
-     * @param object $question record from the 'question' table
+     * @param \mod\automultiplechoice\QuestionListItem $question
      * @return string
      */
     abstract protected function convertQuestion($question);

@@ -226,6 +226,7 @@ class Quizz
         }
         if (isset($record->questions) && is_string($record->questions)) {
             $quizz->questions = QuestionList::fromJson($record->questions);
+            $quizz->questions->updateList($quizz->amcparams->scoringset);
         }
         return $quizz;
     }

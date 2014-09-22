@@ -83,15 +83,15 @@ echo $OUTPUT->box_end();
 echo $OUTPUT->box_start('generalbox', 'questions-part-selecting');
 echo $OUTPUT->heading(get_string('questionselect', 'automultiplechoice'));
 if ($questions && $questions->errors) {
-    echo $OUTPUT->box_start('errorbox');
-    echo $OUTPUT->heading(get_string('errors', 'automultiplechoice'), 3);
-    echo '<ul class="errors">';
-    foreach ($questions->errors as $e) {
-        echo '<li>ERROR (to localize, etc): ' . $e . '</li>';
+        echo $OUTPUT->box_start('errorbox');
+        echo $OUTPUT->heading(get_string('errors', 'automultiplechoice'), 3);
+        echo '<ul class="errors">';
+        foreach ($questions->errors as $e) {
+            echo '<li>ERROR (to localize, etc): ' . $e . '</li>';
+        }
+        echo '</ul>';
+        echo $OUTPUT->box_end();
     }
-    echo '</ul>';
-    echo $OUTPUT->box_end();
-}
 ?>
 <table id="questions-list">
     <thead>
@@ -146,43 +146,12 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
     <button type="submit"><?php echo get_string('savesel', 'automultiplechoice'); ?></button>
 </p>
 <ol id="questions-selected">
-    <li style="display: none;" class="ui-state-default">
-        <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-        <label></label>
-        <input name="question[id][]" value="" type="hidden" disabled="disabled" />
-        <button type="button" title="Enlever cette question">&lt;&lt;</button>
-        <label class="qscore">
-            <?php echo get_string('qscore', 'automultiplechoice'); ?> :
-            <input name="question[score][]" value="1" type="text" disabled="disabled" />
-        </label>
-    </li>
     <?php
+    $emptyQuestion = new amc\Question();
+    echo $emptyQuestion->toHtml();
     if (count($quizz->questions)) {
-        foreach ($quizz->questions->getRecords(null, true) as $q) {
-            if (is_string($q)) {
-                echo '
-        <li class="ui-state-default">
-            <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <label>[section]</label>
-            <input name="question[id][]" value="' . htmlspecialchars($q) . '" type="text" size="50" />
-            <input name="question[score][]" type="hidden" />
-            <button type="button" title="' . $stringRemove .'">&lt;&lt;</button>
-        </li>
-                    ';
-            } else {
-                echo '
-        <li class="ui-state-default" id="qsel-' . $q->id . '">
-            <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <label>' . format_string($q->name) . '</label>
-            <input name="question[id][]" value="' . $q->id . '" type="hidden" />
-            <button type="button" title="' . $stringRemove .'">&lt;&lt;</button>
-            <label class="qscore">
-                ' . get_string('qscore', 'automultiplechoice') . ' :
-                <input name="question[score][]" value="' . ($q->score ? $q->score : sprintf('%.2f', $q->defaultmark)) . '" type="text" />
-            </label>
-        </li>
-                    ';
-            }
+        foreach ($quizz->questions as $q) {
+            echo $q->toHtml();
         }
     }
     ?>

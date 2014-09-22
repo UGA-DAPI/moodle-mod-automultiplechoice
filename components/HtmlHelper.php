@@ -12,7 +12,7 @@
  */
 class HtmlHelper {
     public static function printFormFullQuestions(\mod\automultiplechoice\Quizz $quizz) {
-        echo '<form action="qselect.php" method="post" name="qselect">
+        echo '<form action="questions.php" method="post" name="qselect">
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
         echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
         echo '<thead><tr><th>#</th>'
@@ -24,10 +24,12 @@ class HtmlHelper {
 
         $k = 1;
         $disabled = $quizz->isLocked() ? ' disabled="disabled"' : '';
-        foreach ($quizz->questions->getRecords(null, true) as $q) {
-            if (is_string($q)) {
+        foreach ($quizz->questions as $q) {
+            if ($q->getType() === 'section') {
                 echo '<tr>
-                    <td colspan="3">' . htmlspecialchars($q) . '</td>
+                    <td colspan="3">' . htmlspecialchars($q->name)
+                    . '<div class="question-answers">' . format_text($q->description, FORMAT_HTML) . '</div>'
+                    . '</td>
                 </tr>';
             } else {
                 echo '<tr>

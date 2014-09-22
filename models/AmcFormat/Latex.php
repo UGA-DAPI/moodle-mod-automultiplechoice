@@ -74,7 +74,7 @@ EOL;
     /**
      * Turns a question into a formatted string, in the AMC-txt (aka plain) format.
      *
-     * @param object $question record from the 'question' table
+     * @param \mod\automultiplechoice\QuestionListItem $question record from the 'question' table
      * @return string
      */
     protected function convertQuestion($question) {
@@ -84,9 +84,9 @@ EOL;
 
         // group
         $group = '';
-        if (is_string($question)) {
-            $group = self::normalizeIntoUnique($question);
-            $this->groups[$group] = $question;
+        if ($question->getType() === 'section') {
+            $group = self::normalizeIntoUnique($question->name);
+            $this->groups[$group] = $question->name;
             if ($this->groups) {
                 $output .= "} % close group\n";
             }
@@ -96,7 +96,7 @@ EOL;
         }
         if ($group) {
             $output .= sprintf("\n\\element{%s}{\n", $group);
-            if (is_string($question)) {
+            if ($question->getType() === 'section') {
                 return $output;
             }
         }

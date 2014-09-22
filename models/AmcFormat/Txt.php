@@ -29,30 +29,20 @@ class Txt extends Api
     }
 
     /**
-     * Compute the whole source file content for AMC, by merging header and question blocks.
-     *
-     * @return string file content
-     */
-    public function getContent() {
-        if (!$this->quizz) {
-            throw new \Exception("No quizz set, cannot convert.");
-        }
-        $res = $this->getHeader();
-        foreach ($this->quizz->questions->getRecords($this->quizz->amcparams->scoringset) as $question) {
-            $res .= $this->convertQuestion($question);
-
-        }
-        return $res;
-    }
-
-    /**
      * Turns a question into a formatted string, in the AMC-txt (aka plain) format.
      *
-     * @param object $question record from the 'question' table
+     * @param \mod\automultiplechoice\QuestionListItem $question record from the 'question' table
      * @return string
      */
     protected function convertQuestion($question) {
         global $DB;
+
+        if ($question->getType() !== 'question') {
+            /**
+               * @todo Output sections in AMC-TXT, if possible.
+               */
+            return '';
+        }
 
         $answerstext = '';
         $answers = $DB->get_records('question_answers', array('question' => $question->id));

@@ -31,7 +31,7 @@ $(document).ready(function() {
         },
         add: function(qid, qtitle) {
             var chunk = this.template.clone();
-            chunk.find("input").first().val(qid);
+            chunk.find("input.qid").first().val(qid);
             chunk.find("label").first().html(qtitle);
 			chunk.attr("id", "qsel-" + qid);
             chunk.appendTo($("#questions-selected"));
@@ -58,10 +58,10 @@ $(document).ready(function() {
         }
     });
     $("#questions-selected").on("click", "button", function(e) {
-        var qid = $(this).closest('li').find('input').first().val();
+        var qid = $(this).closest('li').find('input.qid').first().val();
 		Question.remove(qid);
     });
 	$("#insert-section").on("click", function(e) {
-        $("#questions-selected").append('<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><label>[section]</label><input name="question[id][]" type="text" size="50" /><input name="question[score][]" type="hidden" /><button type="button" title="Enlever cette question">&lt;&lt;</button></li>');
+        $("#questions-selected").append('<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><label>[section]</label><input name="question[type][]" value="section" type="hidden" /><input name="question[id][]" type="text" size="50" /><input name="question[score][]" type="hidden" /><button type="button" title="Enlever cette question">&lt;&lt;</button></li>');
     });
 } );

@@ -9,6 +9,8 @@
 namespace mod\automultiplechoice;
 
 require_once __DIR__ . '/ScoringSystem.php';
+require_once __DIR__ . '/Question.php';
+require_once __DIR__ . '/QuestionSection.php';
 
 global $DB;
 /* @var $DB \moodle_database */
@@ -23,10 +25,10 @@ global $DB;
  * }
  * </code>
  */
-class QuestionList implements \Countable, \ArrayAccess
+class QuestionList implements \Countable, \ArrayAccess, \Iterator
 {
     /**
-     * @var array array of array('questionid' => (integer), 'score' => (float), 'scoring' => "b=1,e=0..."
+     * @var array of QuestionListItem instances.
      */
     public $questions = array();
 
@@ -35,44 +37,32 @@ class QuestionList implements \Countable, \ArrayAccess
      */
     public $errors = array();
 
+    private $position = 0;
+
     /**
-     * Get the DB records with added score/scoring fields.
+     * Update the items with the DB records and added score/scoring fields.
      *
      * @global \moodle_database $DB
      * @param integer $scoringSetId (opt) If given, question will have a 'scoring' field.
      * @param boolean $includeSections (opt)
      * @return array of "question+multichoice" records (objects from the DB) with an additional "score", "scoring" fields.
      */
-    public function getRecords($scoringSetId=null, $includeSections=false) {
+    public function updateList($scoringSetId=null) {
         if (!$this->questions) {
             return array();
         }
-        $records = $this->getRawRecords();
         if (isset($scoringSetId)) {
             $scoringSet = ScoringSystem::read()->getScoringSet($scoringSetId);
         } else {
             $scoringSet = null;
         }
-        $callback = function ($q) use ($records, $scoringSet, $includeSections) {
-            if (isset($q['questionid'])) {
-                $r = $records[$q['questionid']];
-                $r->score = (double) $q['score'];
-                if ($scoringSet) {
-                    $rule = $scoringSet->findMatchingRule($r);
-                    if ($rule) {
-                        $r->scoring = $rule->getExpression($r);
-                    } else {
-                        $r->scoring = ''; // default AMC scoring (incomplete set of rules)
-                    }
-                }
-                return $r;
-            } else if (is_string($q)) {
-                if ($includeSections) {
-                    return $q;
-                }
+        $records = $this->getRawRecords();
+        foreach ($this->questions as $q) {
+            if ($q->getType() === 'question') {
+                $q->updateFromRecord($records[$q->id], $scoringSet);
             }
-        };
-        return array_filter(array_map($callback, $this->questions));
+        }
+        return $this;
     }
 
     /**
@@ -121,12 +111,7 @@ class QuestionList implements \Countable, \ArrayAccess
         if (empty($this->questions)) {
             return '';
         }
-        return json_encode(
-                array_map(
-                        function ($v) { if (is_array($v)) { return array_values($v); } else { return $v; } },
-                        $this->questions
-                )
-        );
+        return json_encode($this->questions);
     }
 
     /**
@@ -137,22 +122,38 @@ class QuestionList implements \Countable, \ArrayAccess
      */
     public static function fromJson($json)
     {
-        $new = new self();
+        $qlist = new self();
         $decoded = json_decode($json);
         if (!empty($decoded) && is_array($decoded)) {
             foreach ($decoded as $q) {
+                $new = null;
                 if (is_string($q)) {
-                    $new->questions[] = $q;
+                    $new = new QuestionSection($q);
+                } else if (is_array($q)) {
+                    if (isset($q[0])) {
+                        $new = Question::fromArray(
+                            array(
+                                'id' => (int) $q[0],
+                                'score' => (double) $q[1],
+                                'scoring' => (isset($q[2]) ? $q[2] : ''),
+                            )
+                        );
+                    }
+                } else if (is_object($q) && isset($q->model)) {
+                    if ($q->model === 'QuestionSection') {
+                        $new = new QuestionSection($q->name, $q->description);
+                    } else if ($q->model === 'Question') {
+                        $new = Question::fromArray((array) $q);
+                    }
+                }
+                if ($new) {
+                    $qlist->questions[] = $new;
                 } else {
-                    $new->questions[] = array(
-                        'questionid' => (int) $q[0],
-                        'score' => (double) $q[1],
-                        'scoring' => (isset($q[2]) ? $q[2] : ''),
-                    );
+                    throw new \Exception("Unknown question format in the DB: " . print_r($q, true));
                 }
             }
         }
-        return $new;
+        return $qlist;
     }
 
     /**
@@ -164,16 +165,22 @@ class QuestionList implements \Countable, \ArrayAccess
         if (!isset($_POST[$fieldname]) || empty($_POST[$fieldname]['id'])) {
             return null;
         }
+        $post = $_POST[$fieldname];
         $new = new self();
         for ($i = 0; $i < count($_POST[$fieldname]['id']); $i++) {
-            if (ctype_digit($_POST[$fieldname]['id'][$i])) {
-                $new->questions[] = array(
-                    'questionid' => (int) $_POST[$fieldname]['id'][$i],
-                    'score' => (double) str_replace(',', '.', $_POST[$fieldname]['score'][$i]),
-                    'scoring' => isset($_POST[$fieldname]['scoring']) ? $_POST[$fieldname]['scoring'][$i] : '',
-                );
+            if ($post['type'][$i] === 'section') {
+                $item = new QuestionSection($post['id'][$i], $post['score'][$i]);
             } else {
-                $new->questions[] = $_POST[$fieldname]['id'][$i];
+                $item = Question::fromArray(
+                    array(
+                        'id' => (int) $post['id'][$i],
+                        'score' => (double) str_replace(',', '.', $post['score'][$i]),
+                        'scoring' => isset($post['scoring']) ? $post['scoring'][$i] : '',
+                    )
+                );
+            }
+            if ($item) {
+                $new->questions[] = $item;
             }
         }
         return $new;
@@ -192,7 +199,7 @@ class QuestionList implements \Countable, \ArrayAccess
             $lookup = array($questionids => true);
         }
         foreach ($this->questions as $q) {
-            if (isset($q['questionid']) && isset($lookup[$q['questionid']])) {
+            if (isset($q->id) && isset($lookup[$q->id])) {
                 return true;
             }
         }
@@ -207,7 +214,7 @@ class QuestionList implements \Countable, \ArrayAccess
      */
     public function getById($id) {
         foreach ($this->questions as $q) {
-            if (isset($q['questionid']) && $q['questionid'] == $id) {
+            if (isset($q->id) && $q->id == $id) {
                 return $q;
             }
         }
@@ -220,7 +227,7 @@ class QuestionList implements \Countable, \ArrayAccess
      * @global \moodle_database $DB
      * @return array
      */
-    protected function getRawRecords() {
+    private function getRawRecords() {
         global $DB, $CFG;
         $ids = $this->getIds();
         list ($cond, $params) = $DB->get_in_or_equal($ids);
@@ -247,8 +254,8 @@ class QuestionList implements \Countable, \ArrayAccess
     private function getIds() {
         $ids = array();
         foreach ($this->questions as $q) {
-            if (isset($q['questionid'])) {
-                $ids[] = $q['questionid'];
+            if (isset($q->id)) {
+                $ids[] = (int) $q->id;
             }
         }
         return $ids;
@@ -262,8 +269,8 @@ class QuestionList implements \Countable, \ArrayAccess
     private function getScores() {
         $scores = array();
         foreach ($this->questions as $q) {
-            if (isset($q['questionid'])) {
-                $scores[] = $q['score'];
+            if ($q->getType() === 'question') {
+                $scores[] = $q->score;
             }
         }
         return $scores;
@@ -271,12 +278,33 @@ class QuestionList implements \Countable, \ArrayAccess
 
     // Implement Countable
     /**
-     * Number of questions.
+     * Number of questions (not counting the sections).
      *
      * @return int Count
      */
     public function count() {
         return count($this->getIds());
+    }
+
+    // Implement Iterator
+    public function rewind() {
+        $this->position = 0;
+    }
+
+    public function current() {
+        return $this->questions[$this->position];
+    }
+
+    public function key() {
+        return $this->position;
+    }
+
+    public function next() {
+        $this->position++;
+    }
+
+    public function valid() {
+        return isset($this->questions[$this->position]);
     }
 
     // Implement ArrayAccess
@@ -288,6 +316,6 @@ class QuestionList implements \Countable, \ArrayAccess
         return isset($this->questions[$offset]);
     }
     public function offsetGet($offset) {
-        return isset($this->questions[$offset]) ? $this->questions[$offset] : null;
+        return $this->offsetExists($offset) ? $this->questions[$offset] : null;
     }
 }
