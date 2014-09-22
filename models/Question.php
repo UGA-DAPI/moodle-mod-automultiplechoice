@@ -140,32 +140,34 @@ class Question extends QuestionListItem
                 return '
         <li class="ui-state-default" id="qsel-' . $this->id . '">
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <label>' . format_string($this->name) . '</label>
-            <input name="question[type][]" value="question" type="hidden" />
-            <input name="question[id][]" value="' . $this->id . '" type="hidden" class="qid" />
             <button type="button" title="' . format_string(get_string('remove')) .'">&lt;&lt;</button>'
             . ($displayScore ? '
             <label class="qscore">
                 ' . get_string('qscore', 'automultiplechoice') . ' :
                 <input name="question[score][]" value="' . $this->getScoreDisplayed() . '" type="text" />
             </label>'
-            : '') . '
+            : '<input name="question[score][]" value="' . $this->getScoreDisplayed() . '" type="hidden" />') . '
+            <label>' . format_string($this->name) . '</label>
+            <input name="question[type][]" value="question" type="hidden" />
+            <input name="question[id][]" value="' . $this->id . '" type="hidden" class="qid" />
+            <input name="question[description][]" type="hidden" />
         </li>
 ';
         } else {
             return '
         <li style="display: none;" class="ui-state-default">
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <label></label>
-            <input name="question[type][]" value="question" type="hidden" disabled="disabled" />
-            <input name="question[id][]" value="" type="hidden" class="qid" disabled="disabled" />
             <button type="button" title="Enlever cette question">&lt;&lt;</button>'
             . ($displayScore ? '
             <label class="qscore">
                 ' . get_string('qscore', 'automultiplechoice') . ' :
                 <input name="question[score][]" value="1" type="text" disabled="disabled" />
             </label>'
-            : '') . '
+            : '<input name="question[score][]" value="" type="hidden" disabled="disabled" />') . '
+            <label></label>
+            <input name="question[type][]" value="question" type="hidden" disabled="disabled" />
+            <input name="question[id][]" value="" type="hidden" class="qid" disabled="disabled" />
+            <input name="question[description][]" type="hidden" disabled="disabled" />
         </li>
 ';
         }

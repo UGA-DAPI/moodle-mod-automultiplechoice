@@ -169,7 +169,7 @@ class QuestionList implements \Countable, \ArrayAccess, \Iterator
         $new = new self();
         for ($i = 0; $i < count($_POST[$fieldname]['id']); $i++) {
             if ($post['type'][$i] === 'section') {
-                $item = new QuestionSection($post['id'][$i], $post['score'][$i]);
+                $item = new QuestionSection($post['id'][$i], $post['description'][$i]);
             } else {
                 $item = Question::fromArray(
                     array(

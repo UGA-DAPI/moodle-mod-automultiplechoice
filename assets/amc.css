@@ -24,14 +24,18 @@
 #questions-selected > li button {
 	float: right;
 }
-#questions-selected > li label {
-	margin-left: 1.5em;
-	margin-right: 2.0em;
-}
 #questions-selected label.qscore {
 	float: right;
 }
-
+#questions-selected label {
+	margin-left: 2ex;
+}
+.question-section label {
+	display: inline-block;
+	width: 6em;
+	vertical-align: top;
+	font-weight: bold;
+}
 /* page questions : end */
 
 

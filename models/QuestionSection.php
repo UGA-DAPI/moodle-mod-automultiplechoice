@@ -89,13 +89,17 @@ class QuestionSection extends QuestionListItem
      */
     public function toHtml($displayScore = false) {
         return '
-        <li class="ui-state-default">
+        <li class="ui-state-default question-section">
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+            <button type="button" title="' . format_string(get_string('remove')) .'">&lt;&lt;</button>
             <label>[section]</label>
             <input name="question[type][]" value="section" type="hidden" />
             <input name="question[id][]" value="' . htmlspecialchars($this->name) . '" type="text" size="50" />
             <input name="question[score][]" type="hidden" />
-            <button type="button" title="' . format_string(get_string('remove')) .'">&lt;&lt;</button>
+            <div>
+                <label>Description</label>
+                <textarea name="question[description][]" cols="50" rows="5" >' . format_text($this->description, FORMAT_HTML) . '</textarea>
+            </div>
         </li>
 ';
 
