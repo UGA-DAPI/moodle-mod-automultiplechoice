@@ -59,7 +59,11 @@ $(document).ready(function() {
     });
     $("#questions-selected").on("click", "button", function(e) {
         var qid = $(this).closest('li').find('input.qid').first().val();
-		Question.remove(qid);
+		if (qid) {
+			Question.remove(qid);
+		} else {
+			$(this).closest('li').remove();
+		}
     });
 	$("#insert-section").on("click", function(e) {
         $("#questions-selected").append('<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><label>[section]</label><input name="question[type][]" value="section" type="hidden" /><input name="question[id][]" type="text" size="50" /><input name="question[score][]" type="hidden" /><button type="button" title="Enlever cette question">&lt;&lt;</button></li>');
