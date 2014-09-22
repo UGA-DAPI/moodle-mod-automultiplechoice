@@ -25,8 +25,9 @@ $(document).ready(function() {
     var Question = {
         template: null,
         initTemplate: function() {
-            this.template = $("#questions-selected > li").first().clone();
+            this.template = $("li#template-question").first().clone();
             this.template.removeAttr("style");
+            this.template.removeAttr("id");
 			this.template.find('input').removeAttr('disabled');
         },
         add: function(qid, qtitle) {
@@ -65,7 +66,23 @@ $(document).ready(function() {
 			$(this).closest('li').remove();
 		}
     });
+
+    var Section = {
+        template: null,
+        initTemplate: function() {
+            this.template = $("li#template-section").first().clone();
+            this.template.removeAttr("style");
+            this.template.removeAttr("id");
+			this.template.find(':input').removeAttr('disabled');
+        },
+        add: function() {
+			var chunk = this.template.clone();
+            chunk.appendTo($("#questions-selected"));
+        }
+    };
+	Section.initTemplate();
+
 	$("#insert-section").on("click", function(e) {
-        $("#questions-selected").append('<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><label>[section]</label><input name="question[type][]" value="section" type="hidden" /><input name="question[id][]" type="text" size="50" /><input name="question[score][]" type="hidden" /><button type="button" title="Enlever cette question">&lt;&lt;</button></li>');
+        Section.add();
     });
 } );

@@ -155,7 +155,7 @@ class Question extends QuestionListItem
 ';
         } else {
             return '
-        <li style="display: none;" class="ui-state-default">
+        <li style="display: none;" class="ui-state-default" id="template-question">
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
             <button type="button" title="Enlever cette question">&lt;&lt;</button>'
             . ($displayScore ? '

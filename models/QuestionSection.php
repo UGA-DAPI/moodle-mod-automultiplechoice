@@ -88,6 +88,7 @@ class QuestionSection extends QuestionListItem
      * @return string
      */
     public function toHtml($displayScore = false) {
+        if ($this->name) {
         return '
         <li class="ui-state-default question-section">
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
@@ -98,10 +99,25 @@ class QuestionSection extends QuestionListItem
             <input name="question[score][]" type="hidden" />
             <div>
                 <label>Description</label>
-                <textarea name="question[description][]" cols="50" rows="5" >' . format_text($this->description, FORMAT_HTML) . '</textarea>
+                <textarea name="question[description][]" cols="50" rows="5">' . format_text($this->description, FORMAT_HTML) . '</textarea>
             </div>
         </li>
 ';
-
+        } else {
+        return '
+        <li class="ui-state-default question-section" id="template-section" style="display: none;">
+            <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+            <button type="button" title="' . format_string(get_string('remove')) .'">&lt;&lt;</button>
+            <label>[section]</label>
+            <input name="question[type][]" value="section" type="hidden" disabled="disabled" />
+            <input name="question[id][]" value="" type="text" size="50" disabled="disabled" />
+            <input name="question[score][]" type="hidden" disabled="disabled" />
+            <div>
+                <label>Description</label>
+                <textarea name="question[description][]" cols="50" rows="5" disabled="disabled"></textarea>
+            </div>
+        </li>
+';
+        }
     }
 }

@@ -149,6 +149,8 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
     <?php
     $emptyQuestion = new amc\Question();
     echo $emptyQuestion->toHtml();
+    $emptySection = new amc\QuestionSection();
+    echo $emptySection->toHtml();
     if (count($quizz->questions)) {
         foreach ($quizz->questions as $q) {
             echo $q->toHtml();
