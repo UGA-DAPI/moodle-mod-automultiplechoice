@@ -26,6 +26,10 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_automultiplechoice_upgrade($oldversion) {
     global $DB;
 
+    if (version_compare(phpversion(), '5.4.0') < 0) {
+        error("This module requires PHP 5.4. It won't work with an older PHP.");
+    }
+
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
 
     if ($oldversion < 2014091100) {

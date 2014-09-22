@@ -25,6 +25,10 @@ defined('MOODLE_INTERNAL') || die();
 global $DB;
 /* @var $DB \moodle_database */
 
+if (version_compare(phpversion(), '5.4.0') < 0) {
+    error("This module requires PHP 5.4. It won't work with an older PHP.");
+}
+
 /**
  * Return the list of questions available to a given user.
  *
