@@ -28,4 +28,6 @@ abstract class QuestionListItem implements \JsonSerializable
      * @return array Assoc array
      */
     abstract public function toArray($model = false);
+
+    abstract public function toHtml($displayScore = false);
 }

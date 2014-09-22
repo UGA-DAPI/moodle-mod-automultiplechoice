@@ -83,7 +83,11 @@ class QuestionSection extends QuestionListItem
         return $this->toArray(true);
     }
 
-    public function toHtml() {
+    /**
+     * @param boolean $displayScore Ignored
+     * @return string
+     */
+    public function toHtml($displayScore = false) {
         return '
         <li class="ui-state-default">
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>

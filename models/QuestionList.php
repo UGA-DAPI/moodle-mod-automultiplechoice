@@ -174,7 +174,7 @@ class QuestionList implements \Countable, \ArrayAccess, \Iterator
                 $item = Question::fromArray(
                     array(
                         'id' => (int) $post['id'][$i],
-                        'score' => (double) str_replace(',', '.', $post['score'][$i]),
+                        'score' => isset($post['score']) ? (double) str_replace(',', '.', $post['score'][$i]) : '',
                         'scoring' => isset($post['scoring']) ? $post['scoring'][$i] : '',
                     )
                 );
