@@ -140,7 +140,7 @@ class Question extends QuestionListItem
                 return '
         <li class="ui-state-default" id="qsel-' . $this->id . '">
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <button type="button" title="' . format_string(get_string('remove')) .'">&lt;&lt;</button>'
+            <button type="button" title="' . format_string(get_string('remove')) .'">&#x2A2F;</button>'
             . ($displayScore ? '
             <label class="qscore">
                 ' . get_string('qscore', 'automultiplechoice') . ' :
@@ -157,7 +157,7 @@ class Question extends QuestionListItem
             return '
         <li style="display: none;" class="ui-state-default" id="template-question">
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <button type="button" title="Enlever cette question">&lt;&lt;</button>'
+            <button type="button" title="Enlever cette question">&#x2A2F;</button>'
             . ($displayScore ? '
             <label class="qscore">
                 ' . get_string('qscore', 'automultiplechoice') . ' :

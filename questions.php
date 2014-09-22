@@ -113,7 +113,7 @@ if ($questions && $questions->errors) {
                     array('questions' => $q->id, 'courseid' => $course->id)
             );
             if ($quizz->questions->contains($q->id)) {
-                $button = '<button type="button" data-qid="' . $q->id . '" data-selected="true" title="' . $stringRemove .'">&lt;&lt;</button>'
+                $button = '<button type="button" data-qid="' . $q->id . '" data-selected="true" title="' . $stringRemove .'">&#x2A2F;</button>'
                         . ' <a href="' . $editurl->out() . '" target="_blank">' . $editicon . '</a>';
             } else {
                 $button = '<button type="button" data-qid="' . $q->id . '" title="' . $stringAdd .'">&gt;&gt;</button>'

@@ -8,9 +8,19 @@
 	float: left;
 	width: 49%;
 }
+#questions-part-selecting button {
+	width: 38px;
+}
 #questions-part-selected {
 	float: right;
 	width: 48%;
+}
+#questions-part-selected button[type="submit"] {
+	font-size: 110%;
+	font-weight: bold;
+}
+#questions-part-selected button {
+	margin-left: 30%;
 }
 .datatable-end {
 	clear: both;
@@ -35,6 +45,9 @@
 	width: 6em;
 	vertical-align: top;
 	font-weight: bold;
+}
+.question-section button {
+	height: 14ex;
 }
 /* page questions : end */
 
