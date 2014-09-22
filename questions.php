@@ -155,8 +155,8 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
         }
     }
     ?>
-    <button type="button" id="insert-section"><?php echo get_string('insertsection', 'automultiplechoice'); ?></button>
 </ol>
+<button type="button" id="insert-section"><?php echo get_string('insertsection', 'automultiplechoice'); ?></button>
 </form>
 
 <?php
