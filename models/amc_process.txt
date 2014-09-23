@@ -1,32 +1,41 @@
 Récapitulatif des processus "automultiplechoice" lancés
 
-amcCreatePdf
+@ = racine des données du compte
+  = .../moodledata/local/automultiplechoice/automultiplechoice_NNNNN 
+  (avec NNNNN = numéro de l'instance, ex. 00123)
+<toto> = nom normalisé par normalizeFilename() de $quizz->name
+
+
+amcCreatePdf   ->  @/ sujet-<toto>.pdf , catalog-<toto>.pdf , corrige-<toto>.pdf , prepare-calage.xy
+  v
+amcMeptex      ->  @/data/layout.sqlite
+  v
+amcImprime      -> @/imprime/sujet-%e.pdf
+  v
+
+
+(upload copies)  -> /tmp/filename.pdf (par ex.)
   v
 amcMeptex
   v
-amcImprime
+amcGetimages     -> @/scanlist , @/scans/*.ppm
+  v
+amcAnalyse       -> @/data/capture.sqlite, @/cr/name-*.jpg, @/cr/page-*.jpg
   v
 
+amcPrepareBareme -> @/data/scoring.sqlite
+  v
+amcNote          >> @/data/scoring.sqlite
+  v
+(amcAssociation) -> @data/association.sqlite
+  v
+amcExport         -> @/exports/scores.csv
+  v
+writeFileWithIdentifiedStudents  -> @exports/ : score_names.csv, student_list.csv
 
-(upload copies)
-  v
-amcMeptex
-  v
-amcGetimages
-  v
-amcAnalyse
-  v
-
-amcPrepareBareme
-  v
-amcNote
-  v
-(amcAssociation)
-  v
-amcExport         ->  data/scoring.csv
   v
 amcAnnotePdf
-[ amcAnnote   ]
-[ amcRegroupe ]
+[ amcAnnote   ]   -> @/cr/corrections/jpg/page-*.jpg
+[ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-<toto>.pdf
   v
 amcAssociation
