@@ -22,13 +22,13 @@ class HtmlHelper {
             . $quizz->score . ' /></td></tr>';
         echo '<tr><th>' . get_string('scoringset', 'automultiplechoice') . '</th>'
             . '<td><select name="amc[scoringset]" id="id_amc_scoringset">';
-            foreach (mod\automultiplechoice\ScoringSystem::read()->getSetsNames() as $key => $value) {
-                echo '<option value="' . $key . '" '
+        foreach (mod\automultiplechoice\ScoringSystem::read()->getSetsNames() as $key => $value) {
+            echo '<option value="' . $key . '" '
                 . ($quizz->amcparams->scoringset == $key?' selected="selected"':'')
                 . '>' . $value . '</option>';
-            }
-            echo '</select><div id="scoringset_desc">'
-                . format_string($scoringSet->description) . '</div></td></tr>';
+        }
+        echo '</select><div id="scoringset_desc">'
+            . format_string($scoringSet->description) . '</div></td></tr>';
         echo '</tbody></table>';
 
         echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
@@ -42,26 +42,24 @@ class HtmlHelper {
         $k = 1;
         $disabled = $quizz->isLocked() ? ' disabled="disabled"' : '';
         foreach ($quizz->questions as $q) {
+            echo '<tr>';
             if ($q->getType() === 'section') {
-                echo '<tr>
-                    <td colspan="3">' . htmlspecialchars($q->name)
+                echo '<td colspan="3">' . htmlspecialchars($q->name)
                     . '<div class="question-answers">' . format_text($q->description, FORMAT_HTML) . '</div>'
-                    . '</td>
-                </tr>';
+                    . '<input name="question[id][]" value="' . htmlspecialchars($q->name) . '" type="hidden" />'
+                    . '<input name="question[description][]" value="' . htmlspecialchars($q->description) . '" type="hidden" />';
             } else {
-                echo '<tr>
-                    <td>' . $k . '</td>
+                echo '<td>' . $k . '</td>
                     <td class="q-score">
-                        <input name="question[id][]" value="' . $q->id . '" type="hidden" />
                         <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '" '
                         . $disabled . ' />
                     </td>
                     <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
-                        . HtmlHelper::listAnswers($q)
-                        .'</td>
-                </tr>';
+                        . HtmlHelper::listAnswers($q);
                 $k++;
             }
+            echo $q->htmlHiddenFields((boolean) $disabled);
+            echo "</td>\n</tr>\n";
         }
         echo '<tr>'
             . '<td></td>'
