@@ -70,7 +70,15 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
              $output .= $this->output->notification($message[0], $message[1], $message[2]);
          }
          */
-
+        ?>
+        <noscript>
+            <div class="box errorbox">
+            <h2>Erreur : Javascript n'est pas activé</h2>
+            Javascript n'est pas activé dans votre navigateur.
+            Cette activité ne pourra pas fonctionner correctement sans Javascript.
+            </div>
+        </noscript>
+        <?php
         return $output;
     }
 

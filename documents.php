@@ -56,9 +56,6 @@ if ($quizz->isLocked()) {
             Préparation de l'archive zip <span />
        </div>
     </div>
-    <noscript>
-    TODO
-    </noscript>
 EOL;
     } else {
         echo $OUTPUT->heading("Archive zip", 3);
@@ -86,9 +83,6 @@ EOL;
             ?>
         </div>
     </div>
-    <noscript>
-    TODO : form and submit button that posts to ajax/prepare.php with a redirect option on.
-    </noscript>
     <?php
 }
 
