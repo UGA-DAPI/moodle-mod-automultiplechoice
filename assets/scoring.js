@@ -14,6 +14,21 @@ $(document).ready(function() {
 		}
     });
 
+    //reprise du code de mainform.js
+    function updateScoringDescription() {
+        var id = $("#id_amc_scoringset").val();
+        var myurl = "ajax/scoring.php?scoringsetid=";
+        $.ajax({
+			url: myurl + id,
+			method: 'get',
+            success: function(data) {
+				$("#scoringset_desc").html(data);
+			}
+        });
+    }
+    $("#id_amc_scoringset").on("click", updateScoringDescription);
+    updateScoringDescription();
+
 	var expectedTotalScore = parseInt($('#expected-total-score').val());
     $("#questions-selected").on("keyup", "input.qscore", function(e) {
         var total = 0;

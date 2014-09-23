@@ -27,8 +27,7 @@ class HtmlHelper {
                 . ($quizz->amcparams->scoringset == $key?' selected="selected"':'')
                 . '>' . $value . '</option>';
         }
-        echo '</select><div id="scoringset_desc">'
-            . format_string($scoringSet->description) . '</div></td></tr>';
+        echo '</select><div id="scoringset_desc"></div></td></tr>';
         echo '</tbody></table>';
 
         echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
