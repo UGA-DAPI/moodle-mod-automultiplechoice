@@ -21,7 +21,7 @@ $controller = new amc\Controller();
 $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
-$output = $controller->getRenderer('uploadscans');
+$output = $controller->getRenderer('documents');
 
 require_capability('mod/automultiplechoice:view', $controller->getContext());
 
