@@ -58,10 +58,9 @@ class HtmlHelper {
             . '<td></td>'
             . '<th><span id="computed-total-score">' . $quizz->score . '</span> / '
             . '<span id="total-score">' . $quizz->score . '</span></th>'
-            . '<td>'
-            . ($disabled ? '' : '<button type="submit">' . get_string('savechanges') . '</button>')
-            .'</td></tr>';
+            . '<td></td></tr>';
         echo '</tbody></table>';
+        echo ($disabled ? '' : '<div><button type="submit">' . get_string('savechanges') . '</button></div>');
         echo "</form>\n";
     }
 
