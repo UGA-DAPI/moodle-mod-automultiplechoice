@@ -26,10 +26,31 @@
 	clear: both;
 	margin-bottom: 1.5ex;
 }
+ol#questions-selected {
+	counter-reset: li;
+	list-style: none;
+}
 #questions-selected > li {
 	clear: both;
 	max-width: 120ex;
-	line-height: 21px;
+	line-height: 2.3em;
+}
+#questions-selected > li:not(.question-section):before {
+	content: counter(li);
+	counter-increment: li;
+	display: inline-block;
+	position: absolute;
+	margin-left: -2.5em;
+	text-align: center;
+	padding: 2px 4px;
+	height: 1.4em;
+	width: 1.2em;
+	line-height: 1.8em;
+	border: .3em solid #97ceeb;
+	border-radius: 2em;
+	background: #97deeb;
+	color: black;
+	font-weight: bold;
 }
 #questions-selected > li button {
 	float: right;
