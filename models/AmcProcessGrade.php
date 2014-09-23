@@ -23,6 +23,21 @@ class AmcProcessGrade extends AmcProcess
     public $usersknown = 0;
     public $usersunknown = 0;
 
+    protected $format;
+
+    /**
+     * Constructor
+     *
+     * @param Quizz $quizz
+     * @param string $formatName "txt" | "latex"
+     */
+    public function __constructor(Quizz $quizz, $formatName) {
+        parent::__construct($quizz);
+        $this->format = AmcFormat\buildFormat($formatName);
+        $this->format->quizz = $this->quizz;
+        $this->format->codelength = $this->codelength;
+    }
+
     /**
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
      * @return bool
@@ -31,14 +46,14 @@ class AmcProcessGrade extends AmcProcess
         $pre = $this->workdir;
         $parameters = array(
             '--n-copies', (string) $this->quizz->amcparams->copies,
-            '--with', 'xelatex',
-            '--filter', 'plain',
             '--mode', 'b',
             '--data', $pre . '/data',
-            '--filtered-source', $pre . '/prepare-source_filtered.tex',
+            '--filtered-source', $pre . '/prepare-source_filtered.tex', // the LaTeX will be written in this file
             '--progression-id', 'bareme',
             '--progression', '1',
-            $pre . '/prepare-source.txt'
+            '--with', 'xelatex',
+            '--filter', $this->format->getFilterName(),
+            $pre . $this->format->getFilename()
             );
         $res = $this->shellExecAmc('prepare', $parameters);
         if ($res) {
@@ -153,10 +168,10 @@ class AmcProcessGrade extends AmcProcess
             '--projet',  $pre,
             '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
             '--data', $pre.'/data',
-            '--tex-src', $pre.'/prepare-source.txt',
+            '--tex-src', $pre . $this->format->getFilename(),
+            '--filter', $this->format->getFilterName(),
             '--with', 'xelatex',
-            '--filter', 'plain',
-            '--filtered-source', $pre.'/prepare-source_filtered.tex',
+            '--filtered-source', $pre.'/prepare-source_filtered.tex', // the LaTeX will be written in this file
             '--n-copies', (string) $this->quizz->amcparams->copies,
             '--progression-id', 'regroupe',
             '--progression', '1',

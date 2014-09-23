@@ -72,7 +72,7 @@ EOL;
     }
 
     /**
-     * Turns a question into a formatted string, in the AMC-txt (aka plain) format.
+     * Turns a question into a formatted string, in the LaTeX format.
      *
      * @param \mod\automultiplechoice\QuestionListItem $question record from the 'question' table
      * @return string
