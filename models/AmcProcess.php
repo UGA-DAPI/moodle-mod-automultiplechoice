@@ -103,7 +103,8 @@ class AmcProcess
             '--list', $scanlist,
             '--copy-to', $pre . '/scans/',
             $scanfile
-            ), true);
+            )
+        );
         if ($res) {
             $nscans = count(file($scanlist));
             $this->log('getimages', $nscans . ' pages');
@@ -162,7 +163,7 @@ class AmcProcess
             '--no-ignore-red',
             );
         //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
-        $res = $this->shellExecAmc('analyse', $parameters, true);
+        $res = $this->shellExecAmc('analyse', $parameters);
         if ($res) {
             $this->log('analyse', 'OK.');
         }
@@ -328,6 +329,7 @@ class AmcProcess
      * Wrapper around shellExec() including lock write
      * @param string $cmd auto-multiple-choice subcommand
      * @param array $params List of strings.
+     * @param boolean (opt, false) Write a log as a side-effect (ugly, will probably be written before the HTML starts).
      * @return boolean Success?
      */
     protected function shellExecAmc($cmd, $params, $output=false) {
