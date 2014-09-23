@@ -152,3 +152,10 @@ td ul {
 #form-uploadscans input#scanfile {
 	width: 50ex;
 }
+
+dt {
+	font-weight: bold;
+}
+dt:after {
+	content: " :";
+}

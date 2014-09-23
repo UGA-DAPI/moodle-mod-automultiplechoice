@@ -29,20 +29,50 @@ require_capability('mod/automultiplechoice:view', $controller->getContext());
 $PAGE->set_url('/mod/automultiplechoice/uploadscans.php', array('id' => $cm->id));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
-// Output starts here
-echo $output->header();
-
 $process = new \mod\automultiplechoice\AmcProcess($quizz);
 $amclog = new \mod\automultiplechoice\Log($quizz->id);
 //var_dump($process);
 
-if (isset ($_FILES['scanfile']) ) { // Fichier reçu
+if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
+    $errors = array();
+
+
     if ($_FILES['scanfile']["error"] > 0) {
         echo $OUTPUT->box("Erreur : " . $_FILES['scanfile']['error'], 'errorbox');
     } else {
         $amclog->write('upload');
         $filename = '/tmp/' . $_FILES['scanfile']['name'];
-        move_uploaded_file($_FILES['scanfile']['tmp_name'], $filename); // safer than rename()
+        if (!move_uploaded_file($_FILES['scanfile']['tmp_name'], $filename)) { // safer than rename()
+            error("Impossible d'accéder au fichier déposé");
+        }
+
+        if (!$process->amcMeptex()) {
+            $errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
+        }
+
+        $npages = $process->amcGetimages($filename);
+        if (!$npages) {
+            $errors[] = "Erreur découpage scan (amc getimages)";
+        }
+
+        $analyse = $process->amcAnalyse(true);
+        if (!$analyse) {
+            $errors[] = "Erreur lors de l'analyse (amc analyse).";
+        }
+
+        $scansStats = $process->statScans();
+        if (!$scansStats['count']) {
+            $errors[] = "Erreur, $npages pages scannées mais aucune image n'a été reconnue (pas de PPM).";
+        }
+
+        // Output starts here
+        echo $output->header(); // if the upload went well, the last tab will be enabled!
+        if (!empty($scansStats['count'])) {
+            echo $OUTPUT->box("Le processus s'est achevé : $npages pages scannées, {$scansStats['count']} traitées.", 'informationbox');
+        }
+        foreach ($errors as $errorMsg) {
+            echo $OUTPUT->box($errorMsg, 'errorbox');
+        }
 
         $ko = round($_FILES['scanfile']['size'] / 1024);
         echo "<dl>
@@ -51,32 +81,11 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu
             <dt>Taille</dt> <dd>{$ko} ko</dd>
             <dt>Emplacement</dt> <dd>{$filename}</dd>
             </dl>\n";
-
-        /** @todo ce bloc meptex est-il nécessaire ? **/
-        $diag = $process->amcMeptex();
-        if (!$diag) {
-            echo $OUTPUT->box("Erreur lors du calcul de mise en page (amc meptex).", 'errorbox');
-        }
-
-        $npages = $process->amcGetimages($filename);
-        if ($npages) {
-            echo "Pages : " . $npages ."<br>";
-        } else {
-            echo $OUTPUT->box("Erreur découpage scan (amc getimages)", 'errorbox');
-        }
-
-        $analyse = $process->amcAnalyse(true);
-        if (!$analyse) {
-            echo $OUTPUT->box("Erreur lors de l'analyse (amc analyse).", 'errorbox');
-        }
-
-        $scansStats = $process->statScans();
-        if (!$scansStats['count']) {
-            echo $OUTPUT->box("Erreur, aucune image n'a été reconnue (pas de PPM).", 'errorbox');
-        }
     }
 } else {
     // Upload du fichier
+    // Output starts here
+    echo $output->header();
     ?>
     <form id="form-uploadscans" action="uploadscans.php?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
         <div>
