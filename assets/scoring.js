@@ -1,4 +1,4 @@
-/* 
+/*
  * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
  */
 
@@ -14,7 +14,7 @@ $(document).ready(function() {
 		}
     });
 
-	var expectedTotalScore = parseInt($('#expected-total-score').text());
+	var expectedTotalScore = parseInt($('#expected-total-score').val());
     $("#questions-selected").on("keyup", "input.qscore", function(e) {
         var total = 0;
 		inputs = $("#questions-selected input.qscore").each(function(index) {
@@ -24,7 +24,14 @@ $(document).ready(function() {
 		$('#computed-total-score').html(total)
 				.parent().toggleClass("score-mismatch", total !== Math.floor(expectedTotalScore));
     });
-	$("#questions-selected input.qscore").first().keyup();
+    $("#questions-selected input.qscore").first().keyup();
+
+    $("#params-quizz").on("keyup", "input.qscore", function(e) {
+        var res = parseInt($(this).val());
+        var total = parseInt($('#computed-total-score').text());
+        $('#total-score').html(res)
+            .parent().toggleClass("score-mismatch", res !== total);
+    });
 
 	function toggleAnswers() {
 		$(".question-answers").toggleClass('hide');

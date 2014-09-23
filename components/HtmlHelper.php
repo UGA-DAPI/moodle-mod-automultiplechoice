@@ -12,8 +12,25 @@
  */
 class HtmlHelper {
     public static function printFormFullQuestions(\mod\automultiplechoice\Quizz $quizz) {
+        $scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
         echo '<form action="questions.php" method="post" name="qselect">
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
+
+        echo '<table class="flexible generaltable quizz-summary" id="params-quizz"><tbody>';
+        echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th>'
+            . '<td><input type="text" id="expected-total-score" class="qscore" name="score" value='
+            . $quizz->score . ' /></td></tr>';
+        echo '<tr><th>' . get_string('scoringset', 'automultiplechoice') . '</th>'
+            . '<td><select name="amc[scoringset]" id="id_amc_scoringset">';
+            foreach (mod\automultiplechoice\ScoringSystem::read()->getSetsNames() as $key => $value) {
+                echo '<option value="' . $key . '" '
+                . ($quizz->amcparams->scoringset == $key?' selected="selected"':'')
+                . '>' . $value . '</option>';
+            }
+            echo '</select><div id="scoringset_desc">'
+                . format_string($scoringSet->description) . '</div></td></tr>';
+        echo '</tbody></table>';
+
         echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
         echo '<thead><tr><th>#</th>'
                 . '<th>' . get_string('qscore', 'automultiplechoice')
@@ -48,7 +65,8 @@ class HtmlHelper {
         }
         echo '<tr>'
             . '<td></td>'
-            . '<th><span id="computed-total-score">' . $quizz->score . '</span> / ' . $quizz->score . '</th>'
+            . '<th><span id="computed-total-score">' . $quizz->score . '</span> / '
+            . '<span id="total-score">' . $quizz->score . '</span></th>'
             . '<td>'
             . ($disabled ? '' : '<button type="submit">' . get_string('savechanges') . '</button>')
             .'</td></tr>';
