@@ -72,7 +72,7 @@ class ScoringSystem
     public function toHtmlSelect($name, $value) {
         $html = '<select name="' . $name . '">'
                 . '<option value=""></option>';
-        foreach($this->sets as $rank => $scoringSet) {
+        foreach(self::$sets as $rank => $scoringSet) {
             /* @var $scoringSet ScoringSet */
             $html .= '<option value="' . $rank . '"'
                 . ($value !== '' && $value == $rank ? ' selected="selected">' : '>')

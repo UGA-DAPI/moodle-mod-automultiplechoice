@@ -13,6 +13,7 @@
 class HtmlHelper {
     public static function printFormFullQuestions(\mod\automultiplechoice\Quizz $quizz) {
         $scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
+        $select = mod\automultiplechoice\ScoringSystem::read()->toHtmlSelect('amc[scoringset]', $quizz->amcparams->scoringset);
         echo '<form action="questions.php" method="post" name="qselect">
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
 
@@ -20,16 +21,9 @@ class HtmlHelper {
         echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th>'
             . '<td><input type="text" id="expected-total-score" class="qscore" name="score" value='
             . $quizz->score . ' /></td></tr>';
-        echo '<tr><th>' . get_string('scoringset', 'automultiplechoice') . '</th>'
-            . '<td><select name="amc[scoringset]" id="id_amc_scoringset">';
-        foreach (mod\automultiplechoice\ScoringSystem::read()->getSetsNames() as $key => $value) {
-            echo '<option value="' . $key . '" '
-                . ($quizz->amcparams->scoringset == $key?' selected="selected"':'')
-                . '>' . $value . '</option>';
-        }
-        echo '</select><div id="scoringset_desc"></div></td></tr>';
+        echo '<tr><th>' . get_string('scoringset', 'automultiplechoice') . '</th>';
+        echo '<td>' . $select . '<div id="scoringset_desc"></div></td></tr>';
         echo '</tbody></table>';
-
         echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
         echo '<thead><tr><th>#</th>'
                 . '<th>' . get_string('qscore', 'automultiplechoice')
