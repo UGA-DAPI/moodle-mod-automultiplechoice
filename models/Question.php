@@ -127,30 +127,25 @@ class Question extends QuestionListItem
         if ($this->score > 0) {
             return $this->score;
         } else {
-            return ($this->defaultmark ? sprintf('%.2f', $this->defaultmark) : '');
+            return (empty($this->defaultmark) ? '' : sprintf('%.2f', $this->defaultmark));
         }
     }
 
     /**
-     * @param boolean $displayScore
+     * @param boolean $hideScore
      * @return string
      */
-    public function toHtml($displayScore = false) {
+    public function toHtml($hideScore = true) {
         if ($this->id) {
                 return '
         <li class="ui-state-default" id="qsel-' . $this->id . '">
             <button type="button" title="' . format_string(get_string('remove')) .'">&#x2A2F;</button>
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            ' . ($displayScore ? '
+            ' . ($hideScore ? $this->htmlScoreField($hideScore) : '
             <label class="qscore">
-                ' . get_string('qscore', 'automultiplechoice') . ' :
-                <input name="question[score][]" value="' . $this->getScoreDisplayed() . '" type="text" />
-            </label>'
-            : '<input name="question[score][]" value="' . $this->getScoreDisplayed() . '" type="hidden" />') . '
-            <label>' . format_string($this->name) . '</label>
-            <input name="question[type][]" value="question" type="hidden" />
-            <input name="question[id][]" value="' . $this->id . '" type="hidden" class="qid" />
-            <input name="question[description][]" type="hidden" />
+                ' . get_string('qscore', 'automultiplechoice') . ' : ' . $this->htmlScoreField($hideScore) . '
+            </label>' ) . '
+            <label>' . format_string($this->name) . '</label>' . $this->htmlHiddenFields() . '
         </li>
 ';
         } else {
@@ -158,18 +153,29 @@ class Question extends QuestionListItem
         <li style="display: none;" class="ui-state-default" id="template-question">
             <button type="button" title="Enlever cette question">&#x2A2F;</button>
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            ' . ($displayScore ? '
+            ' . ($hideScore ? $this->htmlScoreField($hideScore) : '
             <label class="qscore">
-                ' . get_string('qscore', 'automultiplechoice') . ' :
-                <input name="question[score][]" value="1" type="text" disabled="disabled" />
-            </label>'
-            : '<input name="question[score][]" value="" type="hidden" disabled="disabled" />') . '
-            <label></label>
-            <input name="question[type][]" value="question" type="hidden" disabled="disabled" />
-            <input name="question[id][]" value="" type="hidden" class="qid" disabled="disabled" />
-            <input name="question[description][]" type="hidden" disabled="disabled" />
+                ' . get_string('qscore', 'automultiplechoice') . ' : ' . $this->htmlScoreField($hideScore) . '
+            </label>' ) . '
+            <label></label>' . $this->htmlHiddenFields() . '
         </li>
 ';
         }
+    }
+
+    public function htmlHiddenFields() {
+        $suffix = ($this->id ? '' : ' disabled="disabled"');
+        return '
+        <input name="question[type][]" value="question" type="hidden"' . $suffix . ' />
+        <input name="question[id][]" value="' . ($this->id > 0 ? $this->id : '') . '" type="hidden" class="qid"' . $suffix . ' />
+        <input name="question[description][]" type="hidden"' . $suffix . ' />';
+
+    }
+
+    public function htmlScoreField($hidden = true) {
+        $suffix = ($this->id ? '' : ' disabled="disabled"');
+        $type = ($hidden ? '" type="hidden"' : '" type="text"');
+        return '<input name="question[score][]" value="' . $this->getScoreDisplayed() . $type . $suffix . ' />';
+
     }
 }

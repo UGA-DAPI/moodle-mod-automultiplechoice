@@ -84,19 +84,18 @@ class QuestionSection extends QuestionListItem
     }
 
     /**
-     * @param boolean $displayScore Ignored
+     * @param boolean $hideScore Ignored
      * @return string
      */
-    public function toHtml($displayScore = false) {
+    public function toHtml($hideScore = true) {
         if ($this->name) {
         return '
         <li class="ui-state-default question-section">
             <button type="button" title="' . format_string(get_string('remove')) .'">&#x2A2F;</button>
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
             <label>[section]</label>
-            <input name="question[type][]" value="section" type="hidden" />
             <input name="question[id][]" value="' . htmlspecialchars($this->name) . '" type="text" size="50" />
-            <input name="question[score][]" type="hidden" />
+            ' . $this->htmlHiddenFields() . '
             <div>
                 <label>Description</label>
                 <textarea name="question[description][]" cols="50" rows="5">' . format_text($this->description, FORMAT_HTML) . '</textarea>
@@ -109,9 +108,8 @@ class QuestionSection extends QuestionListItem
             <button type="button" title="' . format_string(get_string('remove')) .'">&#x2A2F;</button>
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
             <label>[section]</label>
-            <input name="question[type][]" value="section" type="hidden" disabled="disabled" />
             <input name="question[id][]" value="" type="text" size="50" disabled="disabled" />
-            <input name="question[score][]" type="hidden" disabled="disabled" />
+            ' . $this->htmlHiddenFields() . '
             <div>
                 <label>Description</label>
                 <textarea name="question[description][]" cols="50" rows="5" disabled="disabled"></textarea>
@@ -119,5 +117,12 @@ class QuestionSection extends QuestionListItem
         </li>
 ';
         }
+    }
+
+    public function htmlHiddenFields() {
+        $suffix = ($this->name ? '' : ' disabled="disabled"');
+        return '<input name="question[type][]" value="section" type="hidden"' . $suffix . ' />
+        <input name="question[score][]" value="" type="hidden"' . $suffix . ' />';
+
     }
 }
