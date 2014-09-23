@@ -159,6 +159,7 @@ class QuestionList implements \Countable, \ArrayAccess, \Iterator
     /**
      * Read $_POST[$fieldname] and return a new instance.
      *
+     * @param string $fieldname
      * @return QuestionList
      */
     public static function fromForm($fieldname) {
