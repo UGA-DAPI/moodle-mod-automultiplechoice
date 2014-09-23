@@ -53,7 +53,7 @@ $(document).ready(function() {
             Question.remove(qid);
         } else {
 			var qtitle = bton.closest('tr').children('td.qtitle').first().text();
-			bton.text("&#x2A2F;");
+			bton.html("&#x2A2F;");
             bton.data("selected", true);
             Question.add(qid, qtitle);
         }
