@@ -19,7 +19,7 @@
 	font-size: 110%;
 	font-weight: bold;
 }
-#questions-part-selected button {
+#questions-part-selected > p > button {
 	margin-left: 30%;
 }
 .datatable-end {

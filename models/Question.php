@@ -139,9 +139,9 @@ class Question extends QuestionListItem
         if ($this->id) {
                 return '
         <li class="ui-state-default" id="qsel-' . $this->id . '">
+            <button type="button" title="' . format_string(get_string('remove')) .'">&#x2A2F;</button>
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <button type="button" title="' . format_string(get_string('remove')) .'">&#x2A2F;</button>'
-            . ($displayScore ? '
+            ' . ($displayScore ? '
             <label class="qscore">
                 ' . get_string('qscore', 'automultiplechoice') . ' :
                 <input name="question[score][]" value="' . $this->getScoreDisplayed() . '" type="text" />
@@ -156,9 +156,9 @@ class Question extends QuestionListItem
         } else {
             return '
         <li style="display: none;" class="ui-state-default" id="template-question">
+            <button type="button" title="Enlever cette question">&#x2A2F;</button>
             <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-            <button type="button" title="Enlever cette question">&#x2A2F;</button>'
-            . ($displayScore ? '
+            ' . ($displayScore ? '
             <label class="qscore">
                 ' . get_string('qscore', 'automultiplechoice') . ' :
                 <input name="question[score][]" value="1" type="text" disabled="disabled" />
