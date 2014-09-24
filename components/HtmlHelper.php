@@ -33,6 +33,7 @@ class HtmlHelper {
         echo '<tbody>';
 
         $k = 1;
+        $nbline = 1;
         $disabled = $quizz->isLocked() ? ' disabled="disabled"' : '';
         foreach ($quizz->questions as $q) {
             echo '<tr>';
@@ -53,6 +54,10 @@ class HtmlHelper {
             }
             echo $q->htmlHiddenFields((boolean) $disabled);
             echo "</td>\n</tr>\n";
+            $nbline++;
+        }
+        if ($nbline%2) {
+            echo '<tr></tr>';
         }
         echo '<tr>'
             . '<td></td>'
