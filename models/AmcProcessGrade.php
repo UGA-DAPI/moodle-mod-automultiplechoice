@@ -21,8 +21,8 @@ class AmcProcessGrade extends AmcProcess
     const CSV_SEPARATOR = ';';
 
     protected $grades = array();
-    public $usersknown = 0;
-    public $usersunknown = 0;
+    protected $usersknown = 0;
+    protected $usersunknown = 0;
 
     protected $format;
 
@@ -46,7 +46,7 @@ class AmcProcessGrade extends AmcProcess
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
      * @return bool
      */
-    public function amcPrepareBareme() {
+    protected function amcPrepareBareme() {
         $pre = $this->workdir;
         $parameters = array(
             '--n-copies', (string) $this->quizz->amcparams->copies,
@@ -70,7 +70,7 @@ class AmcProcessGrade extends AmcProcess
      * Shell-executes 'amc note'
      * @return bool
      */
-    public function amcNote() {
+    protected function amcNote() {
         $pre = $this->workdir;
         $parameters = array(
             '--data', $pre . '/data',
@@ -96,7 +96,7 @@ class AmcProcessGrade extends AmcProcess
      * Shell-executes 'amc export' to get a csv file
      * @return bool
      */
-    public function amcExport() {
+    protected function amcExport() {
         $pre = $this->workdir;
         $parameters = array(
             '--module', 'CSV',
@@ -128,7 +128,7 @@ class AmcProcessGrade extends AmcProcess
      * fills the cr/corrections/jpg directory with individual annotated copies
      * @return bool
      */
-    public function amcAnnote() {
+    private function amcAnnote() {
         $pre = $this->workdir;
         $parameters = array(
             '--projet', $pre,
@@ -221,7 +221,7 @@ class AmcProcessGrade extends AmcProcess
      * @todo (maybe) manages all variants
      * @return bool
      */
-    public function amcAnnotePdf() {
+    protected function amcAnnotePdf() {
         $pre = $this->workdir;
         $mask = $pre . "/cr/corrections/jpg/*.jpg";
         array_map('unlink', glob( $mask ));
@@ -244,7 +244,7 @@ class AmcProcessGrade extends AmcProcess
      *
      * @return boolean Success?
      */
-    public function writeFileWithIdentifiedStudents() {
+    protected function writeFileWithIdentifiedStudents() {
         $input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
         if (!$input) {
             return false;
@@ -331,7 +331,7 @@ class AmcProcessGrade extends AmcProcess
      * computes and display statistics indicators
      * @return string html table with statistics indicators
      */
-    public function computeStats() {
+    protected function computeStats() {
         if (!$this->grades) {
             $this->writeFileWithIdentifiedStudents();
         }
@@ -356,7 +356,7 @@ class AmcProcessGrade extends AmcProcess
      * @param string $output
      * @return float
      */
-    protected function mmmr($array, $output = 'mean'){
+    private function mmmr($array, $output = 'mean'){
         if (empty($array) || !is_array($array)) {
             return FALSE;
         } else {
@@ -388,7 +388,7 @@ class AmcProcessGrade extends AmcProcess
         }
     }
 
-    protected static function fopenRead($filename) {
+    private static function fopenRead($filename) {
         if (!is_readable($filename)) {
             return false;
         }
