@@ -11,11 +11,12 @@ namespace mod\automultiplechoice;
 require_once __DIR__ . '/AmcProcess.php';
 require_once dirname(__DIR__) . '/locallib.php';
 require_once __DIR__ . '/Log.php';
+require_once __DIR__ . '/AmcFormat/Api.php';
 
 class AmcProcessGrade extends AmcProcess
 {
-    const PATH_AMC_CSV = '/exports/scores.csv';
-    const PATH_FULL_CSV = '/exports/scores_names.csv';
+    const PATH_AMC_CSV = '/exports/grades.csv';
+    const PATH_FULL_CSV = '/exports/grades_with_names.csv';
     const PATH_STUDENTLIST_CSV = '/exports/student_list.csv';
     const CSV_SEPARATOR = ';';
 
@@ -31,9 +32,12 @@ class AmcProcessGrade extends AmcProcess
      * @param Quizz $quizz
      * @param string $formatName "txt" | "latex"
      */
-    public function __constructor(Quizz $quizz, $formatName) {
+    public function __construct(Quizz $quizz, $formatName) {
         parent::__construct($quizz);
-        $this->format = AmcFormat\buildFormat($formatName);
+        $this->format = amcFormat\buildFormat($formatName);
+        if (!$this->format) {
+            throw new \Exception("Erreur, pas de format de QCM pour AMC.");
+        }
         $this->format->quizz = $this->quizz;
         $this->format->codelength = $this->codelength;
     }
@@ -53,7 +57,7 @@ class AmcProcessGrade extends AmcProcess
             '--progression', '1',
             '--with', 'xelatex',
             '--filter', $this->format->getFilterName(),
-            $pre . $this->format->getFilename()
+            $pre . '/' . $this->format->getFilename()
             );
         $res = $this->shellExecAmc('prepare', $parameters);
         if ($res) {
@@ -168,7 +172,7 @@ class AmcProcessGrade extends AmcProcess
             '--projet',  $pre,
             '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
             '--data', $pre.'/data',
-            '--tex-src', $pre . $this->format->getFilename(),
+            '--tex-src', $pre . '/' . $this->format->getFilename(),
             '--filter', $this->format->getFilterName(),
             '--with', 'xelatex',
             '--filtered-source', $pre.'/prepare-source_filtered.tex', // the LaTeX will be written in this file
