@@ -16,6 +16,7 @@ class HtmlHelper {
         $select = mod\automultiplechoice\ScoringSystem::read()->toHtmlSelect('amc[scoringset]', $quizz->amcparams->scoringset);
         echo '<form action="questions.php" method="post" name="qselect">
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
+        echo '<input name="qnumber" value="' . $quizz->qnumber . '" type="hidden" id="quizz-qnumber"/>';
 
         echo '<table class="flexible generaltable quizz-summary" id="params-quizz"><tbody>';
         echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th>'
@@ -63,7 +64,9 @@ class HtmlHelper {
             . '<td></td>'
             . '<th><span id="computed-total-score">' . $quizz->score . '</span> / '
             . '<span id="total-score">' . $quizz->score . '</span></th>'
-            . '<td></td></tr>';
+            . '<td>';
+        echo ($disabled ? '' : '<button type="button" id="scoring-distribution">Répartir les points</button>');
+        echo '</td></tr>';
         echo '</tbody></table>';
         echo ($disabled ? '' : '<div><button type="submit">' . get_string('savechanges') . '</button></div>');
         echo "</form>\n";
