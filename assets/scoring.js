@@ -81,15 +81,15 @@ $(document).ready(function() {
 
 	});
 
-    $('#scoring-distribution').on('click', function(){
-        var totalScore = parseInt($('#expected-total-score').val());
-        var qnumber = parseInt($('#quizz-qnumber').val());
-        var valeur = Math.floor(100*(totalScore / qnumber)) / 100;
-        var total = qnumber*valeur;
-        inputs = $("#questions-selected input.qscore").each(function(index) {
+	$('#scoring-distribution').on('click', function(){
+		var totalScore = parseInt($('#expected-total-score').val());
+		var qnumber = parseInt($('#quizz-qnumber').val());
+		var valeur = Math.floor(100*(totalScore / qnumber)) / 100;
+		var total = qnumber*valeur;
+		inputs = $("form input.qscore").each(function(index) {
 			$(this).val(valeur);
 		});
-        $('#computed-total-score').html(total)
-            .parent().toggleClass("score-mismatch", total !== totalScore);
-    });
+		$('#computed-total-score').html(total)
+			.parent().toggleClass("score-mismatch", total !== totalScore);
+	});
 } );

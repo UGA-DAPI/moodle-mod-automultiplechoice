@@ -81,11 +81,6 @@ if ($quizz->isLocked()) {
             . "<em>[" . get_string('prepare', 'automultiplechoice') . "]</em>.</p>";
 }
 
-// Questions
-echo $OUTPUT->box_start();
-echo $OUTPUT->heading("Questions");
 HtmlHelper::printFormFullQuestions($quizz);
-
-echo $OUTPUT->box_end();
 
 echo $output->footer();
