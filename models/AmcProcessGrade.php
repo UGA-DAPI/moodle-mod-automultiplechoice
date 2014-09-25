@@ -21,8 +21,8 @@ class AmcProcessGrade extends AmcProcess
     const CSV_SEPARATOR = ';';
 
     protected $grades = array();
-    protected $usersknown = 0;
-    protected $usersunknown = 0;
+    public $usersknown = 0;
+    public $usersunknown = 0;
 
     protected $format;
 
@@ -234,6 +234,42 @@ class AmcProcessGrade extends AmcProcess
         return $this->amcRegroupe();
     }
 
+    public function readGrades() {
+        if (count($this->grades) > 0) {
+            return true;
+        }
+        $input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
+        if (!$input) {
+            return false;
+        }
+        $header = fgetcsv($input, 1024, self::CSV_SEPARATOR);
+        if (!$header) {
+            return false;
+        }
+        $getCol = array_flip($header);
+
+        $this->grades = array();
+        while (($data = fgetcsv($input, 1024, self::CSV_SEPARATOR)) !== FALSE) {
+            $idnumber = $data[$getCol['student.number']];
+            $user = null;
+            if ($idnumber) {
+                $user = getStudentByIdNumber($idnumber);
+            }
+            if ($user) {
+                $userid = $user->id;
+                $this->usersknown++;
+            } else {
+                $userid = null;
+                $this->usersunknown++;
+            }
+            $this->grades[] = (object) array(
+                'userid' => $userid,
+                'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
+            );
+        }
+        fclose($input);
+        return true;
+    }
 
     /**
      * Return an array of students with added fields for identified users.
@@ -328,25 +364,17 @@ class AmcProcessGrade extends AmcProcess
 
 
     /**
-     * computes and display statistics indicators
-     * @return string html table with statistics indicators
+     * @return boolean
      */
-    protected function computeStats() {
-        if (!$this->grades) {
-            $this->writeFileWithIdentifiedStudents();
-        }
-        $mark = array();
-        foreach ($this->grades as $rawmark) {
-            $mark[] = $rawmark->rawgrade;
-        }
+    public function hasAnotatedFiles() {
+        return (file_exists($this->workdir . '/cr/corrections/pdf/' . $this->normalizeFilename('corrections')));
+    }
 
-        $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
-        $out = "<table class=\"generaltable\"><tbody>\n";
-        foreach ($indics as $indicen => $indicfr) {
-            $out .= '<tr><td>' . $indicfr. '</td><td>' . $this->mmmr($mark, $indicen) . '</td></tr>' . "\n";
-        }
-        $out .= "</tbody></table>\n";
-        return $out;
+    /**
+     * @return boolean
+     */
+    public function isGraded() {
+        return (file_exists($this->workdir . AmcProcessGrade::PATH_AMC_CSV));
     }
 
     /**
@@ -356,7 +384,7 @@ class AmcProcessGrade extends AmcProcess
      * @param string $output
      * @return float
      */
-    private function mmmr($array, $output = 'mean'){
+    protected function mmmr($array, $output = 'mean'){
         if (empty($array) || !is_array($array)) {
             return FALSE;
         } else {

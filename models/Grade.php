@@ -18,8 +18,14 @@ class Grade extends AmcProcessGrade
     public function __construct(Quizz $quizz, $formatName = 'latex') {
         parent::__construct($quizz, $formatName);
         $this->results = (object) array(
-            'errors' => new \stdClass(),
+            'actions' => new \stdClass(),
         );
+        if ($this->isGraded()) {
+            $this->results->csv = (object) array(
+                'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
+                'grades_with_names.csv' => $this->getFileUrl(AmcProcessGrade::PATH_FULL_CSV),
+            );
+        }
     }
 
     /**
@@ -34,14 +40,9 @@ class Grade extends AmcProcessGrade
         );
         $this->results = (object) array(
             'actions' => (object) $actions,
-            'users' => (object) array(
-                'known' => $this->usersknown,
-                'unknown' => $this->usersunknown,
-            ),
             'csv' => (object) array(
                 'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
                 'grades_with_names.csv' => $this->getFileUrl(AmcProcessGrade::PATH_FULL_CSV),
-
             ),
         );
         return (array_sum($actions) === count($actions));
@@ -76,7 +77,7 @@ class Grade extends AmcProcessGrade
      * @global core_renderer $OUTPUT
      * @return string
      */
-    public function getHtml() {
+    public function getHtmlErrors() {
         global $OUTPUT;
         $html = '';
 
@@ -93,26 +94,40 @@ class Grade extends AmcProcessGrade
                 $html .= $OUTPUT->box($errorMsg[$k], 'errorbox');
             }
         }
+        return $html;
+    }
 
-        $html .= $OUTPUT->heading("Bilan des notes")
-            . $this->computeStats()
-            . "<p>Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.</p>";
-
-        $html .= $OUTPUT->heading("Tableaux des notes")
-            . "<p>" . $this->results->users->known . " copies identifiées et " . $this->results->users->unknown . " non identifiées. </p>"
-            . '<ul class="amc-files">';
+    /**
+     * @return string
+     */
+    public function getHtmlCsvLinks() {
+        $html = '<ul class="amc-files">';
         foreach ((array) $this->results->csv as $name => $url) {
             $html .= "<li>" . \html_writer::link($url, $name) . "</li>";
         }
         $html .= "</ul>\n";
+        return $html;
+    }
 
-        if (!empty($this->results->actions->anotate)) {
-            $url = $this->getFileUrl('cr/corrections/pdf/' . $this->normalizeFilename('corrections'));
-            $html .= $OUTPUT->heading("Copies corrigées")
-                . \html_writer::link($url, $this->normalizeFilename('corrections'), array('target' => '_blank'))
-                . "\n";
+    /**
+     * computes and display statistics indicators
+     * @return string html table with statistics indicators
+     */
+    public function getHtmlStats() {
+        if (!$this->grades) {
+            $this->writeFileWithIdentifiedStudents();
+        }
+        $mark = array();
+        foreach ($this->grades as $rawmark) {
+            $mark[] = $rawmark->rawgrade;
         }
 
-        return $html;
+        $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
+        $out = "<table class=\"generaltable\"><tbody>\n";
+        foreach ($indics as $indicen => $indicfr) {
+            $out .= '<tr><td>' . $indicfr. '</td><td>' . $this->mmmr($mark, $indicen) . '</td></tr>' . "\n";
+        }
+        $out .= "</tbody></table>\n";
+        return $out;
     }
 }

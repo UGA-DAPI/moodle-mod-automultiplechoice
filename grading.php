@@ -21,6 +21,7 @@ $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('grading');
+$action = optional_param('action', '', PARAM_ALPHA);
 
 require_capability('mod/automultiplechoice:view', $controller->getContext());
 
@@ -33,20 +34,35 @@ $PAGE->requires->css(new moodle_url('assets/amc.css'));
 echo $output->header();
 
 $process = new amc\Grade($quizz);
-$process->grade();
-$process->anotate();
+if (!$process->isGraded() || $action === 'grade') {
+    $process->grade();
+} else if ($action === 'anotate') {
+    $process->anotate();
+}
 
-echo $process->getHtml();
+echo $process->getHtmlErrors();
 
-// Bouton imprimer
-?>
-<form action="note.php?a=<?php echo $quizz->id; ?>" method="post">
+echo $OUTPUT->heading("Bilan des notes")
+    . $process->getHtmlStats()
+    . "<p>Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.</p>";
+
+echo $OUTPUT->heading("Tableaux des notes")
+    . "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>"
+    . $process->getHtmlCsvLinks();
+
+if ($process->hasAnotatedFiles()) {
+    $url = $process->getFileUrl('cr/corrections/pdf/' . $process->normalizeFilename('corrections'));
+    echo $OUTPUT->heading("Copies corrigées")
+        . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
+} else {
+    ?>
+    <form action="?a=<?php echo $quizz->id; ?>" method="post">
     <p>
-        <label for="submit">Télécharger les copies annotées</label>
-        <input type="submit" name="submit" value="Annotations">
+        <input type="hidden" name="action" value="anotate" />
+        <button type="submit">Générer les copies corrigées (anotées)</button>
     </p>
-</form>
-<?php
-// <label for="compose">Copies composées</label>  <input type="checkbox" name="compose" id="compose">
+    </form>
+    <?php
+}
 
 echo $output->footer();
