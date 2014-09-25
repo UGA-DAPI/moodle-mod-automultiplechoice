@@ -141,7 +141,7 @@ class AmcProcess
 
     /**
      * Shell-executes 'amc analyse'
-     * @param bool $multiple (see AMC) if multiple copies of the same sheet are possible
+     * @param bool $multiple (opt, true) If false, AMC will check that all the blank answer sheets were distinct.
      * @return bool
      */
     public function amcAnalyse($multiple = true) {
@@ -287,15 +287,16 @@ class AmcProcess
             return false;
         }
         $html = '<pre style="margin:2px; padding:2px; border:1px solid grey;">' . " \n";
-        $html .= $cmd . " \n";
+        $html .= $cmd . " \n---------OUTPUT---------\n";
         $i=0;
         foreach ($lines as $line) {
             $i++;
             $html .= sprintf("%03d.", $i) . " " . $line . "\n";
         }
-        $html .= "Return value = <b>" . $returnVal. "</b\n";
-        $html .= "</pre> \n";
+        $html .= "------RETURN VALUE------\n<b>" . $returnVal. "</b>\n";
+        $html .= "-------CALL TRACE-------\n";
         debugging($html, $debuglevel);
+        echo "</pre>";
     }
 
     /**
@@ -318,7 +319,7 @@ class AmcProcess
             return true;
         } else {
             /**
-             * @todo Fill $this->errors
+             * @todo Fill $this->errors instead of outputing HTML on the fly
              */
             $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_NORMAL);
             return false;
