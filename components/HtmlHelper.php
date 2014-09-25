@@ -14,7 +14,7 @@ class HtmlHelper {
     public static function printFormFullQuestions(\mod\automultiplechoice\Quizz $quizz) {
         $scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
         $select = mod\automultiplechoice\ScoringSystem::read()->toHtmlSelect('amc[scoringset]', $quizz->amcparams->scoringset);
-        echo '<form action="questions.php" method="post" name="qselect">
+        echo '<form action="" method="post" name="qselect">
         <input name="a" value="' . $quizz->id . '" type="hidden" />';
         echo '<input name="qnumber" value="' . $quizz->qnumber . '" type="hidden" id="quizz-qnumber"/>';
 
@@ -41,19 +41,17 @@ class HtmlHelper {
             if ($q->getType() === 'section') {
                 echo '<td colspan="3">' . htmlspecialchars($q->name)
                     . '<div class="question-answers">' . format_text($q->description, FORMAT_HTML) . '</div>'
-                    . '<input name="question[id][]" value="' . htmlspecialchars($q->name) . '" type="hidden" />'
-                    . '<input name="question[description][]" value="' . htmlspecialchars($q->description) . '" type="hidden" />';
+                    . '<input name="q[score][]" value="" type="hidden" />';
             } else {
                 echo '<td>' . $k . '</td>
                     <td class="q-score">
-                        <input name="question[score][]" type="text" class="qscore" value="' . $q->score . '" '
+                        <input name="q[score][]" type="text" class="qscore" value="' . $q->score . '" '
                         . $disabled . ' />
                     </td>
                     <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
                         . HtmlHelper::listAnswers($q);
                 $k++;
             }
-            echo $q->htmlHiddenFields((boolean) $disabled);
             echo "</td>\n</tr>\n";
             $nbline++;
         }

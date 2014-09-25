@@ -27,6 +27,25 @@ $output = $controller->getRenderer('scoringsystem');
 if (!count($quizz->questions)) {
     redirect(new moodle_url('questions.php', array('a' => $quizz->id)));
 }
+if (!$quizz->isLocked() && isset($_POST['score'])) {
+    $quizz->score = (int) $_POST['score'];
+    $quizz->amcparams->scoringset = (int) $_POST['amc']['scoringset'];
+    $pos = 0;
+    foreach ($quizz->questions as $q) {
+        if ($q->getType() === 'question') {
+            /* @var $q amc\Question */
+            $q->score = (float) $_POST['q']['score'][$pos];
+        }
+        $pos++;
+    }
+    if ($quizz->validate()) {
+        if ($quizz->save()) {
+            redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+        } else {
+            die("Could not save into automultiplechoice");
+        }
+    }
+}
 
 require_capability('mod/automultiplechoice:view', $controller->getContext());
 
