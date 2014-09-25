@@ -50,7 +50,7 @@ class Latex extends Api
         $header = <<<EOL
 \documentclass[a4paper]{article}
 
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
 \usepackage{amsmath,amssymb}
