@@ -4,11 +4,11 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
  */
 
-namespace mod\automultiplechoice\AmcFormat;
+namespace mod\automultiplechoice\amcFormat;
 
 /**
  * @param string $formatName "txt" | "latex"
- * @return mod\automultiplechoice\AmcFormat\Api
+ * @return mod\automultiplechoice\amcFormat\Api
  * @throws \Exception
  */
 function buildFormat($formatName) {
@@ -19,7 +19,7 @@ function buildFormat($formatName) {
     } else {
         throw new \Exception("Unknown format");
     }
-    $formatName = 'mod\\automultiplechoice\\AmcFormat\\' . $formatName;
+    $formatName = 'mod\\automultiplechoice\\amcFormat\\' . $formatName;
     return (new $formatName);
 }
 

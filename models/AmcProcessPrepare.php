@@ -62,13 +62,13 @@ EOL;
      * Save the AmcTXT source file.
      *
      * @param string $formatName "txt" | "latex"
-     * @return AmcFormat\Api
+     * @return amcFormat\Api
      */
     protected function saveFormat($formatName) {
         $this->initWorkdir();
 
         try {
-            $format = AmcFormat\buildFormat($formatName);
+            $format = amcFormat\buildFormat($formatName);
             $format->quizz = $this->quizz;
             $format->codelength = $this->codelength;
         } catch (\Exception $e) {
