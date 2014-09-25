@@ -52,7 +52,7 @@ class Log {
      */
     public function read($action) {
         global $DB;
-        $this->actioncheck($action);
+        $this->isValidAction($action);
         $raw = $DB->get_field("automultiplechoice_log", 'actiontime', array('instanceid' => $this->instanceId, 'action' => $action), IGNORE_MISSING);
         return (int) $raw;
     }
@@ -66,7 +66,7 @@ class Log {
      */
     public function write($action, $timestamp=null) {
         global $DB;
-        $this->actioncheck($action);
+        $this->isValidAction($action);
         if ($timestamp === null) {
             $timestamp = $_SERVER['REQUEST_TIME'];
         }
@@ -127,12 +127,16 @@ class Log {
         return $messages;
     }
 
-    protected function actioncheck($action) {
+    /**
+     * @param string $action
+     * @return boolean
+     * @throws \Exception
+     */
+    private function isValidAction($action) {
         $valid = array('process', 'pdf', 'scoringsystem', 'upload', 'grading', 'correction');
-        if (in_array($action, $valid)) {
-            return true;
+        if (!in_array($action, $valid)) {
+            throw new \Exception("L'action $action n'est pas valide.");
         }
-        throw new \Exception("L'action $action n'est pas valide.");
-        return false;
+        return true;
     }
 }
