@@ -26,8 +26,6 @@ require_capability('mod/automultiplechoice:addinstance', $controller->getContext
 
 // form submitted?
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
-$score = (int) $_POST['score'];
-$scoringset = (int) $_POST['amc']['scoringset'];
 if ($questions) {
     if ($quizz->isLocked()) { // no modification allowed
         /**
@@ -36,10 +34,12 @@ if ($questions) {
         redirect(new moodle_url('view.php', array('a' => $quizz->id)));
     }
     $quizz->questions = $questions;
-    $quizz->score = $score;
-    $quizz->amcparams->scoringset = $scoringset;
     if ($quizz->save()) {
-        redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+        if ($quizz->score > 0) {
+            redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+        } else {
+            redirect(new moodle_url('scoringsystem.php', array('a' => $quizz->id)));
+        }
     } else {
         die("Could not save into automultiplechoice");
     }
