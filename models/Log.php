@@ -85,12 +85,15 @@ class Log {
     }
 
     /**
-     * @param array $actions Array of values among "amc", "pdf", "scoring", "upload".
+     * @param string|array $actions Array of values among "amc", "pdf", "scoring", "upload".
      * @return array
      * @throws Exception
      */
     public function check($actions)
     {
+        if (is_string($actions)) {
+            $actions = array($actions);
+        }
         $messages = array();
         foreach ($actions as $action) {
             switch ($action) {
@@ -111,14 +114,16 @@ class Log {
                     }
                     break;
                 case 'grading':
-                    /**
-                     * @todo check grading
-                     */
-                    break;
-                case 'correction':
-                    /**
-                     * @todo check correction/annote
-                     */
+                    $grading = $this->read('grading');
+                    if ($this->read('upload') > $grading) {
+                        $messages[] = "Des copies d'étudiant ont été déposées depuis la dernière notation.";
+                    }
+                    if ($this->read('scoringsystem') > $grading) {
+                        $messages[] = "Le barème a été modifié depuis la dernière notation.";
+                    }
+                    if ($grading > $this->read('correction')) {
+                        $messages[] = "Les copies annotées datent d'avant la dernière notation.";
+                    }
                     break;
                 default:
                     throw new \Exception("Unknown parameter '$action'.");
