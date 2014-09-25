@@ -86,15 +86,17 @@ class AmcParams
         $new = new self;
         $new->displaypoints = (int) $input['displaypoints'];
         $new->copies = (int) $input['copies'];
-        $new->minscore = (int) $input['minscore'];
         $new->shuffleq = (bool) $input['shuffleq'];
         $new->shufflea = (bool) $input['shufflea'];
         $new->separatesheet = (bool) $input['separatesheet'];
         $new->lstudent = $input['lstudent'];
         $new->lname = $input['lname'];
-        $new->scoringset = $input['scoringset'];
         $new->markmulti = (bool) $input['markmulti'];
         $new->instructionsprefix = $input['instructionsprefix'];
+        if (isset($input['scoringset'])) {
+            $new->scoringset = $input['scoringset'];
+            $new->minscore = (int) $input['minscore'];
+        }
         return $new;
     }
 
