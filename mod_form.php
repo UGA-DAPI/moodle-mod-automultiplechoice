@@ -34,13 +34,12 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $PAGE;
+        global $CFG, $PAGE;
 
         $PAGE->requires->jquery();
         $PAGE->requires->js(new moodle_url('/mod/automultiplechoice/assets/mainform.js'));
 
         $mform = $this->_form;
-        $strrequired = get_string('required');
 
         //-------------------------------------------------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
