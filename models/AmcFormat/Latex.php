@@ -86,7 +86,7 @@ EOL;
         $group = '';
         if ($question->getType() === 'section') {
             $group = self::normalizeIntoUnique($question->name);
-            $this->groups[$group] = $question->name;
+            $this->groups[$group] = $question;
             if ($this->groups) {
                 $output .= "} % close group\n";
             }
@@ -154,9 +154,13 @@ EOL;
             . "\n% Instructions\n\\begin{center}\n" . self::htmlToLatex($this->quizz->getInstructions()) . "\n\\end{center}\n"
             . "\\vspace{1ex}\n%%% End of header\n\n";
 
-        foreach ($this->groups as $name => $title) {
-            if ($title) {
-                $output .= sprintf("\\section*{%s}\n", self::htmlToLatex($title));
+        foreach ($this->groups as $name => $section) {
+            /* @var $section \mod\automultiplechoice\QuestionSection */
+            if ($section) {
+                $output .= sprintf("\\section*{%s}\n", self::htmlToLatex($section->name));
+                if ($section->description) {
+                    $output .= self::htmlToLatex($section->description) . "\n\n\medskip";
+                }
             }
             $output .= ($columns > 1 ? "\\begin{multicols}{"."$columns}\n" : "")
                 . ($this->quizz->amcparams->shuffleq ? sprintf("\\shufflegroup{%s}\n", $name) : '')
