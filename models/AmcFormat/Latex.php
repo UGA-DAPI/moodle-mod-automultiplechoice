@@ -50,8 +50,14 @@ class Latex extends Api
         $header = <<<EOL
 \documentclass[a4paper]{article}
 
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+\usepackage{ifxetex}
+\ifxetex
+    \usepackage{xltxtra}
+    \usepackage{xunicode}
+\\else
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+\\fi
 
 \usepackage{amsmath,amssymb}
 \usepackage{multicol}
