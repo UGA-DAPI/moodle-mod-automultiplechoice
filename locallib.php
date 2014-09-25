@@ -145,17 +145,6 @@ function displayLockButton(amc\Quizz $quizz) {
     }
 }
 
-/**
- * @param array $scans
- */
-function displayScanInfo($scans) {
-    if ($scans) {
-        echo "<div>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</div>\n";
-    } else {
-        echo "<div>Pas de copies déposées. La notation est donc désactivée.</div>";
-    }
-}
-
 function displayGradeInfo(amc\AmcProcess $process) {
     $gradetime = $process->lastlog('note');
     if ($gradetime) {

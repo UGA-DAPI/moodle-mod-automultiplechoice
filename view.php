@@ -55,6 +55,13 @@ if (!$quizz->validate()) {
     echo $OUTPUT->box_end();
 }
 
+if ($quizz->isLocked()) {
+    echo $OUTPUT->box(
+        "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction.",
+        'warning generalbox'
+    );
+}
+
 echo $OUTPUT->heading("1. " . get_string('settings'), 3);
 HtmlHelper::printTableQuizz($quizz, array('instructions', 'description'));
 
@@ -68,6 +75,13 @@ echo $OUTPUT->heading("4. " . get_string('documents', 'automultiplechoice'), 3);
 if ($quizz->isLocked()) {
     echo "<div>Les sujets sont prêts à être distribués.</div>\n";
     echo $process->getHtmlZipLink();
+    echo $process->getHtmlPdfLinks();
+    echo '<div>'
+        . $OUTPUT->single_button(
+                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'unlock' => 1)),
+                'Déverrouiller (permettre les modifications du questionnaire)', 'post'
+        )
+        . '</div>';
 } else {
     echo "<div>Les sujets n'ont pas encore été figés dans leur état final.</div>\n";
     $preparetime = $process->lastlog('prepare:pdf');
@@ -79,114 +93,18 @@ if ($quizz->isLocked()) {
 }
 
 echo $OUTPUT->heading("5. " . get_string('uploadscans', 'automultiplechoice'), 3);
-/**
- * @todo Fill in
- */
+$scans = $process->statScans();
+if ($scans) {
+    echo "<div>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</div>\n";
+} else {
+    echo "<div>Aucune copie n'a encore été déposée.</div>";
+}
 
 echo $OUTPUT->heading("6. " . get_string('grading', 'automultiplechoice'), 3);
-/**
- * @todo Fill in
- */
-
-
-
-
-/**
- * @todo Filter what follows down to the footer.
- */
-if ($quizz->isLocked()) {
-    echo '<p class="warning">Le questionnaire est actuellement verrouillé pour éviter les modifications '
-            . "entre l'impression et la correction. Vous pouvez accéder aux documents via le bouton "
-            . "<em>[" . get_string('prepare', 'automultiplechoice') . "]</em>.</p>";
+if ($scans && $process->isGraded()) {
+    echo $process->getHtmlStats();
+} else {
+    echo "<div>Aucune copie n'a encore été notée ou corrigée.</div>";
 }
-echo '<p class="continuebutton">';
-echo html_writer::link(
-        new moodle_url('/course/modedit.php', array('update' => $cm->id, 'return' => 1)),
-        get_string('editsettings')
-);
-echo '</p>';
-
-// Questions
-echo $OUTPUT->box_start();
-echo $OUTPUT->heading(
-        html_writer::link(new moodle_url('questions.php', array('a' => $quizz->id)), "Questions"),
-        3
-);
-HtmlHelper::printFormFullQuestions($quizz);
-if (!$quizz->isLocked()) {
-    echo '<p class="continuebutton">';
-    echo html_writer::link(
-            new moodle_url('questions.php', array('a' => $quizz->id)),
-            get_string('editselection', 'automultiplechoice')
-    );
-    echo '</p>';
-}
-echo $OUTPUT->box_end();
-
-echo $OUTPUT->box_start();
-
-
-// Display available actions
-$optionsNormal = array();
-$optionsDisabled = array('disabled' => 'disabled');
-$process = new amc\AmcProcess($quizz);
-?>
-<div id="main-actions" class="checklock" data-checklockid="<?php echo $quizz->id; ?>">
-    <ul class="amc-process">
-        <li data-check="process">
-            <?php
-            echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id)),
-                    get_string('prepare', 'automultiplechoice'),
-                    'get',
-                    empty($quizz->errors) ? $optionsNormal : $optionsDisabled
-            );
-            displayPrepareInfo($quizz, $process);
-            //displayLockButton($quizz);
-            ?>
-        </li>
-        <li class="amc-process-next"></li>
-        <li>
-            <?php
-            echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id)),
-                    get_string('prepare-locked', 'automultiplechoice'),
-                    'get',
-                    empty($quizz->errors) && $quizz->isLocked() ? $optionsNormal : $optionsDisabled
-            );
-            ?>
-        </li>
-    </ul>
-    <ul class="amc-process">
-        <li data-check="process,pdf">
-            <?php
-            echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/scan.php', array('a' => $quizz->id)),
-                    get_string('analyse', 'automultiplechoice') ,
-                    'post',
-                    empty($quizz->errors) && $quizz->isLocked() ? $optionsNormal : $optionsDisabled
-            );
-            $scans = $process->statScans();
-            displayScanInfo($scans);
-            ?>
-        </li>
-        <li class="amc-process-next"></li>
-        <li data-check="process,pdf,upload">
-            <?php
-            echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/note.php', array('a' => $quizz->id, 'action' => 'note')),
-                    get_string('note', 'automultiplechoice'),
-                    'post',
-                    empty($quizz->errors) && $quizz->isLocked() && $scans ? $optionsNormal : $optionsDisabled
-            );
-            //displayGradesInfo();
-            ?>
-        </li>
-    </ul>
-</div>
-<?php
-
-
-echo $OUTPUT->box_end();
 
 echo $output->footer();
