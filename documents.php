@@ -48,7 +48,7 @@ $process = new amc\AmcProcessPrepare($quizz);
 
 if ($quizz->isLocked()) {
     echo $OUTPUT->heading("Fichiers PDF précédemment créés", 3);
-    echo $process->htmlPdfLinks();
+    echo $process->getHtmlPdfLinks();
     if ($lock) {
         echo <<<EOL
     <div class="async-load" data-url="ajax/prepare.php">
@@ -59,7 +59,7 @@ if ($quizz->isLocked()) {
 EOL;
     } else {
         echo $OUTPUT->heading("Archive zip", 3);
-        echo $process->htmlZipLink();
+        echo $process->getHtmlZipLink();
     }
     echo '<div>'
         . $OUTPUT->single_button(

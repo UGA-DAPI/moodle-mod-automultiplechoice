@@ -30,7 +30,7 @@ $process = new amc\AmcProcessPrepare($quizz);
 if ($action == 'prepare') {
     if ($process->amcCreatePdf("latex")) {
         echo "<h3>Fichiers PDF nouvellement créés</h3>";
-        echo $process->htmlPdfLinks();
+        echo $process->getHtmlPdfLinks();
     } else {
         echo $OUTPUT->error_text("Erreur lors de la création des fichiers PDF :" . $process->getLastError());
         exit();
@@ -43,7 +43,7 @@ if ($action == 'prepare') {
 } else if ($action == 'zip') {
     if ($process->printAndZip()) {
         echo "<h3>Archive Zip créée</h3>";
-        echo $process->htmlZipLink();
+        echo $process->getHtmlZipLink();
     } else {
         echo $OUTPUT->error_text("Erreur lors de la création de l'archive.");
         exit();

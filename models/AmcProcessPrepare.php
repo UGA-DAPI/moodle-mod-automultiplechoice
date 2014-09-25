@@ -15,50 +15,6 @@ require_once __DIR__ . '/Log.php';
 class AmcProcessPrepare extends AmcProcess
 {
     /**
-     * Return the HTML that lists links to the PDF files.
-     *
-     * @return string
-     */
-    public function htmlPdfLinks() {
-        $opts = array('target' => '_blank');
-        $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), $this->normalizeFilename('sujet'), $opts),
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), $this->normalizeFilename('catalog'), $opts),
-        );
-        return <<<EOL
-        <ul class="amc-files">
-            <li>
-                $links[0]
-                <div>Ce fichier contient tous les énoncés regroupés. <span class="warning">Ne pas utiliser ce fichier pour distribuer aux étudiants.</span></div>
-            </li>
-            <li>
-                $links[1]
-                <div>Le corrigé de référence.</div>
-            </li>
-        </ul>
-EOL;
-    }
-
-    /**
-     * Return the HTML that for the link to the ZIP file.
-     *
-     * @return string
-     */
-    public function htmlZipLink() {
-        $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), $this->normalizeFilename('sujets')),
-        );
-        return <<<EOL
-        <ul class="amc-files">
-            <li>
-                $links[0]
-                <div>Cette archive contient un PDF par variante de l'énoncé.</div>
-            </li>
-        </ul>
-EOL;
-    }
-
-    /**
      * Save the AmcTXT source file.
      *
      * @param string $formatName "txt" | "latex"

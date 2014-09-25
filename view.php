@@ -15,6 +15,7 @@
 use \mod\automultiplechoice as amc;
 
 require_once __DIR__ . '/locallib.php';
+require_once __DIR__ . '/models/Grade.php';
 
 global $OUTPUT, $PAGE, $CFG;
 
@@ -23,6 +24,7 @@ $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('dashboard');
+$process = new amc\Grade($quizz);
 
 if (!count($quizz->questions)) {
     redirect(new moodle_url('questions.php', array('a' => $quizz->id)));
@@ -63,9 +65,18 @@ echo $OUTPUT->heading("3. " . get_string('scoringsystem', 'automultiplechoice'),
 HtmlHelper::printTableQuizz($quizz, array('score', 'scoringset'));
 
 echo $OUTPUT->heading("4. " . get_string('documents', 'automultiplechoice'), 3);
-/**
- * @todo Fill in
- */
+if ($quizz->isLocked()) {
+    echo "<div>Les sujets sont prêts à être distribués.</div>\n";
+    echo $process->getHtmlZipLink();
+} else {
+    echo "<div>Les sujets n'ont pas encore été figés dans leur état final.</div>\n";
+    $preparetime = $process->lastlog('prepare:pdf');
+    if ($preparetime) {
+        echo "<div>Dernière préparation des sujets PDF le " . amc\AmcProcess::isoDate($preparetime) . "</div>\n";
+    } else {
+        echo "<div>Aucun sujet PDF n'a encore été préparé.</div>\n";
+    }
+}
 
 echo $OUTPUT->heading("5. " . get_string('uploadscans', 'automultiplechoice'), 3);
 /**

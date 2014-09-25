@@ -126,15 +126,6 @@ function button_back_to_activity($id) {
             . '</div>';
 }
 
-function displayPrepareInfo(amc\Quizz $quizz, amc\AmcProcess $process) {
-    $preparetime = $process->lastlog('prepare:source');
-    if ($preparetime) {
-        echo "<div>Dernière préparation des fichiers PDF le " . amc\AmcProcess::isoDate($preparetime) . "</div>\n";
-    } else {
-        echo "<div>Aucun fichier PDF préparé.</div>\n";
-    }
-}
-
 function displayLockButton(amc\Quizz $quizz) {
     global $OUTPUT;
     if (empty($quizz->errors)) {
