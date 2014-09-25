@@ -41,11 +41,22 @@ if (!$process->isGraded() || $action === 'grade') {
 }
 
 echo $process->getHtmlErrors();
+foreach (amc\Log::build($quizz->id)->check('grading') as $warning) {
+    echo $OUTPUT->box($warning, 'warningbox');
+}
 
 echo $OUTPUT->heading("Bilan des notes")
-    . $process->getHtmlStats()
-    . "<p>Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.</p>";
+    . $process->getHtmlStats();
+?>
+<form action="?a=<?php echo $quizz->id; ?>" method="post">
+<p>
+    Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
+    <input type="hidden" name="action" value="grade" />
+    <button type="submit">Relancer la correction</button>
+</p>
+</form>
 
+<?php
 echo $OUTPUT->heading("Tableaux des notes")
     . "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>"
     . $process->getHtmlCsvLinks();
@@ -59,7 +70,7 @@ if ($process->hasAnotatedFiles()) {
     <form action="?a=<?php echo $quizz->id; ?>" method="post">
     <p>
         <input type="hidden" name="action" value="anotate" />
-        <button type="submit">Générer les copies corrigées (anotées)</button>
+        <button type="submit">Générer les copies corrigées (annotées)</button>
     </p>
     </form>
     <?php
