@@ -14,6 +14,8 @@ class Latex extends Api
 {
     const FILENAME = 'prepare-source.tex';
 
+    private $lastGroup = 'default';
+
     /**
      * @var array List of the groups defined with \element{...}
      */
@@ -41,6 +43,7 @@ class Latex extends Api
         $params = $this->quizz->amcparams;
         $quizzName = self::htmlToLatex($this->quizz->name);
         $multi = $params->markmulti ? '' : '\def\multiSymbole{}';
+        $rand = rand(1000, 100000);
 
         $options = "lang=FR%\n"
             . ",box% puts every question in a block, so that it cannot be split by a page break\n"
@@ -79,6 +82,7 @@ $options
 \\makeatother
 
 $multi
+\\AMCrandomseed{{$rand}}
 
 \\begin{document}
 %Code: {$this->codelength}
@@ -103,18 +107,14 @@ EOL;
         if ($question->getType() === 'section') {
             $group = self::normalizeIntoUnique($question->name);
             $this->groups[$group] = $question;
-            if ($this->groups) {
-                $output .= "} % close group\n";
-            }
+            $this->lastGroup = $group;
+            return '';
         } else if (!$this->groups) {
-            $group = "default";
-            $this->groups["default"] = '';
-        }
-        if ($group) {
-            $output .= sprintf("\n\\element{%s}{\n", $group);
-            if ($question->getType() === 'section') {
-                return $output;
-            }
+            $group = 'default';
+            $this->groups[$group] = '';
+            $this->lastGroup = $group;
+        } else {
+            $group = $this->lastGroup;
         }
 
         // question
@@ -138,13 +138,15 @@ EOL;
 
         // combine all
         $output .= sprintf('
-\begin{question%s}{%s}
-%s
-    \begin{choices}%s
-%s
-    \end{choices}
-\end{question%s}
+\element{%s}{
+    \begin{question%s}{%s}
+    %s
+        \begin{choices}%s
+    %s    \end{choices}
+    \end{question%s}
+}
 ',
+                $group,
                 ($question->single ? '' : 'mult'),
                 self::normalizeIntoUnique($question->name),
                 $questionText,
@@ -164,7 +166,7 @@ EOL;
          // colums: empirical guess, should be in config?
         $columns = $this->quizz->questions->count() > 5 ? 2 : 0;
 
-        $output = "} % group\n"
+        $output = "\n\n"
             . "\\begin{examcopy}[{$this->quizz->amcparams->copies}]\n"
             . "\n% Title without \\maketitle\n\\begin{center}\\Large\\bf\\mytitle\\end{center}\n"
             . ($this->quizz->amcparams->separatesheet ? "" : $this->getStudentBlock())
@@ -263,9 +265,9 @@ EOL;
      * @return string
      */
     static protected function normalizeIntoUnique($text) {
-        return preg_replace('/[\s\\\\_^\$\[\]{}%&~,!?]+/', '-',
+        return preg_replace('/[^a-zA-Z]+/', '',
                 @iconv('UTF-8', 'ASCII//TRANSLIT',
                         substr( html_entity_decode(strip_tags($text)), 0, 30 )
-        )) . "-" . rand(1000,9999);
+        )) . "XXX" . substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 4);
     }
 }
