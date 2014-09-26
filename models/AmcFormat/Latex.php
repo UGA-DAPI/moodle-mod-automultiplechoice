@@ -39,6 +39,8 @@ class Latex extends Api
      */
     protected function getHeader() {
         $params = $this->quizz->amcparams;
+        $quizzName = self::htmlToLatex($this->quizz->name);
+        $multi = $params->markmulti ? '' : '\def\multiSymbole{}';
 
         $options = "lang=FR%\n"
             . ",box% puts every question in a block, so that it cannot be split by a page break\n"
@@ -67,15 +69,22 @@ class Latex extends Api
 $options
 ]{automultiplechoice}
 
+\\date{}
+\\author{}
+\\title{{$quizzName}}
+\\makeatletter
+\\let\\mytitle\\@title
+\\let\\myauthor\\@author
+\\let\\mydate\\@date
+\\makeatother
+
+$multi
+
 \\begin{document}
 %Code: {$this->codelength}
-%L-Name: {$params->lname}
-%L-Student: {$params->lstudent}
 
 EOL;
-        return $header
-            . ($params->markmulti ? '' : "\\def\\multiSymbole{}\n")
-            . "\\date{}\\author{}\n\\title{" . self::htmlToLatex($this->quizz->name) . "}\n";
+        return $header;
     }
 
     /**
@@ -157,7 +166,7 @@ EOL;
 
         $output = "} % group\n"
             . "\\begin{examcopy}[{$this->quizz->amcparams->copies}]\n"
-            . "\n% Title\n\\maketitle\n"
+            . "\n% Title without \\maketitle\n\\begin{center}\\Large\\bf\\mytitle\\end{center}\n"
             . ($this->quizz->amcparams->separatesheet ? "" : $this->getStudentBlock())
             . "\n% Instructions\n\\begin{center}\n" . self::htmlToLatex($this->quizz->getInstructions()) . "\n\\end{center}\n"
             . "\\vspace{1ex}\n%%% End of header\n\n";
@@ -178,7 +187,7 @@ EOL;
         if ($this->quizz->amcparams->separatesheet) {
             // colums: empirical guess, should be in config?
             $columns = $this->quizz->questions->count() > 22 ? 2 : 0;
-            $output .= "\\AMCcleardoublepage\n\AMCformBegin\n\\section*{Feuille de réponse}\n"
+            $output .= "\\AMCcleardoublepage\n\AMCformBegin\n\\section*{\\mytitle{} --- Feuille de réponse}\n"
                 . $this->getStudentBlock()
                 . ($columns > 1 ? "\\begin{multicols}{"."$columns}\\raggedcolumns\n" : "")
                 . '\vspace*{-3.8ex}' // ugly hack to remove unknown top space (especially so that top lines are aligned)
