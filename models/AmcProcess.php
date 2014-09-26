@@ -83,37 +83,6 @@ class AmcProcess
     }
 
     /**
-     * Shell-executes 'amc getimages'
-     * @param string $scanfile name, uploaded by the user
-     * @return bool
-     */
-    public function amcGetimages($scanfile) {
-        $pre = $this->workdir;
-        $scanlist = $pre . '/scanlist';
-        if (file_exists($scanlist)) {
-            unlink($scanlist);
-        }
-        // delete all previous ppm/... files
-        array_map('unlink', $this->findScannedFiles());
-
-        $res = $this->shellExecAmc('getimages', array(
-            '--progression-id', 'analyse',
-            '--vector-density', '250',
-            '--orientation', 'portrait',
-            '--list', $scanlist,
-            '--copy-to', $pre . '/scans/',
-            $scanfile
-            )
-        );
-        if ($res) {
-            $nscans = count(file($scanlist));
-            $this->log('getimages', $nscans . ' pages');
-            return $nscans;
-        }
-        return $res;
-    }
-
-    /**
      * returns stat() information (number and dates) on scanned (ppm) files already stored
      * @return array with keys: count, time, timefr ; null if nothing was uploaded
      */
@@ -137,37 +106,6 @@ class AmcProcess
         } else {
             return null;
         }
-    }
-
-    /**
-     * Shell-executes 'amc analyse'
-     * @param bool $multiple (opt, true) If false, AMC will check that all the blank answer sheets were distinct.
-     * @return bool
-     */
-    public function amcAnalyse($multiple = true) {
-        $pre = $this->workdir;
-        $scanlist = $pre . '/scanlist';
-        $parammultiple = '--' . ($multiple ? '' : 'no-') . 'multiple';
-        $parameters = array(
-            $parammultiple,
-            '--tol-marque', '0.2,0.2',
-            '--prop', '0.8',
-            '--bw-threshold', '0.6',
-            '--progression-id' , 'analyse',
-            '--progression', '1',
-            '--n-procs', '0',
-            '--data', $pre . '/data',
-            '--projet', $pre,
-            '--cr', $pre . '/cr',
-            '--liste-fichiers', $scanlist,
-            '--no-ignore-red',
-            );
-        //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
-        $res = $this->shellExecAmc('analyse', $parameters);
-        if ($res) {
-            $this->log('analyse', 'OK.');
-        }
-        return $res;
     }
 
     /**

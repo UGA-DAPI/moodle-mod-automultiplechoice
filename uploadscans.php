@@ -11,6 +11,7 @@
 use \mod\automultiplechoice as amc;
 
 require_once(__DIR__ . '/locallib.php');
+require_once(__DIR__ . '/models/AmcProcessUpload.php');
 
 global $DB, $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
@@ -29,7 +30,7 @@ require_capability('mod/automultiplechoice:view', $controller->getContext());
 $PAGE->set_url('/mod/automultiplechoice/uploadscans.php', array('id' => $cm->id));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
-$process = new \mod\automultiplechoice\AmcProcess($quizz);
+$process = new \mod\automultiplechoice\AmcProcessUpload($quizz);
 $amclog = new \mod\automultiplechoice\Log($quizz->id);
 //var_dump($process);
 
@@ -45,19 +46,7 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
             error("Impossible d'accéder au fichier déposé");
         }
 
-        if (!$process->amcMeptex()) {
-            $errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
-        }
-
-        $npages = $process->amcGetimages($filename);
-        if (!$npages) {
-            $errors[] = "Erreur découpage scan (amc getimages)";
-        }
-
-        $analyse = $process->amcAnalyse(true);
-        if (!$analyse) {
-            $errors[] = "Erreur lors de l'analyse (amc analyse).";
-        }
+        $process->upload();
 
         $scansStats = $process->statScans();
         if (!$scansStats['count']) {
@@ -66,11 +55,11 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
 
         // Output starts here
         echo $output->header(); // if the upload went well, the last tab will be enabled!
-        if (!empty($scansStats['count'])) {
-            echo $OUTPUT->box("Le processus s'est achevé : $npages pages scannées, {$scansStats['count']} traitées.", 'informationbox');
-        }
         foreach ($errors as $errorMsg) {
             echo $OUTPUT->box($errorMsg, 'errorbox');
+        }
+        if (!empty($scansStats['count'])) {
+            echo $OUTPUT->box("Le processus s'est achevé : {$process->nbPages} pages scannées, {$scansStats['count']} traitées.", 'informationbox');
         }
 
         $ko = round($_FILES['scanfile']['size'] / 1024);
