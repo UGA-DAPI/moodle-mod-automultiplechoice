@@ -46,6 +46,7 @@ Here are the requirements, expressed as Debian packages:
 * texlive-tetex
 * lmodern
 * texlive-fonts-recommended
+* poppler-utils
 
 
 Installation

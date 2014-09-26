@@ -47,7 +47,9 @@ class AmcProcessUpload extends AmcProcess
 
         $res = $this->shellExecAmc('getimages', array(
             '--progression-id', 'analyse',
-            '--vector-density', '250',
+            //'--vector-density', '250',
+            //'--debug=/tmp/amc-debug.txt',
+            '--use-pdfimages',
             '--orientation', 'portrait',
             '--list', $scanlist,
             '--copy-to', $pre . '/scans/',
