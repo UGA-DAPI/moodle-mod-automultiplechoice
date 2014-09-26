@@ -189,15 +189,17 @@ EOL;
         if ($this->quizz->amcparams->separatesheet) {
             // colums: empirical guess, should be in config?
             $columns = $this->quizz->questions->count() > 22 ? 2 : 0;
-            $output .= "\\AMCcleardoublepage\n\AMCformBegin\n\\section*{\\mytitle{} --- Feuille de réponse}\n"
+            $output .= "\\AMCcleardoublepage\n\AMCformBegin\n"
+                . "\\begin{center}\\Large\\bf\\mytitle{} --- Feuille de réponse\\end{center}\n"
                 . $this->getStudentBlock()
                 . ($columns > 1 ? "\\begin{multicols}{"."$columns}\\raggedcolumns\n" : "")
                 . '\vspace*{-3.8ex}' // ugly hack to remove unknown top space (especially so that top lines are aligned)
                 . "\\noindent\\AMCform\n"
-                . ($columns > 1 ? "\\end{multicols}\n" : "");
+                . ($columns > 1 ? "\\end{multicols}\n" : "")
+                . "\\clearpage\n";
         }
         $output .= "\\end{examcopy}\n"
-                . "\\clearpage\n\\end{document}\n";
+                . "\\end{document}\n";
         return $output;
     }
 
