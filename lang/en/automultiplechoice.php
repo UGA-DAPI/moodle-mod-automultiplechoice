@@ -82,6 +82,7 @@ $string['validate_positive_int'] = 'This should be a strictly positive number.';
 $string['validate_poszero_int'] = 'This should be a positive number, or zero.';
 $string['validate_under_maxscore'] = 'This should be lesser than the total score.';
 $string['validateql_deletedquestions'] = 'Some questions could not be found and were probably deleted.';
+$string['validate_copies_without_shuffle'] = 'Having muliple copies without any shuffling is meaningless.';
 
 $string['prepare'] = 'Preview PDF question sheets';
 $string['prepare-locked'] = 'Download the final documents';

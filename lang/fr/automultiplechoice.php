@@ -82,6 +82,7 @@ $string['validate_positive_int'] = 'Ceci devrait être un nombre strictement pos
 $string['validate_poszero_int'] = 'Ceci devrait être un nombre positif ou nul.';
 $string['validate_under_maxscore'] = 'Ceci devrait être inférieur à la note maximale.';
 $string['validateql_deletedquestions'] = 'Certaines questions ne sont pas présentes dans Moodle et ont probablement été supprimées.';
+$string['validate_copies_without_shuffle'] = 'Avoir plusieurs versions sans mélanger questions ni réponses n\'a pas de sens.';
 
 $string['prepare'] = 'Prévisualiser les PDF';
 $string['prepare-locked'] = 'Télécharger les sujets';

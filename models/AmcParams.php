@@ -67,6 +67,9 @@ class AmcParams
         if ($this->copies <= 0) {
             $this->errors['amc[copies]'] = 'validate_positive_int';
         }
+        if ($this->copies > 1 && !$this->shufflea && !$this->shuffleq) {
+            $this->errors['amc[copies]'] = 'validate_copies_without_shuffle';
+        }
         if ($this->minscore < 0) {
             $this->errors['amc[minscore]'] = 'validate_poszero_int';
         }
