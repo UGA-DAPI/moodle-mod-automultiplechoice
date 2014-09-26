@@ -15,7 +15,7 @@ class AmcProcessUpload extends AmcProcess
 {
     public $nbPages = 0;
 
-    public function upload() {
+    public function upload($filename) {
         if (!$this->amcMeptex()) {
             $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
         }

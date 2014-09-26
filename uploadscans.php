@@ -46,7 +46,7 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
             error("Impossible d'accéder au fichier déposé");
         }
 
-        $process->upload();
+        $process->upload($filename);
 
         $scansStats = $process->statScans();
         if (!$scansStats['count']) {
