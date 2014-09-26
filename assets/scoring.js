@@ -86,7 +86,7 @@ $(document).ready(function() {
 		var qnumber = parseInt($('#quizz-qnumber').val());
 		var valeur = Math.floor(100*(totalScore / qnumber)) / 100;
 		var total = qnumber*valeur;
-		inputs = $("form input.qscore").each(function(index) {
+		inputs = $("form table#questions-selected input.qscore").each(function(index) {
 			$(this).val(valeur);
 		});
 		$('#computed-total-score').html(total)
