@@ -36,7 +36,6 @@ $amclog = new \mod\automultiplechoice\Log($quizz->id);
 if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
     $errors = array();
 
-
     if ($_FILES['scanfile']["error"] > 0) {
         echo $OUTPUT->box("Erreur : " . $_FILES['scanfile']['error'], 'errorbox');
     } else {
@@ -86,11 +85,17 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
     // Upload du fichier
     // Output starts here
     echo $output->header();
+    $scans = $process->statScans();
+    if ($scans) {
+        echo "<p>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</p>\n";
+    } else {
+        echo "<p>Aucune copie n'a encore été déposée.</p>";
+    }
     ?>
     <form id="form-uploadscans" action="uploadscans.php?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
         <div>
-            <label for="scanfile">Fichier scan (PDF, TIFF…)</label>
-            <input type="file" name="scanfile" id="scanfile"><br>
+            <label for="scanfile">Fichier scan (PDF ou TIFF)</label>
+            <input type="file" name="scanfile" id="scanfile" accept="application/pdf,image/tiff">
         </div>
         <div>
             <input type="submit" name="submit" value="Envoyer">
