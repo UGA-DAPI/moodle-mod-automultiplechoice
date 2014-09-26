@@ -13,15 +13,14 @@ require_once __DIR__ . '/Log.php';
 
 class Grade extends AmcProcessGrade
 {
-    private $results;
+    private $actions;
+    private $csv;
 
     public function __construct(Quizz $quizz, $formatName = 'latex') {
         parent::__construct($quizz, $formatName);
-        $this->results = (object) array(
-            'actions' => new \stdClass(),
-        );
+        $this->actions = new \stdClass();
         if ($this->isGraded()) {
-            $this->results->csv = (object) array(
+            $this->csv = (object) array(
                 'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
                 'grades_with_names.csv' => $this->getFileUrl(AmcProcessGrade::PATH_FULL_CSV),
             );
@@ -32,17 +31,17 @@ class Grade extends AmcProcessGrade
      * @return boolean
      */
     public function grade() {
-        $this->results->actions = array(
+        $this->actions = array(
             'scoringset' => (boolean) $this->amcPrepareBareme(),
             'scoring' => (boolean) $this->amcNote(),
             'export' => (boolean) $this->amcExport(),
             'csv' => (boolean) $this->writeFileWithIdentifiedStudents(),
         );
-        $this->results->csv = (object) array(
+        $this->csv = (object) array(
             'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
             'grades_with_names.csv' => $this->getFileUrl(AmcProcessGrade::PATH_FULL_CSV),
         );
-        return (array_sum($actions) === count($actions));
+        return (array_sum($this->actions) === count($this->actions));
     }
 
     /**
@@ -53,8 +52,8 @@ class Grade extends AmcProcessGrade
      */
     public function anotate() {
         global $DB;
-        $this->results->actions->anotate = $this->amcAnnotePdf();
-        if (!$this->results->actions->anotate) {
+        $this->actions->anotate = $this->amcAnnotePdf();
+        if (!$this->actions->anotate) {
             return false;
         }
         $grades = $this->getMarks();
@@ -67,7 +66,10 @@ class Grade extends AmcProcessGrade
      * @return StdClass
      */
     public function getResults() {
-        return $this->results;
+        return (object) array(
+            'actions' => $this->actions,
+            'csv' => $this->csv,
+        );
     }
 
     /**
@@ -86,7 +88,7 @@ class Grade extends AmcProcessGrade
             'csv' => "Erreur lors de la création du fichier CSV des notes",
             'anotate' => "Erreur lors de l'annotation des copies",
         );
-        foreach ($this->results->actions as $k => $v) {
+        foreach ($this->actions as $k => $v) {
             if (!$v) {
                 $html .= $OUTPUT->box($errorMsg[$k], 'errorbox');
             }
@@ -99,7 +101,7 @@ class Grade extends AmcProcessGrade
      */
     public function getHtmlCsvLinks() {
         $html = '<ul class="amc-files">';
-        foreach ((array) $this->results->csv as $name => $url) {
+        foreach ((array) $this->csv as $name => $url) {
             $html .= "<li>" . \html_writer::link($url, $name) . "</li>";
         }
         $html .= "</ul>\n";
