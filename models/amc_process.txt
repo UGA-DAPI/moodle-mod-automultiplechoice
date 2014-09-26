@@ -3,39 +3,52 @@ Récapitulatif des processus "automultiplechoice" lancés
 @ = racine des données du compte
   = .../moodledata/local/automultiplechoice/automultiplechoice_NNNNN 
   (avec NNNNN = numéro de l'instance, ex. 00123)
-<toto> = nom normalisé par normalizeFilename() de $quizz->name
+[] fichiers sqlite, placés sous @/data/*.sqlite
+NOM = nom normalisé par normalizeFilename() de $quizz->name
 
 
-amcCreatePdf   ->  @/ sujet-<toto>.pdf , catalog-<toto>.pdf , corrige-<toto>.pdf , prepare-calage.xy
-  v
-amcMeptex      ->  @/data/layout.sqlite
-  v
-amcImprime      -> @/imprime/sujet-%e.pdf
-  v
-
+amcCreatePdf   ->  @/ prepare-source.tex prepare-calage.xy , sujet-NOM.pdf catalog-NOM.pdf corrige-NOM.pdf , amc-compiled.*
+    V
+    V
+amcMeptex      ->  [capture, layout] créés
+    V
+    V
+amcImprime      -> @/sujets-NOM.zip , @/imprime/sujet-%e.pdf
+    V
+    V
 
 (upload copies)  -> /tmp/filename.pdf (par ex.)
-  v
-amcMeptex
-  v
-amcGetimages     -> @/scanlist , @/scans/*.ppm
-  v
-amcAnalyse       -> @/data/capture.sqlite, @/cr/name-*.jpg, @/cr/page-*.jpg
-  v
+    V
+    V
+amcMeptex          [capture, layout] modifiés
+    V
+    V
+amcGetimages     -> @/scanlist , @/scans/NOMSCAN-page-*.ppm
+    V
+    V
+amcAnalyse       -> @/cr/name-*.jpg, @/cr/page-*.jpg
+    V               [capture] modifié  (blobs images)
+    V
 
 amcPrepareBareme -> @/data/scoring.sqlite
-  v
+    V
+    V
 amcNote          >> @/data/scoring.sqlite
-  v
+    V
+    V
 (amcAssociation) -> @data/association.sqlite
-  v
+    V
+    V
 amcExport         -> @/exports/scores.csv
-  v
+    V
+    V
 writeFileWithIdentifiedStudents  -> @exports/ : score_names.csv, student_list.csv
 
-  v
+    V
+    V
 amcAnnotePdf
 [ amcAnnote   ]   -> @/cr/corrections/jpg/page-*.jpg
-[ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-<toto>.pdf
-  v
+[ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-NOM.pdf
+    V
+    V
 amcAssociation
