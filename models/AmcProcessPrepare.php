@@ -105,7 +105,7 @@ class AmcProcessPrepare extends AmcProcess
             $zip->addGlob($mask, GLOB_BRACE, $options);
             // echo "Zip status: [" . $zip->status . "]<br />\n";
             // echo "Zip statusSys: [" . $zip->statusSys . "]<br />\n";
-            echo "Zipped [" . $zip->numFiles . "] files into [" . basename($zip->filename) . "]<br />\n";
+            echo "<p>Zip de [" . $zip->numFiles . "] fichiers dans [" . basename($zip->filename) . "]</p>\n";
             $zip->close();
         }
         if (!file_exists($pre . '/' . $this->normalizeFilename('sujets'))) {
