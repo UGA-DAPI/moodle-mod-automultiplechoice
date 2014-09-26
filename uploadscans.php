@@ -65,7 +65,10 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
             echo $OUTPUT->box($errorMsg, 'errorbox');
         }
         if (!empty($scansStats['count'])) {
-            echo $OUTPUT->box("Le processus s'est achevé : {$process->nbPages} pages scannées, {$scansStats['count']} traitées.", 'informationbox');
+            echo $OUTPUT->box(
+                "Le processus s'est achevé : {$process->nbPages} pages scannées, {$scansStats['count']} extraites, {$scansStats['nbidentified']} pages avec marqueurs.",
+                'informationbox'
+            );
         }
 
         $ko = round($_FILES['scanfile']['size'] / 1024);

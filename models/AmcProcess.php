@@ -101,7 +101,10 @@ class AmcProcess
         }
         if ($ppmfiles) {
             return array(
-                'count' => count($ppmfiles), 'time' => $tsmax, 'timefr' => self::isoDate($tsmax)
+                'nbidentified' => count(glob($this->workdir . '/cr/page-*.jpg')),
+                'count' => count($ppmfiles),
+                'time' => $tsmax,
+                'timefr' => self::isoDate($tsmax)
             );
         } else {
             return null;
