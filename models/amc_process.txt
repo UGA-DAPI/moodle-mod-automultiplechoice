@@ -23,26 +23,26 @@ amcImprime      -> @/sujets-NOM.zip , @/imprime/sujet-%e.pdf
 amcMeptex          [capture, layout] modifiés
     V
     V
-amcGetimages     -> @/scanlist , @/scans/NOMSCAN-page-*.ppm
+amcGetimages     -> @/scanlist , @/scans/NOMSCAN-page-*.ppm (pages brutes)
     V
     V
-amcAnalyse       -> @/cr/name-*.jpg, @/cr/page-*.jpg
+amcAnalyse       -> @/cr/name-*.jpg, @/cr/page-*.jpg    N x (zone nom, page + surlignage coches)
     V               [capture] modifié  (blobs images)
     V
 
-amcPrepareBareme -> @/data/scoring.sqlite
+amcPrepareBareme -> amc-compiled.* : pdf,xy créés ; .amc,.log mis à jour
+    V               [capture] modifié ; [scoring] créé
+    V
+amcNote          -> [capture, scoring] modifiés
     V
     V
-amcNote          >> @/data/scoring.sqlite
-    V
-    V
-(amcAssociation) -> @data/association.sqlite
-    V
-    V
-amcExport         -> @/exports/scores.csv
-    V
+amcExport         -> @/exports/scores.csv  ;  amc-compiled.log,.pdf modifiés
+    V                [association] créé ; [capture, scoring] modifiés
     V
 writeFileWithIdentifiedStudents  -> @exports/ : score_names.csv, student_list.csv
+    V
+    V
+amcAssociation  ???
 
     V
     V
