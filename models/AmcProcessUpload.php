@@ -16,6 +16,10 @@ class AmcProcessUpload extends AmcProcess
     public $nbPages = 0;
 
     public function upload($filename) {
+        if ($this->quizz->hasScans()) {
+            $this->deleteGrades();
+        }
+
         if (!$this->amcMeptex()) {
             $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
         }
@@ -29,6 +33,42 @@ class AmcProcessUpload extends AmcProcess
         if (!$analyse) {
             $this->errors[] = "Erreur lors de l'analyse (amc analyse).";
         }
+    }
+
+    /**
+     * @return boolean
+     */
+    private function deleteGrades() {
+        $scoringFile = $this->workdir . "/data/scoring.sqlite";
+        $a = array_map('unlink', glob($this->workdir . '/exports/*.csv'));
+        /**
+         * @todo Delete Moodle grades!
+         */
+        if (file_exists($scoringFile)) {
+            return unlink($scoringFile);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function deleteUploads() {
+        $a = array_map('unlink', glob($this->workdir . '/scans/*.ppm'));
+        $a = array_map('unlink', glob($this->workdir . '/cr/*.jpg'));
+        if (is_dir($this->workdir . '/cr/corrections')) {
+            $a = array_map('unlink', glob($this->workdir . '/cr/corrections/jpg/*'));
+            $a = array_map('unlink', glob($this->workdir . '/cr/corrections/pdf/*'));
+        }
+        if (is_dir($this->workdir . '/cr/zooms')) {
+            $a = array_map('unlink', glob($this->workdir . '/cr/zooms/*'));
+        }
+        $captureFile = $this->workdir . "/data/capture.sqlite";
+        if (file_exists($captureFile)) {
+            unlink($captureFile);
+        }
+        return $this->deleteGrades();
     }
 
     /**

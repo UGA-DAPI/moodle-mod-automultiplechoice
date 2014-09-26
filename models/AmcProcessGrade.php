@@ -234,6 +234,11 @@ class AmcProcessGrade extends AmcProcess
         return $this->amcRegroupe();
     }
 
+    /**
+     * Fills the "grades" property from the CSV.
+     *
+     * @return boolean
+     */
     public function readGrades() {
         if (count($this->grades) > 0) {
             return true;

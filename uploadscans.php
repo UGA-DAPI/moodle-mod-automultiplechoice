@@ -34,6 +34,12 @@ $process = new \mod\automultiplechoice\AmcProcessUpload($quizz);
 $amclog = new \mod\automultiplechoice\Log($quizz->id);
 //var_dump($process);
 
+$action = optional_param('action', '', PARAM_ALPHA);
+if ($action === 'deleteUploads') {
+    $process->deleteUploads();
+    redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
+}
+
 if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
     $errors = array();
 
@@ -77,6 +83,8 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
     $scans = $process->statScans();
     if ($scans) {
         echo "<p>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</p>\n";
+        echo $OUTPUT->heading("Ajouter des copies", 3);
+        echo "<p>Si vous déposez de nouvelles pages scannées, elles seront ajoutées aux précédentes.</p>";
     } else {
         echo "<p>Aucune copie n'a encore été déposée.</p>";
     }
@@ -91,6 +99,22 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
         </div>
     </form>
     <?php
+    if ($scans) {
+        echo $OUTPUT->heading("Effacer les copies", 3);
+        ?>
+        <form action="?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
+            <p>
+                Vous pouvez effacer les copies déjà déposées.
+                Ceci effacera aussi les notes.
+                Vous pourrez ensuite déposer de nouveaux scans.
+            </p>
+            <div>
+                <input type="hidden" name="action" value="deleteUploads" />
+                <button type="submit">Effacer les copies déposées</button>
+            </div>
+        </form>
+        <?php
+    }
 }
 
 echo $output->footer();
