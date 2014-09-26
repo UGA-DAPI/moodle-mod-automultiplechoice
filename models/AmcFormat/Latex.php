@@ -48,25 +48,26 @@ class Latex extends Api
             . ($params->separatesheet ? '' : '%')
             . ",separateanswersheet";
         $header = <<<EOL
-\documentclass[a4paper]{article}
+\\documentclass[a4paper]{article}
 
-\usepackage{ifxetex}
+\\usepackage{ifxetex}
 \ifxetex
-    \usepackage{xltxtra}
-    \usepackage{xunicode}
+    \\usepackage{xltxtra}
+    \\usepackage{xunicode}
 \\else
-    \usepackage[T1]{fontenc}
-    \usepackage[utf8]{inputenc}
+    \\usepackage[T1]{fontenc}
+    \\usepackage[utf8]{inputenc}
 \\fi
 
-\usepackage{amsmath,amssymb}
-\usepackage{multicol}
+\\usepackage{amsmath,amssymb}
+\\usepackage{multicol}
+\\usepackage{environ}
 
-\usepackage[%
+\\usepackage[%
 $options
 ]{automultiplechoice}
 
-\begin{document}
+\\begin{document}
 %Code: {$this->codelength}
 %L-Name: {$params->lname}
 %L-Student: {$params->lstudent}
@@ -155,6 +156,7 @@ EOL;
         $columns = $this->quizz->questions->count() > 5 ? 2 : 0;
 
         $output = "} % group\n"
+            . "\\begin{examcopy}[{$this->quizz->amcparams->copies}]\n"
             . "\n% Title\n\\maketitle\n"
             . ($this->quizz->amcparams->separatesheet ? "" : $this->getStudentBlock())
             . "\n% Instructions\n\\begin{center}\n" . self::htmlToLatex($this->quizz->getInstructions()) . "\n\\end{center}\n"
@@ -183,7 +185,8 @@ EOL;
                 . "\\noindent\\AMCform\n"
                 . ($columns > 1 ? "\\end{multicols}\n" : "");
         }
-        $output .= "\\clearpage\n\\end{document}\n";
+        $output .= "\\end{examcopy}\n"
+                . "\\clearpage\n\\end{document}\n";
         return $output;
     }
 
