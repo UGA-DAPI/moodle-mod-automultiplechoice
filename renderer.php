@@ -70,7 +70,7 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
              $output .= $this->output->notification($message[0], $message[1], $message[2]);
          }
          */
-        ?>
+        $output .= <<<EOL
         <noscript>
             <div class="box errorbox">
             <h2>Erreur : Javascript n'est pas activé</h2>
@@ -78,7 +78,7 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
             Cette activité ne pourra pas fonctionner correctement sans Javascript.
             </div>
         </noscript>
-        <?php
+EOL;
         return $output;
     }
 
