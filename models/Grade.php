@@ -113,9 +113,7 @@ class Grade extends AmcProcessGrade
      * @return string html table with statistics indicators
      */
     public function getHtmlStats() {
-        if (!$this->grades) {
-            $this->writeFileWithIdentifiedStudents();
-        }
+        $this->readGrades();
         $mark = array();
         foreach ($this->grades as $rawmark) {
             $mark[] = $rawmark->rawgrade;

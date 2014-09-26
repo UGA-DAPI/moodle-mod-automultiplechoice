@@ -239,7 +239,7 @@ class AmcProcessGrade extends AmcProcess
      *
      * @return boolean
      */
-    public function readGrades() {
+    protected function readGrades() {
         if (count($this->grades) > 0) {
             return true;
         }
@@ -351,9 +351,7 @@ class AmcProcessGrade extends AmcProcess
      * @return array grades
      */
     public function getMarks() {
-        if (!$this->grades) {
-            $this->writeFileWithIdentifiedStudents();
-        }
+        $this->readGrades();
         $namedGrades = array();
         foreach ($this->grades as $grade) {
             if ($grade->userid) {
