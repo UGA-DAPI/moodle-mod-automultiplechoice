@@ -96,8 +96,14 @@ class AmcProcessPrepare extends AmcProcess
         array_map('unlink', glob($mask));
         $this->amcImprime();
 
+        // clean up, or some obsolete files will stay in the zip
+        $zipName = $pre . '/' . $this->normalizeFilename('sujets');
+        if (file_exists($zipName)) {
+            unlink($zipName);
+        }
+
         $zip = new \ZipArchive();
-        $ret = $zip->open($pre . '/' . $this->normalizeFilename('sujets'), \ZipArchive::CREATE);
+        $ret = $zip->open($zipName, \ZipArchive::CREATE);
         if ( ! $ret ) {
             printf("Echec lors de l'ouverture de l'archive %d", $ret);
         } else {
@@ -108,7 +114,7 @@ class AmcProcessPrepare extends AmcProcess
             echo "<p>Zip de [" . $zip->numFiles . "] fichiers dans [" . basename($zip->filename) . "]</p>\n";
             $zip->close();
         }
-        if (!file_exists($pre . '/' . $this->normalizeFilename('sujets'))) {
+        if (!file_exists($zipName)) {
             echo "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
         }
         return $ret;
