@@ -66,7 +66,7 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
         }
         if (!empty($scansStats['count'])) {
             echo $OUTPUT->box(
-                "Le processus s'est achevé : {$process->nbPages} pages scannées, {$scansStats['count']} extraites, {$scansStats['nbidentified']} pages avec marqueurs.",
+                "Le processus s'est achevé : {$process->nbPages} pages nouvellement scannées, {$scansStats['count']} extraites, {$scansStats['nbidentified']} pages avec marqueurs.",
                 'informationbox'
             );
         }
@@ -80,44 +80,44 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
             </dl>\n";
     }
 } else {
-    // Upload du fichier
-    // Output starts here
     echo $output->header();
-    $scans = $process->statScans();
-    if ($scans) {
-        echo "<p>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</p>\n";
-        echo $OUTPUT->heading("Ajouter des copies", 3);
-        echo "<p>Si vous déposez de nouvelles pages scannées, elles seront ajoutées aux précédentes.</p>";
-    } else {
-        echo "<p>Aucune copie n'a encore été déposée.</p>";
-    }
+    $scansStats = $process->statScans();
+}
+
+// Upload du fichier
+if ($scansStats) {
+    echo "<p>{$scansStats['count']} pages scannées ont été déposées le {$scansStats['timefr']}.</p>\n";
+    echo $OUTPUT->heading("Ajouter des copies", 3);
+    echo "<p>Si vous déposez de nouvelles pages scannées, elles seront ajoutées aux précédentes.</p>";
+} else {
+    echo "<p>Aucune copie n'a encore été déposée.</p>";
+}
+?>
+<form id="form-uploadscans" action="uploadscans.php?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="scanfile">Fichier scan (PDF ou TIFF)</label>
+        <input type="file" name="scanfile" id="scanfile" accept="application/pdf,image/tiff">
+    </div>
+    <div>
+        <input type="submit" name="submit" value="Envoyer">
+    </div>
+</form>
+<?php
+if ($scansStats) {
+    echo $OUTPUT->heading("Effacer les copies", 3);
     ?>
-    <form id="form-uploadscans" action="uploadscans.php?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
+    <form action="?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
+        <p>
+            Vous pouvez effacer les copies déjà déposées.
+            Ceci effacera aussi les notes.
+            Vous pourrez ensuite déposer de nouveaux scans.
+        </p>
         <div>
-            <label for="scanfile">Fichier scan (PDF ou TIFF)</label>
-            <input type="file" name="scanfile" id="scanfile" accept="application/pdf,image/tiff">
-        </div>
-        <div>
-            <input type="submit" name="submit" value="Envoyer">
+            <input type="hidden" name="action" value="deleteUploads" />
+            <button type="submit">Effacer les copies déposées</button>
         </div>
     </form>
     <?php
-    if ($scans) {
-        echo $OUTPUT->heading("Effacer les copies", 3);
-        ?>
-        <form action="?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
-            <p>
-                Vous pouvez effacer les copies déjà déposées.
-                Ceci effacera aussi les notes.
-                Vous pourrez ensuite déposer de nouveaux scans.
-            </p>
-            <div>
-                <input type="hidden" name="action" value="deleteUploads" />
-                <button type="submit">Effacer les copies déposées</button>
-            </div>
-        </form>
-        <?php
-    }
 }
 
 echo $output->footer();
