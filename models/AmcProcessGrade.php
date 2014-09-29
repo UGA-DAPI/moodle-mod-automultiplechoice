@@ -174,17 +174,23 @@ class AmcProcessGrade extends AmcProcess
      */
     protected function amcRegroupe($single=true) {
         $pre = $this->workdir;
-        $parameters = array(
+        if ($single) {
+            $addon = array(
+                '--single-output', $this->normalizeFilename('corrections'), // merge all sheets into one file that rules them all
+            );
+        } else {
+            $addon = array(
+                '--modele', 'correction-(ID).pdf', // "(ID)" is replaced by the complete name
+                '--csv-build-name', '(nom|id)-(prenom|surname)', // defines the complete name as the columns "id-surname" of the CSV
+            );
+        }
+        $parameters = array_merge(
+            array(
             //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
             '--no-compose',
             '--projet',  $pre,
             '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
             '--data', $pre.'/data',
-            '--tex-src', $pre . '/' . $this->format->getFilename(),
-            '--filter', $this->format->getFilterName(),
-            '--with', 'xelatex',
-            '--filtered-source', $pre.'/prepare-source_filtered.tex', // the LaTeX will be written in this file
-            '--n-copies', (string) $this->quizz->amcparams->copies,
             '--progression-id', 'regroupe',
             '--progression', '1',
             '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
@@ -192,17 +198,16 @@ class AmcProcessGrade extends AmcProcess
             '--sort', 'n',
             '--register',
             '--no-force-ascii'
+            /* // useless with no-compose
+              '--tex-src', $pre . '/' . $this->format->getFilename(),
+              '--filter', $this->format->getFilterName(),
+              '--with', 'xelatex',
+              '--filtered-source', $pre.'/prepare-source_filtered.tex',
+              '--n-copies', (string) $this->quizz->amcparams->copies,
+               */
+            ),
+            $addon
         );
-        if ($single) {
-            $parameters = array_merge($parameters, array(
-                '--single-output', $this->normalizeFilename('corrections'),
-                ));
-        } else {
-            $parameters = array_merge($parameters, array(
-                '--modele', 'correction-(ID).pdf',
-                '--csv-build-name', '(nom|id)-(prenom|surname)',
-                ));
-        }
         $res = $this->shellExecAmc('regroupe', $parameters);
         if ($res) {
             $this->log('regroup', '');
@@ -243,7 +248,9 @@ class AmcProcessGrade extends AmcProcess
         if (!$this->amcAnnote()) {
             return false;
         }
-        $this->amcRegroupe(true);
+        if (!$this->amcRegroupe(true)) {
+            return false;
+        }
         return $this->amcRegroupe(false);
     }
 
