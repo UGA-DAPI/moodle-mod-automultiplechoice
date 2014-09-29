@@ -129,6 +129,12 @@ class AmcProcessGrade extends AmcProcess
      * @return bool
      */
     private function amcAnnote() {
+        if (!is_dir($this->workdir . '/cr/corrections/jpg')) { // amc-annote will silently fail if the dir does not exist
+            mkdir($this->workdir . '/cr/corrections/jpg', 0777, true);
+        }
+        if (!is_dir($this->workdir . '/cr/corrections/pdf')) {
+            mkdir($this->workdir . '/cr/corrections/pdf', 0777, true);
+        }
         $pre = $this->workdir;
         $parameters = array(
             '--projet', $pre,
