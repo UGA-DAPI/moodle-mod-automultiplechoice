@@ -55,14 +55,14 @@ class AmcProcessUpload extends AmcProcess
      * @return boolean
      */
     public function deleteUploads() {
-        $a = array_map('unlink', glob($this->workdir . '/scans/*.ppm'));
-        $a = array_map('unlink', glob($this->workdir . '/cr/*.jpg'));
+        array_map('unlink', $this->findScannedFiles());
+        array_map('unlink', glob($this->workdir . '/cr/*.jpg'));
         if (is_dir($this->workdir . '/cr/corrections')) {
-            $a = array_map('unlink', glob($this->workdir . '/cr/corrections/jpg/*'));
-            $a = array_map('unlink', glob($this->workdir . '/cr/corrections/pdf/*'));
+            array_map('unlink', glob($this->workdir . '/cr/corrections/jpg/*'));
+            array_map('unlink', glob($this->workdir . '/cr/corrections/pdf/*'));
         }
         if (is_dir($this->workdir . '/cr/zooms')) {
-            $a = array_map('unlink', glob($this->workdir . '/cr/zooms/*'));
+            array_map('unlink', glob($this->workdir . '/cr/zooms/*'));
         }
         $captureFile = $this->workdir . "/data/capture.sqlite";
         if (file_exists($captureFile)) {

@@ -139,11 +139,11 @@ class AmcProcessGrade extends AmcProcess
         $parameters = array(
             '--projet', $pre,
             '--ch-sign', '4',
-            '--cr', $pre.'/cr',
+            '--cr', $pre . '/cr',
             '--data', $pre.'/data',
-            '--id-file',  '',
+            //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
             '--taille-max', '1000x1500',
-            '--qualite', '100',
+            '--qualite', '90',
             '--line-width', '2',
             '--indicatives', '1',
             '--symbols', '0-0:none/#000000,0-1:circle/#ff0000,1-0:mark/#ff0000,1-1:mark/#00ff00',
@@ -173,7 +173,7 @@ class AmcProcessGrade extends AmcProcess
     protected function amcRegroupe() {
         $pre = $this->workdir;
         $parameters = array(
-            '--id-file', "",
+            //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
             '--no-compose',
             '--projet',  $pre,
             '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
@@ -185,7 +185,7 @@ class AmcProcessGrade extends AmcProcess
             '--n-copies', (string) $this->quizz->amcparams->copies,
             '--progression-id', 'regroupe',
             '--progression', '1',
-            '--modele', '',
+            //'--modele', '',
             '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
             '--noms-encodage', 'UTF-8',
             '--csv-build-name', '(nom|surname) (prenom|name)',
@@ -228,11 +228,8 @@ class AmcProcessGrade extends AmcProcess
      * @return bool
      */
     protected function amcAnnotePdf() {
-        $pre = $this->workdir;
-        $mask = $pre . "/cr/corrections/jpg/*.jpg";
-        array_map('unlink', glob( $mask ));
-        $mask = $pre . "/cr/corrections/pdf/*.pdf";
-        array_map('unlink', glob( $mask ));
+        array_map('unlink', glob($this->workdir .  "/cr/corrections/jpg/*.jpg"));
+        array_map('unlink', glob($this->workdir .  "/cr/corrections/pdf/*.pdf"));
 
         if (!$this->amcAnnote()) {
             return false;
