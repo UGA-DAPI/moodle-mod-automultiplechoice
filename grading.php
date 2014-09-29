@@ -30,15 +30,19 @@ require_capability('mod/automultiplechoice:view', $controller->getContext());
 $PAGE->set_url('/mod/automultiplechoice/grading.php', array('id' => $cm->id));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
-// Output starts here
-echo $output->header();
-
 $process = new amc\Grade($quizz);
 if (!$process->isGraded() || $action === 'grade') {
-    $process->grade();
+    if ($process->grade()) {
+        redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
+    }
 } else if ($action === 'anotate') {
-    $process->anotate();
+    if ($process->anotate()) {
+        redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
+    }
 }
+
+// Output starts here
+echo $output->header();
 
 echo $process->getHtmlErrors();
 foreach (amc\Log::build($quizz->id)->check('grading') as $warning) {
