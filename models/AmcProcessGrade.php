@@ -167,10 +167,12 @@ class AmcProcessGrade extends AmcProcess
 
      /**
      * lowl-level Shell-executes 'amc regroupe'
-     * fills the cr/corrections/pdf directory with a global pdf file for all copies
+     * fills the cr/corrections/pdf directory with a global pdf file (parameter single==true) for all copies
+     * or one pdf per student (single==false)
+     * @single bool
      * @return bool
      */
-    protected function amcRegroupe() {
+    protected function amcRegroupe($single=true) {
         $pre = $this->workdir;
         $parameters = array(
             //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
@@ -185,15 +187,22 @@ class AmcProcessGrade extends AmcProcess
             '--n-copies', (string) $this->quizz->amcparams->copies,
             '--progression-id', 'regroupe',
             '--progression', '1',
-            //'--modele', '',
             '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
             '--noms-encodage', 'UTF-8',
-            '--csv-build-name', '(nom|surname) (prenom|name)',
-            '--single-output', $this->normalizeFilename('corrections'),
             '--sort', 'n',
             '--register',
             '--no-force-ascii'
         );
+        if ($single) {
+            $parameters = array_merge($parameters, array(
+                '--single-output', $this->normalizeFilename('corrections'),
+                ));
+        } else {
+            $parameters = array_merge($parameters, array(
+                '--modele', 'correction-(ID).pdf',
+                '--csv-build-name', '(nom|id)-(prenom|surname)',
+                ));
+        }
         $res = $this->shellExecAmc('regroupe', $parameters);
         if ($res) {
             $this->log('regroup', '');
@@ -234,7 +243,8 @@ class AmcProcessGrade extends AmcProcess
         if (!$this->amcAnnote()) {
             return false;
         }
-        return $this->amcRegroupe();
+        $this->amcRegroupe(true);
+        return $this->amcRegroupe(false);
     }
 
     /**
