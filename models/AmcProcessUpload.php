@@ -82,8 +82,6 @@ class AmcProcessUpload extends AmcProcess
         if (file_exists($scanlist)) {
             unlink($scanlist);
         }
-        // delete all previous ppm/... files
-        array_map('unlink', $this->findScannedFiles());
 
         $res = $this->shellExecAmc('getimages', array(
             '--progression-id', 'analyse',
