@@ -4,16 +4,16 @@ Récapitulatif des processus "automultiplechoice" lancés
   = .../moodledata/local/automultiplechoice/automultiplechoice_NNNNN 
   (avec NNNNN = numéro de l'instance, ex. 00123)
 [] fichiers sqlite, placés sous @/data/*.sqlite
-NOM = nom normalisé par normalizeFilename() de $quizz->name
+NORM = nom du QCM normalisé par normalizeFilename() de $quizz->name
 
 
-amcCreatePdf   ->  @/ prepare-source.tex prepare-calage.xy , sujet-NOM.pdf catalog-NOM.pdf corrige-NOM.pdf , amc-compiled.*
+amcCreatePdf   ->  @/ prepare-source.tex prepare-calage.xy , sujet-NORM.pdf catalog-NORM.pdf corrige-NORM.pdf , amc-compiled.*
     V
     V
 amcMeptex      ->  [capture, layout] créés
     V
     V
-amcImprime      -> @/sujets-NOM.zip , @/imprime/sujet-%e.pdf
+amcImprime      -> @/sujets-NORM.zip , @/imprime/sujet-%e.pdf
     V
     V
 
@@ -23,7 +23,7 @@ amcImprime      -> @/sujets-NOM.zip , @/imprime/sujet-%e.pdf
 amcMeptex          [capture, layout] modifiés
     V
     V
-amcGetimages     -> @/scanlist , @/scans/NOMSCAN-page-*.ppm (pages brutes)
+amcGetimages     -> @/scanlist , @/scans/NORMSCAN-page-*.ppm (pages brutes)
     V
     V
 amcAnalyse       -> @/cr/name-*.jpg, @/cr/page-*.jpg    N x (zone nom, page + surlignage coches)
@@ -48,7 +48,11 @@ amcAssociation  ???
     V
 amcAnnotePdf
 [ amcAnnote   ]   -> @/cr/corrections/jpg/page-*.jpg
-[ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-NOM.pdf
+[ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-NORM.pdf  (--single-output)
+[ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-IDNUMBER-NOM.pdf  (normal)
     V
     V
-amcAssociation
+amcAssociation  ???
+
+
+note : l'appel à amcAssociation reste à préciser
