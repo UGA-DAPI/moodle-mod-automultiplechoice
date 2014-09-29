@@ -69,6 +69,14 @@ if ($process->hasAnotatedFiles()) {
     $url = $process->getFileUrl('cr/corrections/pdf/' . $process->normalizeFilename('corrections'));
     echo $OUTPUT->heading("Copies corrigées")
         . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
+    ?>
+    <form action="?a=<?php echo $quizz->id; ?>" method="post">
+    <p>
+        <input type="hidden" name="action" value="anotate" />
+        <button type="submit">Mettre à jour les copies corrigées (annotées)</button>
+    </p>
+    </form>
+    <?php
 } else {
     ?>
     <form action="?a=<?php echo $quizz->id; ?>" method="post">
