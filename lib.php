@@ -227,14 +227,7 @@ function automultiplechoice_get_extra_capabilities() {
  * @return bool true if the scale is used by the given automultiplechoice instance
  */
 function automultiplechoice_scale_used($automultiplechoiceid, $scaleid) {
-    global $DB;
-
-    /** @example */
-    if ($scaleid and $DB->record_exists('automultiplechoice', array('id' => $automultiplechoiceid, 'grade' => -$scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
+    return false;
 }
 
 /**
@@ -246,14 +239,7 @@ function automultiplechoice_scale_used($automultiplechoiceid, $scaleid) {
  * @return boolean true if the scale is used by any automultiplechoice instance
  */
 function automultiplechoice_scale_used_anywhere($scaleid) {
-    global $DB;
-
-    /** @example */
-    if ($scaleid and $DB->record_exists('automultiplechoice', array('grade' => -$scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
+    return false;
 }
 
 /**
