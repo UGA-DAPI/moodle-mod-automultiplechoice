@@ -351,11 +351,21 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     }
 
     require_login($course, true, $cm);
-    require_capability('mod/automultiplechoice:view', $context);
 
     $filename = array_pop($args);
     $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
     $process = new \mod\automultiplechoice\AmcProcess($quizz);
+
+    // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
+    /** @todo additional checks (identity?)
+     */
+    if (preg_match('/^correction-.*\.pdf$/', $filename)) {
+        send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        return true;
+    }
+
+    // Then teacher only use cases
+    require_capability('mod/automultiplechoice:view', $context);
 
     // whitelist security
     if (preg_match('/^(sujet|corrige|catalog)-.*\.pdf$/', $filename)) {
