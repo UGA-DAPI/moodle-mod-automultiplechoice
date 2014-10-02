@@ -50,7 +50,7 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
         $output = $this->output->header();
 
         $output .= $this->output->heading($activityname);
-        if (has_capability('mod/automultiplechoice:view', $context)) {
+        if (has_capability('mod/automultiplechoice:update', $context)) {
             if (!empty($this->currenttab)) {
                 $quizz = $this->quizz;
                 $cm = $this->cm;

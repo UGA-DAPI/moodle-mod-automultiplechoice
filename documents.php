@@ -23,7 +23,7 @@ $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('documents');
 
-require_capability('mod/automultiplechoice:view', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 $lock = optional_param('lock', false, PARAM_BOOL);
 $unlock = optional_param('unlock', false, PARAM_BOOL);

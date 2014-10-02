@@ -23,7 +23,7 @@ $course = $controller->getCourse();
 $output = $controller->getRenderer('grading');
 $action = optional_param('action', '', PARAM_ALPHA);
 
-require_capability('mod/automultiplechoice:view', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 /// Print the page header
 

@@ -23,7 +23,7 @@ $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('uploadscans');
 
-require_capability('mod/automultiplechoice:view', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 /// Print the page header
 

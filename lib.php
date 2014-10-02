@@ -365,7 +365,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     }
 
     // Then teacher only use cases
-    require_capability('mod/automultiplechoice:view', $context);
+    require_capability('mod/automultiplechoice:update', $context);
 
     // whitelist security
     if (preg_match('/^(sujet|corrige|catalog)-.*\.pdf$/', $filename)) {

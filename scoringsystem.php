@@ -47,7 +47,7 @@ if (!$quizz->isLocked() && isset($_POST['score'])) {
     }
 }
 
-require_capability('mod/automultiplechoice:view', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 //add_to_log($course->id, 'automultiplechoice', 'view', "scoringsystem.php?id={$cm->id}", $quizz->name, $cm->id);
 

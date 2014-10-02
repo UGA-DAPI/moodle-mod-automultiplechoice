@@ -31,7 +31,7 @@ if (!count($quizz->questions)) {
 }
 
 $viewContext = $controller->getContext();
-if ( ! has_capability('mod/automultiplechoice:view', $viewContext) ) { // simple étudiant
+if ( ! has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple étudiant
 
     $anotatedfile = $process->getUserAnotatedSheet((int) $USER->idnumber);
     if ( $anotatedfile ) {
@@ -43,7 +43,7 @@ if ( ! has_capability('mod/automultiplechoice:view', $viewContext) ) { // simple
         echo \html_writer::link($url, $anotatedfile, array('target' => '_blank')) . "</p>\n";
         echo $output->footer();
     } else {
-        throw new required_capability_exception($viewContext, 'mod/automultiplechoice:view', 'nopermissions', '');
+        throw new required_capability_exception($viewContext, 'mod/automultiplechoice:update', 'nopermissions', '');
     }
 }
 

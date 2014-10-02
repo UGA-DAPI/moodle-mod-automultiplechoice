@@ -20,7 +20,7 @@ $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 
-require_capability('mod/automultiplechoice:view', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $redirect = optional_param('redirect', false, PARAM_BOOL);
