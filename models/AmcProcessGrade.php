@@ -393,12 +393,39 @@ class AmcProcessGrade extends AmcProcess
         return (file_exists($this->workdir . '/cr/corrections/pdf/' . $this->normalizeFilename('corrections')));
     }
 
+	/**
+	 * count individual anotated answer sheets (pdf files)
+	 * @return array ('count' => int)
+	 */
+	public function countIndividualAnotations() {
+		$cnt = count(glob($this->workdir . '/cr/corrections/pdf/correction-*-*.pdf'));
+		return array('count' => $cnt);
+	}
+
     /**
      * @return boolean
      */
     public function isGraded() {
         return (file_exists($this->workdir . AmcProcessGrade::PATH_AMC_CSV));
     }
+
+	/**
+	 * returns the name of pdf anotated file matching user (upon $idnumber)
+	 * @param int $idnumber
+	 * @return string (matching user file) OR FALSE if no matching file
+	 */
+	public function getUserAnotatedSheet($idnumber) {
+		$files = glob($this->workdir . '/cr/corrections/pdf/correction-*.pdf');
+		foreach ($files as $file) {
+			if (preg_match('@[^/]+/correction-([0-9]+)-(.*)\.pdf$@', $file, $matches)) {
+				$filenumber = (int) $matches[1];
+				if ((int)$idnumber == $filenumber) {
+					return 'correction-' . $matches[1] . '-' . $matches[2] . '.pdf';
+				}
+			}
+		}
+		return false;
+	}
 
     /**
      * Computes several statistics indicators from an array

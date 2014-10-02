@@ -30,7 +30,21 @@ if (!count($quizz->questions)) {
     redirect(new moodle_url('questions.php', array('a' => $quizz->id)));
 }
 
-require_capability('mod/automultiplechoice:view', $controller->getContext());
+$viewContext = $controller->getContext();
+if ( ! has_capability('mod/automultiplechoice:view', $viewContext) ) { // simple étudiant
+
+    $anotatedfile = $process->getUserAnotatedSheet((int) $USER->idnumber);
+    if ( $anotatedfile ) {
+        $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
+        echo $output->header();
+        echo "<p>Vous avez une copie corrigée : " . $anotatedfile . ".</p>";
+        echo $output->footer();
+    } else {
+        throw new required_capability_exception($viewContext, 'mod/automultiplechoice:view', 'nopermissions', '');
+    }
+}
+
+// Teacher or admin with editing capability
 
 add_to_log($course->id, 'automultiplechoice', 'view', "view.php?id={$cm->id}", $quizz->name, $cm->id);
 

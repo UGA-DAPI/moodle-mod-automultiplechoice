@@ -69,6 +69,8 @@ if ($process->hasAnotatedFiles()) {
     $url = $process->getFileUrl('cr/corrections/pdf/' . $process->normalizeFilename('corrections'));
     echo $OUTPUT->heading("Copies corrigées")
         . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
+    $cnt = $process->countIndividualAnotations();
+    echo "<p><b>" . $cnt['count'] . "</b> copies individuelles annotées (pdf) disponibles.</p>"
     ?>
     <form action="?a=<?php echo $quizz->id; ?>" method="post">
     <p>
