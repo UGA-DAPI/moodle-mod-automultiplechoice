@@ -30,7 +30,13 @@ if (!count($quizz->questions)) {
     redirect(new moodle_url('questions.php', array('a' => $quizz->id)));
 }
 
+$PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
+$PAGE->requires->jquery();
+$PAGE->requires->js(new moodle_url('assets/scoring.js'));
+$PAGE->requires->css(new moodle_url('assets/amc.css'));
+
 $viewContext = $controller->getContext();
+require_capability('mod/automultiplechoice:view', $viewContext);
 if ( ! has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple étudiant
 
     $anotatedfile = $process->getUserAnotatedSheet((int) $USER->idnumber);
@@ -52,11 +58,6 @@ if ( ! has_capability('mod/automultiplechoice:update', $viewContext) ) { // simp
 add_to_log($course->id, 'automultiplechoice', 'view', "view.php?id={$cm->id}", $quizz->name, $cm->id);
 
 // Output starts here
-$PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
-$PAGE->requires->jquery();
-$PAGE->requires->js(new moodle_url('assets/scoring.js'));
-$PAGE->requires->css(new moodle_url('assets/amc.css'));
-
 echo $output->header();
 
 if (!$quizz->validate()) {
