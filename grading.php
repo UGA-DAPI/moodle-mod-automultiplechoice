@@ -42,6 +42,17 @@ if (!$process->isGraded() || $action === 'grade') {
 } else if ($action === 'setstudentaccess') {
     $quizz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
     $quizz->save();
+} else if ($action === 'notification') {
+    $studentsto = $process->getUsersWithAnotatedSheets();
+    $okSends = $process->sendAnotationNotification($studentsto);
+    /** Moodle has no such thing!
+    global $SESSION;
+    $SESSION->flashmessages->addMessage(
+        ($okSends == count($studentsto)) ? 'success' : 'error',
+        $okSends . " messages envoyés pour " . count($studentsto) . " étudiants ayant une copie annotée."
+    );
+     */
+    redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
 }
 
 // Output starts here
@@ -75,17 +86,6 @@ if ($process->hasAnotatedFiles()) {
     $cnt = $process->countIndividualAnotations();
     echo "<p><b>" . $cnt['count'] . "</b> copies individuelles annotées (pdf) disponibles.</p>";
 
-    //var_dump($process->getUsersWithAnotatedSheets());
-    echo $OUTPUT->single_button(
-        new moodle_url(
-            '/mod/automultiplechoice/notification.php',
-            array('a' => $quizz->id, 'notif' => 1)
-        ),
-        'Envoyer la correction par message Moodle à chaque étudiant',
-        'post'
-    );
-
-
     ?>
     <form action="?a=<?php echo $quizz->id; ?>" method="post">
     <p>
@@ -117,6 +117,14 @@ if ($process->hasAnotatedFiles()) {
         </form>
         <?php
     }
+    echo $OUTPUT->single_button(
+        new moodle_url(
+            '/mod/automultiplechoice/grading.php',
+            array('a' => $quizz->id, 'action' => 'notification')
+        ),
+        'Envoyer la correction par message Moodle à chaque étudiant',
+        'post'
+    );
 } else {
     ?>
     <form action="?a=<?php echo $quizz->id; ?>" method="post">
