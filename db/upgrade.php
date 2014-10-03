@@ -61,6 +61,15 @@ function xmldb_automultiplechoice_upgrade($oldversion) {
         context_system::instance()->mark_dirty();
     }
 
+    if ($oldversion < 2014100302) {
+        $table = new xmldb_table('automultiplechoice');
+        $field = new xmldb_field('studentaccess', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, "author");
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2014100302, 'automultiplechoice');
+    }
 
     // Final return of upgrade result (true, all went good) to Moodle.
     return true;
