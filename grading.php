@@ -45,13 +45,10 @@ if (!$process->isGraded() || $action === 'grade') {
 } else if ($action === 'notification') {
     $studentsto = $process->getUsersWithAnotatedSheets();
     $okSends = $process->sendAnotationNotification($studentsto);
-    /** Moodle has no such thing!
-    global $SESSION;
-    $SESSION->flashmessages->addMessage(
+    amc\FlashMessageManager::addMessage(
         ($okSends == count($studentsto)) ? 'success' : 'error',
         $okSends . " messages envoyés pour " . count($studentsto) . " étudiants ayant une copie annotée."
     );
-     */
     redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
 }
 
