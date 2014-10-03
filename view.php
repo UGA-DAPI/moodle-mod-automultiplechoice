@@ -44,7 +44,7 @@ if ( ! has_capability('mod/automultiplechoice:update', $viewContext) ) { // simp
         $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
         echo $output->header();
 
-        $url = $process->getFileUrl('cr/corrections/pdf/' . $anotatedfile);
+        $url = $process->getFileUrl($anotatedfile);
         echo "<p>Vous avez une copie corrigée : " ;
         echo \html_writer::link($url, $anotatedfile, array('target' => '_blank')) . "</p>\n";
         echo $output->footer();
