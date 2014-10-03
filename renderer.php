@@ -6,6 +6,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once __DIR__ . '/components/FlashMessageManager.php';
+
 class mod_automultiplechoice_renderer extends plugin_renderer_base
 {
     /**
@@ -57,6 +59,7 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
                 $currenttab = $this->currenttab;
                 ob_start();
                 include($CFG->dirroot . '/mod/automultiplechoice/renderer_tabs.php');
+                mod\automultiplechoice\FlashMessageManager::displayMessages();
                 $output .= ob_get_contents();
                 ob_end_clean();
                 unset($quizz);
