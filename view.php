@@ -38,9 +38,8 @@ $PAGE->requires->css(new moodle_url('assets/amc.css'));
 $viewContext = $controller->getContext();
 require_capability('mod/automultiplechoice:view', $viewContext);
 if ( ! has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple étudiant
-
     $anotatedfile = $process->getUserAnotatedSheet($USER->idnumber);
-    if ( $anotatedfile ) {
+    if ($quizz->studentaccess && $anotatedfile) {
         $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
         echo $output->header();
 

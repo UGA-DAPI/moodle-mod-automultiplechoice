@@ -364,7 +364,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
             send_file_not_found();
         }
         if (has_capability('mod/automultiplechoice:update', $context)
-            || (!empty($USER->idnumber) && $process->getUserAnotatedSheet($USER->idnumber) === basename($filename))
+            || (!empty($USER->idnumber) && $quizz->studentaccess && $process->getUserAnotatedSheet($USER->idnumber) === basename($filename))
             ) {
             send_file($target, $filename, 10, 0, false, false, 'application/pdf') ;
             return true;
