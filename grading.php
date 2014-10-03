@@ -43,7 +43,7 @@ if (!$process->isGraded() || $action === 'grade') {
     $quizz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
     $quizz->save();
 } else if ($action === 'notification') {
-    $studentsto = $process->getUsersWithAnotatedSheets();
+    $studentsto = $process->getUsersIdsHavingAnotatedSheets();
     $okSends = $process->sendAnotationNotification($studentsto);
     amc\FlashMessageManager::addMessage(
         ($okSends == count($studentsto)) ? 'success' : 'error',

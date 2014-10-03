@@ -446,9 +446,9 @@ class AmcProcessGrade extends AmcProcess
 
     /**
      * returns a list of students with anotated answer sheets
-     * @return array (int user.id => int (user.idnumber) strictly numeric)
+     * @return array of (int) user.id
      */
-    public function getUsersWithAnotatedSheets() {
+    public function getUsersIdsHavingAnotatedSheets() {
         global $DB;
 
         $files = glob($this->workdir . '/cr/corrections/pdf/correction-*.pdf');
@@ -468,7 +468,7 @@ class AmcProcessGrade extends AmcProcess
                 $DB->get_records_sql_menu($sql, array($this->quizz->course))
                 );
         $res = array_intersect($useridnumbers, $fileidnumbers);
-        return $res;
+        return array_keys($res);
     }
 
     /**
@@ -523,10 +523,10 @@ class AmcProcessGrade extends AmcProcess
 
     /**
     * Sends a Moodle message to all students having an anotated sheet
-    * @param $users array(user.id => user.username)
-    * @return array('ok' => int ok, 'err' => int errors)
+    * @param $usersIds array(user.id => user.username)
+    * @return integer # messages sent
     */
-    public function sendAnotationNotification($users) {
+    public function sendAnotationNotification($usersIds) {
         global $USER;
         $url = new \moodle_url('/mod/automultiplechoice.php', array('a' => $this->quizz->id));
         
@@ -542,14 +542,12 @@ class AmcProcessGrade extends AmcProcess
         $eventdata->smallmessage      = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name;
 
         // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
-        $count = array('err' => 0, 'ok' => 0);
-        foreach ($users as $userid => $username) {
+        $count = 0;
+        foreach ($usersIds as $userid) {
             $eventdata->userto = $userid;
             $res = message_send($eventdata);
             if ($res) {
-                $count['ok']++;
-            } else {
-                $count['err']++;
+                $count++;
             }
         }
         return $count;
