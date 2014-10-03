@@ -47,6 +47,11 @@ class Quizz
     /** @var integer */
     public $author;
 
+    /**
+     * @var boolean
+     */
+    public $studentaccess = false;
+
     /** @var integer */
     public $timecreated;
 
@@ -216,6 +221,9 @@ class Quizz
                 $quizz->$key = (int) $record->$key;
             }
         }
+        if (isset($record->studentaccess)) {
+            $quizz->studentaccess = (boolean) $record->studentaccess;
+        }
         foreach (array('name', 'description', 'comment') as $key) {
             if (isset($record->$key)) {
                 $quizz->$key = $record->$key;
@@ -243,7 +251,7 @@ class Quizz
             'timecreated' => $_SERVER['REQUEST_TIME'],
             'timemodified' => $_SERVER['REQUEST_TIME'],
         );
-        foreach (array('course', 'qnumber', 'score', 'author', 'timecreated') as $key) {
+        foreach (array('course', 'qnumber', 'score', 'author', 'studentaccess', 'timecreated') as $key) {
             if (isset($this->$key)) {
                 $record->$key = (int) $this->$key;
             }
