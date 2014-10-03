@@ -52,6 +52,14 @@ function xmldb_automultiplechoice_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014091100, 'automultiplechoice');
     }
 
+    if ($oldversion < 2014091121) {
+        $roles = $DB->get_records('role', array('archetype' => 'student'));
+        $cid = context_system::instance()->id;
+        foreach ($roles as $role) {
+            assign_capability('mod/automultiplechoice:view', CAP_ALLOW, $role->id, $cid, true);
+        }
+        context_system::instance()->mark_dirty();
+    }
 
 
     // Final return of upgrade result (true, all went good) to Moodle.
