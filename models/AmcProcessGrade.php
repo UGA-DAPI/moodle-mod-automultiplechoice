@@ -418,9 +418,9 @@ class AmcProcessGrade extends AmcProcess
         $numid = self::removePrefixFromIdnumber($idnumber);
         $files = glob($this->workdir . '/cr/corrections/pdf/correction-*.pdf');
         foreach ($files as $file) {
-            if (preg_match('@[^/]+/correction-([0-9]+)-(.*)\.pdf$@', $file, $matches)) {
-                if ($numid === (int) $matches[1]) {
-                    return basename($file);
+            if (preg_match('@/(correction-([0-9]+)-[^/]+\.pdf)$@', $file, $matches)) {
+                if ($numid === (int) $matches[2]) {
+                    return $matches[1];
                 }
             }
         }

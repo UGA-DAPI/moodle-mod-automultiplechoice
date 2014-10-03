@@ -19,6 +19,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/ScoringSystem.php';
 require_once __DIR__ . '/models/AmcProcess.php';
+require_once __DIR__ . '/models/AmcProcessGrade.php';
 
 /* @var $DB moodle_database */
 
@@ -344,7 +345,7 @@ function automultiplechoice_get_file_info($browser, $areas, $course, $cm, $conte
  * @param array $options additional options affecting the file serving
  */
 function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
-    global $DB, $CFG;
+    global $USER;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
@@ -354,12 +355,13 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 
     $filename = array_pop($args);
     $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
-    $process = new \mod\automultiplechoice\AmcProcess($quizz);
+    $process = new \mod\automultiplechoice\AmcProcessGrade($quizz, "latex");
 
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
-    /** @todo additional checks (identity?)
-     */
-    if (preg_match('/^correction-.*\.pdf$/', $filename)) {
+    if (
+            has_capability('mod/automultiplechoice:update', $context) ||
+            (!empty($USER->idnumber) && $process->getUserAnotatedSheet($USER->idnumber) === basename($filename))
+        ) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
     }
