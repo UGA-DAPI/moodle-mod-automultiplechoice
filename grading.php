@@ -76,13 +76,14 @@ if ($process->hasAnotatedFiles()) {
     echo "<p><b>" . $cnt['count'] . "</b> copies individuelles annotées (pdf) disponibles.</p>";
 
     //var_dump($process->getUsersWithAnotatedSheets());
-    $notifbutton = $OUTPUT->single_button(
-    new moodle_url('/mod/automultiplechoice/notification.php',
-        array('a' => $quizz->id, 'notif' => 1)),
-            'Envoyer la correction par message Moodle à chaque étudiant',
-            'post'
+    echo $OUTPUT->single_button(
+        new moodle_url(
+            '/mod/automultiplechoice/notification.php',
+            array('a' => $quizz->id, 'notif' => 1)
+        ),
+        'Envoyer la correction par message Moodle à chaque étudiant',
+        'post'
     );
-    echo $notifbutton;
 
 
     ?>
