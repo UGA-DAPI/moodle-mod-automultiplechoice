@@ -73,7 +73,18 @@ if ($process->hasAnotatedFiles()) {
     echo $OUTPUT->heading("Copies corrigées")
         . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
     $cnt = $process->countIndividualAnotations();
-    echo "<p><b>" . $cnt['count'] . "</b> copies individuelles annotées (pdf) disponibles.</p>"
+    echo "<p><b>" . $cnt['count'] . "</b> copies individuelles annotées (pdf) disponibles.</p>";
+
+    //var_dump($process->getUsersWithAnotatedSheets());
+    $notifbutton = $OUTPUT->single_button(
+    new moodle_url('/mod/automultiplechoice/notification.php',
+        array('a' => $quizz->id, 'notif' => 1)),
+            'Envoyer la correction par message Moodle à chaque étudiant',
+            'post'
+    );
+    echo $notifbutton;
+
+
     ?>
     <form action="?a=<?php echo $quizz->id; ?>" method="post">
     <p>

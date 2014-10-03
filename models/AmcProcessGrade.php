@@ -445,6 +445,25 @@ class AmcProcessGrade extends AmcProcess
     }
 
     /**
+     * returns a list of students with anotated answer sheets
+     * @return array (user.id => user.username)
+     */
+    public function getUsersWithAnotatedSheets() {
+        global $DB;
+        $res = array();
+        $files = glob($this->workdir . '/cr/corrections/pdf/correction-*.pdf');
+        foreach ($files as $file) {
+            if (preg_match('@/correction-([0-9]+)-[^/]+\.pdf$@', $file, $matches)) {
+                $presumid = $matches[1];
+                $sql = "SELECT id, username FROM {user} u WHERE u.idnumber LIKE '%" . $presumid . "%' ";
+                $user = $DB->get_record_sql($sql, array(), MUST_EXIST);
+                $res[$user->id] = $user->username;
+            }
+        }
+        return $res;
+    }
+
+    /**
      * Computes several statistics indicators from an array
      *
      * @param array $array
@@ -493,4 +512,41 @@ class AmcProcessGrade extends AmcProcess
         }
         return $handle;
     }
+
+    /**
+    * Sends a Moodle message to all students having an anotated sheet
+    * @param $users array(user.id => user.username)
+    * @return array('ok' => int ok, 'err' => int errors)
+    */
+    public function sendAnotationNotification($users) {
+        global $USER;
+        $url = new \moodle_url('/mod/automultiplechoice.php', array('a' => $this->quizz->id));
+        
+        $eventdata = new \object();
+        $eventdata->component         = 'mod_automultiplechoice';
+        $eventdata->name              = 'anotatedsheet';
+        $eventdata->userfrom          = $USER;
+        $eventdata->subject           = "Correction disponible";
+        $eventdata->fullmessageformat = FORMAT_PLAIN;   // text format
+        $eventdata->fullmessage       = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name;
+        $eventdata->fullmessagehtml   = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name
+                                      . " à l'adresse " . \html_writer::link($url, $url) ;
+        $eventdata->smallmessage      = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name;
+
+        // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
+        $count = array('err' => 0, 'ok' => 0);
+        foreach ($users as $userid => $username) {
+            $eventdata->userto = $userid;
+var_dump($eventdata);
+            $res = message_send($eventdata);
+var_dump($res);
+            if ($res) {
+                $count['ok']++;
+            } else {
+                $count['err']++;
+            }
+        }
+        return $count;
+    }
+
 }
