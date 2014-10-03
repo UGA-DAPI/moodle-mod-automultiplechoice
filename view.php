@@ -49,8 +49,11 @@ if ( ! has_capability('mod/automultiplechoice:update', $viewContext) ) { // simp
         echo \html_writer::link($url, $anotatedfile, array('target' => '_blank')) . "</p>\n";
         echo $output->footer();
     } else {
-        throw new required_capability_exception($viewContext, 'mod/automultiplechoice:update', 'nopermissions', '');
+        echo $output->header();
+        echo $output->heading("Vous n'avez pas de copie corrigée pour ce QCM");
+        echo $output->footer();
     }
+    return;
 }
 
 // Teacher or admin with editing capability
