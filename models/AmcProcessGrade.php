@@ -446,20 +446,28 @@ class AmcProcessGrade extends AmcProcess
 
     /**
      * returns a list of students with anotated answer sheets
-     * @return array (user.id => user.username)
+     * @return array (int user.id => int (user.idnumber) strictly numeric)
      */
     public function getUsersWithAnotatedSheets() {
         global $DB;
-        $res = array();
+
         $files = glob($this->workdir . '/cr/corrections/pdf/correction-*.pdf');
+        $fileidnumbers = array();
         foreach ($files as $file) {
             if (preg_match('@/correction-([0-9]+)-[^/]+\.pdf$@', $file, $matches)) {
-                $presumid = $matches[1];
-                $sql = "SELECT id, username FROM {user} u WHERE u.idnumber LIKE '%" . $presumid . "%' ";
-                $user = $DB->get_record_sql($sql, array(), MUST_EXIST);
-                $res[$user->id] = $user->username;
+                $fileidnumbers[] = (int) $matches[1];
             }
         }
+
+        $sql = "SELECT u.id, u.idnumber FROM {user} u "
+                . "JOIN {user_enrolments} ue ON (ue.userid = u.id) "
+                . "JOIN {enrol} e ON (e.id = ue.enrolid) "
+                . "WHERE u.idnumber != '' AND e.courseid = ?";
+        $useridnumbers = array_map(
+                array($this, 'removePrefixFromIdnumber'),
+                $DB->get_records_sql_menu($sql, array($this->quizz->course))
+                );
+        $res = array_intersect($useridnumbers, $fileidnumbers);
         return $res;
     }
 
@@ -537,9 +545,7 @@ class AmcProcessGrade extends AmcProcess
         $count = array('err' => 0, 'ok' => 0);
         foreach ($users as $userid => $username) {
             $eventdata->userto = $userid;
-var_dump($eventdata);
             $res = message_send($eventdata);
-var_dump($res);
             if ($res) {
                 $count['ok']++;
             } else {
