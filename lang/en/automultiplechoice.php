@@ -20,6 +20,9 @@ $string['automultiplechoice'] = 'AutoMultipleChoice';
 $string['pluginadministration'] = 'AutoMultipleChoice administration';
 $string['pluginname'] = 'automultiplechoice';
 $string['noautomultiplechoices'] = 'Aucune instance de automultiplechoice n\'est définie dans ce cours';
+$string['automultiplechoice:addinstance'] = 'Create a printable quizz';
+$string['automultiplechoice:update'] = 'Update a printable quizz';
+$string['automultiplechoice:view'] = 'View a quizz or one\'s marked work';
 
 $string['dashboard'] = 'Dashboard';
 $string['documents'] = 'Documents';

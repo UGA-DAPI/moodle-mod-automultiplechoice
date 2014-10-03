@@ -20,6 +20,9 @@ $string['automultiplechoice'] = 'QCM papier';
 $string['pluginadministration'] = 'QCM papier - édition';
 $string['pluginname'] = 'QCM papier';
 $string['noautomultiplechoices'] = 'Aucune instance de QCM papier n\'est définie dans ce cours';
+$string['automultiplechoice:addinstance'] = 'Créer un QCM papier';
+$string['automultiplechoice:update'] = 'Modifier un QCM papier';
+$string['automultiplechoice:view'] = 'Consulter un QCM ou sa copie';
 
 $string['dashboard'] = 'Tableau de bord';
 $string['documents'] = 'Sujets';
