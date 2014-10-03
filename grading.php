@@ -39,6 +39,9 @@ if (!$process->isGraded() || $action === 'grade') {
     if ($process->anotate()) {
         redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
     }
+} else if ($action === 'setstudentaccess') {
+    $quizz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
+    $quizz->save();
 }
 
 // Output starts here
@@ -79,6 +82,29 @@ if ($process->hasAnotatedFiles()) {
     </p>
     </form>
     <?php
+    if ($quizz->studentaccess) {
+        ?>
+        <p>Les étudiants ont accès à leur copies corrigées.</p>
+        <form action="?a=<?php echo $quizz->id; ?>" method="post">
+        <p>
+            <input type="hidden" name="action" value="setstudentaccess" />
+            <input type="hidden" name="studentaccess" value="0" />
+            <button type="submit">Interdire la consultation en ligne</button>
+        </p>
+        </form>
+        <?php
+    } else {
+        ?>
+        <p>Les étudiants n'ont pas accès à leur copies corrigées.</p>
+        <form action="?a=<?php echo $quizz->id; ?>" method="post">
+        <p>
+            <input type="hidden" name="action" value="setstudentaccess" />
+            <input type="hidden" name="studentaccess" value="1" />
+            <button type="submit">Permettre la consultation en ligne</button>
+        </p>
+        </form>
+        <?php
+    }
 } else {
     ?>
     <form action="?a=<?php echo $quizz->id; ?>" method="post">
