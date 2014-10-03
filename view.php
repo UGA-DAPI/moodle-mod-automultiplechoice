@@ -39,7 +39,7 @@ $viewContext = $controller->getContext();
 require_capability('mod/automultiplechoice:view', $viewContext);
 if ( ! has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple étudiant
 
-    $anotatedfile = $process->getUserAnotatedSheet((int) $USER->idnumber);
+    $anotatedfile = $process->getUserAnotatedSheet($USER->idnumber);
     if ( $anotatedfile ) {
         $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
         echo $output->header();

@@ -409,23 +409,40 @@ class AmcProcessGrade extends AmcProcess
         return (file_exists($this->workdir . AmcProcessGrade::PATH_AMC_CSV));
     }
 
-	/**
-	 * returns the name of pdf anotated file matching user (upon $idnumber)
-	 * @param int $idnumber
-	 * @return string (matching user file) OR FALSE if no matching file
-	 */
-	public function getUserAnotatedSheet($idnumber) {
-		$files = glob($this->workdir . '/cr/corrections/pdf/correction-*.pdf');
-		foreach ($files as $file) {
-			if (preg_match('@[^/]+/correction-([0-9]+)-(.*)\.pdf$@', $file, $matches)) {
-				$filenumber = (int) $matches[1];
-				if ((int)$idnumber == $filenumber) {
-					return 'correction-' . $matches[1] . '-' . $matches[2] . '.pdf';
-				}
-			}
-		}
-		return false;
-	}
+    /**
+     * returns the name of pdf anotated file matching user (upon $idnumber)
+     * @param string $idnumber
+     * @return string (matching user file) OR FALSE if no matching file
+     */
+    public function getUserAnotatedSheet($idnumber) {
+        $numid = self::removePrefixFromIdnumber($idnumber);
+        $files = glob($this->workdir . '/cr/corrections/pdf/correction-*.pdf');
+        foreach ($files as $file) {
+            if (preg_match('@[^/]+/correction-([0-9]+)-(.*)\.pdf$@', $file, $matches)) {
+                if ($numid === (int) $matches[1]) {
+                    return basename($file);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Remove the prefixes configured at the module level.
+     *
+     * @param string $idnumber
+     * @return int
+     */
+    static protected function removePrefixFromIdnumber($idnumber) {
+        $prefixestxt = get_config('mod_automultiplechoice', 'idnumberprefixes');
+        $prefixes = array_filter(array_map('trim', preg_split('/\R/', $prefixestxt)));
+        foreach ($prefixes as $p) {
+            if (strncmp($idnumber, $p, strlen($p)) === 0) {
+                return (int) substr($idnumber, strlen($p));
+            }
+        }
+        return (int) $idnumber;
+    }
 
     /**
      * Computes several statistics indicators from an array
