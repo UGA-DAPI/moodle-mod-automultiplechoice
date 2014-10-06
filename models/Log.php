@@ -106,11 +106,14 @@ class Log {
                     break;
                 case 'pdf':
                     $pdf = $this->read('pdf');
-                    if ($this->read('upload') < $pdf) {
-                        $messages[] = "Le PDF du QCM a été modifié après le dépôt des copies.";
-                    }
                     if ($this->read('scoringsystem') > $pdf) {
-                        $messages[] = "Le PDF du QCM a été modifié après le choix du barème.";
+                        $messages[] = "Le choix du barème a été modifié depuis la dernière préparation des sujets PDF.";
+                    }
+                    break;
+                case 'upload':
+                    $pdf = $this->read('pdf');
+                    if ($this->read('upload') < $pdf) {
+                        $messages[] = "Le PDF du QCM a été modifié depuis le dernier dépôt des copies.";
                     }
                     break;
                 case 'grading':

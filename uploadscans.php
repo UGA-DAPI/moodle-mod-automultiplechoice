@@ -84,6 +84,10 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
     $scansStats = $process->statScans();
 }
 
+foreach (amc\Log::build($quizz->id)->check('upload') as $warning) {
+    echo $OUTPUT->notification($warning, 'informationbox notifyproblem');
+}
+
 // Upload du fichier
 if ($scansStats) {
     echo "<p>{$scansStats['count']} pages scannées ont été déposées le {$scansStats['timefr']}.</p>\n";
