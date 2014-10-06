@@ -57,7 +57,7 @@ echo $output->header();
 
 echo $process->getHtmlErrors();
 foreach (amc\Log::build($quizz->id)->check('grading') as $warning) {
-    echo $OUTPUT->box($warning, 'warningbox');
+    echo $OUTPUT->notification($warning, 'informationbox notifyproblem');
 }
 
 echo $OUTPUT->heading("Bilan des notes")
