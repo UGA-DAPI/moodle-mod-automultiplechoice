@@ -84,6 +84,13 @@ $options
 $multi
 \\AMCrandomseed{{$rand}}
 
+\\newenvironment{instructions}{
+}{
+\\vspace{1ex}
+\\hrule
+\\vspace{2ex}
+}
+
 \\begin{document}
 %Code: {$this->codelength}
 
@@ -164,14 +171,14 @@ EOL;
      */
     protected function getFooter() {
          // colums: empirical guess, should be in config?
-        $columns = $this->quizz->questions->count() > 5 ? 2 : 0;
+        $columns = 0; // $this->quizz->questions->count() > 5 ? 2 : 0;
 
         $output = "\n\n"
             . "\\begin{examcopy}[{$this->quizz->amcparams->copies}]\n"
             . "\n% Title without \\maketitle\n\\begin{center}\\Large\\bf\\mytitle\\end{center}\n"
             . ($this->quizz->amcparams->separatesheet ? "" : $this->getStudentBlock())
-            . "\n% Instructions\n\\begin{center}\n" . self::htmlToLatex($this->quizz->getInstructions()) . "\n\\end{center}\n"
-            . "\\vspace{1ex}\n%%% End of header\n\n";
+            . "\n\\begin{instructions}\n" . self::htmlToLatex($this->quizz->getInstructions()) . "\n\\end{instructions}\n"
+            . "%%% End of header\n\n";
 
         foreach ($this->groups as $name => $section) {
             /* @var $section \mod\automultiplechoice\QuestionSection */
