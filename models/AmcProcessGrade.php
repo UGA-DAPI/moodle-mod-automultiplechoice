@@ -393,14 +393,13 @@ class AmcProcessGrade extends AmcProcess
         return (file_exists($this->workdir . '/cr/corrections/pdf/' . $this->normalizeFilename('corrections')));
     }
 
-	/**
-	 * count individual anotated answer sheets (pdf files)
-	 * @return array ('count' => int)
-	 */
-	public function countIndividualAnotations() {
-		$cnt = count(glob($this->workdir . '/cr/corrections/pdf/correction-*-*.pdf'));
-		return array('count' => $cnt);
-	}
+    /**
+     * count individual anotated answer sheets (pdf files)
+     * @return int
+     */
+    public function countIndividualAnotations() {
+        return count(glob($this->workdir . '/cr/corrections/pdf/correction-*-*.pdf'));
+    }
 
     /**
      * @return boolean
