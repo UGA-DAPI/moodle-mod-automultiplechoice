@@ -90,6 +90,9 @@ $multi
 \\hrule
 \\vspace{2ex}
 }
+\\newcommand{\\answersheet}{
+    \\begin{center}\\Large\\bf\\mytitle{} --- Feuille de réponse\\end{center}
+}
 
 \\begin{document}
 %Code: {$this->codelength}
@@ -197,10 +200,9 @@ EOL;
             // colums: empirical guess, should be in config?
             $columns = $this->quizz->questions->count() > 22 ? 2 : 0;
             $output .= "\\AMCcleardoublepage\n\AMCformBegin\n"
-                . "\\begin{center}\\Large\\bf\\mytitle{} --- Feuille de réponse\\end{center}\n"
+                . "\\answersheet\n"
                 . $this->getStudentBlock()
                 . ($columns > 1 ? "\\begin{multicols}{"."$columns}\\raggedcolumns\n" : "")
-                . '\vspace*{-3.8ex}' // ugly hack to remove unknown top space (especially so that top lines are aligned)
                 . "\\noindent\\AMCform\n"
                 . ($columns > 1 ? "\\end{multicols}\n" : "")
                 . "\\clearpage\n";
@@ -215,7 +217,8 @@ EOL;
 \namefield{
     \fbox{
         \begin{minipage}{.9\linewidth}
-            '. self::htmlToLatex($this->quizz->amcparams->lname) . '\\\\[3ex]
+            '. ($this->quizz->amcparams->lname ? self::htmlToLatex($this->quizz->amcparams->lname) . '\\\\[3ex]' : '') . '
+            \null\dotfill\\\\[2.5ex]
             \null\dotfill\vspace*{3mm}
         \end{minipage}
     }
@@ -242,7 +245,7 @@ EOL;
 \end{minipage}
 ';
         }
-        return $tex . "\n\\vspace{2ex}\n";
+        return $tex . "\n\\hrule\n\\vspace*{2ex}\n";
     }
 
     /**
