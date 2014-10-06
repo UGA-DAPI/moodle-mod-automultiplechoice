@@ -100,6 +100,15 @@ class Quizz
     }
 
     /**
+     * Return true if PDF documents were prepared.
+     *
+     * @return bool
+     */
+    public function hasDocuments() {
+        return (bool) glob($this->getDirName() . '/sujet*.pdf');
+    }
+
+    /**
      * Returns true if the Quizz is locked.
      *
      * @todo Add conditions for this to happen (file existence, log existence, explicit locking in DB, etc).

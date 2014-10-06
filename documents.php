@@ -25,14 +25,16 @@ $output = $controller->getRenderer('documents');
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
-$lock = optional_param('lock', false, PARAM_BOOL);
-$unlock = optional_param('unlock', false, PARAM_BOOL);
-if ($lock) {
+$action = optional_param('action', '', PARAM_ALPHA);
+if ($action === 'lock') {
     $quizz->amcparams->locked = true;
     $quizz->save();
-} else if ($unlock) {
+} else if ($action === 'unlock') {
     $quizz->amcparams->locked = false;
     $quizz->save();
+    redirect(new moodle_url('documents.php', array('a' => $quizz->id)));
+} else if ($action === 'prepare') {
+    array_map('unlink', glob($quizz->getDirName() . '/sujet*'));
     redirect(new moodle_url('documents.php', array('a' => $quizz->id)));
 }
 
@@ -49,7 +51,7 @@ $process = new amc\AmcProcessPrepare($quizz);
 if ($quizz->isLocked()) {
     echo $OUTPUT->heading("Fichiers PDF précédemment créés", 3);
     echo $process->getHtmlPdfLinks();
-    if ($lock) {
+    if ($action == 'lock') {
         echo <<<EOL
     <div class="async-load" data-url="ajax/prepare.php">
         <div class="async-target" data-parameters='{"a": {$quizz->id}, "action": "zip"}'>
@@ -63,27 +65,44 @@ EOL;
     }
     echo '<div>'
         . $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'unlock' => 1)),
+                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'unlock')),
                 'Déverrouiller (permettre les modifications du questionnaire)', 'post'
         )
         . '</div>';
 } else {
-    ?>
-    <div class="async-load" data-url="ajax/prepare.php">
-        <div class="async-target" data-parameters='{"a": <?php echo $quizz->id; ?>, "action": "prepare"}'>
-            Préparation des fichiers PDF <span />
-        </div>
-        <div class="async-post-load">
-            <button type="button" onclick="asyncReloadComponents();">Actualiser les documents</button>
+    $hasDocuments = $quizz->hasDocuments();
+    if ($hasDocuments) {
+        ?>
+        <div>
+            <div>
+                <?php
+                echo $process->getHtmlPdfLinks();
+                ?>
+            </div>
+            <div>
             <?php
-            echo $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'lock' => 1)),
-                'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
-            );
-            ?>
-        </div>
-    </div>
+                echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'prepare')),
+                    'Actualiser les documents', 'post'
+                );
+    } else {
+        ?>
+        <div class="async-load" data-url="ajax/prepare.php">
+            <div class="async-target" data-parameters='{"a": <?php echo $quizz->id; ?>, "action": "prepare"}'>
+                Préparation des fichiers PDF <span />
+            </div>
+            <div class="async-post-load">
+                <button type="button" onclick="asyncReloadComponents();">Actualiser les documents</button>
     <?php
+    }
+                echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'lock')),
+                    'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
+                );
+                ?>
+            </div>
+        </div>
+<?php
 }
 
 echo $output->footer();
