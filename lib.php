@@ -87,13 +87,15 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
 function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null) {
     global $DB;
 
+    $quizz = mod\automultiplechoice\Quizz::findById($automultiplechoice->instance);
+
     $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->id = $automultiplechoice->instance;
 
     $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
+    $params->scoringset = $quizz->amcparams->scoringset;
     $automultiplechoice->amcparams = $params->toJson();
-    unset($automultiplechoice->amc);
     if (isset($automultiplechoice->questions)) {
         unset($automultiplechoice->questions);
     }
