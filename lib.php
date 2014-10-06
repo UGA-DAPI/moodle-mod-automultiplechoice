@@ -93,6 +93,10 @@ function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_au
     $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
     $automultiplechoice->amcparams = $params->toJson();
+    unset($automultiplechoice->amc);
+    if (isset($automultiplechoice->questions)) {
+        unset($automultiplechoice->questions);
+    }
 
     return $DB->update_record('automultiplechoice', $automultiplechoice);
 }
