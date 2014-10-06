@@ -70,6 +70,10 @@ EOL;
         )
         . '</div>';
 } else {
+    foreach (amc\Log::build($quizz->id)->check('grading') as $warning) {
+        echo $OUTPUT->box($warning, 'warningbox');
+    }
+
     $hasDocuments = $quizz->hasDocuments();
     if ($hasDocuments) {
         ?>
