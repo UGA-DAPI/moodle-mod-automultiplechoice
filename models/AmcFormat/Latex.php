@@ -52,6 +52,14 @@ class Latex extends Api
             . ",noshuffle% stops the automatic shuffling of the answers for every question\n"
             . ($params->separatesheet ? '' : '%')
             . ",separateanswersheet";
+        $shortTitles = '';
+        if ($this->quizz->amcparams->answerSheetColumns > 2) {
+            $shortTitles = '\makeatletter
+  \def\AMC@loc@qf#1{\textbf{Q. #1 :}}
+  %\def\AMC@loc@q#1#2{\textbf{Q. #1} #2}
+\makeatother
+';
+        }
         $header = <<<EOL
 \\documentclass[a4paper]{article}
 
@@ -81,6 +89,7 @@ $options
 \\let\\mydate\\@date
 \\makeatother
 
+$shortTitles
 $multi
 \\AMCrandomseed{{$rand}}
 
