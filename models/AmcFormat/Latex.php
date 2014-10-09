@@ -183,7 +183,10 @@ EOL;
      */
     protected function getFooter() {
          // colums: empirical guess, should be in config?
-        $columns = 0; // $this->quizz->questions->count() > 5 ? 2 : 0;
+        $columns = $this->quizz->amcparams->questionsColumns;
+        if ($columns == 0) {
+            $columns = $this->quizz->questions->count() > 5 ? 2 : 0;
+        }
 
         $output = "\n\n"
             . "\\begin{examcopy}[{$this->quizz->amcparams->copies}]\n"

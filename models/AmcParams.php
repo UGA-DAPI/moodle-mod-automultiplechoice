@@ -31,6 +31,9 @@ class AmcParams
     /** @var boolean Shuffle answers  */
     public $shufflea;
 
+    /** @var integer 0=auto */
+    public $questionsColumns = 1;
+
     /** @var boolean Separate answer sheet  */
     public $separatesheet;
 
@@ -92,6 +95,7 @@ class AmcParams
         $new = new self;
         $new->displaypoints = (int) $input['displaypoints'];
         $new->copies = (int) $input['copies'];
+        $new->questionsColumns = (int) $input['questionsColumns'];
         $new->shuffleq = (bool) $input['shuffleq'];
         $new->shufflea = (bool) $input['shufflea'];
         $new->separatesheet = (bool) $input['separatesheet'];

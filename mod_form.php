@@ -130,6 +130,11 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setDefault('minscore', 0);
          */
 
+        $mform->addElement('select', 'amc[questionsColumns]', get_string('amc_questionsColumns', 'automultiplechoice'),
+            array("Auto", 1, 2)
+        );
+        $mform->addHelpButton('amc[questionsColumns]', 'amc_questionsColumns', 'automultiplechoice');
+
         $mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('amc_shuffleq', 'automultiplechoice'));
         $mform->setType('amc[shuffleq]', PARAM_BOOL);
 
