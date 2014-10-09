@@ -198,7 +198,16 @@ EOL;
         }
         if ($this->quizz->amcparams->separatesheet) {
             // colums: empirical guess, should be in config?
-            $columns = $this->quizz->questions->count() > 22 ? 2 : 0;
+            if (empty($this->quizz->amcparams->answerSheetColumns)) {
+                $columns = $this->quizz->questions->count() > 22 ? 2 : 0;
+            } else {
+                $count = $this->quizz->amcparams->answerSheetColumns;
+                if ($count == 1) {
+                    $columns = 0;
+                } else {
+                    $columns = $count;
+                }
+            }
             $output .= "\\AMCcleardoublepage\n\AMCformBegin\n"
                 . "\\answersheet\n"
                 . $this->getStudentBlock()
