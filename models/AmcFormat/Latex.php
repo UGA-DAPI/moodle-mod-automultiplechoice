@@ -245,7 +245,7 @@ EOL;
 \end{minipage}
 ';
         }
-        return $tex . "\n\\hrule\n\\vspace*{2ex}\n";
+        return $tex . "\n\\hrule\n\n";
     }
 
     /**
