@@ -115,7 +115,7 @@ EOL;
         // group
         $group = '';
         if ($question->getType() === 'section') {
-            $group = self::normalizeIntoUnique($question->name);
+            $group = self::normalizeIntoUnique($question->name, true);
             $this->groups[$group] = $question;
             $this->lastGroup = $group;
             return '';
@@ -158,7 +158,7 @@ EOL;
 ',
                 $group,
                 ($question->single ? '' : 'mult'),
-                self::normalizeIntoUnique($question->name),
+                self::normalizeIntoUnique($question->name, false),
                 $questionText,
                 ($this->quizz->amcparams->shufflea ? '' : '[o]'),
                 $answersText,
@@ -272,14 +272,25 @@ EOL;
         );
     }
 
+    static private $questionCounter = 0;
+    static private $sectionCounter = 0;
+
     /**
      * @param string $text
+     * @param boolean $isSection
      * @return string
      */
-    static protected function normalizeIntoUnique($text) {
+    static protected function normalizeIntoUnique($text, $isSection=false) {
+        if ($isSection) {
+            self::$sectionCounter++;
+            $append = "P" . self::$sectionCounter;
+        } else {
+            self::$questionCounter++;
+            $append = "Q" . self::$questionCounter;
+        }
         return preg_replace('/[^a-zA-Z]+/', '',
                 @iconv('UTF-8', 'ASCII//TRANSLIT',
                         substr( html_entity_decode(strip_tags($text)), 0, 30 )
-        )) . "XXX" . substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 4);
+        )) . "-" . $append;
     }
 }
