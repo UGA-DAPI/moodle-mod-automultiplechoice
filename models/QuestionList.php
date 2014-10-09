@@ -77,7 +77,7 @@ class QuestionList implements \Countable, \ArrayAccess, \Iterator
             $this->errors['qnumber'] = 'validateql_wrong_number';
         }
         $scores = $this->getScores();
-        if (array_sum($scores) != $quizz->score) {
+        if (abs(array_sum($scores) - $quizz->score) > 0.01) {
             $this->errors['score'] = 'validateql_wrong_sum';
         }
         if (in_array(0, $scores)) {
