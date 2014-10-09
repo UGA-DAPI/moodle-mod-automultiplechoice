@@ -33,11 +33,12 @@ $(document).ready(function() {
     $("#questions-selected").on("keyup", "input.qscore", function(e) {
         var total = 0;
 		inputs = $("#questions-selected input.qscore").each(function(index) {
-			total += parseFloat($(this).val());
+			if ($(this).val()) {
+				total += parseFloat($(this).val());
+			}
 		});
-		total = Math.round(4*total) / 4;
-		$('#computed-total-score').html(total)
-				.parent().toggleClass("score-mismatch", total !== Math.floor(expectedTotalScore));
+		$('#computed-total-score').html(Math.round(100*total)/100)
+				.parent().toggleClass("score-mismatch", Math.abs(total - expectedTotalScore) > 0.01);
     });
     $("#questions-selected input.qscore").first().keyup();
 
