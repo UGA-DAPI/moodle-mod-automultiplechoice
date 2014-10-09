@@ -139,6 +139,11 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'amc[separatesheet]', get_string('amc_separatesheet', 'automultiplechoice'));
         $mform->setType('amc[separatesheet]', PARAM_BOOL);
 
+        $mform->addElement('select', 'amc[answerSheetColumns]', get_string('amc_answerSheetColumns', 'automultiplechoice'),
+            array("Auto", 1, 2, 3, 4)
+        );
+        $mform->disabledIf('amc[answerSheetColumns]', 'amc[separatesheet]', 'eq', 0);
+
         $mform->addElement('select', 'amc[displaypoints]', get_string('amc_displaypoints', 'automultiplechoice'),
                 array("Ne pas afficher", "En début de question", "En fin de question")
         );

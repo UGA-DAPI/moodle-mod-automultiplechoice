@@ -34,6 +34,9 @@ class AmcParams
     /** @var boolean Separate answer sheet  */
     public $separatesheet;
 
+    /** @var integer 0=auto */
+    public $answerSheetColumns;
+
     /** @var string Instructions for the student number */
     public $lstudent;
 
@@ -92,6 +95,11 @@ class AmcParams
         $new->shuffleq = (bool) $input['shuffleq'];
         $new->shufflea = (bool) $input['shufflea'];
         $new->separatesheet = (bool) $input['separatesheet'];
+        if (isset($input['answerSheetColumns'])) {
+            $new->answerSheetColumns = (int) $input['answerSheetColumns'];
+        } else {
+            $new->answerSheetColumns = 0;
+        }
         $new->lstudent = $input['lstudent'];
         $new->lname = $input['lname'];
         $new->markmulti = (bool) $input['markmulti'];

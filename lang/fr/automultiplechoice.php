@@ -52,6 +52,7 @@ $string['amc_copies'] = 'Nombre de versions';
 $string['amc_shuffleq'] = 'Mélanger les questions';
 $string['amc_shufflea'] = 'Mélanger les réponses';
 $string['amc_separatesheet'] = 'Feuille réponses séparée';
+$string['amc_answerSheetColumns'] = 'Nb. colonnes sur cette feuille';
 $string['anonymous'] = 'Copies anonymes';
 $string['amc_lstudent'] = 'Consigne / n° d\'étudiant';
 $string['amc_lname'] = 'Zone d\'identification';

@@ -52,6 +52,7 @@ $string['amc_copies'] = 'Versions Number';
 $string['amc_shuffleq'] = 'Shuffle questions';
 $string['amc_shufflea'] = 'Shuffle answers';
 $string['amc_separatesheet'] = 'Separate answer sheet';
+$string['amc_answerSheetColumns'] = '# columns on this sheet';
 $string['anonymous'] = 'Anonymous';
 $string['amc_lstudent'] = 'Instructions / student #';
 $string['amc_lname'] = 'Instructions / name';
