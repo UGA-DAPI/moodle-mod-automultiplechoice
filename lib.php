@@ -364,18 +364,26 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     $process = new \mod\automultiplechoice\AmcProcessGrade($quizz, "latex");
 
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
+    // and corrigé
     if (preg_match('/^correction-.*\.pdf$/', $filename)) {
         $target = $process->workdir . '/cr/corrections/pdf/' . $filename;
         if (!file_exists($target)) {
             send_file_not_found();
         }
         if (has_capability('mod/automultiplechoice:update', $context)
-            || (!empty($USER->idnumber) && $quizz->studentaccess && $process->getUserAnotatedSheet($USER->idnumber) === basename($filename))
+            || ( ! empty($USER->idnumber) && $quizz->studentaccess && $process->getUserAnotatedSheet($USER->idnumber) === basename($filename))
             ) {
             send_file($target, $filename, 10, 0, false, false, 'application/pdf') ;
             return true;
         }
     }
+    if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
+        if ( ( ! empty($USER->idnumber) && $quizz->studentaccess && $process->getUserAnotatedSheet($USER->idnumber) )
+            ) {
+            send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+            return true;
+         }
+     }
 
     // Then teacher only use cases
     require_capability('mod/automultiplechoice:update', $context);
