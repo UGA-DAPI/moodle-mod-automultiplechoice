@@ -20,8 +20,6 @@ class HtmlToTex
 
     private $mapping;
 
-    private $tables = [];
-
     private $tmpDir = '/tmp';
 
     public function __construct($configfile = '') {
@@ -43,6 +41,10 @@ class HtmlToTex
         return $this;
     }
 
+    /**
+     * @param string $html Partial HTML document.
+     * @return \HtmlToTex
+     */
     public function loadFragment($html) {
         $this->dom = new DOMDocument();
         $this->dom->loadHTML(
@@ -51,18 +53,34 @@ class HtmlToTex
                 . '</body></html>',
             $this->getOptions()
         );
+        return $this;
     }
 
+    /**
+     * @param string $html Whole HTML document, starting at the doctype or the html tag.
+     * @return \HtmlToTex
+     */
     public function loadString($html) {
         $this->dom = new DOMDocument();
         $this->dom->loadHTML($html, $this->getOptions());
+        return $this;
     }
 
-    public function loadFile($html) {
+    /**
+     * @param string $filename
+     * @return \HtmlToTex
+     */
+    public function loadFile($filename) {
         $this->dom = new DOMDocument();
-        $this->dom->loadHTMLFile($html, $this->getOptions());
+        $this->dom->loadHTMLFile($filename, $this->getOptions());
+        return $this;
     }
 
+    /**
+     * Convert the HTML into a TeX string.
+     *
+     * @return string
+     */
     public function toTex() {
         $tex = '';
         foreach ($this->dom->childNodes as $node) {
@@ -71,6 +89,10 @@ class HtmlToTex
         return $tex;
     }
 
+    /**
+     * @param DOMNode $node
+     * @return string
+     */
     protected function nodeToTeX(DOMNode $node) {
         switch ($node->nodeType) {
             case XML_ELEMENT_NODE:
@@ -85,6 +107,10 @@ class HtmlToTex
         }
     }
 
+    /**
+     * @param DOMElement $e
+     * @return string
+     */
     protected function elementToTex(DOMElement $e) {
         $wrapper = null;
         if ($e->hasAttribute('class')) {
@@ -118,6 +144,12 @@ class HtmlToTex
         return $tex;
     }
 
+    /**
+     * Convert a simple HTML string (no tag, no entity) into a TeX string.
+     *
+     * @param string $htmlText
+     * @return string
+     */
     protected function textToTex($htmlText) {
         return str_replace(
             ['\\',                '%'  , '&',  '~',  '{',  '}',  '[',  ']',  '_',  '^',    '$',  '#',  "\n"],
@@ -243,6 +275,11 @@ class HtmlToTex
         return $res;
     }
 
+    /**
+     * Build the options parameter that libxml uses.
+     *
+     * @return integer
+     */
     protected function getOptions() {
         $options = LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_NOBLANKS | LIBXML_NOCDATA | LIBXML_NOENT | LIBXML_NONET;
         if ($this->quiet) {
