@@ -158,7 +158,7 @@ EOL;
         $pointsTxt = $points ? '(' . $points . ' pt' . ($question->score > 1 ? 's' : '') . ')' : '';
         $questionText = ($question->scoring ? '    \\scoring{' . $question->scoring . "}\n" : '')
                 . ($dp == \mod\automultiplechoice\AmcParams::DISPLAY_POINTS_BEGIN ? $pointsTxt . ' ' : '')
-                . $this->htmlToLatex($question->questiontext)
+                . $this->htmlToLatex(format_text($question->questiontext, $question->questiontextformat, ['filter' => false]))
                 . ($dp == \mod\automultiplechoice\AmcParams::DISPLAY_POINTS_END ? ' ' . $pointsTxt : '');
 
         // answers
@@ -292,7 +292,7 @@ EOL;
         $converter = new \HtmlToTex();
         $converter->setTmpDir($this->tmpDir);
         return $converter->loadFragment(
-                str_replace(['<tex>', '</tex>'], ['<code class="tex">', '</code>'], $html)
+                str_replace(['<tex>', '</tex>', '[[', ']]'], ['<code class="tex">', '</code>', '<code class="tex">', '</code>'], $html)
             )->toTex();
     }
 
