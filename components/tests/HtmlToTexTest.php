@@ -49,6 +49,10 @@ Bonjour, \textbf{moi} !
                 "<table><thead><tr><th>A</th><th>B</th></tr></thead>\n<tbody><tr><td>a</td><td>b</td></tr></tbody></table>",
                 '\begin{tabular}{|c|c|}\hline \textbf{A} & \textbf{B} \\\\ \hline a & b \\\\ \hline\end{tabular}',
             ],
+            [
+                '<img src="http://home.gna.org/auto-qcm/logo.png" />',
+                '\includegraphics{/tmp/492e9f9f431214f9847bc46d916768e3}'
+            ]
         ];
     }
 }

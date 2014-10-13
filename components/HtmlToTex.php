@@ -22,6 +22,8 @@ class HtmlToTex
 
     private $tables = [];
 
+    private $tmpDir = '/tmp';
+
     public function __construct($configfile = '') {
         if (!$configfile) {
             $configfile = __DIR__ . '/htmltotex.json';
@@ -30,6 +32,15 @@ class HtmlToTex
         if (empty($this->mapping)) {
             die("Empty config!");
         }
+    }
+
+    /**
+     * @param string $dir
+     * @return \HtmlToTex
+     */
+    public function setTmpDir($dir) {
+        $this->tmpDir = rtrim($dir, '/');
+        return $this;
     }
 
     public function loadFragment($html) {
@@ -149,7 +160,7 @@ class HtmlToTex
     }
 
     /**
-     * @param DOMElement $element
+     * @param DOMElement $e
      * @return ConvertedTag
      */
     protected function tagImgToTex(DOMElement $e) {
@@ -158,11 +169,32 @@ class HtmlToTex
          */
         $res = new ConvertedTag;
         $res->recursive = false;
+        if (!$e->hasAttribute('src')) {
+            $res->hide = true;
+            return $res;
+        }
+        $imgSrc = $e->getAttribute('src');
+        $imgTmpname = $this->tmpDir . '/' . md5($imgSrc);
+
+        $curl = curl_init($imgSrc);
+        $fp = fopen($imgTmpname, "w");
+        curl_setopt($curl, CURLOPT_FILE, $fp);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        curl_exec($curl);
+        $error = curl_error($curl);
+        if ($error) {
+            $res->content = '\textbf{Could not download the image.}';
+            return $res;
+        }
+        curl_close($curl);
+        fclose($fp);
+
+        $res->content = '\includegraphics{' . $imgTmpname . '}';
         return $res;
     }
 
     /**
-     * @param DOMElement $element
+     * @param DOMElement $e
      * @return ConvertedTag
      */
     protected function tagTableToTex(DOMElement $e) {
