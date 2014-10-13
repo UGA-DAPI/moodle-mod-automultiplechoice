@@ -34,7 +34,7 @@ class AmcProcessGrade extends AmcProcess
      */
     public function __construct(Quizz $quizz, $formatName) {
         parent::__construct($quizz);
-        $this->format = amcFormat\buildFormat($formatName);
+        $this->format = amcFormat\buildFormat($formatName, $quizz);
         if (!$this->format) {
             throw new \Exception("Erreur, pas de format de QCM pour AMC.");
         }
