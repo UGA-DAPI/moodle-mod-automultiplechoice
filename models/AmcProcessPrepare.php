@@ -24,7 +24,7 @@ class AmcProcessPrepare extends AmcProcess
         $this->initWorkdir();
 
         try {
-            $format = amcFormat\buildFormat($formatName);
+            $format = amcFormat\buildFormat($formatName, $this->quizz);
             $format->quizz = $this->quizz;
             $format->codelength = $this->codelength;
         } catch (\Exception $e) {

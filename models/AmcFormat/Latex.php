@@ -9,6 +9,7 @@
 namespace mod\automultiplechoice\amcFormat;
 
 require_once __DIR__ . '/Api.php';
+require_once dirname(dirname(__DIR__)) . '/components/HtmlToTex.php';
 
 class Latex extends Api
 {
@@ -20,6 +21,8 @@ class Latex extends Api
      * @var array List of the groups defined with \element{...}
      */
     protected $groups = array();
+
+    protected $tmpDir = '/tmp';
 
     /**
      * @return string
@@ -35,13 +38,21 @@ class Latex extends Api
         return "latex";
     }
 
+    public function __construct($quizz=null, $codelength=10) {
+        parent::__construct($quizz, $codelength);
+        $this->tmpDir = $this->quizz->getDirName() . '/htmlimages';
+        if (!is_dir($this->tmpDir)) {
+            mkdir($this->tmpDir);
+        }
+    }
+
     /**
      * Computes the header block of the source file
      * @return string header block of the AMC-TXT file
      */
     protected function getHeader() {
         $params = $this->quizz->amcparams;
-        $quizzName = self::htmlToLatex($this->quizz->name);
+        $quizzName = $this->htmlToLatex($this->quizz->name);
         $multi = $params->markmulti ? '' : '\def\multiSymbole{}';
 
         $scholarYear = (string) (date('n') < 8 ? date('Y') - 1 : date('Y'));
@@ -77,6 +88,7 @@ class Latex extends Api
 \\usepackage{amsmath,amssymb}
 \\usepackage{multicol}
 \\usepackage{environ}
+\\usepackage{graphicx}
 
 \\usepackage[%
 $options
@@ -146,7 +158,7 @@ EOL;
         $pointsTxt = $points ? '(' . $points . ' pt' . ($question->score > 1 ? 's' : '') . ')' : '';
         $questionText = ($question->scoring ? '    \\scoring{' . $question->scoring . "}\n" : '')
                 . ($dp == \mod\automultiplechoice\AmcParams::DISPLAY_POINTS_BEGIN ? $pointsTxt . ' ' : '')
-                . self::htmlToLatex($question->questiontext)
+                . $this->htmlToLatex($question->questiontext)
                 . ($dp == \mod\automultiplechoice\AmcParams::DISPLAY_POINTS_END ? ' ' . $pointsTxt : '');
 
         // answers
@@ -154,7 +166,7 @@ EOL;
         $answers = $DB->get_records('question_answers', array('question' => $question->id));
         foreach ($answers as $answer) {
             $answersText .= "        \\" . ($answer->fraction > 0 ? 'correct' : 'wrong') . "choice{"
-                    . self::htmlToLatex($answer->answer) . "}\n";
+                    . $this->htmlToLatex($answer->answer) . "}\n";
         }
 
         // combine all
@@ -194,15 +206,15 @@ EOL;
             . "\\begin{examcopy}[{$this->quizz->amcparams->copies}]\n"
             . "\n% Title without \\maketitle\n\\begin{center}\\Large\\bf\\mytitle\\end{center}\n"
             . ($this->quizz->amcparams->separatesheet ? "" : $this->getStudentBlock())
-            . "\n\\begin{instructions}\n" . self::htmlToLatex($this->quizz->getInstructions()) . "\n\\end{instructions}\n"
+            . "\n\\begin{instructions}\n" . $this->htmlToLatex($this->quizz->getInstructions()) . "\n\\end{instructions}\n"
             . "%%% End of header\n\n";
 
         foreach ($this->groups as $name => $section) {
             /* @var $section \mod\automultiplechoice\QuestionSection */
             if ($section) {
-                $output .= sprintf("\\section*{%s}\n", self::htmlToLatex($section->name));
+                $output .= sprintf("\\section*{%s}\n", $this->htmlToLatex($section->name));
                 if ($section->description) {
-                    $output .= self::htmlToLatex($section->description) . "\n\n\medskip";
+                    $output .= $this->htmlToLatex($section->description) . "\n\n\medskip";
                 }
             }
             $output .= ($columns > 1 ? "\\begin{multicols}{"."$columns}\n" : "")
@@ -240,7 +252,7 @@ EOL;
 \namefield{
     \fbox{
         \begin{minipage}{.9\linewidth}
-            '. ($this->quizz->amcparams->lname ? self::htmlToLatex($this->quizz->amcparams->lname) . '\\\\[3ex]' : '') . '
+            '. ($this->quizz->amcparams->lname ? $this->htmlToLatex($this->quizz->amcparams->lname) . '\\\\[3ex]' : '') . '
             \null\dotfill\\\\[2.5ex]
             \null\dotfill\vspace*{3mm}
         \end{minipage}
@@ -256,7 +268,7 @@ EOL;
         \AMCcode{student.number}{' . $this->codelength . '}
 
         \columnbreak
-        $\longleftarrow{}$\hspace{0pt plus 1cm}' . self::htmlToLatex($this->quizz->amcparams->lstudent) . '\\\\[3ex]
+        $\longleftarrow{}$\hspace{0pt plus 1cm}' . $this->htmlToLatex($this->quizz->amcparams->lstudent) . '\\\\[3ex]
         \hfill{}' . $namefield . '\hfill\\\\
     \end{multicols}
 }
@@ -276,23 +288,12 @@ EOL;
      * @param string $html UTF-8 HTML string
      * @return string
      */
-    static protected function htmlToLatex($html) {
-        /**
-         * @todo Real conversion of the HTML DOM to LaTeX.
-         * @todo Keep <tex>...</tex> unchanged.
-         * @todo Images?
-         */
-        return strip_tags(
-            str_replace(
-                array('<em>', '</em>', '<i>', '</i>', '<b>', '</b>', '<br/>', '<br />', '<br>'),
-                array('\\emph{', '}', '\textit{', '}', '\textbf{', '}', '\newline', '\newline', '\newline'),
-                str_replace(
-                    array('\\',                '%'  , '&amp;', '&',  '~',  '{',  '}',  '[',  ']',  '_',  '^',  '$' ),
-                    array('\\textbackslash{}', '\%' , '\&',    '\&', '\~', '\{', '\}', '\[', '\]', '\_', '\^', '\$'),
-                    html_entity_decode($html)
-                )
-            )
-        );
+    protected function htmlToLatex($html) {
+        $converter = new \HtmlToTex();
+        $converter->setTmpDir($this->tmpDir);
+        return $converter->loadFragment(
+                str_replace(['<tex>', '</tex>'], ['<code class="tex">', '</code>'], $html)
+            )->toTex();
     }
 
     static private $questionCounter = 0;

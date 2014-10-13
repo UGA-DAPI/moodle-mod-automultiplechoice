@@ -8,10 +8,11 @@ namespace mod\automultiplechoice\amcFormat;
 
 /**
  * @param string $formatName "txt" | "latex"
+ * @param mod\automultiplechoice\Quizz $quizz
  * @return mod\automultiplechoice\amcFormat\Api
  * @throws \Exception
  */
-function buildFormat($formatName) {
+function buildFormat($formatName, $quizz) {
     $formatName = ucfirst(strtolower($formatName));
     $filename = __DIR__ . '/' . $formatName . '.php';
     if (file_exists($filename)) {
@@ -20,7 +21,7 @@ function buildFormat($formatName) {
         throw new \Exception("Unknown format");
     }
     $formatName = 'mod\\automultiplechoice\\amcFormat\\' . $formatName;
-    return (new $formatName);
+    return (new $formatName($quizz));
 }
 
 abstract class Api
