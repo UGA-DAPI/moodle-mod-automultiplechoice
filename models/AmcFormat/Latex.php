@@ -43,7 +43,9 @@ class Latex extends Api
         $params = $this->quizz->amcparams;
         $quizzName = self::htmlToLatex($this->quizz->name);
         $multi = $params->markmulti ? '' : '\def\multiSymbole{}';
-        $rand = rand(1000, 100000);
+
+        $scholarYear = (string) (date('n') < 8 ? date('Y') - 1 : date('Y'));
+        $rand = abs(crc32("année " . $scholarYear) % 100000);
 
         $options = "lang=FR%\n"
             . ",box% puts every question in a block, so that it cannot be split by a page break\n"
