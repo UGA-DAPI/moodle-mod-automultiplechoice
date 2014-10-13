@@ -121,6 +121,23 @@
 	"table": {
 		"type": "custom"
 	},
+	"tbody": {
+		"type": "skip"
+	},
+	"thead": {
+		"type": "skip"
+	},
+	"td": {
+		"type": "skip"
+	},
+	"th": {
+		"type": "macro",
+		"tex": "textbf"
+	},
+	"tr": {
+		"type": "raw",
+		"tex": [" \\\\ ", ""]
+	},
 	"ul": {
 		"type": "env",
 		"tex": "itemize"

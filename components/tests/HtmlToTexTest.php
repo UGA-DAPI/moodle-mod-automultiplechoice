@@ -45,6 +45,10 @@ Bonjour, \textbf{moi} !
                 "<ul><li>a</li>\n<li>b</li></ul>",
                 '\begin{itemize}\item[]a \item[]b\end{itemize}',
             ],
+            [
+                "<table><thead><tr><th>A</th><th>B</th></tr></thead>\n<tbody><tr><td>a</td><td>b</td></tr></tbody></table>",
+                '\begin{tabular}{|c|c|}\hline \textbf{A} & \textbf{B} \\\\ \hline a & b \\\\ \hline\end{tabular}',
+            ],
         ];
     }
 }

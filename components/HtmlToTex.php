@@ -20,6 +20,8 @@ class HtmlToTex
 
     private $mapping;
 
+    private $tables = [];
+
     public function __construct($configfile = '') {
         if (!$configfile) {
             $configfile = __DIR__ . '/htmltotex.json';
@@ -73,33 +75,35 @@ class HtmlToTex
     }
 
     protected function elementToTex(DOMElement $e) {
-        $found = false;
+        $wrapper = null;
         if ($e->hasAttribute('class')) {
             $classes = preg_split('/\s+/', $e->getAttribute('class'));
             foreach ($classes as $class) {
                 if (isset($this->mapping[$e->nodeName . '.' . $class])) {
-                    list ($start, $end) = self::mappingToTex($this->mapping[$e->nodeName], $e);
-                    $found = true;
+                    $wrapper = $this->mappingToTex($this->mapping[$e->nodeName], $e);
                     break;
                 }
             }
         }
-        if (!$found) {
+        if (!isset($wrapper)) {
             if (isset($this->mapping[$e->nodeName])) {
-                list ($start, $end) = self::mappingToTex($this->mapping[$e->nodeName], $e);
-                $found = true;
+                $wrapper = $this->mappingToTex($this->mapping[$e->nodeName], $e);
             } else {
                 return "\n% Unknown tag {$e->nodeName}\n";
             }
         }
-        if ($start === null) {
+        if ($wrapper->hide) {
             return "";
         }
-        $tex = $start;
-        foreach ($e->childNodes as $e) {
-            $tex .= $this->nodeToTex($e);
+        $tex = $wrapper->start;
+        if ($wrapper->recursive) {
+            foreach ($e->childNodes as $e) {
+                $tex .= $this->nodeToTex($e);
+            }
+        } else {
+            $tex .= $wrapper->content;
         }
-        $tex .= $end;
+        $tex .= $wrapper->end;
         return $tex;
     }
 
@@ -111,12 +115,19 @@ class HtmlToTex
         );
     }
 
-    protected static function mappingToTex($mapping, $element) {
+    /**
+     * @param array $mapping
+     * @param DOMElement $element
+     * @return ConvertedTag
+     */
+    protected function mappingToTex($mapping, $element) {
         if (isset($mapping['type'])) {
             if ($mapping['type'] === 'hide') {
-               return [null, null];
+               $res = new ConvertedTag;
+               $res->hide = true;
+               return $res;
             } else if ($mapping['type'] === 'skip') {
-                return ["", ""];
+                return ConvertedTag::wrap("", "");
             } else if ($mapping['type'] === 'custom') {
                 if (isset($mapping['function'])) {
                     $function = (string) $mapping['function'];
@@ -126,29 +137,78 @@ class HtmlToTex
                 return self::$function($element);
             } else if (isset($mapping['tex'])) {
                 if ($mapping['type'] === 'macro') {
-                    return ['\\' . $mapping['tex'] . '{', '}'];
+                    return ConvertedTag::wrap('\\' . $mapping['tex'] . '{', '}');
                 } else if ($mapping['type'] === 'env') {
-                    return ['\\begin{' . $mapping['tex'] . '}', '\end{' . $mapping['tex'] . '}'];
+                    return ConvertedTag::wrap('\\begin{' . $mapping['tex'] . '}', '\end{' . $mapping['tex'] . '}');
                 } else if ($mapping['type'] === 'raw' && is_array($mapping['tex']) && count($mapping['tex']) === 2) {
-                    return $mapping['tex'];
+                    return ConvertedTag::wrap($mapping['tex'][0], $mapping['tex'][1]);
                 }
             }
         }
         var_dump($mapping); die("Unknown HtmlToTex mapping.");
     }
 
+    /**
+     * @param DOMElement $element
+     * @return ConvertedTag
+     */
     protected function tagImgToTex(DOMElement $e) {
         /**
          * @todo read src attr, save img into a local path (object attr), then use includegraphicx (which must be loaded).
          */
-        return ['', ''];
+        $res = new ConvertedTag;
+        $res->recursive = false;
+        return $res;
     }
 
+    /**
+     * @param DOMElement $element
+     * @return ConvertedTag
+     */
     protected function tagTableToTex(DOMElement $e) {
         /**
-         * @todo count columns, read alignments, and produce the valid parameter for tabular
+         * @todo read alignments
          */
-        return ['begin{tabular}{}', '\end{tabular}'];
+        $res = new ConvertedTag;
+        $res->recursive = false;
+
+        $cols = 0;
+        $count = true;
+        $xpath = new DOMXpath($this->dom);
+        $rows = [];
+        foreach ($xpath->query('./thead/tr|./tbody/tr|./tr', $e) as $node) {
+            if ($node->nodeType === XML_ELEMENT_NODE) {
+                $cells = [];
+                /* @var $node DOMElement */
+                foreach ($node->childNodes as $td) {
+                    if ($node->nodeType === XML_ELEMENT_NODE) {
+                        $tagname = strtolower($td->nodeName);
+                        if ($tagname === 'th' || $tagname === 'td') {
+                            $cells[] = $this->nodeToTeX($td);
+                        }
+                        if ($count) {
+                            if ($td->hasAttribute('colspan')) {
+                                $cols += $td->getAttribute('colspan');
+                            } else {
+                                $cols++;
+                            }
+                        }
+                    }
+                }
+                $count = false;
+                $rows[] = join(' & ', $cells);
+            }
+        }
+        if (!$rows) {
+            $res->hide = true;
+            return $res;
+        }
+        $columns = array_fill(0, $cols, 'c');
+        $res->start = '\begin{tabular}{|' . join('|', $columns) . '|}\hline ';
+        $res->content = join(' \\\\ \hline ', $rows);
+        $res->end = ' \\\\ \hline\end{tabular}';
+        
+        return $res;
     }
 
     protected function getOptions() {
@@ -157,5 +217,22 @@ class HtmlToTex
             $options = $options | LIBXML_NOERROR | LIBXML_NOWARNING;
         }
         return $options;
+    }
+}
+
+class ConvertedTag
+{
+    public $hide = false;
+    public $recursive = true;
+    public $content = '';
+    public $start;
+    public $end;
+
+    public static function wrap($start, $end)
+    {
+        $new = new self;
+        $new->start = $start;
+        $new->end = $end;
+        return $new;
     }
 }
