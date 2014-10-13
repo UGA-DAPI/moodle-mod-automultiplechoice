@@ -117,7 +117,7 @@ class HtmlToTex
             $classes = preg_split('/\s+/', $e->getAttribute('class'));
             foreach ($classes as $class) {
                 if (isset($this->mapping[$e->nodeName . '.' . $class])) {
-                    $wrapper = $this->mappingToTex($this->mapping[$e->nodeName], $e);
+                    $wrapper = $this->mappingToTex($this->mapping[$e->nodeName . '.' . $class], $e);
                     break;
                 }
             }
@@ -272,6 +272,17 @@ class HtmlToTex
         $res->content = join(' \\\\ \hline ', $rows);
         $res->end = ' \\\\ \hline\end{tabular}';
         
+        return $res;
+    }
+
+    /**
+     * @param DOMElement $e
+     * @return ConvertedTag
+     */
+    protected function embeddedTex(DOMElement $e) {
+        $res = new ConvertedTag();
+        $res->recursive = false;
+        $res->content = $e->textContent;
         return $res;
     }
 

@@ -52,7 +52,11 @@ Bonjour, \textbf{moi} !
             [
                 '<img src="http://home.gna.org/auto-qcm/logo.png" />',
                 '\includegraphics{/tmp/492e9f9f431214f9847bc46d916768e3}'
-            ]
+            ],
+            [
+                '<code class="tex">$$ \phi^2 \sim f_2 $$</code>',
+                '$$ \phi^2 \sim f_2 $$'
+            ],
         ];
     }
 }
