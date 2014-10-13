@@ -105,8 +105,8 @@ class HtmlToTex
 
     protected function textToTex($htmlText) {
         return str_replace(
-            ['\\',                '%'  , '&',  '~',  '{',  '}',  '[',  ']',  '_',  '^',    '$',  '#'],
-            ['\\textbackslash{}', '\%' , '\&', '\~', '\{', '\}', '\[', '\]', '\_', '\^{}', '\$', '\#'],
+            ['\\',                '%'  , '&',  '~',  '{',  '}',  '[',  ']',  '_',  '^',    '$',  '#',  "\n"],
+            ['\\textbackslash{}', '\%' , '\&', '\~', '\{', '\}', '\[', '\]', '\_', '\^{}', '\$', '\#', " "],
             $htmlText
         );
     }
@@ -138,10 +138,16 @@ class HtmlToTex
     }
 
     protected function tagImgToTex(DOMElement $e) {
+        /**
+         * @todo read src attr, save img into a local path (object attr), then use includegraphicx (which must be loaded).
+         */
         return ['', ''];
     }
 
     protected function tagTableToTex(DOMElement $e) {
+        /**
+         * @todo count columns, read alignments, and produce the valid parameter for tabular
+         */
         return ['begin{tabular}{}', '\end{tabular}'];
     }
 

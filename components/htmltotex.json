@@ -89,8 +89,8 @@
 		"type": "custom"
 	},
 	"li": {
-		"type": "macro",
-		"tex": "item"
+		"type": "raw",
+		"tex": ["\\item[]", ""]
 	},
 	"meta": {
 		"type": "hide"
