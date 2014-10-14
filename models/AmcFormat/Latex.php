@@ -77,7 +77,7 @@ class Latex extends Api
 \\documentclass[a4paper]{article}
 
 \\usepackage{ifxetex}
-\ifxetex
+\\ifxetex
     \\usepackage{xltxtra}
     \\usepackage{xunicode}
 \\else

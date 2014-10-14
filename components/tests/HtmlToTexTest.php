@@ -22,6 +22,10 @@ class HtmlToTexTest extends PHPUnit_Framework_TestCase
     {
         return [
             [
+                '<p>ζ</p>',
+                "\n\nζ\n\n"
+            ],
+            [
                 'Bonjour, $f^2(x)$',
                 'Bonjour, \$f\^{}2(x)\$',
             ],
@@ -56,6 +60,10 @@ Bonjour, \textbf{moi} !
             [
                 '<code class="tex">$$ \phi^2 \sim f_2 $$</code>',
                 '$$ \phi^2 \sim f_2 $$'
+            ],
+            [
+                "<table><thead><tr><th>A</th><th>B</th></tr></thead>\n<tbody><tr><td>a</td><td><table><tr><td>x</td><td>y</td></tr></table></td></tr></tbody></table>",
+                '\begin{tabular}{|c|c|}\hline \textbf{A} & \textbf{B} \\\\ \hline a & \begin{tabular}{|c|c|}\hline x & y \\\\ \hline\end{tabular} \\\\ \hline\end{tabular}',
             ],
         ];
     }
