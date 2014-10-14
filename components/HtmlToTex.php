@@ -152,8 +152,8 @@ class HtmlToTex
      */
     protected function textToTex($htmlText) {
         return str_replace(
-            ['\\',                '%'  , '&',  '~',  '{',  '}',  '[',  ']',  '_',  '^',    '$',  '#',  "\n"],
-            ['\\textbackslash{}', '\%' , '\&', '\~', '\{', '\}', '\[', '\]', '\_', '\^{}', '\$', '\#', " "],
+            ['{',  '}',  '\\',                '%'  , '&',  '~',  '[',  ']',  '_',  '^',    '$',  '#',  "\n"],
+            ['\{', '\}', '\\textbackslash{}', '\%' , '\&', '\~', '\[', '\]', '\_', '\^{}', '\$', '\#', " "],
             $htmlText
         );
     }
@@ -172,12 +172,12 @@ class HtmlToTex
             } else if ($mapping['type'] === 'skip') {
                 return ConvertedTag::wrap("", "");
             } else if ($mapping['type'] === 'custom') {
-                if (isset($mapping['function'])) {
-                    $function = (string) $mapping['function'];
+                if (isset($mapping['method'])) {
+                    $function = (string) $mapping['method'];
                 } else {
                     $function = "tag{$element->nodeName}ToTex";
                 }
-                return self::$function($element);
+                return $this->$function($element);
             } else if (isset($mapping['tex'])) {
                 if ($mapping['type'] === 'macro') {
                     return ConvertedTag::wrap('\\' . $mapping['tex'] . '{', '}');
