@@ -249,12 +249,12 @@ class HtmlToTex
                         $tagname = strtolower($td->nodeName);
                         if ($tagname === 'th' || $tagname === 'td') {
                             $cells[] = $this->nodeToTeX($td);
-                        }
-                        if ($count) {
-                            if ($td->hasAttribute('colspan')) {
-                                $cols += $td->getAttribute('colspan');
-                            } else {
-                                $cols++;
+                            if ($count) {
+                                if ($td->hasAttribute('colspan')) {
+                                    $cols += $td->getAttribute('colspan');
+                                } else {
+                                    $cols++;
+                                }
                             }
                         }
                     }
