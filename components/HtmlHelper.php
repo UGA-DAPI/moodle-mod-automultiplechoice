@@ -83,11 +83,11 @@ class HtmlHelper {
             switch ($row) {
                 case 'instructions':
                     echo $tr . get_string('instructions', 'automultiplechoice') . '</th>'
-                        . '<td>' . nl2br(format_string($quizz->amcparams->instructionsprefix)) . '</td></tr>';
+                        . '<td>' . format_text($quizz->amcparams->instructionsprefix, $quizz->amcparams->instructionsprefixformat) . '</td></tr>';
                     break;
                 case 'description':
                     echo $tr . get_string('description', 'automultiplechoice') . '</th>'
-                        . '<td>' . nl2br(format_string($quizz->description)) . '</td></tr>';
+                        . '<td>' . format_text($quizz->description, $quizz->descriptionformat) . '</td></tr>';
                     break;
                 case 'comment':
                     if ($quizz->comment) {
