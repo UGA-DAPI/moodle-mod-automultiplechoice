@@ -221,7 +221,7 @@ class HtmlToTex
         curl_close($curl);
         fclose($fp);
 
-        $res->content = '\includegraphics{' . $imgTmpname . '}';
+        $res->content = '\includegraphics[scale=.75]{' . $imgTmpname . '}';
         return $res;
     }
 
