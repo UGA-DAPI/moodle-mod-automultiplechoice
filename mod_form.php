@@ -88,10 +88,11 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
         $mform->setType('instructions', PARAM_TEXT);
         $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
-        $mform->addElement('textarea', 'amc[instructionsprefix]', get_string('instructions', 'automultiplechoice'), array('rows'=>'4', 'cols'=>'64'));
+        $mform->addElement('editor', 'amc[instructionsprefix]', get_string('instructions', 'automultiplechoice'), array('rows'=>'4', 'cols'=>'64'));
+        $mform->setType('amc[instructionsprefix]', PARAM_RAW);
 
-        $mform->addElement('textarea', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'6', 'cols'=>'64'));
-        $mform->setType('description', PARAM_TEXT);
+        $mform->addElement('editor', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'6', 'cols'=>'64'));
+        $mform->setType('description', PARAM_RAW);
         $mform->addHelpButton('description', 'description', 'automultiplechoice');
 
         /* // moved to the scoringsystem tab
@@ -171,10 +172,19 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
      * @param array $default_values passed by reference
      */
     function data_preprocessing(&$default_values){
+        $default_values['description'] = array('text' => $default_values['description']);
         // Convert from JSON to array
         if (!empty($default_values['amcparams'])) {
             $params = amc\AmcParams::fromJson($default_values['amcparams']);
             $default_values['amc'] = (array) $params;
+            $default_values['amc']['instructionsprefix'] = array(
+                'text' => $params->instructionsprefix,
+                //'format' => $params->instructionsprefixformat
+            );
+            $this->_form->setDefault('amc[instructionsprefix]', array(
+                'text' => $params->instructionsprefix,
+                //'format' => $params->instructionsprefixformat
+            ));
             if (!empty($this->current->id) && !empty($params->locked)) {
                 $this->_form->freeze(
                         array(
@@ -191,6 +201,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             }
 
         }
+        //var_dump($default_values); die();
         // Hideous hack to insert a tab bar at the top of the page
         if (!empty($this->current->id)) {
             global $PAGE, $OUTPUT;
