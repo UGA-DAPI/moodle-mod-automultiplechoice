@@ -29,6 +29,9 @@ class Quizz
     /** @var string */
     public $description = '';
 
+    /** @var int */
+    public $descriptionformat = 2; // FORMAT_PLAIN
+
     /** @var string */
     public $comment = '';
 
@@ -189,15 +192,31 @@ class Quizz
     /**
      * Return a new instance.
      *
+     * @param array $input
      * @return Quizz
      */
-    public static function fromForm($input) {
+    public static function fromForm($input)
+    {
+        $new = new self;
+        return $new->readFromForm($input);
+    }
+
+    /**
+     * Update using the form data..
+     *
+     * @param StdClass $input
+     * @return Quizz
+     */
+    public function readFromForm($input) {
         if (empty($input)) {
-            return null;
+            return $this;
         }
-        $new = self::buildFromRecord((object) $input);
-        $new->amcparams = AmcParams::fromForm($input["amc"]);
-        return $new;
+        $this->readFromRecord($input);
+        if (empty($this->amcparams)) {
+            $this->amcparams = new AmcParams();
+        }
+        $this->amcparams->readFromForm($input->amc);
+        return $this;
     }
 
     /**
@@ -225,27 +244,42 @@ class Quizz
     public static function buildFromRecord(\stdClass $record)
     {
         $quizz = new self();
-        foreach (array('id', 'course', 'qnumber', 'score', 'author', 'timecreated', 'timemodified') as $key) {
+        return $quizz->readFromRecord($record);
+    }
+
+    /**
+     * Update from a record object.
+     *
+     * @param object $record
+     * @return Quizz
+     */
+    public function readFromRecord(\stdClass $record)
+    {
+        foreach (array('id', 'course', 'descriptionformat', 'qnumber', 'score', 'author', 'timecreated', 'timemodified') as $key) {
             if (isset($record->$key)) {
-                $quizz->$key = (int) $record->$key;
+                $this->$key = (int) $record->$key;
             }
         }
         if (isset($record->studentaccess)) {
-            $quizz->studentaccess = (boolean) $record->studentaccess;
+            $this->studentaccess = (boolean) $record->studentaccess;
         }
-        foreach (array('name', 'description', 'comment') as $key) {
-            if (isset($record->$key)) {
-                $quizz->$key = $record->$key;
+        foreach (array('name', 'comment', 'description') as $key) {
+            if (isset($record->$key) && is_string($record->$key)) {
+                $this->$key = $record->$key;
             }
         }
+        if (isset($record->description) && is_array($record->description)) {
+            $this->description = (string) $record->description['text'];
+            $this->descriptionformat = (int) $record->description['format'];
+        }
         if (isset($record->amcparams) && is_string($record->amcparams)) {
-            $quizz->amcparams = AmcParams::fromJson($record->amcparams);
+            $this->amcparams = AmcParams::fromJson($record->amcparams);
         }
         if (isset($record->questions) && is_string($record->questions)) {
-            $quizz->questions = QuestionList::fromJson($record->questions);
-            $quizz->questions->updateList($quizz->amcparams->scoringset);
+            $this->questions = QuestionList::fromJson($record->questions);
+            $this->questions->updateList($this->amcparams->scoringset);
         }
-        return $quizz;
+        return $this;
     }
 
     /**

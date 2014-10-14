@@ -63,6 +63,8 @@ class AmcParams
      */
     public $instructionsprefix = '';
 
+    public $instructionsprefixformat = 2; // FORMAT_PLAIN
+
     /**
      * Validate the instance and update $this->errors.
      *
@@ -88,31 +90,49 @@ class AmcParams
     /**
      * Return a new instance.
      *
+     * @param array $input
      * @return AmcParams
      */
     public static function fromForm($input)
     {
         $new = new self;
-        $new->displaypoints = (int) $input['displaypoints'];
-        $new->copies = (int) $input['copies'];
-        $new->questionsColumns = (int) $input['questionsColumns'];
-        $new->shuffleq = (bool) $input['shuffleq'];
-        $new->shufflea = (bool) $input['shufflea'];
-        $new->separatesheet = (bool) $input['separatesheet'];
+        return $new->readFromForm($input);
+    }
+
+    /**
+     * Update using the form data..
+     *
+     * @param array $input
+     * @return AmcParams
+     */
+    public function readFromForm($input)
+    {
+        $this->displaypoints = (int) $input['displaypoints'];
+        $this->copies = (int) $input['copies'];
+        $this->questionsColumns = (int) $input['questionsColumns'];
+        $this->shuffleq = (bool) $input['shuffleq'];
+        $this->shufflea = (bool) $input['shufflea'];
+        $this->separatesheet = (bool) $input['separatesheet'];
         if (isset($input['answerSheetColumns'])) {
-            $new->answerSheetColumns = (int) $input['answerSheetColumns'];
+            $this->answerSheetColumns = (int) $input['answerSheetColumns'];
         } else {
-            $new->answerSheetColumns = 0;
+            $this->answerSheetColumns = 0;
         }
-        $new->lstudent = $input['lstudent'];
-        $new->lname = $input['lname'];
-        $new->markmulti = (bool) $input['markmulti'];
-        $new->instructionsprefix = $input['instructionsprefix'];
+        $this->lstudent = (string) $input['lstudent'];
+        $this->lname = (string) $input['lname'];
+        $this->markmulti = (bool) $input['markmulti'];
+        if (is_array($input['instructionsprefix'])) {
+            $this->instructionsprefix = (string) $input['instructionsprefix']['text'];
+            $this->instructionsprefixformat = (int) $input['instructionsprefix']['format'];
+        } else {
+            $this->instructionsprefix = (string) $input['instructionsprefix'];
+            $this->instructionsprefixformat = (int) $input['instructionsprefixformat'];
+        }
         if (isset($input['scoringset'])) {
-            $new->scoringset = $input['scoringset'];
-            $new->minscore = (int) $input['minscore'];
+            $this->scoringset = (string) $input['scoringset'];
+            $this->minscore = (int) $input['minscore'];
         }
-        return $new;
+        return $this;
     }
 
     /**
