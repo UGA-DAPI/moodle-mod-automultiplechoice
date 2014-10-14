@@ -106,7 +106,12 @@ if ($quizz->isLocked()) {
         )
         . '</div>';
 } else {
-    echo "<div>Les sujets n'ont pas encore été figés dans leur état final.</div>\n";
+    if ( $quizz->hasDocuments() ) {
+        echo "<div>Les sujets n'ont pas encore été figés mais les documents préparatoires sont disponibles.</div>\n";
+        echo $process->getHtmlPdfLinks();
+    } else {
+        echo "<div>Aucun document n'est encore disponible.</div>\n";
+    }
     $preparetime = $process->lastlog('prepare:pdf');
     if ($preparetime) {
         echo "<div>Dernière préparation des sujets PDF le " . amc\AmcProcess::isoDate($preparetime) . "</div>\n";
