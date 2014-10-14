@@ -125,18 +125,18 @@ class Quizz
     /**
      * Concat the 3 instructions fields.
      *
+     * @param boolean $filter Apply the moodle filters.
      * @return string
      */
-    public function getInstructions() {
+    public function getInstructions($filter = true) {
         $scoringset = ScoringSystem::read()->getScoringSet($this->amcparams->scoringset);
         if ($scoringset) {
             $suffix =  "\n\n" . $scoringset->description;
         } else {
             $suffix = '';
         }
-        return rtrim($this->amcparams->instructionsprefix, "\n") . "\n\n"
-                . trim($this->description, "\n")
-                . "\n\n" . ltrim($suffix, "\n");
+        return format_text($this->amcparams->instructionsprefix, $this->amcparams->instructionsprefixformat, ['filter' => $filter])
+            . "<div>" . format_text($this->description, $this->descriptionformat, ['filter' => $filter]) . "\n" . $suffix . "</div>";
     }
 
     /**

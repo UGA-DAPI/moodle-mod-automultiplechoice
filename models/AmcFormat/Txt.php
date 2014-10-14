@@ -72,7 +72,7 @@ class Txt extends Api
      * @return string header block of the AMC-TXT file
      */
     protected function getHeader() {
-        $descr = $this->quizz->getInstructions();
+        $descr = strip_tags($this->quizz->getInstructions());
         $params = $this->quizz->amcparams;
         $markMulti = $params->markmulti ? '' : "LaTeX-BeginDocument: \def\multiSymbole{}\n";
         $columns = (int) ceil($this->quizz->questions->count() / 28); // empirical guess, should be in config?

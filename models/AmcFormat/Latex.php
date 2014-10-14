@@ -80,6 +80,8 @@ class Latex extends Api
 \\ifxetex
     \\usepackage{xltxtra}
     \\usepackage{xunicode}
+    % The default font does not include greek, etc
+    %\\usepackage{fontspec} \\setromanfont{TeX Gyre Pagella}
 \\else
     \\usepackage[T1]{fontenc}
     \\usepackage[utf8]{inputenc}
@@ -206,7 +208,7 @@ EOL;
             . "\\begin{examcopy}[{$this->quizz->amcparams->copies}]\n"
             . "\n% Title without \\maketitle\n\\begin{center}\\Large\\bf\\mytitle\\end{center}\n"
             . ($this->quizz->amcparams->separatesheet ? "" : $this->getStudentBlock())
-            . "\n\\begin{instructions}\n" . $this->htmlToLatex($this->quizz->getInstructions()) . "\n\\end{instructions}\n"
+            . "\n\\begin{instructions}\n" . $this->htmlToLatex($this->quizz->getInstructions(false)) . "\n\\end{instructions}\n"
             . "%%% End of header\n\n";
 
         foreach ($this->groups as $name => $section) {
