@@ -88,6 +88,10 @@ function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_au
     global $DB;
 
     $quizz = mod\automultiplechoice\Quizz::findById($automultiplechoice->instance);
+    $quizz->readFromForm($automultiplechoice);
+    $quizz->timemodified = $_SERVER['REQUEST_TIME'];
+    return $quizz->save();
+
 
     $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->id = $automultiplechoice->instance;
