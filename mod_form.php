@@ -194,6 +194,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                         )
                 );
             }
+            $this->_form->setDefault('instructions', '');
             foreach (parse_default_instructions() as $v) {
                 if ($params->instructionsprefix === $v) {
                     $this->_form->setDefault('instructions', $v);
