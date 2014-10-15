@@ -42,6 +42,8 @@ if (!$process->isGraded() || $action === 'grade') {
 } else if ($action === 'setstudentaccess') {
     $quizz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
     $quizz->save();
+//    var_dump(optional_param('studentaccess', false, PARAM_BOOL));
+//    var_dump(optional_param('corrigeaccess', false, PARAM_BOOL));
 } else if ($action === 'notification') {
     $studentsto = $process->getUsersIdsHavingAnotatedSheets();
     $okSends = $process->sendAnotationNotification($studentsto);
@@ -90,29 +92,18 @@ if ($process->hasAnotatedFiles()) {
     </p>
     </form>
     <?php
-    if ($quizz->studentaccess) {
-        ?>
-        <p>Les étudiants ont accès à leur copies corrigées.</p>
-        <form action="?a=<?php echo $quizz->id; ?>" method="post">
-        <p>
-            <input type="hidden" name="action" value="setstudentaccess" />
-            <input type="hidden" name="studentaccess" value="0" />
-            <button type="submit">Interdire la consultation en ligne</button>
-        </p>
-        </form>
-        <?php
-    } else {
-        ?>
-        <p>Les étudiants n'ont pas accès à leur copies corrigées.</p>
-        <form action="?a=<?php echo $quizz->id; ?>" method="post">
-        <p>
-            <input type="hidden" name="action" value="setstudentaccess" />
-            <input type="hidden" name="studentaccess" value="1" />
-            <button type="submit">Permettre la consultation en ligne</button>
-        </p>
-        </form>
-        <?php
-    }
+    echo "<p>Permettre l'accès de chaque étudiant</p>\n";
+    echo '<form action="?a=' . $quizz->id .'" method="post">' . "\n";
+    echo '<ul>';
+    $ckcopie = ($quizz->studentaccess ? 'checked="checked"' : '');
+    // $ckcorrige = ($quizz->corrigeaccess ? 'checked="checked"' : '');
+    echo '<li><input type="checkbox" name="studentaccess" ' .$ckcopie. '>à sa copie corrigée annotée</input></li>' ;
+    // echo '<li><input type="checkbox" name="corrigeaccess" ' .$ckcorrige. '>au corrigé complet</input></li>' ;
+    echo '</ul>';
+    echo '<input type="hidden" name="action" value="setstudentaccess" value="1" />';
+    echo '<button type="submit">Permettre</button>';
+    echo '</form>';
+
     echo $OUTPUT->single_button(
         new moodle_url(
             '/mod/automultiplechoice/grading.php',
