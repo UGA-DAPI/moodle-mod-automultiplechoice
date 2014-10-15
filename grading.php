@@ -41,9 +41,8 @@ if (!$process->isGraded() || $action === 'grade') {
     }
 } else if ($action === 'setstudentaccess') {
     $quizz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
+    $quizz->corrigeaccess = optional_param('corrigeaccess', false, PARAM_BOOL);
     $quizz->save();
-//    var_dump(optional_param('studentaccess', false, PARAM_BOOL));
-//    var_dump(optional_param('corrigeaccess', false, PARAM_BOOL));
 } else if ($action === 'notification') {
     $studentsto = $process->getUsersIdsHavingAnotatedSheets();
     $okSends = $process->sendAnotationNotification($studentsto);
@@ -96,9 +95,9 @@ if ($process->hasAnotatedFiles()) {
     echo '<form action="?a=' . $quizz->id .'" method="post">' . "\n";
     echo '<ul>';
     $ckcopie = ($quizz->studentaccess ? 'checked="checked"' : '');
-    // $ckcorrige = ($quizz->corrigeaccess ? 'checked="checked"' : '');
+    $ckcorrige = ($quizz->corrigeaccess ? 'checked="checked"' : '');
     echo '<li><input type="checkbox" name="studentaccess" ' .$ckcopie. '>à sa copie corrigée annotée</input></li>' ;
-    // echo '<li><input type="checkbox" name="corrigeaccess" ' .$ckcorrige. '>au corrigé complet</input></li>' ;
+    echo '<li><input type="checkbox" name="corrigeaccess" ' .$ckcorrige. '>au corrigé complet</input></li>' ;
     echo '</ul>';
     echo '<input type="hidden" name="action" value="setstudentaccess" value="1" />';
     echo '<button type="submit">Permettre</button>';
