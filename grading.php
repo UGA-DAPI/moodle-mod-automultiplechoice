@@ -42,6 +42,9 @@ if (!$process->isGraded() || $action === 'grade') {
 } else if ($action === 'setstudentaccess') {
     $quizz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
     $quizz->corrigeaccess = optional_param('corrigeaccess', false, PARAM_BOOL);
+var_dump($quizz->studentaccess);
+var_dump($quizz->corrigeaccess);
+
     $quizz->save();
 } else if ($action === 'notification') {
     $studentsto = $process->getUsersIdsHavingAnotatedSheets();

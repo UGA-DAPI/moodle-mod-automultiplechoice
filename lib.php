@@ -382,7 +382,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         }
     }
     if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
-        if ( ( ! empty($USER->idnumber) && $quizz->studentaccess && $process->getUserAnotatedSheet($USER->idnumber) )
+        if ( ( ! empty($USER->idnumber) && $quizz->corrigeaccess && $process->getUserAnotatedSheet($USER->idnumber) )
             ) {
             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
             return true;

@@ -45,10 +45,14 @@ if ( ! has_capability('mod/automultiplechoice:update', $viewContext) ) { // simp
 
         $url = $process->getFileUrl($anotatedfile);
         echo "<p>Vous avez une copie corrigée : " ;
-        echo \html_writer::link($url, $anotatedfile, array('target' => '_blank')) . "<br />\n";
-        $corrige = $process->normalizeFilename('corrige');
-        $link = \html_writer::link($process->getFileUrl($corrige), $corrige, array('target' => '_blank'));
-        echo "Vous pouvez consulter le corrigé : " . $link . "</p>\n";
+        echo \html_writer::link($url, $anotatedfile, array('target' => '_blank')) . "</p>\n";
+var_dump($quizz)        ;
+
+        if ($quizz->corrigeaccess) {
+            $corrige = $process->normalizeFilename('corrige');
+            $link = \html_writer::link($process->getFileUrl($corrige), $corrige, array('target' => '_blank'));
+            echo "<p>Vous pouvez consulter le corrigé : " . $link . "</p>\n";
+        }
         echo $output->footer();
     } else {
         echo $output->header();
