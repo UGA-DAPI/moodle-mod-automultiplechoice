@@ -17,7 +17,8 @@
         <FIELD NAME="amcparams" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="amc parameters, as a json serialized field" />
         <FIELD NAME="questions" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="question list, as a json serialized field" />
         <FIELD NAME="author" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="user.id of the question set author" />
-        <FIELD NAME="studentaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="1 if student are allowed to see their work" />
+        <FIELD NAME="studentaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="1 if students are allowed to see their work" />
+        <FIELD NAME="corrigeaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="1 if students are allowed to see the corrige" />
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
       </FIELDS>

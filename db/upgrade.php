@@ -80,6 +80,14 @@ function xmldb_automultiplechoice_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014101400, 'automultiplechoice');
     }
 
+    if ($oldversion < 2014101500) {
+        $table = new xmldb_table('automultiplechoice');
+        $field = new xmldb_field('corrigeaccess', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, "studentaccess");
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2014101500, 'automultiplechoice');
+    }
 
     // Final return of upgrade result (true, all went good) to Moodle.
     return true;
