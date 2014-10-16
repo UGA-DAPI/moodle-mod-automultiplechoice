@@ -299,11 +299,8 @@ class Quizz
             'timemodified' => $_SERVER['REQUEST_TIME'],
         );
         foreach (array('course', 'qnumber', 'score', 'author', 'studentaccess', 'corrigeaccess', 'timecreated') as $key) {
-var_dump($key);
             if (isset($this->$key)) {
-echo "value = ".$this->$key . "  ";
                 $record->$key = (int) $this->$key;
-echo "record = ". $record->$key;
             }
         }
         foreach (array('name', 'description', 'comment') as $key) {
