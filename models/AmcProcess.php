@@ -180,7 +180,7 @@ class AmcProcess
      * @return (guess what ?)
      */
     public function normalizeText($text) {
-        setlocale(LC_ALL, 'fr_FR.utf8');
+        setlocale(LC_CTYPE, 'fr_FR.utf8');
         if (extension_loaded("iconv")) {
             $text = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
         }
@@ -193,6 +193,7 @@ class AmcProcess
         $text = trim ($text, '-');
         $text = preg_replace('/[^\w\d-]/si', '', $text); //remove all illegal chars
         $text = substr($text, 0, 50);
+        setlocale(LC_CTYPE, 'C');
         return $text;
     }
 
