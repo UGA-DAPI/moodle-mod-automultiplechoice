@@ -64,6 +64,9 @@ if (empty($quizz->name)) {
 } else if (!$quizz->hasScans()) {
     $inactive = array('grading');
 }
+if ($quizz->isLocked()) {
+    $inactive[] = 'questions';
+}
 if (!isset($currenttab)) {
     $currenttab = 'dashboard';
 }
