@@ -71,7 +71,7 @@ if ($ADMIN->fulltree) {
             . "The first line of each block will be the title displayed in the dropdown list. Example:<pre>"
             . "Concours\nVous avez 4 heures.\nL'anonymat est garanti.\n---\nFirst Test\nPlease use a pencil and gray each selected case completely.</pre>",
         "",
-        PARAM_TEXT
+        PARAM_RAW
     );
     $s->plugin = 'mod_automultiplechoice';
     $settings->add($s);
