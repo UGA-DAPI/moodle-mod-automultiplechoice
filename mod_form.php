@@ -172,7 +172,9 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
      * @param array $default_values passed by reference
      */
     function data_preprocessing(&$default_values){
-        $default_values['description'] = array('text' => $default_values['description']);
+        if (isset($default_values['description'])) {
+            $default_values['description'] = array('text' => $default_values['description']);
+        }
         // Convert from JSON to array
         if (!empty($default_values['amcparams'])) {
             $params = amc\AmcParams::fromJson($default_values['amcparams']);
