@@ -40,9 +40,11 @@ class Latex extends Api
 
     public function __construct($quizz=null, $codelength=10) {
         parent::__construct($quizz, $codelength);
-        $this->tmpDir = $this->quizz->getDirName() . '/htmlimages';
-        if (!is_dir($this->tmpDir)) {
-            mkdir($this->tmpDir);
+        if (!empty($quizz->id)) {
+            $this->tmpDir = $this->quizz->getDirName() . '/htmlimages';
+            if (!is_dir($this->tmpDir)) {
+                mkdir($this->tmpDir);
+            }
         }
     }
 
