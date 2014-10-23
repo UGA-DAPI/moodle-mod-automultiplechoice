@@ -21,8 +21,6 @@ class AmcProcessPrepare extends AmcProcess
      * @return amcFormat\Api
      */
     protected function saveFormat($formatName) {
-        $this->initWorkdir();
-
         try {
             $format = amcFormat\buildFormat($formatName, $this->quizz);
             $format->quizz = $this->quizz;
@@ -118,27 +116,6 @@ class AmcProcessPrepare extends AmcProcess
             echo "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
         }
         return $ret;
-    }
-
-
-    /**
-     * Initialize the data directory $this->workdir with the template structure.
-     */
-    protected function initWorkdir() {
-        if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
-            $parent = dirname($this->workdir);
-            if (!is_dir($parent)) {
-                if (!mkdir($parent, 0777, true)) {
-                    error("Could not create directory. Please contact the administrator.");
-                }
-            }
-            if (!is_writeable($parent)) {
-                error("Could not write in directory. Please contact the administrator.");
-            } else {
-                $templatedir = get_config('mod_automultiplechoice', 'amctemplate');
-                $this->shellExec('cp', array('-r', $templatedir, $this->workdir));
-            }
-        }
     }
 
     /**
