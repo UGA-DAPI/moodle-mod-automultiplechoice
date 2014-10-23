@@ -70,7 +70,13 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
     $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
     $automultiplechoice->amcparams = $params->toJson();
-    return $DB->insert_record('automultiplechoice', $automultiplechoice);
+    $quizz = new mod\automultiplechoice\Quizz();
+    $quizz->readFromRecord($automultiplechoice);
+    if ($quizz->save()) {
+        return $quizz->id;
+    } else {
+        throw new Exception("ERROR");
+    }
 }
 
 /**
