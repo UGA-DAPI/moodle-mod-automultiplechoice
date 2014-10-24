@@ -65,9 +65,9 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
             echo $OUTPUT->box($errorMsg, 'errorbox');
         }
         if (!empty($scansStats['count'])) {
-            echo $OUTPUT->box(
+            echo $OUTPUT->notification(
                 "Le processus s'est achevé : {$process->nbPages} pages nouvellement scannées, {$scansStats['count']} extraites, {$scansStats['nbidentified']} pages avec marqueurs.",
-                'informationbox'
+                'notifymessage'
             );
         }
 
@@ -84,13 +84,13 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
     $scansStats = $process->statScans();
 }
 
-foreach (amc\Log::build($quizz->id)->check('upload') as $warning) {
-    echo $OUTPUT->notification($warning, 'notifyproblem');
-}
-
 // Upload du fichier
 if ($scansStats) {
-    echo "<p>{$scansStats['count']} pages scannées ont été déposées le {$scansStats['timefr']}.</p>\n";
+    foreach (amc\Log::build($quizz->id)->check('upload') as $warning) {
+        echo $OUTPUT->notification($warning, 'notifyproblem');
+    }
+
+    echo '<p class="notifymessage alert alert-info">' . "Copies enregistrées : <b>{$scansStats['count']}</b> pages scannées ont été déposées le {$scansStats['timefr']}.</p>\n";
     echo $OUTPUT->heading("Ajouter des copies", 3);
     echo "<p>Si vous déposez de nouvelles pages scannées, elles seront ajoutées aux précédentes.</p>";
 } else {

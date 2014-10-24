@@ -64,9 +64,14 @@ if ($warnings) {
     foreach ($warnings as $warning) {
         echo $warning;
     }
+    echo "<br /><br />";
     echo $OUTPUT->single_button(
             new moodle_url('/mod/automultiplechoice/grading.php', array('a' => $quizz->id, 'action' => 'grade')),
             'Relancer la correction', 'post'
+        );
+    echo $OUTPUT->single_button(
+            new moodle_url('/mod/automultiplechoice/grading.php', array('a' => $quizz->id, 'action' => 'anotate')),
+            'Regénérer les copies corrigées', 'post'
         );
     echo "</div>";
 }

@@ -28,6 +28,7 @@ require_capability('mod/automultiplechoice:update', $controller->getContext());
 $action = optional_param('action', '', PARAM_ALPHA);
 if ($action === 'lock') {
     $quizz->amcparams->locked = true;
+    amc\Log::build($quizz->id)->write('lock');
     $quizz->save();
 } else if ($action === 'unlock') {
     $quizz->amcparams->locked = false;
@@ -53,10 +54,13 @@ echo $output->header();
 $process = new amc\AmcProcessPrepare($quizz);
 
 if ($quizz->isLocked()) {
-    echo $OUTPUT->notification(
-        "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction.",
-        'notifymessage'
-    );
+    echo '<div class="informationbox notifyproblem alert alert-info">'
+        . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
+        . $OUTPUT->single_button(
+                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'unlock')),
+                'Déverrouiller (permettre les modifications du questionnaire)', 'post'
+        )
+        . "</div>\n";
 
     echo $OUTPUT->heading("Fichiers PDF précédemment créés", 3);
     echo $process->getHtmlPdfLinks();
