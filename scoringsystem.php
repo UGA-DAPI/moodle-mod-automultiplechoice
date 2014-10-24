@@ -72,14 +72,6 @@ if (!$quizz->validate()) {
     echo $OUTPUT->box_end();
 }
 
-/**
- * @todo Filter what follows down to the footer.
- */
-if ($quizz->isLocked()) {
-    echo '<p class="warning">Le questionnaire est actuellement verrouillé pour éviter les modifications '
-            . "entre l'impression et la correction. Vous pouvez accéder aux documents via l'onglet <em>Sujets</em>.</p>";
-}
-
 HtmlHelper::printFormFullQuestions($quizz);
 
 echo $output->footer();

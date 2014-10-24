@@ -53,6 +53,11 @@ echo $output->header();
 $process = new amc\AmcProcessPrepare($quizz);
 
 if ($quizz->isLocked()) {
+    echo $OUTPUT->notification(
+        "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction.",
+        'notifymessage'
+    );
+
     echo $OUTPUT->heading("Fichiers PDF précédemment créés", 3);
     echo $process->getHtmlPdfLinks();
     if ($action == 'lock') {
@@ -67,15 +72,9 @@ EOL;
         echo $OUTPUT->heading("Archive zip", 3);
         echo $process->getHtmlZipLink();
     }
-    echo '<div>'
-        . $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'unlock')),
-                'Déverrouiller (permettre les modifications du questionnaire)', 'post'
-        )
-        . '</div>';
 } else {
     foreach (amc\Log::build($quizz->id)->check('pdf') as $warning) {
-        echo $OUTPUT->notification($warning, 'informationbox notifyproblem');
+        echo $OUTPUT->notification($warning, 'notifyproblem');
     }
 
     $hasDocuments = $quizz->hasDocuments();

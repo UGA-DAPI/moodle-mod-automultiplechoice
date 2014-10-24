@@ -27,8 +27,8 @@ class FlashMessageManager
         foreach ($SESSION->flashmessages as $status => $messages) {
             if ($messages) {
                 foreach ($messages as $message) {
-                    $class = ($status === 'error' ? "problem" : $status);
-                    echo $OUTPUT->notification($message, "notify" . $class);
+                    $class = ($status === 'error' || $status === 'warning' ? "problem" : $status);
+                    echo $OUTPUT->notification($message, "notify" . $class . " alert alert-" . $status);
                 }
             }
         }

@@ -58,8 +58,17 @@ if (!$process->isGraded() || $action === 'grade') {
 echo $output->header();
 
 echo $process->getHtmlErrors();
-foreach (amc\Log::build($quizz->id)->check('grading') as $warning) {
-    echo $OUTPUT->notification($warning, 'informationbox notifyproblem');
+$warnings = amc\Log::build($quizz->id)->check('grading');
+if ($warnings) {
+    echo '<div class="informationbox notifyproblem alert alert-error">';
+    foreach ($warnings as $warning) {
+        echo $warning;
+    }
+    echo $OUTPUT->single_button(
+            new moodle_url('/mod/automultiplechoice/grading.php', array('a' => $quizz->id, 'action' => 'grade')),
+            'Relancer la correction', 'post'
+        );
+    echo "</div>";
 }
 
 echo $OUTPUT->heading("Bilan des notes")
@@ -101,7 +110,7 @@ if ($process->hasAnotatedFiles()) {
     echo '<li><input type="checkbox" name="corrigeaccess" ' .$ckcorrige. '>au corrigé complet</input></li>' ;
     echo '</ul>';
     echo '<input type="hidden" name="action" value="setstudentaccess" value="1" />';
-    echo '<button type="submit">Permettre</button>';
+    echo '<button type="submit">Permettre ces accès</button>';
     echo '</form>';
 
     echo $OUTPUT->single_button(

@@ -82,10 +82,15 @@ if (!$quizz->validate()) {
 }
 
 if ($quizz->isLocked()) {
-    echo $OUTPUT->box(
-        "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction.",
-        'warning generalbox'
-    );
+    // cannot put a button if we use $OUTPUT->notification
+    echo '<div class="informationbox notifyproblem alert alert-info">'
+        . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
+        . " Vous pouvez accéder aux documents via l'onglet <em>Sujets</em>."
+        . $OUTPUT->single_button(
+            new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'unlock')),
+            'Déverrouiller (permettre les modifications du questionnaire)', 'post'
+        ),
+        "</div>\n";
 }
 
 echo $OUTPUT->heading("1. " . get_string('settings'), 3);

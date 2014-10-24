@@ -85,7 +85,7 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
 }
 
 foreach (amc\Log::build($quizz->id)->check('upload') as $warning) {
-    echo $OUTPUT->notification($warning, 'informationbox notifyproblem');
+    echo $OUTPUT->notification($warning, 'notifyproblem');
 }
 
 // Upload du fichier
