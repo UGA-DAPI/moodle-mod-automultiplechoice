@@ -57,6 +57,15 @@ if (!$process->isGraded() || $action === 'grade') {
 // Output starts here
 echo $output->header();
 
+$checklock = json_encode(array('a' => $quizz->id, 'actions' => 'process'));
+$button = '<form action="' . htmlspecialchars(new moodle_url('/mod/automultiplechoice/grading.php', array('a' => $quizz->id)))
+    . '" method="post" class="checklock" data-checklock="' . htmlspecialchars($checklock) . '">
+<p>
+<input type="hidden" name="action" value="%s" />
+<button type="submit">%s</button>
+</p>
+</form>';
+
 echo $process->getHtmlErrors();
 $warnings = amc\Log::build($quizz->id)->check('grading');
 if ($warnings) {
@@ -64,28 +73,20 @@ if ($warnings) {
     foreach ($warnings as $warning) {
         echo $warning;
     }
+
     echo "<br /><br />";
-    echo $OUTPUT->single_button(
-            new moodle_url('/mod/automultiplechoice/grading.php', array('a' => $quizz->id, 'action' => 'grade')),
-            'Relancer la correction', 'post'
-        );
-    echo $OUTPUT->single_button(
-            new moodle_url('/mod/automultiplechoice/grading.php', array('a' => $quizz->id, 'action' => 'anotate')),
-            'Regénérer les copies corrigées', 'post'
-        );
+    printf($button, 'grade', 'Relancer la correction');
+    printf($button, 'anotate', 'Regénérer les copies corrigées');
     echo "</div>";
 }
 
 echo $OUTPUT->heading("Bilan des notes")
     . $process->getHtmlStats();
+echo "<p>
+        Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
+    </p>";
+printf($button, 'grade', 'Relancer la correction');
 ?>
-<form action="?a=<?php echo $quizz->id; ?>" method="post">
-<p>
-    Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
-    <input type="hidden" name="action" value="grade" />
-    <button type="submit">Relancer la correction</button>
-</p>
-</form>
 
 <?php
 echo $OUTPUT->heading("Tableaux des notes")
@@ -98,14 +99,8 @@ if ($process->hasAnotatedFiles()) {
         . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
     echo "<p><b>" . $process->countIndividualAnotations() . "</b> copies individuelles annotées (pdf) disponibles.</p>";
 
-    ?>
-    <form action="?a=<?php echo $quizz->id; ?>" method="post">
-    <p>
-        <input type="hidden" name="action" value="anotate" />
-        <button type="submit">Mettre à jour les copies corrigées (annotées)</button>
-    </p>
-    </form>
-    <?php
+    printf($button, 'anotate', 'Mettre à jour les copies corrigées (annotées)');
+
     echo "<p>Permettre l'accès de chaque étudiant</p>\n";
     echo '<form action="?a=' . $quizz->id .'" method="post">' . "\n";
     echo '<ul>';
@@ -127,14 +122,7 @@ if ($process->hasAnotatedFiles()) {
         'post'
     );
 } else {
-    ?>
-    <form action="?a=<?php echo $quizz->id; ?>" method="post">
-    <p>
-        <input type="hidden" name="action" value="anotate" />
-        <button type="submit">Générer les copies corrigées (annotées)</button>
-    </p>
-    </form>
-    <?php
+    printf($button, 'anotate', 'Générer les copies corrigées (annotées)');
 }
 
 echo $output->footer();

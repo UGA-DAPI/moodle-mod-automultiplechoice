@@ -26,6 +26,18 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
     public $currenttab = '';
 
     /**
+     * Constructor method, calls the parent constructor
+     *
+     * @param moodle_page $page
+     * @param string $target one of rendering target constants
+     */
+    public function __construct(moodle_page $page, $target) {
+        $page->requires->jquery();
+        $page->requires->js(new moodle_url('assets/async.js'));
+        parent::__construct($page, $target);
+    }
+
+    /**
       * Returns the header for the automultiplechoice module
       *
       * @return string

@@ -46,12 +46,19 @@ if ($action === 'lock') {
 $PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));
 
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
-$PAGE->requires->jquery();
-$PAGE->requires->js(new moodle_url('assets/async.js'));
 
 echo $output->header();
 
 $process = new amc\AmcProcessPrepare($quizz);
+
+$checklock = json_encode(array('a' => $quizz->id, 'actions' => 'process'));
+$button = '<form action="' . htmlspecialchars(new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id)))
+    . '" method="post" class="checklock" data-checklock="' . htmlspecialchars($checklock) . '">
+<p>
+<input type="hidden" name="action" value="%s" />
+<button type="submit">%s</button>
+</p>
+</form>';
 
 if ($quizz->isLocked()) {
     echo '<div class="informationbox notifyproblem alert alert-info">'
@@ -92,10 +99,7 @@ EOL;
             </div>
             <div>
             <?php
-                echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'prepare')),
-                    'Actualiser les documents', 'post'
-                );
+                printf($button, 'prepare', 'Actualiser les documents');
                 echo $OUTPUT->single_button(
                     new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'randomize')),
                     'Mélanger questions et réponses', 'post'
@@ -108,13 +112,10 @@ EOL;
             </div>
             <div class="async-post-load">
                 <button type="button" onclick="asyncReloadComponents();">Actualiser les documents</button>
-    <?php
-    }
-                echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'lock')),
-                    'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
-                );
-                ?>
+        <?php
+        }
+        printf($button, 'lock', 'Préparer les documents à imprimer et verrouiller le questionnaire');
+        ?>
             </div>
         </div>
 <?php
