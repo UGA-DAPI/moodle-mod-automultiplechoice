@@ -57,7 +57,6 @@ class HtmlHelper {
 
         $k = 1;
         $nbline = 1;
-        $disabled = $quizz->isLocked() ? ' disabled="disabled"' : '';
         foreach ($quizz->questions as $q) {
             echo '<tr>';
             if ($q->getType() === 'section') {
@@ -67,8 +66,7 @@ class HtmlHelper {
             } else {
                 echo '<td>' . $k . '</td>
                     <td class="q-score">
-                        <input name="q[score][]" type="text" class="qscore" value="' . $q->score . '" '
-                        . $disabled . ' />
+                        <input name="q[score][]" type="text" class="qscore" value="' . $q->score . '" />
                     </td>
                     <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
                         . HtmlHelper::listAnswers($q);
@@ -85,10 +83,10 @@ class HtmlHelper {
             . '<th><span id="computed-total-score">' . $quizz->score . '</span> / '
             . '<span id="total-score">' . $quizz->score . '</span></th>'
             . '<td>';
-        echo ($disabled ? '' : '<button type="button" id="scoring-distribution">Répartir les points</button>');
+        echo '<button type="button" id="scoring-distribution">Répartir les points</button>';
         echo '</td></tr>';
         echo '</tbody></table>';
-        echo ($disabled ? '' : '<div><button type="submit">' . get_string('savechanges') . '</button></div>');
+        echo '<div><button type="submit">' . get_string('savechanges') . '</button></div>';
         echo "</form>\n";
     }
 
