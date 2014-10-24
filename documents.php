@@ -51,22 +51,10 @@ echo $output->header();
 
 $process = new amc\AmcProcessPrepare($quizz);
 
-$checklock = json_encode(array('a' => $quizz->id, 'actions' => 'process'));
-$button = '<form action="' . htmlspecialchars(new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id)))
-    . '" method="post" class="checklock" data-checklock="' . htmlspecialchars($checklock) . '">
-<p>
-<input type="hidden" name="action" value="%s" />
-<button type="submit">%s</button>
-</p>
-</form>';
-
 if ($quizz->isLocked()) {
     echo '<div class="informationbox notifyproblem alert alert-info">'
         . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
-        . $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'unlock')),
-                'Déverrouiller (permettre les modifications du questionnaire)', 'post'
-        )
+        . HtmlHelper::buttonWithAjaxCheck('Déverrouiller (permettre les modifications du questionnaire)', $quizz->id, 'documents', 'unlock', 'unlock')
         . "</div>\n";
 
     echo $OUTPUT->heading("Fichiers PDF précédemment créés", 3);
@@ -99,7 +87,7 @@ EOL;
             </div>
             <div>
             <?php
-                printf($button, 'prepare', 'Actualiser les documents');
+                echo HtmlHelper::buttonWithAjaxCheck('Actualiser les documents', $quizz->id, 'documents', 'prepare', '');
                 echo $OUTPUT->single_button(
                     new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'randomize')),
                     'Mélanger questions et réponses', 'post'
@@ -114,7 +102,7 @@ EOL;
                 <button type="button" onclick="asyncReloadComponents();">Actualiser les documents</button>
         <?php
         }
-        printf($button, 'lock', 'Préparer les documents à imprimer et verrouiller le questionnaire');
+        echo HtmlHelper::buttonWithAjaxCheck('Préparer les documents à imprimer et verrouiller le questionnaire', $quizz->id, 'documents', 'lock', '')
         ?>
             </div>
         </div>

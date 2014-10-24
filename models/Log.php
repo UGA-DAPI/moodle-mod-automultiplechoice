@@ -9,6 +9,8 @@
 
 namespace mod\automultiplechoice;
 
+require_once __DIR__ . '/Quizz.php';
+
 /**
  * Log the last action for each activity instance.
  *
@@ -85,7 +87,7 @@ class Log {
     }
 
     /**
-     * @param string|array $actions Array of values among "amc", "pdf", "scoring", "upload".
+     * @param string|array $actions Array of values among "process", "pdf", "grading", "upload", "unlock".
      * @return array
      * @throws Exception
      */
@@ -140,6 +142,11 @@ class Log {
                         $messages[] = "La dernière notation est plus récente que les copies annotées. Re-générer les copies corrigées ?";
                     }
                     break;
+                case 'unlock':
+                    if (Quizz::findById($this->instanceId)->hasScans()) {
+                        $messages[] = "Des copies scannées ont déjà été déposées. En cas de modification du QCM, les copies scannées ne seront plus valables.";
+                    }
+                    break;
                 default:
                     throw new \Exception("Unknown parameter '$action'.");
             }
@@ -153,7 +160,7 @@ class Log {
      * @throws \Exception
      */
     private function isValidAction($action) {
-        $valid = array('process', 'pdf', 'scoringsystem', 'upload', 'grading', 'correction', 'lock');
+        $valid = array('process', 'pdf', 'scoringsystem', 'upload', 'grading', 'correction', 'lock', 'unlock');
         if (!in_array($action, $valid)) {
             throw new \Exception("L'action $action n'est pas valide.");
         }

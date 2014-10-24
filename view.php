@@ -86,10 +86,7 @@ if ($quizz->isLocked()) {
     echo '<div class="informationbox notifyproblem alert alert-info">'
         . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
         . " Vous pouvez accéder aux documents via l'onglet <em>Sujets</em>."
-        . $OUTPUT->single_button(
-            new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'unlock')),
-            'Déverrouiller (permettre les modifications du questionnaire)', 'post'
-        ),
+        . HtmlHelper::buttonWithAjaxCheck('Déverrouiller (permettre les modifications du questionnaire)', $quizz->id, 'documents', 'unlock', 'unlock'),
         "</div>\n";
 }
 
@@ -108,10 +105,7 @@ if ($quizz->isLocked()) {
     echo $process->getHtmlZipLink();
     echo $process->getHtmlPdfLinks();
     echo '<div>'
-        . $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'unlock' => 1)),
-                'Déverrouiller (permettre les modifications du questionnaire)', 'post'
-        )
+        . HtmlHelper::buttonWithAjaxCheck('Déverrouiller (permettre les modifications du questionnaire)', $quizz->id, 'documents', 'unlock', 'unlock')
         . '</div>';
 } else {
     if ( $quizz->hasDocuments() ) {

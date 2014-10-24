@@ -118,7 +118,7 @@ if ($scansStats) {
         </p>
         <div>
             <input type="hidden" name="action" value="deleteUploads" />
-            <button type="submit">Effacer les copies déposées</button>
+            <button type="submit" onclick="return confirm('Supprimer définitivement les copies déposées sur le serveur ?');">Effacer les copies déposées</button>
         </div>
     </form>
     <?php

@@ -75,8 +75,8 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    printf($button, 'grade', 'Relancer la correction');
-    printf($button, 'anotate', 'Regénérer les copies corrigées');
+    echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
+    echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'grading', 'anotate', 'process');
     echo "</div>";
 }
 
@@ -85,7 +85,7 @@ echo $OUTPUT->heading("Bilan des notes")
 echo "<p>
         Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
     </p>";
-printf($button, 'grade', 'Relancer la correction');
+echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
 ?>
 
 <?php
@@ -99,7 +99,7 @@ if ($process->hasAnotatedFiles()) {
         . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
     echo "<p><b>" . $process->countIndividualAnotations() . "</b> copies individuelles annotées (pdf) disponibles.</p>";
 
-    printf($button, 'anotate', 'Mettre à jour les copies corrigées (annotées)');
+    echo HtmlHelper::buttonWithAjaxCheck('Mettre à jour les copies corrigées (annotées)', $quizz->id, 'grading', 'anotate', 'process');
 
     echo "<p>Permettre l'accès de chaque étudiant</p>\n";
     echo '<form action="?a=' . $quizz->id .'" method="post">' . "\n";
@@ -122,7 +122,7 @@ if ($process->hasAnotatedFiles()) {
         'post'
     );
 } else {
-    printf($button, 'anotate', 'Générer les copies corrigées (annotées)');
+    echo HtmlHelper::buttonWithAjaxCheck('Générer les copies corrigées (annotées)', $quizz->id, 'grading', 'anotate', 'process');
 }
 
 echo $output->footer();
