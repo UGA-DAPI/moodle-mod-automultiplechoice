@@ -11,6 +11,28 @@
  * @author François Gannaz <francois.gannaz@silecs.info>
  */
 class HtmlHelper {
+    /**
+     *
+     * @param string $buttonText
+     * @param integer $quizzid
+     * @param string $targetpage
+     * @param string $action
+     * @param string $checks (opt)
+     * @return string HTML
+     */
+    public static function buttonWithAjaxCheck($buttonText, $quizzid, $targetpage, $action, $checks = "") {
+        $checklock = json_encode(array('a' => $quizzid, 'actions' => $checks));
+        $button = '<form action="' . htmlspecialchars(new moodle_url("/mod/automultiplechoice/$targetpage.php", array('a' => $quizzid)))
+            . '" method="post" '
+            . ($checks ? 'class="checklock" data-checklock="' . htmlspecialchars($checklock) . '">' : '>') . '
+        <p>
+            <input type="hidden" name="action" value="%s" />
+            <button type="submit">%s</button>
+        </p>
+        </form>';
+        return sprintf($button, htmlspecialchars($action), $buttonText);
+    }
+
     public static function printFormFullQuestions(\mod\automultiplechoice\Quizz $quizz) {
         $scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
         $select = mod\automultiplechoice\ScoringSystem::read()->toHtmlSelect('amc[scoringset]', $quizz->amcparams->scoringset);
