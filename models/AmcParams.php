@@ -13,6 +13,8 @@ class AmcParams
     const DISPLAY_POINTS_NO = 0;
     const DISPLAY_POINTS_BEGIN = 1;
     const DISPLAY_POINTS_END = 2;
+    const RAND_MINI = 1000;
+    const RAND_MAXI = 100000;
 
     /** @var integer Display the number of points for each question */
     public $displaypoints;
@@ -30,6 +32,9 @@ class AmcParams
 
     /** @var boolean Shuffle answers  */
     public $shufflea;
+
+    /** @var integer random seed for AMC*/
+    public $randomseed;
 
     /** @var integer 0=auto */
     public $questionsColumns = 1;
@@ -100,6 +105,15 @@ class AmcParams
     }
 
     /**
+     * reset the random seed
+     */
+    public function randomize()
+    {
+        $this->randomseed = rand(self::RAND_MINI, self::RAND_MAXI);
+        return true;
+    }
+
+    /**
      * Update using the form data..
      *
      * @param array $input
@@ -117,6 +131,9 @@ class AmcParams
             $this->answerSheetColumns = (int) $input['answerSheetColumns'];
         } else {
             $this->answerSheetColumns = 0;
+        }
+        if ( ! isset($this->randomseed) ) {
+            $this->randomize();
         }
         $this->lstudent = (string) $input['lstudent'];
         $this->lname = (string) $input['lname'];
@@ -162,4 +179,6 @@ class AmcParams
         }
         return $new;
     }
+
+
 }

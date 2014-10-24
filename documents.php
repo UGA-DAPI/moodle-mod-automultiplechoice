@@ -36,6 +36,10 @@ if ($action === 'lock') {
 } else if ($action === 'prepare') {
     array_map('unlink', glob($quizz->getDirName() . '/sujet*'));
     redirect(new moodle_url('documents.php', array('a' => $quizz->id)));
+} else if ($action === 'randomize') {
+    $quizz->amcparams->randomize();
+    $quizz->save();
+    redirect(new moodle_url('documents.php', array('a' => $quizz->id)));
 }
 
 $PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));
@@ -88,6 +92,10 @@ EOL;
                 echo $OUTPUT->single_button(
                     new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'prepare')),
                     'Actualiser les documents', 'post'
+                );
+                echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'randomize')),
+                    'Mélanger questions et réponses', 'post'
                 );
     } else {
         ?>
