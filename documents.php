@@ -77,8 +77,7 @@ EOL;
         echo $OUTPUT->notification($warning, 'notifyproblem');
     }
 
-    $hasDocuments = $quizz->hasDocuments();
-    if ($hasDocuments) {
+    if ($quizz->hasDocuments() ) {
         ?>
         <div>
             <div>
@@ -100,11 +99,12 @@ EOL;
                 Préparation des fichiers PDF <span />
             </div>
             <div class="async-post-load">
-                <button type="button" onclick="asyncReloadComponents();">Actualiser les documents</button>
-        <?php
-        }
-        echo HtmlHelper::buttonWithAjaxCheck('Préparer les documents à imprimer et verrouiller le questionnaire', $quizz->id, 'documents', 'lock', '')
-        ?>
+            <?php
+                echo HtmlHelper::buttonWithAjaxCheck('Actualiser les documents', $quizz->id, 'documents', 'prepare', '');
+                echo HtmlHelper::buttonWithAjaxCheck('Mélanger questions et réponses', $quizz->id, 'documents', 'randomize', '');
+            }
+            echo HtmlHelper::buttonWithAjaxCheck('Préparer les documents à imprimer et verrouiller le questionnaire', $quizz->id, 'documents', 'lock', '');
+            ?>
             </div>
         </div>
 <?php
