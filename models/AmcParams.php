@@ -179,7 +179,6 @@ class AmcParams
         }
         if (empty($new->randomseed)) {
             $new->randomize();
-            $new->save();
         }
         return $new;
     }
