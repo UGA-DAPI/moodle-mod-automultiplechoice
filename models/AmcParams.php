@@ -177,6 +177,10 @@ class AmcParams
                 $new->$attr = $v;
             }
         }
+        if (empty($new->randomseed)) {
+            $new->randomize();
+            $new->save();
+        }
         return $new;
     }
 
