@@ -40,6 +40,7 @@ if ($action === 'lock') {
 } else if ($action === 'randomize') {
     $quizz->amcparams->randomize();
     $quizz->save();
+    array_map('unlink', glob($quizz->getDirName() . '/sujet*'));
     redirect(new moodle_url('documents.php', array('a' => $quizz->id)));
 }
 
