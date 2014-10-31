@@ -9,6 +9,13 @@ namespace mod\automultiplechoice;
 
 class FlashMessageManager
 {
+    private static $toMoodleClass = [
+        'success' => 'success',
+        'error' => 'problem',
+        'warning' => 'problem',
+        'info' => 'tiny',
+    ];
+
     static public function init() {
         self::clearMessages();
     }
@@ -21,14 +28,15 @@ class FlashMessageManager
     static public function displayMessages($clearAfterwards = true) {
         global $SESSION;
         global $OUTPUT;
+        /* @var $OUTPUT \renderer_base */
         if (empty($SESSION->flashmessages)) {
             return;
         }
         foreach ($SESSION->flashmessages as $status => $messages) {
             if ($messages) {
+                $class = "notify" . self::$toMoodleClass[$status];
                 foreach ($messages as $message) {
-                    $class = ($status === 'error' || $status === 'warning' ? "problem" : $status);
-                    echo $OUTPUT->notification($message, "notify" . $class . " alert alert-" . $status);
+                    echo $OUTPUT->notification($message, $class);
                 }
             }
         }
@@ -43,6 +51,7 @@ class FlashMessageManager
             'success' => array(),
             'error' => array(),
             'warning' => array(),
+            'info' => array(),
         );
     }
 }
