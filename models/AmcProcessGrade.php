@@ -122,7 +122,7 @@ class AmcProcessGrade extends AmcProcess
             '--output', $pre . self::PATH_AMC_ODS,
             '--option-out', 'stats=1',
         ));
-        $res = $this->shellExecAmc('export', $parametersCsv) && $this->shellExecAmc('export', $parametersOds, true);
+        $res = $this->shellExecAmc('export', $parametersCsv) && $this->shellExecAmc('export', $parametersOds);
         if ($res) {
             $this->log('export', 'scoring.csv');
             Log::build($this->quizz->id)->write('grading');
