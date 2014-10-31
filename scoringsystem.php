@@ -40,10 +40,13 @@ if (isset($_POST['score'])) {
     }
     if ($quizz->validate()) {
         if ($quizz->save()) {
+            amc\FlashMessageManager::addMessage('success', "Les modification du barème ont été enregistrées.");
             redirect(new moodle_url('view.php', array('a' => $quizz->id)));
         } else {
             die("Could not save into automultiplechoice");
         }
+    } else {
+        $output->displayErrors($quizz->errors());
     }
 }
 

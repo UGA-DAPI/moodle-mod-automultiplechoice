@@ -104,4 +104,17 @@ EOL;
     public function footer() {
         return $this->output->footer();
     }
+
+    public function displayErrors($errors) {
+        echo $this->box_start('errorbox');
+        echo '<p>' . get_string('someerrorswerefound') . '</p>';
+        echo '<dl>';
+        foreach ($errors as $field => $error) {
+            $field = preg_replace('/^(.+)\[(.+)\]$/', '${1}_${2}', $field);
+            echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>\n"
+                    . "<dd>" . get_string($error, 'automultiplechoice') . "</dd>\n";
+        }
+        echo "</dl>\n";
+        echo $this->box_end();
+    }
 }
