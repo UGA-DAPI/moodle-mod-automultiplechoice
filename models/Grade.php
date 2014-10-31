@@ -14,13 +14,14 @@ require_once __DIR__ . '/Log.php';
 class Grade extends AmcProcessGrade
 {
     private $actions;
-    private $csv;
+    private $exportedFiles;
 
     public function __construct(Quizz $quizz, $formatName = 'latex') {
         parent::__construct($quizz, $formatName);
         $this->actions = new \stdClass();
         if ($this->isGraded()) {
-            $this->csv = (object) array(
+            $this->exportedFiles = (object) array(
+                'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
                 'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
                 'grades_with_names.csv' => $this->getFileUrl(AmcProcessGrade::PATH_FULL_CSV),
             );
@@ -37,7 +38,8 @@ class Grade extends AmcProcessGrade
             'export' => (boolean) $this->amcExport(),
             'csv' => (boolean) $this->writeFileWithIdentifiedStudents(),
         );
-        $this->csv = (object) array(
+        $this->exportedFiles = (object) array(
+            'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
             'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
             'grades_with_names.csv' => $this->getFileUrl(AmcProcessGrade::PATH_FULL_CSV),
         );
@@ -68,7 +70,7 @@ class Grade extends AmcProcessGrade
     public function getResults() {
         return (object) array(
             'actions' => $this->actions,
-            'csv' => $this->csv,
+            'csv' => $this->exportedFiles,
         );
     }
 
@@ -101,7 +103,7 @@ class Grade extends AmcProcessGrade
      */
     public function getHtmlCsvLinks() {
         $html = '<ul class="amc-files">';
-        foreach ((array) $this->csv as $name => $url) {
+        foreach ((array) $this->exportedFiles as $name => $url) {
             $html .= "<li>" . \html_writer::link($url, $name) . "</li>";
         }
         $html .= "</ul>\n";

@@ -16,6 +16,7 @@ require_once __DIR__ . '/AmcFormat/Api.php';
 class AmcProcessGrade extends AmcProcess
 {
     const PATH_AMC_CSV = '/exports/grades.csv';
+    const PATH_AMC_ODS = '/exports/grades.ods';
     const PATH_FULL_CSV = '/exports/grades_with_names.csv';
     const PATH_STUDENTLIST_CSV = '/exports/student_list.csv';
     const CSV_SEPARATOR = ';';
@@ -99,26 +100,32 @@ class AmcProcessGrade extends AmcProcess
     protected function amcExport() {
         $pre = $this->workdir;
         $parameters = array(
-            '--module', 'CSV',
             '--data', $pre . '/data',
             '--useall', '0',
             '--sort', 'n',
             '--no-rtl',
-            '--output', $pre . self::PATH_AMC_CSV,
             '--option-out', 'encodage=UTF-8',
             '--option-out', 'columns=student.copy,student.key,student.name',
-            '--option-out', 'decimal=,',
-            '--option-out', 'ticked=',
-            '--option-out', 'separateur=' . self::CSV_SEPARATOR,
             '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
             '--noms-encodage', 'UTF-8',
-            '--csv-build-name', '(nom|surname) (prenom|name)',
         );
-        $res = $this->shellExecAmc('export', $parameters);
+        $parametersCsv = array_merge($parameters + array(
+            '--module', 'CSV',
+            '--output', $pre . self::PATH_AMC_CSV,
+            '--csv-build-name', '(nom|surname) (prenom|name)',
+            '--option-out', 'separateur=' . self::CSV_SEPARATOR,
+            '--option-out', 'decimal=,',
+            '--option-out', 'ticked=',
+        ));
+        $parametersOds = array_merge($parameters, array(
+            '--module', 'ods',
+            '--output', $pre . self::PATH_AMC_ODS,
+            '--option-out', 'stats=1',
+        ));
+        $res = $this->shellExecAmc('export', $parametersCsv) && $this->shellExecAmc('export', $parametersOds, true);
         if ($res) {
             $this->log('export', 'scoring.csv');
-            $amclog = Log::build($this->quizz->id);
-            $amclog->write('grading');
+            Log::build($this->quizz->id)->write('grading');
         }
         return $res;
     }
