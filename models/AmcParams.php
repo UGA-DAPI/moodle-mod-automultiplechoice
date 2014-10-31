@@ -121,33 +121,32 @@ class AmcParams
      */
     public function readFromForm($input)
     {
-        $this->displaypoints = (int) $input['displaypoints'];
-        $this->copies = (int) $input['copies'];
-        $this->questionsColumns = (int) $input['questionsColumns'];
-        $this->shuffleq = (bool) $input['shuffleq'];
-        $this->shufflea = (bool) $input['shufflea'];
-        $this->separatesheet = (bool) $input['separatesheet'];
-        if (isset($input['answerSheetColumns'])) {
-            $this->answerSheetColumns = (int) $input['answerSheetColumns'];
-        } else {
-            $this->answerSheetColumns = 0;
+        foreach (['displaypoints', 'copies', 'questionsColumns', 'answerSheetColumns', 'minscore'] as $col) {
+            if (isset($input[$col])) {
+                $this->$col = (int) $input[$col];
+            }
         }
-        if ( ! isset($this->randomseed) ) {
+        foreach (['shuffleq', 'shufflea', 'separatesheet', 'markmulti'] as $col) {
+            if (isset($input[$col])) {
+                $this->$col = (bool) $input[$col];
+            }
+        }
+        foreach (['lstudent', 'lstudent', 'separatesheet', 'scoringset'] as $col) {
+            if (isset($input[$col])) {
+                $this->$col = (string) $input[$col];
+            }
+        }
+        if (isset($input['instructionsprefix'])) {
+            if (is_array($input['instructionsprefix'])) {
+                $this->instructionsprefix = (string) $input['instructionsprefix']['text'];
+                $this->instructionsprefixformat = (int) $input['instructionsprefix']['format'];
+            } else {
+                $this->instructionsprefix = (string) $input['instructionsprefix'];
+                $this->instructionsprefixformat = (int) $input['instructionsprefixformat'];
+            }
+        }
+        if (!isset($this->randomseed) ) {
             $this->randomize();
-        }
-        $this->lstudent = (string) $input['lstudent'];
-        $this->lname = (string) $input['lname'];
-        $this->markmulti = (bool) $input['markmulti'];
-        if (is_array($input['instructionsprefix'])) {
-            $this->instructionsprefix = (string) $input['instructionsprefix']['text'];
-            $this->instructionsprefixformat = (int) $input['instructionsprefix']['format'];
-        } else {
-            $this->instructionsprefix = (string) $input['instructionsprefix'];
-            $this->instructionsprefixformat = (int) $input['instructionsprefixformat'];
-        }
-        if (isset($input['scoringset'])) {
-            $this->scoringset = (string) $input['scoringset'];
-            $this->minscore = (int) $input['minscore'];
         }
         return $this;
     }
@@ -182,6 +181,4 @@ class AmcParams
         }
         return $new;
     }
-
-
 }

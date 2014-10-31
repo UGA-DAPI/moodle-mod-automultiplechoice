@@ -27,9 +27,9 @@ $output = $controller->getRenderer('scoringsystem');
 if (!count($quizz->questions)) {
     redirect(new moodle_url('questions.php', array('a' => $quizz->id)));
 }
-if (!$quizz->isLocked() && isset($_POST['score'])) {
+if (isset($_POST['score'])) {
     $quizz->score = (int) $_POST['score'];
-    $quizz->amcparams->scoringset = (int) $_POST['amc']['scoringset'];
+    $quizz->amcparams->readFromForm($_POST['amc']);
     $pos = 0;
     foreach ($quizz->questions as $q) {
         if ($q->getType() === 'question') {
