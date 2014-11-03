@@ -34,60 +34,8 @@ class HtmlHelper {
     }
 
     public static function printFormFullQuestions(\mod\automultiplechoice\Quizz $quizz) {
-        $scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
-        $select = mod\automultiplechoice\ScoringSystem::read()->toHtmlSelect('amc[scoringset]', $quizz->amcparams->scoringset);
-        echo '<form action="" method="post" name="qselect">
-        <input name="a" value="' . $quizz->id . '" type="hidden" />';
-        echo '<input name="qnumber" value="' . $quizz->qnumber . '" type="hidden" id="quizz-qnumber"/>';
-
-        echo '<table class="flexible generaltable quizz-summary" id="params-quizz"><tbody>';
-        echo '<tr><th>' . get_string('score', 'automultiplechoice') . '</th>'
-            . '<td><input type="text" id="expected-total-score" class="qscore" name="score" value='
-            . $quizz->score . ' /></td></tr>';
-        echo '<tr><th>' . get_string('scoringset', 'automultiplechoice') . '</th>';
-        echo '<td>' . $select . '<div id="scoringset_desc"></div></td></tr>';
-        echo '</tbody></table>';
-        echo '<table class="flexible boxaligncenter generaltable" id="questions-selected">';
-        echo '<thead><tr><th>#</th>'
-                . '<th>' . get_string('qscore', 'automultiplechoice')
-                . '</th><th>' . get_string('qtitle', 'automultiplechoice')
-                . '<div><button type="button" id="toggle-answers">Afficher/masquer les réponses</button></div>'
-                . '</th></tr></thead>';
-        echo '<tbody>';
-
-        $k = 1;
-        $nbline = 1;
-        foreach ($quizz->questions as $q) {
-            echo '<tr>';
-            if ($q->getType() === 'section') {
-                echo '<td colspan="3">' . htmlspecialchars($q->name)
-                    . '<div class="question-answers">' . format_text($q->description, FORMAT_HTML) . '</div>'
-                    . '<input name="q[score][]" value="" type="hidden" />';
-            } else {
-                echo '<td>' . $k . '</td>
-                    <td class="q-score">
-                        <input name="q[score][]" type="text" class="qscore" value="' . $q->score . '" />
-                    </td>
-                    <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
-                        . HtmlHelper::listAnswers($q);
-                $k++;
-            }
-            echo "</td>\n</tr>\n";
-            $nbline++;
-        }
-        if ($nbline%2) {
-            echo '<tr></tr>';
-        }
-        echo '<tr>'
-            . '<td></td>'
-            . '<th><span id="computed-total-score">' . $quizz->score . '</span> / '
-            . '<span id="total-score">' . $quizz->score . '</span></th>'
-            . '<td>';
-        echo '<button type="button" id="scoring-distribution">Répartir les points</button>';
-        echo '</td></tr>';
-        echo '</tbody></table>';
-        echo '<div><button type="submit">' . get_string('savechanges') . '</button></div>';
-        echo "</form>\n";
+        //$scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
+        require __DIR__ . '/_scoring_form.php';
     }
 
     public static function printTableQuizz(\mod\automultiplechoice\Quizz $quizz, $rows = array('instructions', 'description', 'comment', 'qnumber', 'score', 'scoringset'))
