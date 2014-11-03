@@ -78,11 +78,11 @@ class AmcProcessGrade extends AmcProcess
             '--progression-id', 'notation',
             '--progression', '1',
             '--seuil', '0.5', // black ratio threshold
-            '--grain', '0.25',
-            '--arrondi', 'inf',
+            '--grain', $this->quizz->amcparams->gradegranularity,
+            '--arrondi', $this->quizz->amcparams->graderounding,
             '--notemin', $this->quizz->amcparams->minscore,
-            '--notemax', $this->quizz->score,
-            '--plafond',
+            '--notemax', $this->quizz->amcparams->grademax,
+            //'--plafond', // removed as grades ares scaled from min to max
             '--postcorrect-student', '', //FIXME inutile ?
             '--postcorrect-copy', '',    //FIXME inutile ?
             );
