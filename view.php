@@ -97,7 +97,7 @@ echo $OUTPUT->heading("2. " . get_string('questions', 'question'), 3);
 HtmlHelper::printTableQuizz($quizz, array('qnumber'));
 
 echo $OUTPUT->heading("3. " . get_string('scoringsystem', 'automultiplechoice'), 3);
-HtmlHelper::printTableQuizz($quizz, array('score', 'scoringset'));
+HtmlHelper::printTableQuizz($quizz, array('score', 'grademax', 'scoringset'));
 
 echo $OUTPUT->heading("4. " . get_string('documents', 'automultiplechoice'), 3);
 if ($quizz->isLocked()) {

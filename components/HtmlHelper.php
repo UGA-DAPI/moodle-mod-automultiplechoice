@@ -79,7 +79,13 @@ class HtmlHelper {
                             . '</td></tr>';
                     break;
                 default:
-                    throw new Exception("Coding error, unknown row $row.");
+                    if (property_exists($quizz, $row)) {
+                        echo $tr . get_string($row, 'automultiplechoice') . '</th><td>' . $quizz->$row. '</td></tr>';
+                    } else if (property_exists($quizz->amcparams, $row)) {
+                        echo $tr . get_string('amc_' . $row, 'automultiplechoice') . '</th><td>' . $quizz->amcparams->$row. '</td></tr>';
+                    } else {
+                        throw new Exception("Coding error, unknown row $row.");
+                    }
             }
         }
         echo '</tbody></table>';
