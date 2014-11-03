@@ -66,4 +66,14 @@ $(document).ready(function() {
 		$('#computed-total-score').html(total)
 			.parent().toggleClass("score-mismatch", total !== totalScore);
 	});
+
+	// if grademax is empty at page load, copy from totalpoints.
+	if ($('#amc-grademax').attr('value') === '') {
+		$("#expected-total-score").on("keyup", function() {
+			totalpoints = $("#expected-total-score").val().toString();
+			if (totalpoints.startsWith($('#amc-grademax').val())) {
+				$('#amc-grademax').val(totalpoints);
+			}
+		});
+	}
 } );
