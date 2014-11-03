@@ -16,13 +16,19 @@ class AmcParams
     const RAND_MINI = 1000;
     const RAND_MAXI = 100000;
 
-    /** @var integer Display the number of points for each question */
-    public $displaypoints;
+    public static $scoreRcoundingValues = [
+        'n' => "Au plus proche",
+        'i' => "Inférieur",
+        's' => "Supérieur",
+    ];
 
     /**
      * @var array Keys are field names in the form.
      */
     public $errors = array();
+
+    /** @var integer Display the number of points for each question */
+    public $displaypoints;
 
     /** @var integer Number of copies  */
     public $copies;
@@ -43,7 +49,7 @@ class AmcParams
     public $separatesheet;
 
     /** @var integer 0=auto */
-    public $answerSheetColumns;
+    public $answerSheetColumns = 0;
 
     /** @var string Instructions for the student number */
     public $lstudent;
@@ -62,6 +68,15 @@ class AmcParams
 
     /** @var integer */
     public $minscore = 0;
+
+    /** @var integer */
+    public $grademax = 0;
+
+    /** @var float */
+    public $gradegranularity = 0.25;
+
+    /** @var string within AmcParams::$scoreRoundingValues */
+    public $graderounding = 'n'; // nearest
 
     /**
      * @var string
@@ -121,7 +136,7 @@ class AmcParams
      */
     public function readFromForm($input)
     {
-        foreach (['displaypoints', 'copies', 'questionsColumns', 'answerSheetColumns', 'minscore'] as $col) {
+        foreach (['displaypoints', 'copies', 'questionsColumns', 'answerSheetColumns', 'minscore', 'grademax'] as $col) {
             if (isset($input[$col])) {
                 $this->$col = (int) $input[$col];
             }
@@ -135,6 +150,14 @@ class AmcParams
             if (isset($input[$col])) {
                 $this->$col = (string) $input[$col];
             }
+        }
+        foreach (['gradegranularity'] as $col) {
+            if (isset($input[$col])) {
+                $this->$col = (double) $input[$col];
+            }
+        }
+        if (isset($input['graderounding']) && isset(self::$scoreRcoundingValues[$input['graderounding']])) {
+            $this->graderounding = $input['graderounding'];
         }
         if (isset($input['instructionsprefix'])) {
             if (is_array($input['instructionsprefix'])) {

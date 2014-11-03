@@ -278,6 +278,9 @@ class Quizz
         }
         if (isset($record->amcparams) && is_string($record->amcparams)) {
             $this->amcparams = AmcParams::fromJson($record->amcparams);
+            if ($this->amcparams->grademax == 0) {
+                $this->amcparams->grademax = $this->score;
+            }
         }
         if (isset($record->questions) && is_string($record->questions)) {
             $this->questions = QuestionList::fromJson($record->questions);
