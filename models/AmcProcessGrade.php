@@ -109,7 +109,7 @@ class AmcProcessGrade extends AmcProcess
             '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
             '--noms-encodage', 'UTF-8',
         );
-        $parametersCsv = array_merge($parameters + array(
+        $parametersCsv = array_merge($parameters, array(
             '--module', 'CSV',
             '--output', $pre . self::PATH_AMC_CSV,
             '--csv-build-name', '(nom|surname) (prenom|name)',
