@@ -49,7 +49,7 @@ class Controller
             $this->course = $DB->get_record('course', array('id' => $this->quizz->course), '*', MUST_EXIST);
             $this->cm = \get_coursemodule_from_instance('automultiplechoice', $this->quizz->id, $this->course->id, false, MUST_EXIST);
         } else {
-            error('You must specify a course_module ID or an instance ID');
+            print_error('You must specify a course_module ID or an instance ID');
         }
     }
 
