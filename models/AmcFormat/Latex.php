@@ -293,9 +293,16 @@ EOL;
     protected function htmlToLatex($html) {
         $converter = new \HtmlToTex();
         $converter->setTmpDir($this->tmpDir);
-        return $converter->loadFragment(
-                str_replace(['<tex>', '</tex>', '[[', ']]'], ['<code class="tex">', '</code>', '<code class="tex">', '</code>'], $html)
-            )->toTex();
+        if (strpos($html, '<tex') !== false) {
+            $filtered = preg_replace('#<tex\b(.*)>(.+?)</tex>#', '<code class="tex"\1>\(\2\)</code>', $html);
+        } else if (strpos($html, '[[') !== false) {
+            $filtered = str_replace(['[[', ']]'], ['<code class="tex">', '</code>'], $html);
+        } else if (strpos($html, '$$') !== false) {
+            $filtered = preg_replace('/\$\$(.+?)\$\$/', '<code class="tex">\(\1\)</code>', $html);
+        } else {
+            $filtered = $html;
+        }
+        return $converter->loadFragment($filtered)->toTex();
     }
 
     static private $questionCounter = 0;
