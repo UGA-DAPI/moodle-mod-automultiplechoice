@@ -54,6 +54,9 @@ if (!$process->isGraded() || $action === 'grade') {
     redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
 }
 
+// Has side effects, so must be called early.
+$stats = $process->getHtmlStats();
+
 // Output starts here
 echo $output->header();
 
@@ -79,28 +82,34 @@ if ($warnings) {
     echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'grading', 'anotate', 'process');
     echo "</div>";
 }
-
-echo $OUTPUT->heading("Bilan des notes")
-    . $process->getHtmlStats();
-echo "<p>
-        Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
-    </p>";
-echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
 ?>
 
 <?php
-echo $OUTPUT->heading("Tableaux des notes")
+echo $OUTPUT->box_start('informationbox well');
+echo $OUTPUT->heading("Notes", 2)
+    . $OUTPUT->heading("Fichiers tableaux des notes", 3)
     . "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>"
-    . $process->getHtmlCsvLinks();
+    . $process->getHtmlCsvLinks()
+    . $OUTPUT->heading("Statistiques", 3)
+    . $stats
+    . "<p>
+        Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
+    </p>";
+;
+echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
+echo $OUTPUT->box_end();
 
 if ($process->hasAnotatedFiles()) {
     $url = $process->getFileUrl('cr/corrections/pdf/' . $process->normalizeFilename('corrections'));
-    echo $OUTPUT->heading("Copies corrigées")
+    echo $OUTPUT->box_start('informationbox well');
+    echo $OUTPUT->heading("Copies corrigées", 2)
+        . $OUTPUT->heading("Fichiers", 3)
         . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
     echo "<p><b>" . $process->countIndividualAnotations() . "</b> copies individuelles annotées (pdf) disponibles.</p>";
 
     echo HtmlHelper::buttonWithAjaxCheck('Mettre à jour les copies corrigées (annotées)', $quizz->id, 'grading', 'anotate', 'process');
 
+    echo $OUTPUT->heading("Accès aux copies", 3);
     echo "<p>Permettre l'accès de chaque étudiant</p>\n";
     echo '<form action="?a=' . $quizz->id .'" method="post">' . "\n";
     echo '<ul>';
@@ -113,6 +122,7 @@ if ($process->hasAnotatedFiles()) {
     echo '<button type="submit">Permettre ces accès</button>';
     echo '</form>';
 
+    echo $OUTPUT->heading("Envoi des copies", 3);
     echo $OUTPUT->single_button(
         new moodle_url(
             '/mod/automultiplechoice/grading.php',
@@ -121,6 +131,7 @@ if ($process->hasAnotatedFiles()) {
         'Envoyer la correction par message Moodle à chaque étudiant',
         'post'
     );
+    echo $OUTPUT->box_end();
 } else {
     echo HtmlHelper::buttonWithAjaxCheck('Générer les copies corrigées (annotées)', $quizz->id, 'grading', 'anotate', 'process');
 }
