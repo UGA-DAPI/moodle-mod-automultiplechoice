@@ -99,6 +99,8 @@ class AmcProcessGrade extends AmcProcess
      */
     protected function amcExport() {
         $pre = $this->workdir;
+        $oldcwd = getcwd();
+        chdir($pre . '/exports');
         $parameters = array(
             '--data', $pre . '/data',
             '--useall', '0',
@@ -123,6 +125,7 @@ class AmcProcessGrade extends AmcProcess
             '--option-out', 'stats=1',
         ));
         $res = $this->shellExecAmc('export', $parametersCsv) && $this->shellExecAmc('export', $parametersOds);
+        chdir($oldcwd);
         if ($res) {
             $this->log('export', 'scoring.csv');
             Log::build($this->quizz->id)->write('grading');
