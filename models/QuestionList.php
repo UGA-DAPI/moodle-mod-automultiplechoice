@@ -37,6 +37,12 @@ class QuestionList implements \Countable, \ArrayAccess, \Iterator
      */
     public $errors = array();
 
+    /**
+     * @todo Use this!
+     * @var array
+     */
+    public $warnings = array();
+
     private $position = 0;
 
     /**
@@ -57,9 +63,14 @@ class QuestionList implements \Countable, \ArrayAccess, \Iterator
             $scoringSet = null;
         }
         $records = $this->getRawRecords();
-        foreach ($this->questions as $q) {
+        foreach ($this->questions as $k => $q) {
             if ($q->getType() === 'question') {
-                $q->updateFromRecord($records[$q->id], $scoringSet);
+                if (isset($records[$q->id])) {
+                    $q->updateFromRecord($records[$q->id], $scoringSet);
+                } else {
+                    $this->warnings[] = ("La question ID={$q->id} est introuvable, elle a été retirée.");
+                    unset($this->questions[$k]);
+                }
             }
         }
         return $this;
