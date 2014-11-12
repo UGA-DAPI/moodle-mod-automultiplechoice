@@ -51,7 +51,7 @@ Bonjour, \textbf{moi} !
             ],
             [
                 "<table><thead><tr><th>A</th><th>B</th></tr></thead>\n<tbody><tr><td>a</td><td>b</td></tr></tbody></table>",
-                '\begin{tabular}{|c|c|}\hline \textbf{A} & \textbf{B} \\\\ \hline a & b \\\\ \hline\end{tabular}',
+                '\begin{tabular}{|c|c|}\hline {\bf{}A} & {\bf{}B} \\\\ \hline a & b \\\\ \hline\end{tabular}',
             ],
             [
                 '<img src="http://home.gna.org/auto-qcm/logo.png" />',
@@ -67,7 +67,15 @@ Bonjour, \textbf{moi} !
             ],
             [
                 "<table><thead><tr><th>A</th><th>B</th></tr></thead>\n<tbody><tr><td>a</td><td><table><tr><td>x</td><td>y</td></tr></table></td></tr></tbody></table>",
-                '\begin{tabular}{|c|c|}\hline \textbf{A} & \textbf{B} \\\\ \hline a & \begin{tabular}{|c|c|}\hline x & y \\\\ \hline\end{tabular} \\\\ \hline\end{tabular}',
+                '\begin{tabular}{|c|c|}\hline {\bf{}A} & {\bf{}B} \\\\ \hline a & \begin{tabular}{|c|c|}\hline x & y \\\\ \hline\end{tabular} \\\\ \hline\end{tabular}',
+            ],
+            [
+                "<strong>L1<br />L2<p></p>L3</strong>",
+                '{\bf{}L1\newline{}L2
+
+
+
+L3}',
             ],
         ];
     }

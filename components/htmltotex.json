@@ -72,8 +72,8 @@
 		"tex": "subparagraph*"
 	},
 	"h6": {
-		"type": "macro",
-		"tex": "textbf"
+		"type": "raw",
+		"tex": ["{\\bf{}", "}"]
 	},
 	"head": {
 		"type": "hide"
@@ -115,8 +115,8 @@
 		"tex": ["{}", "{}"]
 	},
 	"strong": {
-		"type": "macro",
-		"tex": "textbf"
+		"type": "raw",
+		"tex": ["{\\bf{}", "}"]
 	},
 	"table": {
 		"type": "custom"
@@ -131,8 +131,8 @@
 		"type": "skip"
 	},
 	"th": {
-		"type": "macro",
-		"tex": "textbf"
+		"type": "raw",
+		"tex": ["{\\bf{}", "}"]
 	},
 	"tr": {
 		"type": "raw",
