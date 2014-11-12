@@ -46,7 +46,7 @@ if (isset($_POST['score'])) {
             die("Could not save into automultiplechoice");
         }
     } else {
-        $output->displayErrors($quizz->errors());
+        $output->displayErrors($quizz->errors);
     }
 }
 
