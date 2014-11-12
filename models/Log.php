@@ -109,7 +109,7 @@ class Log {
                 case 'pdf':
                     $pdf = $this->read('pdf');
                     if (!$pdf) {
-                        return;
+                        return [];
                     }
                     if ($this->read('scoringsystem') > $pdf) {
                         $messages[] = "Le choix du barème a été modifié depuis la dernière préparation des sujets PDF.";
@@ -118,7 +118,7 @@ class Log {
                 case 'upload':
                     $upload = $this->read('upload');
                     if (!$upload) {
-                        return;
+                        return [];
                     }
                     if ($this->read('pdf') > $upload) {
                         $messages[] = "Le PDF du QCM a été modifié depuis le dernier dépôt des copies.";
@@ -130,7 +130,7 @@ class Log {
                 case 'grading':
                     $grading = $this->read('grading');
                     if (!$grading) {
-                        return;
+                        return [];
                     }
                     if ($this->read('upload') > $grading) {
                         $messages[] = "Des copies d'étudiant ont été déposées depuis la dernière notation. Relancer la correction ?";
