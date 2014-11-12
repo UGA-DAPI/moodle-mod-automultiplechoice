@@ -9,6 +9,7 @@
 namespace mod\automultiplechoice;
 
 require_once __DIR__ . '/Log.php';
+require_once __DIR__ . '/AmcLogfile.php';
 
 class AmcProcess
 {
@@ -27,6 +28,8 @@ class AmcProcess
      * @var array
      */
     protected $errors = array();
+
+    private $logger;
 
     /**
      * Constructor
@@ -48,6 +51,16 @@ class AmcProcess
         /**
          * @todo error if codelength == 0
          */
+    }
+
+    /**
+     * @return AmcLogfile
+     */
+    public function getLogger() {
+        if (!isset($this->logger)) {
+            $this->logger = new AmcLogfile($this->workdir);
+        }
+        return $this->logger;
     }
 
     /**
@@ -226,24 +239,37 @@ class AmcProcess
      * Displays a block containing the shell output
      *
      * @param string $cmd
-     * @param integer $returnVal shell return value
      * @param array $lines output lines to be displayed
+     * @param integer $returnVal shell return value
+     * @return string
      */
-    protected function shellOutput($cmd, $returnVal, $lines, $debuglevel) {
-        if (get_config('core', 'debugdisplay') == 0) {
-            return false;
-        }
-        $html = '<pre style="margin:2px; padding:2px; border:1px solid grey;">' . " \n";
-        $html .= $cmd . " \n---------OUTPUT---------\n";
+    protected function formatShellOutput($cmd, $lines, $returnVal) {
+        $txt = $cmd . " \n---------OUTPUT---------\n";
         $i=0;
         foreach ($lines as $line) {
             $i++;
-            $html .= sprintf("%03d.", $i) . " " . $line . "\n";
+            $txt .= sprintf("%03d.", $i) . " " . $line . "\n";
         }
-        $html .= "------RETURN VALUE------\n<b>" . $returnVal. "</b>\n";
-        $html .= "-------CALL TRACE-------\n";
+        $txt .= "------RETURN VALUE------\n" . $returnVal. "\n";
+        return $txt;
+    }
+    /**
+     * Displays a block containing the shell output
+     *
+     * @param string $cmd
+     * @param array $lines output lines to be displayed
+     * @param integer $returnVal shell return value
+     * @param int $debuglevel
+     */
+    protected function displayShellOutput($cmd, $lines, $returnVal, $debuglevel) {
+        if (get_config('core', 'debugdisplay') == 0) {
+            return false;
+        }
+        $html = '<pre style="margin:2px; padding:2px; border:1px solid grey;">' . " \n"
+            . $this->formatShellOutput($cmd, $returnVal, $lines)
+            . "</pre>"
+            . "-------CALL TRACE-------\n";
         debugging($html, $debuglevel);
-        echo "</pre>";
     }
 
     /**
@@ -259,16 +285,18 @@ class AmcProcess
         $lines = array();
         $returnVal = 0;
         exec($shellCmd, $lines, $returnVal);
-            if ($output) {
-                $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_DEVELOPER);
-            }
+
+        $this->getLogger()->write($this->formatShellOutput($shellCmd, $lines, $returnVal));
+        if ($output) {
+            $this->displayShellOutput($shellCmd, $lines, $returnVal, DEBUG_DEVELOPER);
+        }
         if ($returnVal === 0) {
             return true;
         } else {
             /**
              * @todo Fill $this->errors instead of outputing HTML on the fly
              */
-            $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_NORMAL);
+            $this->displayShellOutput($shellCmd, $lines, $returnVal, DEBUG_NORMAL);
             return false;
         }
     }

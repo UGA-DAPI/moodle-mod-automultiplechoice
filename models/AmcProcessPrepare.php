@@ -53,6 +53,7 @@ class AmcProcessPrepare extends AmcProcess
         if (!$format) {
             return false;
         }
+        $this->getLogger()->clear();
 
         $pre = $this->workdir;
         $res = $this->shellExecAmc('prepare',
