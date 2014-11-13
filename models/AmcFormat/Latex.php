@@ -24,6 +24,9 @@ class Latex extends Api
 
     protected $tmpDir = '/tmp';
 
+    /** @var \mod\automultiplechoice\ScoringSet */
+    private $scoringset;
+
     /**
      * @return string
      */
@@ -53,6 +56,8 @@ class Latex extends Api
      * @return string header block of the AMC-TXT file
      */
     protected function getHeader() {
+        $this->scoringset = \mod\automultiplechoice\ScoringSystem::read()->getScoringSet($this->quizz->amcparams->scoringset);
+
         $params = $this->quizz->amcparams;
         $quizzName = $this->htmlToLatex($this->quizz->name);
         $multi = $params->markmulti ? '' : '\def\multiSymbole{}';
@@ -109,6 +114,9 @@ $shortTitles
 $multi
 \\AMCrandomseed{{$rand}}
 
+\scoringDefaultS{}
+\scoringDefaultM{}
+
 \\newenvironment{instructions}{
 }{
 \\vspace{1ex}
@@ -158,7 +166,17 @@ EOL;
                 (abs(round(10*$question->score) - 10*$question->score) < 1 ? sprintf('%.1f', $question->score)
                     : sprintf('%.2f', $question->score)));
         $pointsTxt = $points ? '(' . $points . ' pt' . ($question->score > 1 ? 's' : '') . ')' : '';
-        $questionText = ($question->scoring ? '    \\scoring{' . $question->scoring . "}\n" : '')
+        if ($question->scoring) {
+            $scoring = $question->scoring;
+        } else {
+            $scoring = $this->scoringset->findMatchingRule($question)->getExpression($question);
+        }
+        if ($scoring) {
+            $scoring .= ',b=' . $question->score;
+        } else {
+            $scoring = $question->score;
+        }
+        $questionText = ($scoring ? '    \\scoring{' . $scoring . "}\n" : '')
                 . ($dp == \mod\automultiplechoice\AmcParams::DISPLAY_POINTS_BEGIN ? $pointsTxt . ' ' : '')
                 . $this->htmlToLatex(format_text($question->questiontext, $question->questiontextformat, ['filter' => false]))
                 . ($dp == \mod\automultiplechoice\AmcParams::DISPLAY_POINTS_END ? ' ' . $pointsTxt : '');
