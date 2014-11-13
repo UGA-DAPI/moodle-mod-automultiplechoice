@@ -10,6 +10,7 @@ use \mod\automultiplechoice as amc;
 
 require_once(__DIR__ . '/locallib.php');
 require_once __DIR__ . '/models/Grade.php';
+require_once __DIR__ . '/models/AmcProcessPrepare.php';
 
 global $DB, $OUTPUT, $PAGE;
 /* @var $DB moodle_database */
@@ -32,6 +33,9 @@ $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 $process = new amc\Grade($quizz);
 if (!$process->isGraded() || $action === 'grade') {
+    $prepare = new amc\AmcProcessPrepare($quizz);
+    $prepare->saveFormat('latex');
+    unset($prepare);
     if ($process->grade()) {
         redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
     }

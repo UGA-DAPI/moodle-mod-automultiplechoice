@@ -20,7 +20,7 @@ class AmcProcessPrepare extends AmcProcess
      * @param string $formatName "txt" | "latex"
      * @return amcFormat\Api
      */
-    protected function saveFormat($formatName) {
+    public function saveFormat($formatName) {
         try {
             $format = amcFormat\buildFormat($formatName, $this->quizz);
             $format->quizz = $this->quizz;
