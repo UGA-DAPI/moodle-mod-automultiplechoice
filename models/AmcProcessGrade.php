@@ -53,7 +53,7 @@ class AmcProcessGrade extends AmcProcess
             '--n-copies', (string) $this->quizz->amcparams->copies,
             '--mode', 'b',
             '--data', $pre . '/data',
-            '--filtered-source', $pre . '/prepare-source_filtered.tex', // the LaTeX will be written in this file
+            '--filtered-source', $pre . '/prepare-source_filtered.tex', // for AMC-txt, the LaTeX will be written in this file
             '--progression-id', 'bareme',
             '--progression', '1',
             '--with', 'xelatex',
