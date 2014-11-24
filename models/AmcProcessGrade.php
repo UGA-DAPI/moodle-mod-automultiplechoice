@@ -99,6 +99,12 @@ class AmcProcessGrade extends AmcProcess
      */
     protected function amcExport() {
         $pre = $this->workdir;
+        if (!is_writable($pre . '/exports')) {
+            $this->errors[] = "Le répertoire /exports n'est pas accessible en écriture. Contactez l'administrateur.";
+        }
+        $oldcwd = getcwd();
+        chdir($pre . '/exports');
+
         $csvfile = $pre . self::PATH_AMC_CSV;
         $odsfile = $pre . self::PATH_AMC_ODS;
         if (file_exists($csvfile)) {
@@ -114,8 +120,6 @@ class AmcProcessGrade extends AmcProcess
             }
         }
 
-        $oldcwd = getcwd();
-        chdir($pre . '/exports');
         $parameters = array(
             '--data', $pre . '/data',
             '--useall', '0',
