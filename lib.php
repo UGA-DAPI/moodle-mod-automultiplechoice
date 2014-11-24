@@ -409,7 +409,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
      } elseif (preg_match('/^corrections-.*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
-    } elseif (preg_match('/\.csv$/', $filename)) {
+    } elseif (preg_match('/\.(csv|ods)$/', $filename)) {
         send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
         return true;
     }
