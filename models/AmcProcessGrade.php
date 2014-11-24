@@ -99,6 +99,21 @@ class AmcProcessGrade extends AmcProcess
      */
     protected function amcExport() {
         $pre = $this->workdir;
+        $csvfile = $pre . self::PATH_AMC_CSV;
+        $odsfile = $pre . self::PATH_AMC_ODS;
+        if (file_exists($csvfile)) {
+            if (!unlink($csvfile)) {
+                $this->errors[] = "Le fichier CSV n'a pas pu être recréé. Contactez l'administrateur pour un problème de permissions de fichiers.";
+                return false;
+            }
+        }
+        if (file_exists($odsfile)) {
+            if (!unlink($odsfile)) {
+                $this->errors[] = "Le fichier ODS n'a pas pu être recréé. Contactez l'administrateur pour un problème de permissions de fichiers.";
+                return false;
+            }
+        }
+
         $oldcwd = getcwd();
         chdir($pre . '/exports');
         $parameters = array(
@@ -113,7 +128,7 @@ class AmcProcessGrade extends AmcProcess
         );
         $parametersCsv = array_merge($parameters, array(
             '--module', 'CSV',
-            '--output', $pre . self::PATH_AMC_CSV,
+            '--output', $csvfile,
             '--csv-build-name', '(nom|surname) (prenom|name)',
             '--option-out', 'separateur=' . self::CSV_SEPARATOR,
             '--option-out', 'decimal=,',
@@ -121,7 +136,7 @@ class AmcProcessGrade extends AmcProcess
         ));
         $parametersOds = array_merge($parameters, array(
             '--module', 'ods',
-            '--output', $pre . self::PATH_AMC_ODS,
+            '--output', $odsfile,
             '--option-out', 'stats=1',
         ));
         $res = $this->shellExecAmc('export', $parametersCsv) && $this->shellExecAmc('export', $parametersOds);
@@ -129,6 +144,10 @@ class AmcProcessGrade extends AmcProcess
         if ($res) {
             $this->log('export', 'scoring.csv');
             Log::build($this->quizz->id)->write('grading');
+        }
+        if (!file_exists($csvfile) || !file_exists($odsfile)) {
+            $this->errors[] = "Les fichiers CSV et ODS n'ont pu être générés. Consultez l'administrateur.";
+            return false;
         }
         return $res;
     }
