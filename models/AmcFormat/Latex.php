@@ -258,7 +258,7 @@ EOL;
                 . "\\answersheet\n"
                 . $this->getStudentBlock()
                 . ($columns > 1 ? "\\begin{multicols}{"."$columns}\\raggedcolumns\n" : "")
-                . "\\noindent\\AMCform\n"
+                . "\\AMCform\n"
                 . ($columns > 1 ? "\\end{multicols}\n" : "")
                 . "\\clearpage\n";
         }
