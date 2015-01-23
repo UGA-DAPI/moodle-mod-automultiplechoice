@@ -23,7 +23,7 @@ class Grade extends AmcProcessGrade
             $this->exportedFiles = (object) array(
                 'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
                 'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
-                'grades_with_names.csv' => $this->getFileUrl(AmcProcessGrade::PATH_FULL_CSV),
+                'grades_apogee.csv' => $this->getFileUrl(AmcProcessGrade::PATH_APOGEE_CSV),
             );
         }
     }
@@ -35,13 +35,14 @@ class Grade extends AmcProcessGrade
         $this->actions = array(
             'scoringset' => (boolean) $this->amcPrepareBareme(),
             'scoring' => (boolean) $this->amcNote(),
+            'studentlist' =>(boolean) $this->writeFileStudentsList(),
             'export' => (boolean) $this->amcExport(),
-            'csv' => (boolean) $this->writeFileWithIdentifiedStudents(),
+            'csv' => (boolean) $this->writeFileApogeeCsv(),
         );
         $this->exportedFiles = (object) array(
             'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
             'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
-            'grades_with_names.csv' => $this->getFileUrl(AmcProcessGrade::PATH_FULL_CSV),
+            'grades_apogee.csv' => $this->getFileUrl(AmcProcessGrade::PATH_APOGEE_CSV),
         );
         return (array_sum($this->actions) === count($this->actions));
     }

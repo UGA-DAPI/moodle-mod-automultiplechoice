@@ -17,7 +17,7 @@ class AmcProcessGrade extends AmcProcess
 {
     const PATH_AMC_CSV = '/exports/grades.csv';
     const PATH_AMC_ODS = '/exports/grades.ods';
-    const PATH_FULL_CSV = '/exports/grades_with_names.csv';
+    const PATH_APOGEE_CSV = '/exports/grades_apogee.csv';
     const PATH_STUDENTLIST_CSV = '/exports/student_list.csv';
     const CSV_SEPARATOR = ';';
 
@@ -126,7 +126,6 @@ class AmcProcessGrade extends AmcProcess
             '--sort', 'n',
             '--no-rtl',
             '--option-out', 'encodage=UTF-8',
-            '--option-out', 'columns=student.copy,student.key,student.name',
             '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
             '--noms-encodage', 'UTF-8',
         );
@@ -134,6 +133,7 @@ class AmcProcessGrade extends AmcProcess
             '--module', 'CSV',
             '--output', $csvfile,
             '--csv-build-name', '(nom|surname) (prenom|name)',
+            '--option-out', 'columns=student.key,name,surname,moodleid,student.copy',
             '--option-out', 'separateur=' . self::CSV_SEPARATOR,
             '--option-out', 'decimal=,',
             '--option-out', 'ticked=',
@@ -141,6 +141,7 @@ class AmcProcessGrade extends AmcProcess
         $parametersOds = array_merge($parameters, array(
             '--module', 'ods',
             '--output', $odsfile,
+            '--option-out', 'columns=student.key,name,surname,student.copy',
             '--option-out', 'stats=1',
         ));
         $res = $this->shellExecAmc('export', $parametersCsv) && $this->shellExecAmc('export', $parametersOds);
@@ -293,6 +294,7 @@ class AmcProcessGrade extends AmcProcess
      * @return boolean
      */
     protected function readGrades() {
+
         if (count($this->grades) > 0) {
             return true;
         }
@@ -300,32 +302,28 @@ class AmcProcessGrade extends AmcProcess
         if (!$input) {
             return false;
         }
-        $header = fgetcsv($input, 1024, self::CSV_SEPARATOR);
+        $header = fgetcsv($input, 0, self::CSV_SEPARATOR);
         if (!$header) {
             return false;
         }
         $getCol = array_flip($header);
-
-        $this->grades = array();
-        while (($data = fgetcsv($input, 1024, self::CSV_SEPARATOR)) !== FALSE) {
+ 
+	$this->grades = array();
+        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
             $idnumber = $data[$getCol['student.number']];
-            $user = null;
-            if ($idnumber) {
-                $user = getStudentByIdNumber($idnumber);
-            }
-            if ($user) {
-                $userid = $user->id;
-                $this->usersknown++;
-            } else {
-                $userid = null;
-                $this->usersunknown++;
-            }
-            $this->grades[] = (object) array(
-                'userid' => $userid,
+	    $userid=null;
+	    $userid = $data[$getCol['moodleid']];
+	    if ($userid) {
+		    $this->usersknown++;
+	    } else {
+		    $this->usersunknown++;
+	    }
+	    $this->grades[] = (object) array(
+		'userid' => $userid,
                 'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
-            );
+	);
         }
-        fclose($input);
+	fclose($input);
         return true;
     }
 
@@ -338,66 +336,78 @@ class AmcProcessGrade extends AmcProcess
      *
      * @return boolean Success?
      */
-    protected function writeFileWithIdentifiedStudents() {
-        $input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
-        if (!$input) {
-            return false;
-        }
-        $output = fopen($this->workdir . self::PATH_FULL_CSV, 'w');
-        if (!$output) {
-            return false;
-        }
+    protected function writeFileStudentsList() {
+	global $DB;
+        
         $studentList = fopen($this->workdir . self::PATH_STUDENTLIST_CSV, 'w');
         if (!$studentList) {
             return false;
         }
-        fputcsv($studentList, array('surname', 'name', 'id', 'email'), self::CSV_SEPARATOR);
+        fputcsv($studentList, array('surname', 'name', 'id', 'email','moodleid'), self::CSV_SEPARATOR);
+	$codelength = get_config('mod_automultiplechoice', 'amccodelength');
+	$sql = "SELECT RIGHT(u.idnumber,".$codelength.") as idnumber ,u.firstname, u.lastname,u.email, u.id as id FROM {user} u "
+                . "JOIN {user_enrolments} ue ON (ue.userid = u.id) "
+                . "JOIN {enrol} e ON (e.id = ue.enrolid) "
+                . "WHERE u.idnumber != '' AND e.courseid = ?";
+        $users=  $DB->get_records_sql($sql, array($this->quizz->course));
 
-        $header = fgetcsv($input, 1024, self::CSV_SEPARATOR);
-        if (!$header) {
-            return false;
-        }
-        $getCol = array_flip($header);
-        $header[] = 'firstname';
-        $header[] = 'lastname';
-        $header[] = 'idnumber';
-        fputcsv($output, $header, self::CSV_SEPARATOR);
-
-        $this->grades = array();
-        while (($data = fgetcsv($input, 1024, self::CSV_SEPARATOR)) !== FALSE) {
-            $idnumber = $data[$getCol['student.number']];
-            $user = null;
-            if ($idnumber) {
-                $user = getStudentByIdNumber($idnumber);
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                fputcsv($studentList, array($user->lastname, $user->firstname, $user->idnumber, $user->email, $user->id), self::CSV_SEPARATOR);
             }
-            if ($user) {
-                $userid = $user->id;
-                $data[$getCol['Name']] = fullname($user);
-                $data[] = $user->firstname;
-                $data[] = $user->lastname;
-                $data[] = $user->idnumber;
-                $this->usersknown++;
-                fputcsv($studentList, array($user->lastname, $user->firstname, $idnumber, $user->email), self::CSV_SEPARATOR);
-            } else {
-                $userid = null;
-                $data[] = '';
-                $data[] = '';
-                $data[] = '';
-                $this->usersunknown++;
-            }
-            $this->grades[] = (object) array(
-                'userid' => $userid,
-                'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
-            );
-            fputcsv($output, $data, self::CSV_SEPARATOR);
         }
-        fclose($input);
-        fclose($output);
         fclose($studentList);
 
         return $this->amcAssociation();
     }
 
+    /**
+     * Return an array of students with added fields for identified users.
+     *
+     * Initialize $this->grades.
+     * Sets $this->usersknown and $this->usersunknown.
+     *
+     *
+     * @return boolean Success?
+     */
+    protected function writeFileApogeeCsv() {
+        $input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
+        if (!$input) {
+            return false;
+        }
+        $output = fopen($this->workdir . self::PATH_APOGEE_CSV, 'w');
+        if (!$output) {
+            return false;
+        }
+        
+        $header = fgetcsv($input, 0, self::CSV_SEPARATOR);
+        if (!$header) {
+            return false;
+        }
+        $getCol = array_flip($header);
+	fputcsv($output, array('id','name','surname', 'mark'), self::CSV_SEPARATOR);
+	$this->grades = array();
+        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
+		$idnumber = $data[$getCol['student.number']];
+		$userid=null;
+		$userid = $data[$getCol['moodleid']];
+		if ($userid) {
+			$this->usersknown++;
+		} else {
+			$this->usersunknown++;
+		}
+		$this->grades[] = (object) array(
+			'userid' => $userid,
+			'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
+										            );
+            fputcsv($output, array($data[$getCol['student.number']],$data[$getCol['name']],$data[$getCol['surname']], $data[$getCol['Mark']]), self::CSV_SEPARATOR);
+        }
+        fclose($input);
+        fclose($output);
+        
+
+        return true;
+    }
     /**
      * returns an array to fill the Moodle grade system from the raw marks .
      *
