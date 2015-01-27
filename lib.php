@@ -376,21 +376,21 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
     // and corrigé
-    if (preg_match('/^correction-.*\.pdf$/', $filename)) {
+    if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
         $target = $process->workdir . '/cr/corrections/pdf/' . $filename;
         if (!file_exists($target)) {
             send_file_not_found();
         }
         if (has_capability('mod/automultiplechoice:update', $context)
-            || ( ! empty($USER->idnumber) && $quizz->studentaccess && $process->getUserAnotatedSheet($USER->idnumber) === basename($filename))
+            || (  $quizz->studentaccess && $USER->id.".pdf" === basename($filename))
             ) {
             send_file($target, $filename, 10, 0, false, false, 'application/pdf') ;
             return true;
         }
     }
     if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
-        if ( ( ! empty($USER->idnumber) && $quizz->corrigeaccess && $process->getUserAnotatedSheet($USER->idnumber) )
-            ) {
+        if (   $quizz->corrigeaccess && file_exists("cr-".$USER->id.".pdf") )
+            {
             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
             return true;
          }
@@ -407,6 +407,9 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/zip') ;
         return true;
      } elseif (preg_match('/^corrections-.*\.pdf$/', $filename)) {
+        send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        return true;
+     } elseif (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
     } elseif (preg_match('/\.csv$/', $filename)) {

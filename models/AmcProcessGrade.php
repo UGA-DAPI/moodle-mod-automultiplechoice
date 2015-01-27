@@ -206,20 +206,8 @@ class AmcProcessGrade extends AmcProcess
      * @single bool
      * @return bool
      */
-    protected function amcRegroupe($single=true) {
-        $pre = $this->workdir;
-        if ($single) {
-            $addon = array(
-                '--single-output', $this->normalizeFilename('corrections'), // merge all sheets into one file that rules them all
-            );
-        } else {
-            $addon = array(
-                '--modele', 'correction-(ID).pdf', // "(ID)" is replaced by the complete name
-                '--csv-build-name', '(nom|id)-(prenom|surname)', // defines the complete name as the columns "id-surname" of the CSV
-            );
-        }
-        $parameters = array_merge(
-            array(
+    protected function amcRegroupe() {
+        $parameters = array(
             //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
             '--no-compose',
             '--projet',  $pre,
@@ -231,7 +219,8 @@ class AmcProcessGrade extends AmcProcess
             '--noms-encodage', 'UTF-8',
             '--sort', 'n',
             '--register',
-            '--no-force-ascii'
+            '--no-force-ascii',
+	    '--modele', 'cr-(moodleid).pdf'
             /* // useless with no-compose
               '--tex-src', $pre . '/' . $this->format->getFilename(),
               '--filter', $this->format->getFilterName(),
@@ -239,8 +228,6 @@ class AmcProcessGrade extends AmcProcess
               '--filtered-source', $pre.'/prepare-source_filtered.tex',
               '--n-copies', (string) $this->quizz->amcparams->copies,
                */
-            ),
-            $addon
         );
         $res = $this->shellExecAmc('regroupe', $parameters);
         if ($res) {
@@ -276,16 +263,21 @@ class AmcProcessGrade extends AmcProcess
      * @return bool
      */
     protected function amcAnnotePdf() {
-        array_map('unlink', glob($this->workdir .  "/cr/corrections/jpg/*.jpg"));
-        array_map('unlink', glob($this->workdir .  "/cr/corrections/pdf/*.pdf"));
+	$pre = $this->workdir;    
+	array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
+        array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
 
         if (!$this->amcAnnote()) {
             return false;
         }
-        if (!$this->amcRegroupe(true)) {
+        if (!$this->amcRegroupe()) {
             return false;
-        }
-        return $this->amcRegroupe(false);
+	}
+	$lines = array();
+	$returnVal = 0;
+	$cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=".$pre.$this->normalizeFilemane('corrections')." ".$pre."/cr/corrections/pdf/cr-*.pdf";
+	exec($cmd,$lines,$returnVal);
+        return $returnVal;
     }
 
     /**
@@ -441,7 +433,7 @@ class AmcProcessGrade extends AmcProcess
      * @return int
      */
     public function countIndividualAnotations() {
-        return count(glob($this->workdir . '/cr/corrections/pdf/correction-*-*.pdf'));
+        return count(glob($this->workdir . '/cr/corrections/pdf/cr-*.pdf'));
     }
 
     /**
@@ -451,23 +443,6 @@ class AmcProcessGrade extends AmcProcess
         return (file_exists($this->workdir . AmcProcessGrade::PATH_AMC_CSV));
     }
 
-    /**
-     * returns the name of pdf anotated file matching user (upon $idnumber)
-     * @param string $idnumber
-     * @return string (matching user file) OR FALSE if no matching file
-     */
-    public function getUserAnotatedSheet($idnumber) {
-        $numid = self::removePrefixFromIdnumber($idnumber);
-        $files = glob($this->workdir . '/cr/corrections/pdf/correction-*.pdf');
-        foreach ($files as $file) {
-            if (preg_match('@/(correction-([0-9]+)-[^/]+\.pdf)$@', $file, $matches)) {
-                if ($numid === (int) $matches[2]) {
-                    return $matches[1];
-                }
-            }
-        }
-        return false;
-    }
 
     /**
      * Remove the prefixes configured at the module level.
@@ -493,24 +468,13 @@ class AmcProcessGrade extends AmcProcess
     public function getUsersIdsHavingAnotatedSheets() {
         global $DB;
 
-        $files = glob($this->workdir . '/cr/corrections/pdf/correction-*.pdf');
-        $fileidnumbers = array();
+        $files = glob($this->workdir . '/cr/corrections/pdf/cr-*.pdf');
+        $userids = array();
         foreach ($files as $file) {
-            if (preg_match('@/correction-([0-9]+)-[^/]+\.pdf$@', $file, $matches)) {
-                $fileidnumbers[] = (int) $matches[1];
-            }
+	    $userids[] = (int) substr($file,3,-4);
         }
 
-        $sql = "SELECT u.id, u.idnumber FROM {user} u "
-                . "JOIN {user_enrolments} ue ON (ue.userid = u.id) "
-                . "JOIN {enrol} e ON (e.id = ue.enrolid) "
-                . "WHERE u.idnumber != '' AND e.courseid = ?";
-        $useridnumbers = array_map(
-                array($this, 'removePrefixFromIdnumber'),
-                $DB->get_records_sql_menu($sql, array($this->quizz->course))
-                );
-        $res = array_intersect($useridnumbers, $fileidnumbers);
-        return array_keys($res);
+        return $userids;
     }
 
     /**
