@@ -43,7 +43,7 @@ Requirements
 Here are the requirements, expressed as Debian packages:
 
 * auto-multiple-choice 1.2.1-2 (Jessie)
-* texlive-tetex
+* texlive-xetex
 * lmodern
 * texlive-fonts-recommended
 
