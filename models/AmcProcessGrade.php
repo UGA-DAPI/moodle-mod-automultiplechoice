@@ -163,13 +163,13 @@ class AmcProcessGrade extends AmcProcess
      * @return bool
      */
     private function amcAnnote() {
-        if (!is_dir($this->workdir . '/cr/corrections/jpg')) { // amc-annote will silently fail if the dir does not exist
-            mkdir($this->workdir . '/cr/corrections/jpg', 0777, true);
-        }
-        if (!is_dir($this->workdir . '/cr/corrections/pdf')) {
-            mkdir($this->workdir . '/cr/corrections/pdf', 0777, true);
-        }
         $pre = $this->workdir;
+        if (!is_dir($pre. '/cr/corrections/jpg')) { // amc-annote will silently fail if the dir does not exist
+            mkdir($pre. '/cr/corrections/jpg', 0777, true);
+        }
+        if (!is_dir($pre. '/cr/corrections/pdf')) {
+            mkdir($pre. '/cr/corrections/pdf', 0777, true);
+        }
         $parameters = array(
             '--projet', $pre,
             '--ch-sign', '4',
@@ -187,12 +187,12 @@ class AmcProcessGrade extends AmcProcess
             '--verdict', '%(ID) Note: %s/%m (score total : %S/%M)',
             '--verdict-question', '"%s / %m"',
             '--no-rtl',
-            '--no-changes-only',
+            '--changes-only',
             '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
             //'--noms-encodage', 'UTF-8',
             //'--csv-build-name', 'surname name',
         );
-        $res = $this->shellExecAmc('annote', $parameters);
+        $res = $this->shellExecAmc('annote', $parameters,true);
         if ($res) {
             $this->log('annote', '');
         }
@@ -273,11 +273,16 @@ class AmcProcessGrade extends AmcProcess
         if (!$this->amcRegroupe()) {
             return false;
 	}
-	$lines = array();
-	$returnVal = 0;
-	$cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=".$pre.$this->normalizeFilemane('corrections')." ".$pre."/cr/corrections/pdf/cr-*.pdf";
-	exec($cmd,$lines,$returnVal);
-        return $returnVal;
+	$parameters = array(
+            '-q',
+            '-dNOPAUSE', 
+            '-dBATCH', 
+            '-sDEVICE=pdfwrite',
+            '-sOutputFile='.$pre.$this->normalizeFilemane('corrections'),
+            $pre."/cr/corrections/pdf/cr-*.pdf"           
+        );
+   
+	return $this->shellExecAmc('gs', $parameters ,true);
     }
 
     /**
