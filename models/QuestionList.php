@@ -242,7 +242,10 @@ class QuestionList implements \Countable, \ArrayAccess, \Iterator
     private function getRawRecords() {
         global $DB, $CFG;
         $ids = $this->getIds();
-        list ($cond, $params) = $DB->get_in_or_equal($ids);
+	if (empty($ids)){
+		return NULL;
+	}
+	list ($cond, $params) = $DB->get_in_or_equal($ids);
         if ($CFG->version >= 2013111800) {
             $qtable = 'qtype_multichoice_options';
             $qfield = 'questionid';
@@ -255,7 +258,8 @@ class QuestionList implements \Countable, \ArrayAccess, \Iterator
                 . 'FROM {question} q INNER JOIN {' . $qtable . "} qc ON qc.{$qfield}=q.id "
                 . 'WHERE q.id ' . $cond,
                 $params
-        );
+	);
+	
     }
 
     /**
