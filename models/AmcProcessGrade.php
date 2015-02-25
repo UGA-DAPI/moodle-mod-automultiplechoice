@@ -410,6 +410,18 @@ class AmcProcessGrade extends AmcProcess
 
         return true;
     }
+    
+    protected function writeGrades(){
+
+	global $DB;
+	$grades = $this->getMarks();
+	$record = $DB->get_record('automultiplechoice', array('id' => $this->quizz->id), '*');
+	\automultiplechoice_grade_item_update($record, $grades);
+	return true;
+    } 
+    
+    
+    
     /**
      * returns an array to fill the Moodle grade system from the raw marks .
      *
