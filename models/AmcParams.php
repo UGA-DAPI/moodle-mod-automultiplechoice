@@ -85,6 +85,7 @@ class AmcParams
 
     public $instructionsprefixformat = 2; // FORMAT_PLAIN
 
+    public $customlayout;
     /**
      * Validate the instance and update $this->errors.
      *
@@ -146,7 +147,7 @@ class AmcParams
                 $this->$col = (bool) $input[$col];
             }
         }
-        foreach (['lstudent', 'lstudent', 'separatesheet', 'scoringset'] as $col) {
+        foreach (['lstudent', 'lstudent', 'separatesheet', 'scoringset','customlayout'] as $col) {
             if (isset($input[$col])) {
                 $this->$col = (string) $input[$col];
             }

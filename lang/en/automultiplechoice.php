@@ -68,6 +68,9 @@ $string['amc_lname_default'] = 'Name and surname';
 $string['amc_markmulti'] = 'Mark when multiple answers';
 $string['amc_markmulti_help'] = 'A clover leaf will appear when a question has more than one right answer.';
 
+$string['amc_customlayout'] = 'Custom layout';
+$string['amc_customlayout_help'] = ' Customize QCM layout.';
+
 $string['questionselect'] = 'Select questions';
 $string['questionselected'] = 'Selected Questions';
 $string['sortmsg'] = 'You can reorder the selected questions by dragging them with the mouse.';

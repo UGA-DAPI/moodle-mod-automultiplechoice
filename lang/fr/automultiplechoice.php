@@ -68,6 +68,9 @@ $string['amc_lname_default'] = 'Nom et prénom';
 $string['amc_markmulti'] = 'Marque pour réponses multiples';
 $string['amc_markmulti_help'] = 'Un trèfle sera affiché quand une question a plusieurs bonnes réponses.';
 
+$string['amc_customlayout'] = 'Personnalisation de la mise en pages';
+$string['amc_customlayout_help'] = 'Personnalise la mise en page du questionnaire en changeant les valeurs par défaut.';
+
 $string['questionselect'] = 'Sélection des questions';
 $string['questionselected'] = 'Questions choisies';
 $string['sortmsg'] = 'Les questions sélectionnées peuvent être triées en les déplaçant à la souris.';
