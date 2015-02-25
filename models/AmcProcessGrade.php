@@ -133,7 +133,7 @@ class AmcProcessGrade extends AmcProcess
             '--module', 'CSV',
             '--output', $csvfile,
             '--csv-build-name', '(nom|surname) (prenom|name)',
-            '--option-out', 'columns=student.key,name,surname,moodleid,student.copy',
+            '--option-out', 'columns=student.copy,student.key,name,surname,moodleid,groupslist',
             '--option-out', 'separateur=' . self::CSV_SEPARATOR,
             '--option-out', 'decimal=,',
             '--option-out', 'ticked=',
@@ -141,7 +141,7 @@ class AmcProcessGrade extends AmcProcess
         $parametersOds = array_merge($parameters, array(
             '--module', 'ods',
             '--output', $odsfile,
-            '--option-out', 'columns=student.key,name,surname,student.copy',
+            '--option-out', 'columns=student.copy,student.key,name,surname,groupslist',
             '--option-out', 'stats=1',
         ));
         $res = $this->shellExecAmc('export', $parametersCsv) && $this->shellExecAmc('export', $parametersOds);
@@ -340,17 +340,20 @@ class AmcProcessGrade extends AmcProcess
         if (!$studentList) {
             return false;
         }
-        fputcsv($studentList, array('surname', 'name', 'id', 'email','moodleid'), self::CSV_SEPARATOR);
+        fputcsv($studentList, array('surname', 'name', 'id', 'email','moodleid','groupslist'), self::CSV_SEPARATOR);
 	$codelength = get_config('mod_automultiplechoice', 'amccodelength');
-	$sql = "SELECT RIGHT(u.idnumber,".$codelength.") as idnumber ,u.firstname, u.lastname,u.email, u.id as id FROM {user} u "
-                . "JOIN {user_enrolments} ue ON (ue.userid = u.id) "
-                . "JOIN {enrol} e ON (e.id = ue.enrolid) "
-                . "WHERE u.idnumber != '' AND e.courseid = ?";
+	$sql = "SELECT RIGHT(u.idnumber,".$codelength.") as idnumber ,u.firstname, u.lastname,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
+                ."JOIN {user_enrolments} ue ON (ue.userid = u.id) "
+		."JOIN {enrol} e ON (e.id = ue.enrolid) "
+		."JOIN  groups_members gm ON u.id=gm.userid "
+		."JOIN groups g ON g.id=gm.groupid "
+		."WHERE u.idnumber != '' AND e.courseid = ? AND g.courseid=e.courseid "
+		."GROUP BY u.id";
         $users=  $DB->get_records_sql($sql, array($this->quizz->course));
 
         if (!empty($users)) {
-            foreach ($users as $user) {
-                fputcsv($studentList, array($user->lastname, $user->firstname, $user->idnumber, $user->email, $user->id), self::CSV_SEPARATOR);
+		foreach ($users as $user) {
+				fputcsv($studentList, array($user->lastname, $user->firstname, $user->idnumber, $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
             }
         }
         fclose($studentList);
@@ -382,7 +385,7 @@ class AmcProcessGrade extends AmcProcess
             return false;
         }
         $getCol = array_flip($header);
-	fputcsv($output, array('id','name','surname', 'mark'), self::CSV_SEPARATOR);
+	fputcsv($output, array('id','name','surname','groups', 'mark'), self::CSV_SEPARATOR);
 	$this->grades = array();
         while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
 		$idnumber = $data[$getCol['student.number']];
@@ -397,7 +400,9 @@ class AmcProcessGrade extends AmcProcess
 			'userid' => $userid,
 			'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
 										            );
-            fputcsv($output, array($data[$getCol['student.number']],$data[$getCol['name']],$data[$getCol['surname']], $data[$getCol['Mark']]), self::CSV_SEPARATOR);
+		if ($data[$getCol['A:id']]!='NONE'){
+			fputcsv($output, array($data[$getCol['A:id']],$data[$getCol['name']],$data[$getCol['surname']],$data[$getCol['groupslist']], $data[$getCol['Mark']]), self::CSV_SEPARATOR);
+		}
         }
         fclose($input);
         fclose($output);
