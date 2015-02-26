@@ -119,5 +119,7 @@ if ($scansStats) {
     </form>
     <?php
 }
-
+if (($scansStats) && (($scansStats['count']-$scansStats['nbidentified'])>0)){
+	echo $process->print_failed();
+}
 echo $output->footer();
