@@ -388,6 +388,18 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
             return true;
         }
     }
+    if (preg_match('/^page-[0-9]*-[0-9]*-[0-9]*\.jpg$/', $filename)) {
+        $target = $process->workdir . '/cr/corrections/jpg/' . $filename;
+        if (!file_exists($target)) {
+            send_file_not_found();
+        }
+        if (has_capability('mod/automultiplechoice:update', $context)
+            || (  $quizz->studentaccess && $USER->id.".jpg" === basename($filename))
+            ) {
+            send_file($target, $filename, 10, 0, false, false, 'application/jpg') ;
+            return true;
+	    }
+    }
     if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
         if (   $quizz->corrigeaccess && file_exists("cr-".$USER->id.".pdf") )
             {
@@ -417,6 +429,15 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         return true;
     } elseif (preg_match('/\.ods$/', $filename)) {
         send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'application/vnd.oasis.opendocument.spreadsheet') ;
+        return true;
+    } elseif (preg_match('/\.ppm$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/x-portable-pixmap') ;
+        return true;
+    } elseif (preg_match('/\.pbm$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/x-portable-bitmap') ;
+        return true;
+    } elseif (preg_match('/\.tif[f]*$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/tiff') ;
         return true;
     }
     send_file_not_found();
