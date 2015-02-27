@@ -403,7 +403,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
             ) {
             send_file($target, $filename, 10, 0, false, false, 'application/jpg') ;
             return true;
-	    }
+        }
     }
     if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
         if (   $quizz->corrigeaccess && file_exists("cr-".$USER->id.".pdf") )
@@ -417,7 +417,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     require_capability('mod/automultiplechoice:update', $context);
 
     // whitelist security
-    if (preg_match('/^(sujet|corrige|catalog)-.*\.pdf$/', $filename)) {
+    if (preg_match('/^(sujet|corrige|catalog|failed)-.*\.pdf$/', $filename)) {
         send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
      } elseif (preg_match('/^sujets-.*\.zip$/', $filename)) {
