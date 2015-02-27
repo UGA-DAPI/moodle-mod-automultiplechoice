@@ -232,6 +232,8 @@ class AmcProcess
                 return 'sujets-' . $this->normalizeText($this->quizz->name) . '.zip';
             case 'corrections':
                 return 'corrections-' . $this->normalizeText($this->quizz->name) . '.pdf';
+            case 'failed':
+                return 'failed-' . $this->normalizeText($this->quizz->name) . '.pdf';
         }
     }
 
@@ -351,6 +353,25 @@ class AmcProcess
             </li>
         </ul>
 EOL;
+    }
+    /**
+     *      * @return boolean
+     *           */
+    public function makeFailedPdf() {
+	    if (extension_loaded('sqlite3')){   
+		    $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
+		    $results = $capture->query('SELECT * FROM capture_failed');
+		    $scans = array();
+		    while ($row = $results->fetchArray()) {
+			    $scans[] = $this->workdir.substr($row[0],7);
+
+		    }
+		    $output = $this->normalizeFilename('failed');
+		    $scans[] = $this->workdir.'/'.$output;
+		    $res = $this->shellExec('convert ',$scans);
+		    return $res;
+	    }
+	    return false;
     }
 
     /**
