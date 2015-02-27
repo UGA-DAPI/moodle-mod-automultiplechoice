@@ -81,7 +81,7 @@ class Quizz
         if ($absolute) {
             return $CFG->dataroot . '/local/automultiplechoice/' . $dir;
         } else {
-            return '/local/automultiplechoice/' . $dir;
+            return 'local/automultiplechoice/' . $dir;
         }
     }
 

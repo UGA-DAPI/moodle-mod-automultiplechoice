@@ -81,38 +81,15 @@ class AmcProcessUpload extends AmcProcess
                 }
                 return  $capture->exec('DELETE FROM capture_failed ');
             }else{
-                $result = $capture->querySingle('SELECT * FROM capture_failed WHERE filename LIKE %'.$scan);
-                if ($result){
-                    array_map('unlink', glob($this->workdir . '/scans/'.$scan));
-                    return  $capture->exec('DELETE FROM capture_failed WHERE filename LIKE %'.$scan);
+                $result = $capture->querySingle('SELECT * FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
+                if (substr($result,14)==$scan){
+                    unlink( glob($this->workdir . '/scans/'.$scan));
+                    return  $capture->exec('DELETE FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
                 }
             }
         return false;
         }
     }
-/**
-     * @return boolean
-     */
-    public function downloadFailed() {
-        if (extension_loaded('sqlite3')){   
-            $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
-            $results = $capture->query('SELECT * FROM capture_failed');
-            $scans = array();
-            while ($row = $results->fetchArray()) {
-                $scans[] = substr($row[0],14);
-                
-            }
-            $output = $this->normalizeFilename('failed');
-            $scans[] = $output;
-            $res = $this->shellExec('convert ',$scan);
-            if ($res){
-                redirect($this->getFileUrl($this->normalizeFilename('failed')));
-            }
-            return $res;
-        }
-        return false;
-    }
-
 
 
     /**
@@ -126,10 +103,11 @@ class AmcProcessUpload extends AmcProcess
         $failedoutput = $OUTPUT->heading('Scans non reconnus',3,'helptitle');
         $failedoutput .= \html_writer::start_div('box generalbox boxaligncenter');
         $deleteallurl = new \moodle_url('uploadscans.php', array('a' => $this->quizz->id, 'action' => 'delete','scan'=>'all'));
-        $failedoutput .= $OUTPUT->single_button($deleteallurl, 'Effacer tous les scans non reconnus', array('action'=>new \confirm_action(get_string('confirm'))));
-        $downloadfailedurl = new \moodle_url('uploadscans.php', array('a' => $this->quizz->id, 'action' => 'failed'));
-        $failedoutput .= $OUTPUT->single_button($deleteallurl, 'Effacer tous les scans non reconnus', array('action'=>new \confirm_action(get_string('confirm'))));
-        
+	$deleteallbutton= new \single_button($deleteallurl, 'Effacer tous les scans non reconnus');
+	$deleteallbutton->add_confirm_action(get_string('confirm'));
+        $downloadfailedurl = $this->getFileUrl($this->normalizeFilename('failed'));
+        $failedoutput .= $OUTPUT->render($deleteallbutton);
+        $failedoutput .= \html_writer::link($downloadfailedurl, 'Télécharger tous les scans non reconnus',array('class'=>'btn','target'=>'_blank'));
         $failedoutput .= \html_writer::start_tag('ul',array('class'=>'unlist'));
         while ($row = $results->fetchArray()) {
             $scan = substr($row[0],14);

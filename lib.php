@@ -417,9 +417,15 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     require_capability('mod/automultiplechoice:update', $context);
 
     // whitelist security
-    if (preg_match('/^(sujet|corrige|catalog|failed)-.*\.pdf$/', $filename)) {
+    if (preg_match('/^(sujet|corrige|catalog)-.*\.pdf$/', $filename)) {
         send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
+     } elseif (preg_match('/^failed-.*\.pdf$/', $filename)) {
+	$ret=$process->makeFailedPdf();     
+	if ($ret){
+		send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+	}
+        return $ret;
      } elseif (preg_match('/^sujets-.*\.zip$/', $filename)) {
         send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/zip') ;
         return true;
