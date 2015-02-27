@@ -27,7 +27,9 @@ $string['automultiplechoice:view'] = 'Consulter un QCM ou sa copie';
 $string['dashboard'] = 'Tableau de bord';
 $string['documents'] = 'Sujets';
 $string['uploadscans'] = 'Dépôt des copies';
+$string['associating'] = 'Association';
 $string['grading'] = 'Correction';
+$string['annotating'] = 'Annotation';
 
 $string['instructionsheader'] = 'Rédaction de la consigne';
 $string['automultiplechoicename'] = 'Nom du questionnaire';
