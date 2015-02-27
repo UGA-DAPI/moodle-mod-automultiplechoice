@@ -70,36 +70,87 @@ class AmcProcessUpload extends AmcProcess
         }
         return $this->deleteGrades();
     }
-	
+
+    /**
+     * @return boolean
+     */
+    public function deleteFailed($scan) {
+        if (extension_loaded('sqlite3')){   
+            $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
+            if ($scan=='all'){
+                $results = $capture->query('SELECT * FROM capture_failed');
+                while ($row = $results->fetchArray()) {
+                    $scan = substr($row[0],14);
+                    array_map('unlink', glob($this->workdir . '/scans/'.$scan));
+                }
+                return  $capture->exec('DELETE FROM capture_failed ');
+            }else{
+                $result = $capture->querySingle('SELECT * FROM capture_failed WHERE filename LIKE %'.$scan);
+                if ($result){
+                    array_map('unlink', glob($this->workdir . '/scans/'.$scan));
+                    return  $capture->exec('DELETE FROM capture_failed WHERE filename LIKE %'.$scan);
+                }
+            }
+        return false;
+        }
+    }
+/**
+     * @return boolean
+     */
+    public function downloadFailed() {
+        if (extension_loaded('sqlite3')){   
+            $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
+            $results = $capture->query('SELECT * FROM capture_failed');
+            $scans = array();
+            while ($row = $results->fetchArray()) {
+                $scans[] = substr($row[0],14);
+                
+            }
+            $output = $this->normalizeFilename('failed');
+            $scans[] = $output;
+            $res = $this->shellExec('convert ',$scan);
+            if ($res){
+                redirect($this->getFileUrl($this->normalizeFilename('failed')));
+            }
+            return $res;
+        }
+        return false;
+    }
+
+
+
     /**
     *      * @return string
     *           */
-    public function print_failed() {
-	global $OUTPUT;    
-	if (extension_loaded('sqlite3')){	
-		$capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READONLY);
-		$results = $capture->query('SELECT * FROM capture_failed');
-		$failedoutput = $OUTPUT->heading('Scans non reconnus',3,'helptitle');
-		$failedoutput .= \html_writer::start_div('box generalbox boxaligncenter');
-		$deleteallurl = new \moodle_url('uploadscans.php', array('a' => $this->quizz->id, 'action' => 'delete','scan'=>'all'));
-		$failedoutput .= $OUTPUT->single_button($deleteallurl, 'Effacer tous les scans non reconnus', array('action'=>new \confirm_action(get_string('confirm'))));
-		$failedoutput .= \html_writer::start_tag('ul',array('class'=>'unlist'));
-		while ($row = $results->fetchArray()) {
-			$scan = substr($row[0],14);
-			$url = new \moodle_url('uploadscans.php', array('a'=>$this->quizz->id,'action'=>'delete', 'scan'=>$scan));
-			$deleteicon = $OUTPUT->action_icon($url,new \pix_icon('t/delete',get_string('delete')),new \confirm_action(get_string('confirm')));
-			$scanoutput = \html_writer::link($this->getFileUrl($scan),$scan); 
-			$failedoutput .= \html_writer::tag('li', $scanoutput . $deleteicon);
+    public function list_failed() {
+    global $OUTPUT;    
+    if (extension_loaded('sqlite3')){   
+        $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READONLY);
+        $results = $capture->query('SELECT * FROM capture_failed');
+        $failedoutput = $OUTPUT->heading('Scans non reconnus',3,'helptitle');
+        $failedoutput .= \html_writer::start_div('box generalbox boxaligncenter');
+        $deleteallurl = new \moodle_url('uploadscans.php', array('a' => $this->quizz->id, 'action' => 'delete','scan'=>'all'));
+        $failedoutput .= $OUTPUT->single_button($deleteallurl, 'Effacer tous les scans non reconnus', array('action'=>new \confirm_action(get_string('confirm'))));
+        $downloadfailedurl = new \moodle_url('uploadscans.php', array('a' => $this->quizz->id, 'action' => 'failed'));
+        $failedoutput .= $OUTPUT->single_button($deleteallurl, 'Effacer tous les scans non reconnus', array('action'=>new \confirm_action(get_string('confirm'))));
+        
+        $failedoutput .= \html_writer::start_tag('ul',array('class'=>'unlist'));
+        while ($row = $results->fetchArray()) {
+            $scan = substr($row[0],14);
+            $url = new \moodle_url('uploadscans.php', array('a'=>$this->quizz->id,'action'=>'delete', 'scan'=>$scan));
+            $deleteicon = $OUTPUT->action_icon($url,new \pix_icon('t/delete',get_string('delete')),new \confirm_action(get_string('confirm')));
+            $scanoutput = \html_writer::link($this->getFileUrl($scan),$scan); 
+            $failedoutput .= \html_writer::tag('li', $scanoutput . $deleteicon);
 
-		}
-		$failedoutput .= \html_writer::end_tag('ul' );
-		$failedoutput .= \html_writer::end_div();
-	}else{
-		$failedoutput = 'Demandez à votre administrateur système d\'installer php-sqlite3 pour voir les fichiers non reconnus';
-	}
+        }
+        $failedoutput .= \html_writer::end_tag('ul' );
+        $failedoutput .= \html_writer::end_div();
+    }else{
+        $failedoutput = 'Demandez à votre administrateur système d\'installer php-sqlite3 pour voir les fichiers non reconnus';
+    }
 
-		return $failedoutput;
-	}
+        return $failedoutput;
+    }
     /**
      * Shell-executes 'amc getimages'
      * @param string $scanfile name, uploaded by the user
@@ -120,6 +171,7 @@ class AmcProcessUpload extends AmcProcess
             '--orientation', 'portrait',
             '--list', $scanlist,
             '--copy-to', $pre . '/scans/',
+            '--force-convert', '1',
             $scanfile
             )
         );
@@ -162,4 +214,3 @@ class AmcProcessUpload extends AmcProcess
         return $res;
     }
 }
-
