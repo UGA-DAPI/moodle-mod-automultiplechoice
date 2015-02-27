@@ -90,6 +90,9 @@ class AmcProcessPrepare extends AmcProcess
         if (!is_dir($pre . '/imprime')) {
             mkdir($pre . '/imprime');
         }
+        if (!$this->amcMeptex()) {
+           $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
+        }
 
         $mask = $pre . "/imprime/*.pdf";
         array_map('unlink', glob($mask));
@@ -104,17 +107,17 @@ class AmcProcessPrepare extends AmcProcess
         $zip = new \ZipArchive();
         $ret = $zip->open($zipName, \ZipArchive::CREATE);
         if ( ! $ret ) {
-            printf("Echec lors de l'ouverture de l'archive %d", $ret);
+            $this->errors[] ="Echec lors de l'ouverture de l'archive $ret\n";
         } else {
             $options = array('add_path' => 'sujets_amc/', 'remove_all_path' => true);
             $zip->addGlob($mask, GLOB_BRACE, $options);
             // echo "Zip status: [" . $zip->status . "]<br />\n";
             // echo "Zip statusSys: [" . $zip->statusSys . "]<br />\n";
-            echo "<p>Zip de [" . $zip->numFiles . "] fichiers dans [" . basename($zip->filename) . "]</p>\n";
+            $this->errors[] = "<p>Zip de [" . $zip->numFiles . "] fichiers dans [" . basename($zip->filename) . "]</p>\n";
             $zip->close();
         }
         if (!file_exists($zipName)) {
-            echo "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
+            $this->errors[] = "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
         }
         return $ret;
     }
