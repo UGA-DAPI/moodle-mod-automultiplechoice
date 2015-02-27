@@ -20,10 +20,6 @@ class AmcProcessUpload extends AmcProcess
             $this->deleteGrades();
         }
 
-        if (!$this->amcMeptex()) {
-            $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
-        }
-
         $this->nbPages = $this->amcGetimages($filename);
         if (!$this->nbPages) {
             $this->errors[] = "Erreur découpage scan (amc getimages)";
