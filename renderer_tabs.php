@@ -43,9 +43,19 @@ $tabs = array(
         "5. " . get_string('uploadscans', 'automultiplechoice')
     ),
     new tabobject(
+        'associating',
+        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/associating.php?a={$quizz->id}"),
+        "6. " . get_string('associating', 'automultiplechoice')
+    ),
+    new tabobject(
         'grading',
         new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/grading.php?a={$quizz->id}"),
-        "6. " . get_string('grading', 'automultiplechoice')
+        "7. " . get_string('grading', 'automultiplechoice')
+    ),
+    new tabobject(
+        'annotating',
+        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/annotating.php?a={$quizz->id}"),
+        "8. " . get_string('annotating', 'automultiplechoice')
     ),
 );
 

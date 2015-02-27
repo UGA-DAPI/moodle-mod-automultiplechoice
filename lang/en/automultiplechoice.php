@@ -34,7 +34,9 @@ $string['automultiplechoice:view'] = 'View a quizz or one\'s marked work';
 $string['dashboard'] = 'Dashboard';
 $string['documents'] = 'Documents';
 $string['uploadscans'] = 'Upload answers';
+$string['associating'] = 'Associating';
 $string['grading'] = 'Grading';
+$string['annotating'] = 'Annotating';
 
 $string['instructionsheader'] = 'Instructions';
 $string['automultiplechoicename'] = 'Nom du questionnaire';
