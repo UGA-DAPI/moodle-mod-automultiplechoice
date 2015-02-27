@@ -39,7 +39,15 @@ if ($action === 'deleteUploads') {
     $process->deleteUploads();
     redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
 }
-
+if ($action === 'failed') {
+    $process->downloadFailed();
+    redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
+}
+if ($action === 'delete') {
+    $scan = $action = optional_param('scan', 'all', PARAM_ALPHA);
+    $process->deleteFailed($scan);
+    redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
+}
 if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
     $errors = array();
 
@@ -124,6 +132,6 @@ if ($scansStats) {
     <?php
 }
 if (($scansStats) && (($scansStats['count']-$scansStats['nbidentified'])>0)){
-	echo $process->print_failed();
+    echo $process->list_failed();
 }
 echo $output->footer();
