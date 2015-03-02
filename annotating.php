@@ -9,8 +9,8 @@
 use \mod\automultiplechoice as amc;
 
 require_once(__DIR__ . '/locallib.php');
-require_once __DIR__ . '/models/Grade.php';
-require_once __DIR__ . '/models/AmcProcessPrepare.php';
+require_once __DIR__ . '/models/AmcProcessAnnotate.php';
+
 
 global $DB, $OUTPUT, $PAGE;
 /* @var $DB moodle_database */
@@ -31,15 +31,8 @@ require_capability('mod/automultiplechoice:update', $controller->getContext());
 $PAGE->set_url('/mod/automultiplechoice/annotating.php', array('id' => $cm->id));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
-$process = new amc\Grade($quizz);
-if (!$process->isGraded() || $action === 'grade') {
-    $prepare = new amc\AmcProcessPrepare($quizz);
-    $prepare->saveFormat('latex');
-    unset($prepare);
-    if ($process->grade()) {
-        redirect(new moodle_url('annotating.php', array('a' => $quizz->id)));
-    }
-} else if ($action === 'anotate') {
+$process = new amc\AmcProcessAnnotate($quizz);
+if ($action === 'anotate') {
     if ($process->anotate()) {
         redirect(new moodle_url('annotating.php', array('a' => $quizz->id)));
     }
@@ -58,8 +51,7 @@ if (!$process->isGraded() || $action === 'grade') {
     redirect(new moodle_url('annotating.php', array('a' => $quizz->id)));
 }
 
-// Has side effects, so must be called early.
-$stats = $process->getHtmlStats();
+
 
 // Output starts here
 echo $output->header();

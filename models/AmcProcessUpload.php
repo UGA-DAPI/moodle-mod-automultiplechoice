@@ -95,35 +95,21 @@ class AmcProcessUpload extends AmcProcess
     /**
     *      * @return string
     *           */
-    public function list_failed() {
+    public function get_failed_scans() {
     global $OUTPUT;    
     if (extension_loaded('sqlite3')){   
         $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READONLY);
         $results = $capture->query('SELECT * FROM capture_failed');
-        $failedoutput = $OUTPUT->heading('Scans non reconnus',3,'helptitle');
-        $failedoutput .= \html_writer::start_div('box generalbox boxaligncenter');
-        $deleteallurl = new \moodle_url('uploadscans.php', array('a' => $this->quizz->id, 'action' => 'delete','scan'=>'all'));
-	$deleteallbutton= new \single_button($deleteallurl, 'Effacer tous les scans non reconnus');
-	$deleteallbutton->add_confirm_action(get_string('confirm'));
-        $downloadfailedurl = $this->getFileUrl($this->normalizeFilename('failed'));
-        $failedoutput .= $OUTPUT->render($deleteallbutton);
-        $failedoutput .= \html_writer::link($downloadfailedurl, 'Télécharger tous les scans non reconnus',array('class'=>'btn','target'=>'_blank'));
-        $failedoutput .= \html_writer::start_tag('ul',array('class'=>'unlist'));
+        $scan=array();
         while ($row = $results->fetchArray()) {
-            $scan = substr($row[0],14);
-            $url = new \moodle_url('uploadscans.php', array('a'=>$this->quizz->id,'action'=>'delete', 'scan'=>$scan));
-            $deleteicon = $OUTPUT->action_icon($url,new \pix_icon('t/delete',get_string('delete')),new \confirm_action(get_string('confirm')));
-            $scanoutput = \html_writer::link($this->getFileUrl($scan),$scan); 
-            $failedoutput .= \html_writer::tag('li', $scanoutput . $deleteicon);
-
+            $scan[] = substr($row[0],14);
+            
         }
-        $failedoutput .= \html_writer::end_tag('ul' );
-        $failedoutput .= \html_writer::end_div();
+        return $scan;
     }else{
-        $failedoutput = 'Demandez à votre administrateur système d\'installer php-sqlite3 pour voir les fichiers non reconnus';
+        return NULL;
     }
 
-        return $failedoutput;
     }
     /**
      * Shell-executes 'amc getimages'

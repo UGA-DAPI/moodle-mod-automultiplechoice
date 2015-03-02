@@ -30,7 +30,7 @@ class AmcProcess
     protected $errors = array();
 
     private $logger;
-
+    const PATH_STUDENTLIST_CSV = '/exports/student_list.csv';
     /**
      * Constructor
      *
@@ -52,7 +52,31 @@ class AmcProcess
          * @todo error if codelength == 0
          */
     }
+ /**
+     * Save the AmcTXT source file.
+     *
+     * @param string $formatName "txt" | "latex"
+     * @return amcFormat\Api
+     */
+    public function saveFormat($formatName) {
+        try {
+            $format = amcFormat\buildFormat($formatName, $this->quizz);
+            $format->quizz = $this->quizz;
+            $format->codelength = $this->codelength;
+        } catch (\Exception $e) {
+            // error
+            $this->errors[] = $e->getMessage();
+            return null;
+        }
 
+        $filename = $this->workdir . "/" . $format->getFilename();
+        if (file_put_contents($filename, $format->getContent())) {
+            return $format;
+        } else {
+            $this->errors[] = "Could not write the file for AMC. Disk full?";
+            return null;
+        }
+    }
     /**
      * @return AmcLogfile
      */
@@ -358,20 +382,20 @@ EOL;
      *      * @return boolean
      *           */
     public function makeFailedPdf() {
-	    if (extension_loaded('sqlite3')){   
-		    $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
-		    $results = $capture->query('SELECT * FROM capture_failed');
-		    $scans = array();
-		    while ($row = $results->fetchArray()) {
-			    $scans[] = $this->workdir.substr($row[0],7);
+        if (extension_loaded('sqlite3')){   
+            $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
+            $results = $capture->query('SELECT * FROM capture_failed');
+            $scans = array();
+            while ($row = $results->fetchArray()) {
+                $scans[] = $this->workdir.substr($row[0],7);
 
-		    }
-		    $output = $this->normalizeFilename('failed');
-		    $scans[] = $this->workdir.'/'.$output;
-		    $res = $this->shellExec('convert ',$scans);
-		    return $res;
-	    }
-	    return false;
+            }
+            $output = $this->normalizeFilename('failed');
+            $scans[] = $this->workdir.'/'.$output;
+            $res = $this->shellExec('convert ',$scans);
+            return $res;
+        }
+        return false;
     }
 
     /**
