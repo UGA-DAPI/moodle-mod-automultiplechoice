@@ -61,7 +61,6 @@ class AmcProcessGrade extends AmcProcess
         $this->actions = array(
             'scoringset' => (boolean) $this->amcPrepareBareme(),
             'scoring' => (boolean) $this->amcNote(),
-            'studentlist' =>(boolean) $this->writeFileStudentsList(),
             'export' => (boolean) $this->amcExport(),
         'csv' => (boolean) $this->writeFileApogeeCsv(),
         'gradebook' =>(boolean) $this->writeGrades()
@@ -224,7 +223,7 @@ class AmcProcessGrade extends AmcProcess
             '--sort', 'n',
             '--no-rtl',
             '--option-out', 'encodage=UTF-8',
-            '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
+            '--fich-noms', $this->get_students_list(),
             '--noms-encodage', 'UTF-8',
         );
         $parametersCsv = array_merge($parameters, array(
@@ -253,24 +252,6 @@ class AmcProcessGrade extends AmcProcess
             return false;
         }
         return $res;
-    }
-
-     /**
-     * Shell-executes 'amc association-auto'
-     * @return bool
-     */
-    protected function amcAssociation() {
-        $pre = $this->workdir;
-        $parameters = array(
-            '--data', $pre . '/data',
-            '--no-pre-association',
-            '--liste', $pre . self::PATH_STUDENTLIST_CSV,
-            '--encodage-liste', 'UTF-8',
-            '--liste-key', 'id',
-            '--csv-build-name', '(nom|surname) (prenom|name)',
-            '--notes-id', 'student.number',
-        );
-        return $this->shellExecAmc('association-auto', $parameters);
     }
 
     /**
@@ -305,46 +286,11 @@ class AmcProcessGrade extends AmcProcess
         }
         $this->grades[] = (object) array(
         'userid' => $userid,
-                'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
+                'rawgrade' => str_replace(',', '.', $data[6])
     );
         }
     fclose($input);
         return true;
-    }
-
-    /**
-     * Return an array of students with added fields for identified users.
-     *
-     *
-     *
-     * @return boolean Success?
-     */
-    protected function writeFileStudentsList() {
-    global $DB;
-        
-        $studentList = fopen($this->workdir . self::PATH_STUDENTLIST_CSV, 'w');
-        if (!$studentList) {
-            return false;
-        }
-        fputcsv($studentList, array('surname', 'name', 'id', 'email','moodleid','groupslist'), self::CSV_SEPARATOR);
-    $codelength = get_config('mod_automultiplechoice', 'amccodelength');
-    $sql = "SELECT RIGHT(u.idnumber,".$codelength.") as idnumber ,u.firstname, u.lastname,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
-                ."JOIN {user_enrolments} ue ON (ue.userid = u.id) "
-        ."JOIN {enrol} e ON (e.id = ue.enrolid) "
-        ."JOIN  groups_members gm ON u.id=gm.userid "
-        ."JOIN groups g ON g.id=gm.groupid "
-        ."WHERE u.idnumber != '' AND e.courseid = ? AND g.courseid=e.courseid "
-        ."GROUP BY u.id";
-        $users=  $DB->get_records_sql($sql, array($this->quizz->course));
-
-        if (!empty($users)) {
-        foreach ($users as $user) {
-                fputcsv($studentList, array($user->lastname, $user->firstname, $user->idnumber, $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
-            }
-        }
-        fclose($studentList);
-
-        return $this->amcAssociation();
     }
 
     /**
@@ -381,13 +327,14 @@ class AmcProcessGrade extends AmcProcess
             $this->usersknown++;
         } else {
             $this->usersunknown++;
-        }
+	}
+	
         $this->grades[] = (object) array(
             'userid' => $userid,
-            'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
+            'rawgrade' => str_replace(',', '.', $data[6])
                                                     );
         if ($data[$getCol['A:id']]!='NONE'){
-            fputcsv($output, array($data[$getCol['A:id']],$data[$getCol['name']],$data[$getCol['surname']],$data[$getCol['groupslist']], $data[$getCol['Mark']]), self::CSV_SEPARATOR);
+            fputcsv($output, array($data[$getCol['A:id']],$data[$getCol['name']],$data[$getCol['surname']],$data[$getCol['groupslist']], $data[6]), self::CSV_SEPARATOR);
         }
         }
         fclose($input);
@@ -439,38 +386,6 @@ class AmcProcessGrade extends AmcProcess
     }
 
 
-    /**
-     * Remove the prefixes configured at the module level.
-     *
-     * @param string $idnumber
-     * @return int
-     */
-    static protected function removePrefixFromIdnumber($idnumber) {
-        $prefixestxt = get_config('mod_automultiplechoice', 'idnumberprefixes');
-        $prefixes = array_filter(array_map('trim', preg_split('/\R/', $prefixestxt)));
-        foreach ($prefixes as $p) {
-            if (strncmp($idnumber, $p, strlen($p)) === 0) {
-                return (int) substr($idnumber, strlen($p));
-            }
-        }
-        return (int) $idnumber;
-    }
-
-    /**
-     * returns a list of students with anotated answer sheets
-     * @return array of (int) user.id
-     */
-    public function getUsersIdsHavingAnotatedSheets() {
-        global $DB;
-
-        $files = glob($this->workdir . '/cr/corrections/pdf/cr-*.pdf');
-        $userids = array();
-        foreach ($files as $file) {
-        $userids[] = (int) substr($file,3,-4);
-        }
-
-        return $userids;
-    }
 
     /**
      * Computes several statistics indicators from an array
@@ -522,36 +437,5 @@ class AmcProcessGrade extends AmcProcess
         return $handle;
     }
 
-    /**
-    * Sends a Moodle message to all students having an anotated sheet
-    * @param $usersIds array(user.id => user.username)
-    * @return integer # messages sent
-    */
-    public function sendAnotationNotification($usersIds) {
-        global $USER;
-        $url = new \moodle_url('/mod/automultiplechoice.php', array('a' => $this->quizz->id));
-        
-        $eventdata = new \object();
-        $eventdata->component         = 'mod_automultiplechoice';
-        $eventdata->name              = 'anotatedsheet';
-        $eventdata->userfrom          = $USER;
-        $eventdata->subject           = "Correction disponible";
-        $eventdata->fullmessageformat = FORMAT_PLAIN;   // text format
-        $eventdata->fullmessage       = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name;
-        $eventdata->fullmessagehtml   = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name
-                                      . " à l'adresse " . \html_writer::link($url, $url) ;
-        $eventdata->smallmessage      = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name;
-
-        // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
-        $count = 0;
-        foreach ($usersIds as $userid) {
-            $eventdata->userto = $userid;
-            $res = message_send($eventdata);
-            if ($res) {
-                $count++;
-            }
-        }
-        return $count;
-    }
 
 }
