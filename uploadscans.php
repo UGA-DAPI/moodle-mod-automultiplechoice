@@ -136,17 +136,17 @@ if (($scansStats) && (($scansStats['count']-$scansStats['nbidentified'])>0)){
     if ($array_failed){
         $failedoutput = $OUTPUT->heading('Scans non reconnus',3,'helptitle');
         $failedoutput .= \html_writer::start_div('box generalbox boxaligncenter');
-        $deleteallurl = new \moodle_url('uploadscans.php', array('a' => $this->quizz->id, 'action' => 'delete','scan'=>'all'));
+        $deleteallurl = new \moodle_url('uploadscans.php', array('a' => $quizz->id, 'action' => 'delete','scan'=>'all'));
         $deleteallbutton= new \single_button($deleteallurl, 'Effacer tous les scans non reconnus');
         $deleteallbutton->add_confirm_action(get_string('confirm'));
-        $downloadfailedurl = $this->getFileUrl($this->normalizeFilename('failed'));
+        $downloadfailedurl = $process->getFileUrl($process->normalizeFilename('failed'));
         $failedoutput .= $OUTPUT->render($deleteallbutton);
         $failedoutput .= \html_writer::link($downloadfailedurl, 'Télécharger tous les scans non reconnus',array('class'=>'btn','target'=>'_blank'));
         $failedoutput .= \html_writer::start_tag('ul',array('class'=>'unlist'));
         foreach ($array_failed as $scan) {
-            $url = new \moodle_url('uploadscans.php', array('a'=>$this->quizz->id,'action'=>'delete', 'scan'=>$scan));
+            $url = new \moodle_url('uploadscans.php', array('a'=>$quizz->id,'action'=>'delete', 'scan'=>$scan));
             $deleteicon = $OUTPUT->action_icon($url,new \pix_icon('t/delete',get_string('delete')),new \confirm_action(get_string('confirm')));
-            $scanoutput = \html_writer::link($this->getFileUrl($scan),$scan);
+            $scanoutput = \html_writer::link($process->getFileUrl($scan),$scan);
             $failedoutput .= \html_writer::tag('li', $scanoutput . $deleteicon); 
         }
         $failedoutput .= \html_writer::end_tag('ul' );
