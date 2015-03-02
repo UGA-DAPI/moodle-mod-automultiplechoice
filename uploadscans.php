@@ -128,6 +128,30 @@ if ($scansStats) {
     <?php
 }
 if (($scansStats) && (($scansStats['count']-$scansStats['nbidentified'])>0)){
-    echo $process->list_failed();
+    $array_failed= $process->get_failed_scans();
+    if ($array_failed){
+        $failedoutput = $OUTPUT->heading('Scans non reconnus',3,'helptitle');
+        $failedoutput .= \html_writer::start_div('box generalbox boxaligncenter');
+        $deleteallurl = new \moodle_url('uploadscans.php', array('a' => $this->quizz->id, 'action' => 'delete','scan'=>'all'));
+        $deleteallbutton= new \single_button($deleteallurl, 'Effacer tous les scans non reconnus');
+        $deleteallbutton->add_confirm_action(get_string('confirm'));
+        $downloadfailedurl = $this->getFileUrl($this->normalizeFilename('failed'));
+        $failedoutput .= $OUTPUT->render($deleteallbutton);
+        $failedoutput .= \html_writer::link($downloadfailedurl, 'Télécharger tous les scans non reconnus',array('class'=>'btn','target'=>'_blank'));
+        $failedoutput .= \html_writer::start_tag('ul',array('class'=>'unlist'));
+        foreach ($array_failed as $scan) {
+            $url = new \moodle_url('uploadscans.php', array('a'=>$this->quizz->id,'action'=>'delete', 'scan'=>$scan));
+            $deleteicon = $OUTPUT->action_icon($url,new \pix_icon('t/delete',get_string('delete')),new \confirm_action(get_string('confirm')));
+            $scanoutput = \html_writer::link($this->getFileUrl($scan),$scan);
+            $failedoutput .= \html_writer::tag('li', $scanoutput . $deleteicon); 
+        }
+        $failedoutput .= \html_writer::end_tag('ul' );
+        $failedoutput .= \html_writer::end_div();
+    }else{
+        $failedoutput = 'Demandez à votre administrateur système d\'installer php-sqlite3 pour voir les fichiers non reconnus';
+    }
+
+        echo $failedoutput;
+    
 }
 echo $output->footer();

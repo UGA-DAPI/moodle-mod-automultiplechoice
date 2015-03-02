@@ -31,38 +31,23 @@ require_capability('mod/automultiplechoice:update', $controller->getContext());
 $PAGE->set_url('/mod/automultiplechoice/associating.php', array('id' => $cm->id));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
-$process = new amc\Grade($quizz);
-if (!$process->isGraded() || $action === 'grade') {
-    $prepare = new amc\AmcProcessPrepare($quizz);
-    $prepare->saveFormat('latex');
-    unset($prepare);
-    if ($process->grade()) {
-        redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
+$process = new amc\AmcProcessAssociate($quizz);
+ if ($action === 'associate') {
+    if ($process->associate()) {
+        redirect(new moodle_url('associating.php', array('a' => $quizz->id)));
     }
-} else if ($action === 'anotate') {
-    if ($process->anotate()) {
-        redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
-    }
-} else if ($action === 'setstudentaccess') {
-    $quizz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
-    $quizz->corrigeaccess = optional_param('corrigeaccess', false, PARAM_BOOL);
-    $quizz->save();
-    redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
-} else if ($action === 'notification') {
-    $studentsto = $process->getUsersIdsHavingAnotatedSheets();
-    $okSends = $process->sendAnotationNotification($studentsto);
-    amc\FlashMessageManager::addMessage(
-        ($okSends == count($studentsto)) ? 'success' : 'error',
-        $okSends . " messages envoyés pour " . count($studentsto) . " étudiants ayant une copie annotée."
-    );
-    redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
-}
+} 
 
-// Has side effects, so must be called early.
-$stats = $process->getHtmlStats();
 
 // Output starts here
 echo $output->header();
+
+echo $OUTPUT->box_start('informationbox well');
+echo $OUTPUT->heading("Association", 2)
+    . "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
+;
+echo HtmlHelper::buttonWithAjaxCheck('Relancer l\'association', $quizz->id, 'associating', 'associate', 'process');
+echo $OUTPUT->box_end();
 
 
 echo $output->footer();

@@ -63,16 +63,16 @@ $inactive = array();
 $activated = array();
 if (empty($quizz->name)) {
     $currenttab = 'dashboard';
-    $inactive = array('dashboard', 'questions', 'scoringsystem', 'documents', 'uploadscans', 'grading');
+    $inactive = array('dashboard', 'questions', 'scoringsystem', 'documents', 'uploadscans', 'associating','grading','annotating');
 } else if (empty($quizz->questions)) {
     $currenttab = 'questions';
-    $inactive = array('dashboard', 'scoringsystem', 'documents', 'uploadscans', 'grading');
+    $inactive = array('dashboard', 'scoringsystem', 'documents', 'uploadscans','associating','grading','annotating');
 } else if (!$quizz->validate()) {
-    $inactive = array('documents', 'uploadscans', 'grading');
+    $inactive = array('documents', 'uploadscans','associating','grading','annotating');
 } else if (!empty($quizz->errors) || !$quizz->isLocked()) {
-    $inactive = array('uploadscans', 'grading');
+    $inactive = array('uploadscans', 'associating','grading','annotating');
 } else if (!$quizz->hasScans()) {
-    $inactive = array('grading');
+    $inactive = array('associating','grading','annotating');
 }
 if ($quizz->isLocked()) {
     $inactive[] = 'questions';

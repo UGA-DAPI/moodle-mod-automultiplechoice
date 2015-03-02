@@ -14,31 +14,7 @@ require_once __DIR__ . '/Log.php';
 
 class AmcProcessPrepare extends AmcProcess
 {
-    /**
-     * Save the AmcTXT source file.
-     *
-     * @param string $formatName "txt" | "latex"
-     * @return amcFormat\Api
-     */
-    public function saveFormat($formatName) {
-        try {
-            $format = amcFormat\buildFormat($formatName, $this->quizz);
-            $format->quizz = $this->quizz;
-            $format->codelength = $this->codelength;
-        } catch (\Exception $e) {
-            // error
-            $this->errors[] = $e->getMessage();
-            return null;
-        }
-
-        $filename = $this->workdir . "/" . $format->getFilename();
-        if (file_put_contents($filename, $format->getContent())) {
-            return $format;
-        } else {
-            $this->errors[] = "Could not write the file for AMC. Disk full?";
-            return null;
-        }
-    }
+   
 
     /**
      * Shell-executes 'amc prepare' for creating pdf files
