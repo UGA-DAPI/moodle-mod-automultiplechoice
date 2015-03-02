@@ -10,7 +10,7 @@ use \mod\automultiplechoice as amc;
 
 require_once(__DIR__ . '/locallib.php');
 require_once __DIR__ . '/models/Grade.php';
-require_once __DIR__ . '/models/AmcProcessPrepare.php';
+require_once __DIR__ . '/models/AmcProcessAssociate.php';
 
 global $DB, $OUTPUT, $PAGE;
 /* @var $DB moodle_database */
