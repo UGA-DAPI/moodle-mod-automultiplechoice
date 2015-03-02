@@ -17,7 +17,6 @@ class AmcProcessAnnotate extends AmcProcess
 {
     
 
-    protected $grades = array();
 
     /**
      *
@@ -27,8 +26,8 @@ class AmcProcessAnnotate extends AmcProcess
      */
     public function anotate() {
         global $DB;
-        $this->actions->anotate = $this->amcAnnotePdf();
-        if (!$this->actions->anotate) {
+        $res = $this->amcAnnotePdf();
+        if (!$res) {
             return false;
         }
         return true;
@@ -65,11 +64,11 @@ class AmcProcessAnnotate extends AmcProcess
             '--verdict-question', '"%s / %m"',
             '--no-rtl',
             '--changes-only',
-            '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
+            '--fich-noms', $this->get_students_list(),
             //'--noms-encodage', 'UTF-8',
             //'--csv-build-name', 'surname name',
         );
-        $res = $this->shellExecAmc('annote', $parameters,true);
+        $res = $this->shellExecAmc('annote', $parameters);
         if ($res) {
             $this->log('annote', '');
         }
@@ -84,6 +83,7 @@ class AmcProcessAnnotate extends AmcProcess
      * @return bool
      */
     protected function amcRegroupe() {
+        $pre = $this->workdir;    
         $parameters = array(
             //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
             '--no-compose',
@@ -92,7 +92,7 @@ class AmcProcessAnnotate extends AmcProcess
             '--data', $pre.'/data',
             '--progression-id', 'regroupe',
             '--progression', '1',
-            '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
+            '--fich-noms', $this->get_students_list(),
             '--noms-encodage', 'UTF-8',
             '--sort', 'n',
             '--register',
@@ -124,7 +124,7 @@ class AmcProcessAnnotate extends AmcProcess
     protected function amcAnnotePdf() {
     $pre = $this->workdir;    
     array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
-        array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
+    array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
 
         if (!$this->amcAnnote()) {
             return false;
@@ -137,11 +137,11 @@ class AmcProcessAnnotate extends AmcProcess
             '-dNOPAUSE', 
             '-dBATCH', 
             '-sDEVICE=pdfwrite',
-            '-sOutputFile='.$pre.$this->normalizeFilemane('corrections'),
+            '-sOutputFile='.$pre.'/'.$this->normalizeFilename('corrections'),
             $pre."/cr/corrections/pdf/cr-*.pdf"           
         );
    
-    return $this->shellExecAmc('gs', $parameters ,true);
+    return $this->shellExec('gs', $parameters );
     }
     
 

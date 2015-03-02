@@ -204,7 +204,13 @@ class AmcProcess
                 $forcedld
         );
     }
-
+    protected function get_students_list(){
+        if (file_exists($this->workdir . self::PATH_STUDENTLIST_CSV)){
+		return $this->workdir . self::PATH_STUDENTLIST_CSV;
+	}else{
+		return '';
+	}
+    }
     /**
      * Format a timestamp into a fr datetime.
      *
