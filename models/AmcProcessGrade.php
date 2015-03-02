@@ -227,7 +227,7 @@ class AmcProcessGrade extends AmcProcess
             '--sort', 'n',
             '--no-rtl',
             '--option-out', 'encodage=UTF-8',
-            '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
+            '--fich-noms', $this->get_students_list(),
             '--noms-encodage', 'UTF-8',
         );
         $parametersCsv = array_merge($parameters, array(
@@ -426,7 +426,6 @@ class AmcProcessGrade extends AmcProcess
         global $DB;
         
         $studentList = fopen($this->workdir . self::PATH_STUDENTLIST_CSV, 'w');
-        
         if (!$studentList) {
             return false;
         }
@@ -559,38 +558,6 @@ class AmcProcessGrade extends AmcProcess
     }
 
 
-    /**
-     * Remove the prefixes configured at the module level.
-     *
-     * @param string $idnumber
-     * @return int
-     */
-    static protected function removePrefixFromIdnumber($idnumber) {
-        $prefixestxt = get_config('mod_automultiplechoice', 'idnumberprefixes');
-        $prefixes = array_filter(array_map('trim', preg_split('/\R/', $prefixestxt)));
-        foreach ($prefixes as $p) {
-            if (strncmp($idnumber, $p, strlen($p)) === 0) {
-                return (int) substr($idnumber, strlen($p));
-            }
-        }
-        return (int) $idnumber;
-    }
-
-    /**
-     * returns a list of students with anotated answer sheets
-     * @return array of (int) user.id
-     */
-    public function getUsersIdsHavingAnotatedSheets() {
-        global $DB;
-
-        $files = glob($this->workdir . '/cr/corrections/pdf/cr-*.pdf');
-        $userids = array();
-        foreach ($files as $file) {
-	    $userids[] = (int) substr($file,3,-4);
-        }
-
-        return $userids;
-    }
 
     /**
      * Computes several statistics indicators from an array
@@ -642,36 +609,5 @@ class AmcProcessGrade extends AmcProcess
         return $handle;
     }
 
-    /**
-    * Sends a Moodle message to all students having an anotated sheet
-    * @param $usersIds array(user.id => user.username)
-    * @return integer # messages sent
-    */
-    public function sendAnotationNotification($usersIds) {
-        global $USER;
-        $url = new \moodle_url('/mod/automultiplechoice.php', array('a' => $this->quizz->id));
-        
-        $eventdata = new \object();
-        $eventdata->component         = 'mod_automultiplechoice';
-        $eventdata->name              = 'anotatedsheet';
-        $eventdata->userfrom          = $USER;
-        $eventdata->subject           = "Correction disponible";
-        $eventdata->fullmessageformat = FORMAT_PLAIN;   // text format
-        $eventdata->fullmessage       = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name;
-        $eventdata->fullmessagehtml   = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name
-                                      . " à l'adresse " . \html_writer::link($url, $url) ;
-        $eventdata->smallmessage      = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name;
-
-        // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
-        $count = 0;
-        foreach ($usersIds as $userid) {
-            $eventdata->userto = $userid;
-            $res = message_send($eventdata);
-            if ($res) {
-                $count++;
-            }
-        }
-        return $count;
-    }
 
 }

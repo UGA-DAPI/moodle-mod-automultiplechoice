@@ -74,7 +74,7 @@ class Latex extends Api
         $shortTitles = '';
         if ($this->quizz->amcparams->answerSheetColumns > 2) {
 		$shortTitles = '\def\AMCformQuestion#1{\vspace{\AMCformVSpace}\par{\bf Q.#1 :}}
-\def\AMCformAnswer#1{\hspace{\AMCformHSpace}#1}\makeatletter';
+\def\AMCformAnswer#1{\hspace{\AMCformHSpace}#1}';
         }
         $header = <<<EOL
 \\documentclass[a4paper]{article}

@@ -77,6 +77,9 @@ if (empty($quizz->name)) {
 if ($quizz->isLocked()) {
     $inactive[] = 'questions';
 }
+if (has_students($context)==0){
+    $inactive = array('associating');
+}
 if (!isset($currenttab)) {
     $currenttab = 'dashboard';
 }

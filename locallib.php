@@ -110,7 +110,25 @@ function getStudentByIdNumber($idn) {
     }
     return null;
 }
+/**
+ * Return a user record.
+ *
+ *
+ * @global \moodle_database $DB
+ * @param context if
+ * @return int count student user.
+ */
+function has_students($context) {
+	global $DB;
+	list($relatedctxsql, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+	$countsql = "SELECT COUNT(DISTINCT(ra.userid))
+		FROM {role_assignments} ra
+		JOIN {user} u ON u.id = ra.userid
+		WHERE ra.contextid  $relatedctxsql AND ra.roleid = 5";
+	$totalcount = $DB->count_records_sql($countsql,$params);
+	return $totalcount;
 
+}
 /**
  * Returns a HTML button.
  *
