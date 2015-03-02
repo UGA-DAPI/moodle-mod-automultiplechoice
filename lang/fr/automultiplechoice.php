@@ -107,6 +107,7 @@ $string['note'] = 'Notes et copies corrigées';
 $string['export'] = 'Rapports';
 
 $string['questionoperations'] = 'Avant de sélectionner des questions, vous pouvez enrichir la banque de questions par…';
+$string['importfilequestions'] = 'Importer un fichier de questions';
 $string['importquestions'] = 'Import/ Création de questions';
 $string['importfilequestions'] = 'Import d\'un fichier de question'; 
 $string['createquestions'] = "Création d'une question par formulaire";
