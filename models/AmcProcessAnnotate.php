@@ -108,7 +108,7 @@ class AmcProcessAnnotate extends AmcProcess
      * @todo (maybe) manages all variants
      * @return bool
      */
-    protected function amcAnnotePdf() {
+    public function amcAnnotePdf() {
         $pre = $this->workdir;    
         array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
         array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
@@ -127,9 +127,6 @@ class AmcProcessAnnotate extends AmcProcess
         exec($cmd, $lines, $returnVal);
 
         $this->getLogger()->write($this->formatShellOutput($cmd, $lines, $returnVal));
-        if ($output) {
-            $this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_DEVELOPER);
-        }
         if ($returnVal === 0) {
             return true;
         } else {
