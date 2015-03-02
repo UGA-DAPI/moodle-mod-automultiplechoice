@@ -71,7 +71,7 @@ echo $output->header();
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('questionoperations', 'automultiplechoice'));
 echo '<p>' . $OUTPUT->action_link(
-        new moodle_url('/question/import.php', array('courseid' => $course->id));,
+        new moodle_url('/question/import.php', array('courseid' => $course->id)),
         get_string('importfilequestions', 'automultiplechoice'),
         null,
         array('target' => '_blank')
