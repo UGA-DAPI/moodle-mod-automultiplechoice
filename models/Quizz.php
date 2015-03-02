@@ -122,7 +122,39 @@ class Quizz
     public function isLocked() {
         return $this->amcparams->locked;
     }
+/**
+     * 
+     *
+     *
+     *
+     * @return boolean Success?
+     */
+    public function has_students() {
+        global $DB;
+        $sql = "SELECT COUNT(u.id) FROM {user} u "
+                ."JOIN {user_enrolments} ue ON (ue.userid = u.id) "
+        ."JOIN {enrol} e ON (e.id = ue.enrolid) "
+        
+        ."WHERE u.idnumber != '' AND e.courseid = ? AND g.courseid=e.courseid ";
 
+       $countsql = "SELECT COUNT(DISTINCT(ra.userid))
+                   FROM {role_assignments} ra
+                   JOIN {user} u ON u.id = ra.userid
+                   $groupsql
+                  WHERE ra.contextid $relatedctxsql AND ra.roleid = :roleid";
+
+    $totalcount = $DB->count_records_sql($countsql, $params);
+        $users=  $DB->get_records_sql($sql, array($this->quizz->course));
+
+        if (!empty($users)) {
+        foreach ($users as $user) {
+                fputcsv($studentList, array($user->lastname, $user->firstname, $user->idnumber, $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
+            }
+        }
+        fclose($studentList);
+
+        return $this->amcAssociation();
+    }
     /**
      * Concat the 3 instructions fields.
      *
