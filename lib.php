@@ -425,7 +425,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/zip') ;
         return true;
      } elseif (preg_match('/^corrections-.*\.pdf$/', $filename)) {
-        send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
      } elseif (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
@@ -530,7 +530,7 @@ class mod_automultiplechoice_users_iterator {
      * @param int    $groupid iterate only group users if present
     
      */
-    public function __construct($course, $groupid=0,) {
+    public function __construct($course, $groupid=0) {
         $this->course      = $course;
         $this->grade_items = $grade_items;
         $this->groupid     = $groupid;

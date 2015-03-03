@@ -86,6 +86,12 @@ echo '<p>' . $OUTPUT->action_link(
         null,
         array('target' => '_blank')
     ) . '</p>';
+echo '<p>' . $OUTPUT->action_link(
+        new moodle_url('/question/edit.php', array('courseid' => $course->id)),
+        get_string('questionbank', 'question'),
+        null,
+        array('target' => '_blank')
+    ) . '</p>';
 echo "<p>Si vos questions récentes n'apparaissent pas, "
         . "pensez à rafraichir la page de votre navigateur (F5) et à trier par date descendante.</p>";
 echo $OUTPUT->box_end();

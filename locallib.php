@@ -169,3 +169,10 @@ function displayGradeInfo(amc\AmcProcess $process) {
         echo "<div>Correction des copies déjà effectuée le " . amc\AmcProcess::isoDate($gradetime) . "</div>\n";
     }
 }
+function backup_source($file){
+     copy ($file,$file.'.orig');
+}
+function restore_source($file){
+	rename ($file,substr($file,-5));
+}
+
