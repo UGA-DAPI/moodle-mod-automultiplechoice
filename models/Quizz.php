@@ -163,27 +163,6 @@ class Quizz
         return (boolean) $this->id;
     }
 
-/**
-     * Saves the instance into the DB.
-     *
-     * @global \moodle_database $DB
-     * @return boolean Success?
-     */
-    public function lock() {
-        $this->amcparams->locked = true;
-        amc\Log::build($quizz->id)->write('lock');
-        $this->save();
-    }
-/**
-     * Saves the instance into the DB.
-     *
-     * @global \moodle_database $DB
-     * @return boolean Success?
-     */
-    public function unlock() {
-        $this->amcparams->locked = false;
-        $this->save();
-    }
     /**
      * Validate the instance and update $this->errors.
      *

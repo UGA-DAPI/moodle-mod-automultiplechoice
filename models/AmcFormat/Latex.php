@@ -172,8 +172,7 @@ EOL;
         }
         if (!$scoring) {
             $scoring = 'b=' . $question->score;
-        } 
-        
+        }
         $questionText = ($scoring ? '    \\scoring{' . $scoring . "}\n" : '')
                 . ($dp == \mod\automultiplechoice\AmcParams::DISPLAY_POINTS_BEGIN ? $pointsTxt . ' ' : '')
                 . $this->htmlToLatex(format_text($question->questiontext, $question->questiontextformat, ['filter' => false]))

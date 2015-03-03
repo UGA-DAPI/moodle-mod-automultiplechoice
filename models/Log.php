@@ -137,8 +137,11 @@ class Log {
                     }
                     if ($this->read('scoringsystem') > $grading) {
                         $messages[] = "Le barème a été modifié depuis la dernière notation. Relancer la correction ?";
-                    }
-                    if ($grading > $this->read('correction')) {
+		    }
+		    break;
+		case 'annotating':
+                    $annotating = $this->read('correction');
+		    if ($this->read('grading') > $annotating) {
                         $messages[] = "La dernière notation est plus récente que les copies annotées. Re-générer les copies corrigées ?";
                     }
                     break;
