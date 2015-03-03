@@ -23,6 +23,7 @@ $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('annotating');
 $action = optional_param('action', '', PARAM_ALPHA);
+$userid   = optional_param('userid', $USER->id, PARAM_INT);
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
@@ -90,6 +91,59 @@ if ($process->hasAnotatedFiles()) {
         'post'
     );
     echo $OUTPUT->box_end();
+
+    $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
+    $currentgroup = groups_get_course_group($course, true);
+
+    if (!$currentgroup) {      // To make some other functions work better later
+        $currentgroup = NULL;
+    }
+
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
+    $context = context_module::instance($cm->id);
+    if (has_students($context)==0) {
+        // no separate group access, can view only self
+        $user_selector = false;
+    } else {
+        $user_selector = true;
+    }
+
+    
+    $showonlyactiveenrol = !has_capability('moodle/course:viewsuspendedusers', $context);
+    if (empty($userid)) {
+        $gui = new graded_users_iterator($course, null, $currentgroup);
+        $gui->require_active_enrolment($showonlyactiveenrol);
+        $gui->init();
+        // Add tabs
+        print_grade_page_head($courseid, 'report', 'user');
+        //groups_print_activity_menu($cm, $urlroot, $return=false, $hideallparticipants=false);groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
+
+        if ($user_selector) {
+            $renderer = $PAGE->get_renderer('gradereport_user');
+            echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, true);
+        }
+
+      
+    } else { // Only show one user's report
+        $report = new grade_report_user($courseid, $gpr, $context, $userid);
+
+        $studentnamelink = html_writer::link(new moodle_url('/user/view.php', array('id' => $report->user->id, 'course' => $courseid)), fullname($report->user));
+        print_grade_page_head($courseid, 'report', 'user', get_string('pluginname', 'gradereport_user') . ' - ' . $studentnamelink);
+        //groups_print_activity_menu($cm, $urlroot, $return=false, $hideallparticipants=false);
+
+        if ($user_selector) {
+            $renderer = $PAGE->get_renderer('gradereport_user');
+            $showallusersoptions = true;
+            echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, $showallusersoptions);
+        }
+
+       
+    }
+
+
+
+
+    
 } else {
     echo HtmlHelper::buttonWithAjaxCheck('Générer les copies corrigées (annotées)', $quizz->id, 'annotating', 'anotate', 'process');
 }

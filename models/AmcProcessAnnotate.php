@@ -110,7 +110,7 @@ class AmcProcessAnnotate extends AmcProcess
      */
     public function amcAnnotePdf() {
         $pre = $this->workdir;    
-        array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
+        //array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
         array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
 
         if (!$this->amcAnnote()) {
