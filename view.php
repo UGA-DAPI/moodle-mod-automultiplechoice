@@ -129,12 +129,15 @@ if ($scans) {
 } else {
     echo "<div>Aucune copie n'a encore été déposée.</div>";
 }
+echo $OUTPUT->heading( "6. " . get_string('associating', 'automultiplechoice'), 3);
 
-echo $OUTPUT->heading("6. " . get_string('grading', 'automultiplechoice'), 3);
+
+echo $OUTPUT->heading("7. " . get_string('grading', 'automultiplechoice'), 3);
 if ($scans && $process->isGraded()) {
     echo $process->getHtmlStats();
 } else {
     echo "<div>Aucune copie n'a encore été notée ou corrigée.</div>";
 }
+echo $OUTPUT->heading( "8. " . get_string('annotating', 'automultiplechoice'), 3);
 
 echo $output->footer();

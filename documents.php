@@ -74,6 +74,12 @@ EOL;
     } else {
         echo $OUTPUT->heading("Archive zip", 3);
         echo $process->getHtmlZipLink();
+        if (has_capability('mod/automultiplechoice:restoreoriginalfile', $controller->getContext())){
+            echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'restore')),
+                    'Restaurer la version originale', 'post'
+                );
+        }
     }
 } else {
     foreach (amc\Log::build($quizz->id)->check('pdf') as $warning) {
@@ -90,11 +96,12 @@ EOL;
             </div>
             <div>
             <?php
-                echo HtmlHelper::buttonWithAjaxCheck('Actualiser les documents', $quizz->id, 'documents', 'prepare', '');
+                echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'prepare')),
+                    'Actualiser les documents' );
                 echo $OUTPUT->single_button(
                     new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'randomize')),
-                    'Mélanger questions et réponses', 'post'
-                );
+                    'Mélanger questions et réponses' );
     } else {
         ?>
         <div class="async-load" data-url="ajax/prepare.php">
@@ -103,10 +110,16 @@ EOL;
             </div>
             <div class="async-post-load">
             <?php
-                echo HtmlHelper::buttonWithAjaxCheck('Actualiser les documents', $quizz->id, 'documents', 'prepare', '');
-                echo HtmlHelper::buttonWithAjaxCheck('Mélanger questions et réponses', $quizz->id, 'documents', 'randomize', '');
+                 echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'prepare')),
+                    'Actualiser les documents' );
+                echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'randomize')),
+                    'Mélanger questions et réponses' );
             }
-            echo HtmlHelper::buttonWithAjaxCheck('Préparer les documents à imprimer et verrouiller le questionnaire', $quizz->id, 'documents', 'lock', '');
+            echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'lock')),
+                    'Préparer les documents à imprimer et verrouiller le questionnaire' );
             ?>
             </div>
         </div>

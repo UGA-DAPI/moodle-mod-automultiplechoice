@@ -25,7 +25,7 @@ class AmcProcessUpload extends AmcProcess
             $this->errors[] = "Erreur découpage scan (amc getimages)";
         }
 
-        $analyse = $this->amcAnalyse(true);
+        $analyse = $this->amcAnalyse();
         if (!$analyse) {
             $this->errors[] = "Erreur lors de l'analyse (amc analyse).";
         }
@@ -145,12 +145,17 @@ class AmcProcessUpload extends AmcProcess
 
     /**
      * Shell-executes 'amc analyse'
+     * @param string $arg (opt, '') file to analyse
      * @param bool $multiple (opt, true) If false, AMC will check that all the blank answer sheets were distinct.
      * @return bool
      */
-    private function amcAnalyse($multiple = true) {
+    private function amcAnalyse($arg='',$multiple = true) {
         $pre = $this->workdir;
-        $scanlist = $pre . '/scanlist';
+        if ($arg==''){
+            $paramscan = '--liste-fichiers ' .  $pre . '/scanlist';
+        }else{
+             $paramscan = $arg;
+        }
         $parammultiple = '--' . ($multiple ? '' : 'no-') . 'multiple';
         $parameters = array(
             $parammultiple,
@@ -163,8 +168,8 @@ class AmcProcessUpload extends AmcProcess
             '--data', $pre . '/data',
             '--projet', $pre,
             '--cr', $pre . '/cr',
-            '--liste-fichiers', $scanlist,
             '--no-ignore-red',
+            $paramscan,
             );
         //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
         $res = $this->shellExecAmc('analyse', $parameters);
