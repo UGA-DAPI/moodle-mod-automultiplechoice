@@ -72,4 +72,28 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+    'mod/automultiplechoice:managethreshold' => array(
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_PREVENT,
+            'manager' => CAP_PREVENT
+        )
+    ),
+    'mod/automultiplechoice:restoreoriginalfile' => array(
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'guest' => CAP_PREVENT,
+            'student' => CAP_PREVENT,
+            'teacher' => CAP_PREVENT,
+            'editingteacher' => CAP_PREVENT,
+            'manager' => CAP_PREVENT
+        )
+    ),
 );

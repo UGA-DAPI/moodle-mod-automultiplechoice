@@ -20,16 +20,19 @@ amcImprime      -> @/sujets-NORM.zip , @/imprime/sujet-%e.pdf
 (upload copies)  -> /tmp/filename.pdf (par ex.)
     V
     V
-amcMeptex          [capture, layout] modifiés
-    V
-    V
 amcGetimages     -> @/scanlist , @/scans/NORMSCAN-page-*.ppm (pages brutes)
     V
     V
 amcAnalyse       -> @/cr/name-*.jpg, @/cr/page-*.jpg    N x (zone nom, page + surlignage coches)
     V               [capture] modifié  (blobs images)
     V
-
+writeStudentsList  -> si etudiant dans le cours @exports/ : student_list.csv créé
+    V
+amcAssociation-auto   ->  [association] créé
+    V
+    V
+amcAssociation-manuel   ->  [association] modifié
+    V
 amcPrepareBareme -> amc-compiled.* : pdf,xy créés ; .amc,.log mis à jour
     V               [capture] modifié ; [scoring] créé
     V
@@ -39,20 +42,7 @@ amcNote          -> [capture, scoring] modifiés
 amcExport         -> @/exports/scores.csv  ;  amc-compiled.log,.pdf modifiés
     V                [association] créé ; [capture, scoring] modifiés
     V
-writeFileWithIdentifiedStudents  -> @exports/ : score_names.csv, student_list.csv
-    V
-    V
-amcAssociation  ???
-
-    V
-    V
 amcAnnotePdf
 [ amcAnnote   ]   -> @/cr/corrections/jpg/page-*.jpg
 [ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-NORM.pdf  (--single-output)
 [ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-IDNUMBER-NOM.pdf  (normal)
-    V
-    V
-amcAssociation  ???
-
-
-note : l'appel à amcAssociation reste à préciser
