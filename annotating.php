@@ -59,15 +59,15 @@ echo $output->header();
 
 $warnings = amc\Log::build($quizz->id)->check('annotating');
 if ($warnings) {
-	echo '<div class="informationbox notifyproblem alert alert-error">';
-	foreach ($warnings as $warning) {
-		echo $warning;
-	}
+    echo '<div class="informationbox notifyproblem alert alert-error">';
+    foreach ($warnings as $warning) {
+        echo $warning;
+    }
 
-	echo "<br /><br />";
-	echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
-	echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'grading', 'anotate', 'process');
-	echo "</div>";
+    echo "<br /><br />";
+    echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
+    echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'grading', 'anotate', 'process');
+    echo "</div>";
 }
 if ($process->hasAnotatedFiles()) {
     $url = $process->getFileUrl( $process->normalizeFilename('corrections'));
@@ -109,9 +109,9 @@ if ($process->hasAnotatedFiles()) {
     if (!$currentgroup) {      // To make some other functions work better later
         $currentgroup = NULL;
     }
-
-    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
     $context = context_module::instance($cm->id);
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
+    
     if (has_students($context)==0) {
         // no separate group access, can view only self
         $user_selector = false;

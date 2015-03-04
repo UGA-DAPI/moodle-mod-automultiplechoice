@@ -18,13 +18,10 @@ global $DB, $OUTPUT, $PAGE;
 /* @var $OUTPUT core_renderer */
 
 $controller = new amc\Controller();
-
 $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('documents');
-
-$process = new amc\AmcProcessPrepare($quizz);
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
@@ -55,10 +52,7 @@ $PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));
 
 echo $output->header();
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 4bb8a11... dev backup source
 if ($quizz->isLocked()) {
     echo '<div class="informationbox notifyproblem alert alert-info">'
         . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
@@ -67,7 +61,6 @@ if ($quizz->isLocked()) {
 
     echo $OUTPUT->heading("Fichiers PDF précédemment créés", 3);
     echo $process->getHtmlPdfLinks();
-  
     if ($action == 'lock') {
         $params = json_encode(["a" => $quizz->id, "action" => "zip"]);
         $content = '';
@@ -80,6 +73,12 @@ if ($quizz->isLocked()) {
     } else {
         echo $OUTPUT->heading("Archive zip", 3);
         echo $process->getHtmlZipLink();
+        if (has_capability('mod/automultiplechoice:restoreoriginalfile', $controller->getContext())){
+            echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'restore')),
+                    'Restaurer la version originale', 'post'
+                );
+        }
     }
 } else {
     foreach (amc\Log::build($quizz->id)->check('pdf') as $warning) {
@@ -90,15 +89,18 @@ if ($quizz->isLocked()) {
         ?>
         <div>
             <div>
-                <?php echo $process ? $process->getHtmlPdfLinks() : '';?>
+                <?php
+                echo $process->getHtmlPdfLinks();
+                ?>
             </div>
             <div>
             <?php
-                echo HtmlHelper::buttonWithAjaxCheck('Actualiser les documents', $quizz->id, 'documents', 'prepare', '');
+                echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'prepare')),
+                    'Actualiser les documents' );
                 echo $OUTPUT->single_button(
                     new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'randomize')),
-                    'Mélanger questions et réponses', 'post'
-                );
+                    'Mélanger questions et réponses' );
     } else {
         ?>
         <div class="async-load" data-url="ajax/prepare.php">
@@ -107,14 +109,19 @@ if ($quizz->isLocked()) {
             </div>
             <div class="async-post-load">
             <?php
-                echo HtmlHelper::buttonWithAjaxCheck('Actualiser les documents', $quizz->id, 'documents', 'prepare', '');
-                echo HtmlHelper::buttonWithAjaxCheck('Mélanger questions et réponses', $quizz->id, 'documents', 'randomize', '');
-    }
-    echo HtmlHelper::buttonWithAjaxCheck('Préparer les documents à imprimer et verrouiller le questionnaire', $quizz->id, 'documents', 'lock', '');
-          
-    ?>
+                 echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'prepare')),
+                    'Actualiser les documents' );
+                echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'randomize')),
+                    'Mélanger questions et réponses' );
+            }
+            echo $OUTPUT->single_button(
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'action' => 'lock')),
+                    'Préparer les documents à imprimer et verrouiller le questionnaire' );
+            ?>
+            </div>
         </div>
-    </div>
 <?php
 }
 

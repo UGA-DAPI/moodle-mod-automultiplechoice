@@ -33,14 +33,14 @@ class AmcProcessAnnotate extends AmcProcess
         if (!is_dir($pre. '/cr/corrections/pdf')) {
             mkdir($pre. '/cr/corrections/pdf', 0777, true);
         }
-	if ($this->quizz->amcparams->answerSheetColumns > 2) {
-		$ecart='8';
-		$pointsize='110';
-	}else{
-		$ecart='10';
-		$pointsize='80';
-	}
-	$parameters = array(
+    if ($this->quizz->amcparams->answerSheetColumns > 2) {
+        $ecart='8';
+        $pointsize='110';
+    }else{
+        $ecart='10';
+        $pointsize='80';
+    }
+    $parameters = array(
             '--projet', $pre,
             '--ch-sign', '2',
             '--cr', $pre . '/cr',
@@ -91,7 +91,7 @@ class AmcProcessAnnotate extends AmcProcess
             '--sort', 'n',
             '--register',
             '--no-force-ascii',
-        '--modele', 'cr-(moodleid).pdf'
+        '--modele', 'cr-(ID).pdf'
             /* // useless with no-compose
               '--tex-src', $pre . '/' . $this->format->getFilename(),
               '--filter', $this->format->getFilterName(),
