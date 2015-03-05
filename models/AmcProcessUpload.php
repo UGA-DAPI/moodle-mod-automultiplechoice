@@ -19,7 +19,14 @@ class AmcProcessUpload extends AmcProcess
         if ($this->quizz->hasScans()) {
             $this->deleteGrades();
         }
-
+        $captureFile = $this->workdir . "/data/capture.sqlite";
+        if (!file_exists($captureFile)) {
+            if (file_exists($captureFile.'.orig')) {
+		    copy ($capture.'.orig',$capture);
+	    }else{
+		    $this->amcMeptex();
+	    }
+	}
         $this->nbPages = $this->amcGetimages($filename);
         if (!$this->nbPages) {
             $this->errors[] = "Erreur découpage scan (amc getimages)";

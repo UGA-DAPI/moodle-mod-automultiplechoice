@@ -32,6 +32,7 @@ if ($action === 'lock') {
     amc\Log::build($quizz->id)->write('lock');
     $quizz->save();
     array_map('backup_source', glob($quizz->getDirName() . '/prepare-source*'));
+    copy($quizz->getDirName().'/data/capture.sqlite',$quizz->getDirName().'data/capture.sqlite.orig');
 } else if ($action === 'unlock') {
     $quizz->amcparams->locked = false;
     $quizz->save();
@@ -46,6 +47,7 @@ if ($action === 'lock') {
     redirect(new moodle_url('documents.php', array('a' => $quizz->id)));
 } else if ($action === 'restore') {
     array_map('restore_source', glob($quizz->getDirName() . '/*.orig'));
+    copy($quizz->getDirName().'/data/capture.sqlite.orig',$quizz->getDirName().'data/capture.sqlite');
 }
 
 $PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));

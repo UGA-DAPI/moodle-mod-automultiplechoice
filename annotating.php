@@ -65,8 +65,7 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
-    echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'grading', 'anotate', 'process');
+    echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'annotating', 'anotate', 'process');
     echo "</div>";
 }
 if ($process->hasAnotatedFiles()) {
