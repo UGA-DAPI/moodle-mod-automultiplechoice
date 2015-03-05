@@ -124,14 +124,13 @@ class AmcProcessUpload extends AmcProcess
         }
 
         $res = $this->shellExecAmc('getimages', array(
-            '--progression-id', 'analyse',
+            '--progression-id', 'getimage',
             //'--vector-density', '250',
             //'--debug=/tmp/amc-debug.txt',
             '--use-pdfimages',
             '--orientation', 'portrait',
             '--list', $scanlist,
             '--copy-to', $pre . '/scans/',
-            '--force-convert',
             $scanfile
             )
         );
@@ -152,7 +151,7 @@ class AmcProcessUpload extends AmcProcess
     private function amcAnalyse($arg='',$multiple = true) {
         $pre = $this->workdir;
         if ($arg==''){
-            $paramlist = '--liste-fichiers ' ;
+            $paramlist = '--liste-fichiers' ;
             $paramscan =  $pre . '/scanlist';
         }else{
              $paramlist = '';
