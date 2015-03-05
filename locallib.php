@@ -173,6 +173,6 @@ function backup_source($file){
      copy ($file,$file.'.orig');
 }
 function restore_source($file){
-	rename ($file,substr($file,-5));
+	copy ($file,substr($file,-5));
 }
 
