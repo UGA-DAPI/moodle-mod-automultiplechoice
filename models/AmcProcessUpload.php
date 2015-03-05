@@ -131,7 +131,7 @@ class AmcProcessUpload extends AmcProcess
             '--orientation', 'portrait',
             '--list', $scanlist,
             '--copy-to', $pre . '/scans/',
-            '--force-convert', '1',
+            '--force-convert',
             $scanfile
             )
         );
@@ -152,8 +152,10 @@ class AmcProcessUpload extends AmcProcess
     private function amcAnalyse($arg='',$multiple = true) {
         $pre = $this->workdir;
         if ($arg==''){
-            $paramscan = '--liste-fichiers ' .  $pre . '/scanlist';
+            $paramlist = '--liste-fichiers ' ;
+            $paramscan =  $pre . '/scanlist';
         }else{
+             $paramlist = '';
              $paramscan = $arg;
         }
         $parammultiple = '--' . ($multiple ? '' : 'no-') . 'multiple';
@@ -169,6 +171,7 @@ class AmcProcessUpload extends AmcProcess
             '--projet', $pre,
             '--cr', $pre . '/cr',
             '--no-ignore-red',
+            $paramlist,
             $paramscan,
             );
         //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
