@@ -37,7 +37,13 @@ class AmcProcessAssociate extends AmcProcess
             '--csv-build-name', '(nom|surname) (prenom|name)',
             '--notes-id', 'student.number',
         );
-        return $this->shellExecAmc('association-auto', $parameters);
+        $res = $this->shellExecAmc('association-auto', $parameters);
+        if ($res) {
+            $this->log('association-auto', 'OK.');
+            $amclog = Log::build($this->quizz->id);
+            $amclog->write('associating');
+        }
+        return $res;
     }
 
     /**
@@ -71,8 +77,37 @@ class AmcProcessAssociate extends AmcProcess
             }
         }
         fclose($studentList);
-
-        return $this->amcAssociation();
+        if !($this->amcNote()){
+            amc\FlashMessageManager::addMessage('error', "Erreur lors du calcul des notes");
+            return $res;
+        }else{
+            return $this->amcAssociation();
+        }
     }
 
+    /**
+     * @return boolean
+     */
+    public function deleteFailed($scan) {
+        if (extension_loaded('sqlite3')){   
+            $capture = new \SQLite3($this->workdir . '/data/scoring.sqlite',SQLITE3_OPEN_READ);
+            if ($scan=='all'){
+                $results = $capture->query('SELECT * FROM capture_failed');
+                while ($row = $results->fetchArray()) {
+                    $scan = substr($row[0],14);
+                    array_map('unlink', glob($this->workdir . '/scans/'.$scan));
+                }
+                return  $capture->exec('DELETE FROM capture_failed ');
+            }else{
+                $result = $capture->querySingle('SELECT * FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
+                if (substr($result,14)==$scan){
+                    unlink( glob($this->workdir . '/scans/'.$scan));
+                    return  $capture->exec('DELETE FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
+                }
+            }
+        return false;
+        }else{
+
+        }
+    }
 }

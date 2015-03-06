@@ -69,11 +69,11 @@ class Latex extends Api
             . ($params->shuffleq ? '%' : '')
             . ",noshuffle% stops the automatic shuffling of the answers for every question\n"
             . ($params->separatesheet ? '' : '%')
-	    . ",separateanswersheet";
-	$customlayout=$params->customlayout;
+        . ",separateanswersheet";
+    $customlayout=$params->customlayout;
         $shortTitles = '';
         if ($this->quizz->amcparams->answerSheetColumns > 2) {
-		$shortTitles = '\def\AMCformQuestion#1{\vspace{\AMCformVSpace}\par{\bf Q.#1 :}}
+        $shortTitles = '\def\AMCformQuestion#1{\vspace{\AMCformVSpace}\par{\bf Q.#1 :}}
 \def\AMCformAnswer#1{\hspace{\AMCformHSpace}#1}';
         }
         $header = <<<EOL
@@ -334,9 +334,9 @@ EOL;
             $append = "P" . self::$sectionCounter;
         } else {
             self::$questionCounter++;
-            $append = "Q" . self::$questionCounter;
+            $append = "-" . self::$questionCounter;
         }
-        return preg_replace('/[^a-zA-Z]+/', '',
+        return preg_replace('/[^a-zA-Z0-9]+/', '',
                 @iconv('UTF-8', 'ASCII//TRANSLIT',
                         substr( html_entity_decode(strip_tags($text)), 0, 30 )
         )) . "-" . $append;
