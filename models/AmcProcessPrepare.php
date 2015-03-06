@@ -61,6 +61,7 @@ class AmcProcessPrepare extends AmcProcess
         return $res;
     }
 
+
     /**
      * Executes "amc imprime" then zip the resulting files
      * @return bool

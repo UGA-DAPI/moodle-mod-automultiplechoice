@@ -59,7 +59,6 @@ class AmcProcessGrade extends AmcProcess
      */
     public function grade() {
         $this->actions = array(
-            'scoringset' => (boolean) $this->amcPrepareBareme(),
             'scoring' => (boolean) $this->amcNote(),
             'export' => (boolean) $this->amcExport(),
         'csv' => (boolean) $this->writeFileApogeeCsv(),
@@ -94,7 +93,6 @@ class AmcProcessGrade extends AmcProcess
 
         // error messages
         $errorMsg = array(
-            'scoringset' => "Erreur lors de l'extraction du barème",
             'scoring' => "Erreur lors du calcul des notes",
             'export' => "Erreur lors de l'export CSV des notes",
             'csv' => "Erreur lors de la création du fichier CSV des notes",
@@ -140,6 +138,7 @@ class AmcProcessGrade extends AmcProcess
     }
 
 
+<<<<<<< 3db4fb1cf26548b2c678ff1afe9159c88d4a2b8b
     /**
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
      * @return bool
@@ -189,6 +188,8 @@ class AmcProcessGrade extends AmcProcess
         }
         return $res;
     }
+=======
+>>>>>>> fix new tab
 
     /**
      * Shell-executes 'amc export' to get a csv file
@@ -397,7 +398,6 @@ class AmcProcessGrade extends AmcProcess
     $this->grades = array();
         while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
             $idnumber = $data[$getCol['student.number']];
-<<<<<<< de31e0c1a87a27fc12d72d90ac15d0237c5a01f5
 	    $userid=null;
 	    $userid = $data[$getCol['moodleid']];
 	    if ($userid) {
@@ -409,19 +409,6 @@ class AmcProcessGrade extends AmcProcess
 		'userid' => $userid,
                 'rawgrade' => str_replace(',', '.', $data[7])
 	);
-=======
-        $userid=null;
-        $userid = $data[$getCol['moodleid']];
-        if ($userid) {
-            $this->usersknown++;
-        } else {
-            $this->usersunknown++;
-        }
-        $this->grades[] = (object) array(
-        'userid' => $userid,
-                'rawgrade' => str_replace(',', '.', $data[6])
-    );
->>>>>>> continue new tabs + failed
         }
     fclose($input);
         return true;
@@ -539,8 +526,8 @@ class AmcProcessGrade extends AmcProcess
             $this->usersknown++;
         } else {
             $this->usersunknown++;
-	}
-	
+    }
+    
         $this->grades[] = (object) array(
             'userid' => $userid,
             'rawgrade' => str_replace(',', '.', $data[6])
