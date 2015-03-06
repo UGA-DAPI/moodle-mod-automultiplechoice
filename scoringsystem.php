@@ -15,7 +15,7 @@
 use \mod\automultiplechoice as amc;
 
 require_once __DIR__ . '/locallib.php';
-
+require_once __DIR__ . '/models/AmcProcessPrepare.php';
 global $OUTPUT, $PAGE, $CFG;
 
 $controller = new amc\Controller();
@@ -40,7 +40,12 @@ if (isset($_POST['score'])) {
     }
     if ($quizz->validate()) {
         if ($quizz->save()) {
-            amc\FlashMessageManager::addMessage('success', "Les modification du barème ont été enregistrées.");
+            $process = new amc\AmcProcess($quizz);
+            if (!$process->amcPrepareBareme()){
+                 amc\FlashMessageManager::addMessage('error',"Erreur lors de l'extraction du barème");
+            }else{
+                amc\FlashMessageManager::addMessage('success', "Les modification du barème ont été enregistrées.");
+            }
             redirect(new moodle_url('view.php', array('a' => $quizz->id)));
         } else {
             die("Could not save into automultiplechoice");

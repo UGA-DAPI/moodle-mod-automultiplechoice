@@ -124,6 +124,60 @@ class AmcProcess
         return $res;
     }
 
+    
+    /**
+     * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
+     * @return bool
+     */
+    protected function amcPrepareBareme() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--n-copies', (string) $this->quizz->amcparams->copies,
+            '--mode', 'b',
+            '--data', $pre . '/data',
+            '--filtered-source', $pre . '/prepare-source_filtered.tex', // for AMC-txt, the LaTeX will be written in this file
+            '--progression-id', 'bareme',
+            '--progression', '1',
+            '--with', 'xelatex',
+            '--filter', $this->format->getFilterName(),
+            $pre . '/' . $this->format->getFilename()
+            );
+        $res = $this->shellExecAmc('prepare', $parameters);
+        if ($res) {
+            $this->log('prepare:bareme', 'OK.');
+             $amclog = Log::build($this->quizz->id);
+             $amclog->write('scoring');
+        }
+        return $res;
+    }
+
+    /**
+     * Shell-executes 'amc note'
+     * @return bool
+     */
+    protected function amcNote() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--data', $pre . '/data',
+            '--progression-id', 'notation',
+            '--progression', '1',
+            '--seuil', '0.5', // black ratio threshold
+            '--grain', $this->quizz->amcparams->gradegranularity,
+            '--arrondi', $this->quizz->amcparams->graderounding,
+            '--notemin', $this->quizz->amcparams->minscore,
+            '--notemax', $this->quizz->amcparams->grademax,
+            //'--plafond', // removed as grades ares scaled from min to max
+            '--postcorrect-student', '', //FIXME inutile ?
+            '--postcorrect-copy', '',    //FIXME inutile ?
+            );
+        $res = $this->shellExecAmc('note', $parameters);
+        if ($res) {
+            $this->log('note', 'OK.');
+            $amclog = Log::build($this->quizz->id);
+             $amclog->write('grading');
+        }
+        return $res;
+    }
     /**
      * returns stat() information (number and dates) on scanned (ppm) files already stored
      * @return array with keys: count, time, timefr ; null if nothing was uploaded
@@ -206,10 +260,10 @@ class AmcProcess
     }
     protected function get_students_list(){
         if (file_exists($this->workdir . self::PATH_STUDENTLIST_CSV)){
-		return $this->workdir . self::PATH_STUDENTLIST_CSV;
-	}else{
-		return '';
-	}
+        return $this->workdir . self::PATH_STUDENTLIST_CSV;
+    }else{
+        return '';
+    }
     }
     /**
      * Format a timestamp into a fr datetime.

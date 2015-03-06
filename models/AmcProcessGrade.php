@@ -59,7 +59,6 @@ class AmcProcessGrade extends AmcProcess
      */
     public function grade() {
         $this->actions = array(
-            'scoringset' => (boolean) $this->amcPrepareBareme(),
             'scoring' => (boolean) $this->amcNote(),
             'export' => (boolean) $this->amcExport(),
         'csv' => (boolean) $this->writeFileApogeeCsv(),
@@ -94,7 +93,6 @@ class AmcProcessGrade extends AmcProcess
 
         // error messages
         $errorMsg = array(
-            'scoringset' => "Erreur lors de l'extraction du barème",
             'scoring' => "Erreur lors du calcul des notes",
             'export' => "Erreur lors de l'export CSV des notes",
             'csv' => "Erreur lors de la création du fichier CSV des notes",
@@ -140,55 +138,6 @@ class AmcProcessGrade extends AmcProcess
     }
 
 
-    /**
-     * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
-     * @return bool
-     */
-    protected function amcPrepareBareme() {
-        $pre = $this->workdir;
-        $parameters = array(
-            '--n-copies', (string) $this->quizz->amcparams->copies,
-            '--mode', 'b',
-            '--data', $pre . '/data',
-            '--filtered-source', $pre . '/prepare-source_filtered.tex', // for AMC-txt, the LaTeX will be written in this file
-            '--progression-id', 'bareme',
-            '--progression', '1',
-            '--with', 'xelatex',
-            '--filter', $this->format->getFilterName(),
-            $pre . '/' . $this->format->getFilename()
-            );
-        $res = $this->shellExecAmc('prepare', $parameters);
-        if ($res) {
-            $this->log('prepare:bareme', 'OK.');
-        }
-        return $res;
-    }
-
-    /**
-     * Shell-executes 'amc note'
-     * @return bool
-     */
-    protected function amcNote() {
-        $pre = $this->workdir;
-        $parameters = array(
-            '--data', $pre . '/data',
-            '--progression-id', 'notation',
-            '--progression', '1',
-            '--seuil', '0.5', // black ratio threshold
-            '--grain', $this->quizz->amcparams->gradegranularity,
-            '--arrondi', $this->quizz->amcparams->graderounding,
-            '--notemin', $this->quizz->amcparams->minscore,
-            '--notemax', $this->quizz->amcparams->grademax,
-            //'--plafond', // removed as grades ares scaled from min to max
-            '--postcorrect-student', '', //FIXME inutile ?
-            '--postcorrect-copy', '',    //FIXME inutile ?
-            );
-        $res = $this->shellExecAmc('note', $parameters);
-        if ($res) {
-            $this->log('note', 'OK.');
-        }
-        return $res;
-    }
 
     /**
      * Shell-executes 'amc export' to get a csv file
@@ -327,8 +276,8 @@ class AmcProcessGrade extends AmcProcess
             $this->usersknown++;
         } else {
             $this->usersunknown++;
-	}
-	
+    }
+    
         $this->grades[] = (object) array(
             'userid' => $userid,
             'rawgrade' => str_replace(',', '.', $data[6])

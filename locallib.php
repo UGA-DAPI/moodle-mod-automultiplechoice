@@ -119,16 +119,155 @@ function getStudentByIdNumber($idn) {
  * @return int count student user.
  */
 function has_students($context) {
-	global $DB;
-	list($relatedctxsql, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
-	$countsql = "SELECT COUNT(DISTINCT(ra.userid))
-		FROM {role_assignments} ra
-		JOIN {user} u ON u.id = ra.userid
-		WHERE ra.contextid  $relatedctxsql AND ra.roleid = 5";
-	$totalcount = $DB->count_records_sql($countsql,$params);
-	return $totalcount;
+    global $DB;
+    list($relatedctxsql, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+    $countsql = "SELECT COUNT(DISTINCT(ra.userid))
+        FROM {role_assignments} ra
+        JOIN {user} u ON u.id = ra.userid
+        WHERE ra.contextid  $relatedctxsql AND ra.roleid = 5";
+    $totalcount = $DB->count_records_sql($countsql,$params);
+    return $totalcount;
 
 }
+
+
+/**
+ * Gets all the users assigned this role in this context or higher
+ *
+ * Note that moodle is based on capabilities and it is usually better
+ * to check permissions than to check role ids as the capabilities
+ * system is more flexible. If you really need, you can to use this
+ * function but consider has_capability() as a possible substitute.
+ *
+ * The caller function is responsible for including all the
+ * $sort fields in $fields param.
+ *
+ * If $roleid is an array or is empty (all roles) you need to set $fields
+ * (and $sort by extension) params according to it, as the first field
+ * returned by the database should be unique (ra.id is the best candidate).
+ *
+ * @param int $roleid (can also be an array of ints!)
+ * @param context $context
+ * @param bool $parent if true, get list of users assigned in higher context too
+ * @param string $fields fields from user (u.) , role assignment (ra) or role (r.)
+ * @param string $sort sort from user (u.) , role assignment (ra.) or role (r.).
+ *      null => use default sort from users_order_by_sql.
+ * @param bool $all true means all, false means limit to enrolled users
+ * @param string $group defaults to ''
+ * @param mixed $limitfrom defaults to ''
+ * @param mixed $limitnum defaults to ''
+ * @param string $extrawheretest defaults to ''
+ * @param array $whereorsortparams any paramter values used by $sort or $extrawheretest.
+ * @return array
+ */
+function get_role_users($roleid, context $context, $parent = false, $fields = '',
+        $sort = null, $all = true, $group = '',
+        $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereorsortparams = array()) {
+    global $DB;
+
+    if (empty($fields)) {
+        $allnames = get_all_user_name_fields(true, 'u');
+        $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .
+                  'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, '.
+                  'u.country, u.picture, u.idnumber, u.department, u.institution, '.
+                  'u.lang, u.timezone, u.lastaccess, u.mnethostid, r.name AS rolename, r.sortorder, '.
+                  'r.shortname AS roleshortname, rn.name AS rolecoursealias';
+    }
+
+    // Prevent wrong function uses.
+    if ((empty($roleid) || is_array($roleid)) && strpos($fields, 'ra.id') !== 0) {
+        debugging('get_role_users() without specifying one single roleid needs to be called prefixing ' .
+            'role assignments id (ra.id) as unique field, you can use $fields param for it.');
+
+        if (!empty($roleid)) {
+            // Solving partially the issue when specifying multiple roles.
+            $users = array();
+            foreach ($roleid as $id) {
+                // Ignoring duplicated keys keeping the first user appearance.
+                $users = $users + get_role_users($id, $context, $parent, $fields, $sort, $all, $group,
+                    $limitfrom, $limitnum, $extrawheretest, $whereorsortparams);
+            }
+            return $users;
+        }
+    }
+
+    $parentcontexts = '';
+    if ($parent) {
+        $parentcontexts = substr($context->path, 1); // kill leading slash
+        $parentcontexts = str_replace('/', ',', $parentcontexts);
+        if ($parentcontexts !== '') {
+            $parentcontexts = ' OR ra.contextid IN ('.$parentcontexts.' )';
+        }
+    }
+
+    if ($roleid) {
+        list($rids, $params) = $DB->get_in_or_equal($roleid, SQL_PARAMS_NAMED, 'r');
+        $roleselect = "AND ra.roleid $rids";
+    } else {
+        $params = array();
+        $roleselect = '';
+    }
+
+    if ($coursecontext = $context->get_course_context(false)) {
+        $params['coursecontext'] = $coursecontext->id;
+    } else {
+        $params['coursecontext'] = 0;
+    }
+
+    if ($group) {
+        $groupjoin   = "JOIN {groups_members} gm ON gm.userid = u.id";
+        $groupselect = " AND gm.groupid = :groupid ";
+        $params['groupid'] = $group;
+    } else {
+        $groupjoin   = '';
+        $groupselect = '';
+    }
+
+    $params['contextid'] = $context->id;
+
+    if ($extrawheretest) {
+        $extrawheretest = ' AND ' . $extrawheretest;
+    }
+
+    if ($whereorsortparams) {
+        $params = array_merge($params, $whereorsortparams);
+    }
+
+    if (!$sort) {
+        list($sort, $sortparams) = users_order_by_sql('u');
+        $params = array_merge($params, $sortparams);
+    }
+
+    if ($all === null) {
+        // Previously null was used to indicate that parameter was not used.
+        $all = true;
+    }
+    if (!$all and $coursecontext) {
+        // Do not use get_enrolled_sql() here for performance reasons.
+        $ejoin = "JOIN {user_enrolments} ue ON ue.userid = u.id
+                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :ecourseid)";
+        $params['ecourseid'] = $coursecontext->instanceid;
+    } else {
+        $ejoin = "";
+    }
+
+    $sql = "SELECT DISTINCT $fields, ra.roleid
+              FROM {role_assignments} ra
+              JOIN {user} u ON u.id = ra.userid
+              JOIN {role} r ON ra.roleid = r.id
+            $ejoin
+         LEFT JOIN {role_names} rn ON (rn.contextid = :coursecontext AND rn.roleid = r.id)
+        $groupjoin
+             WHERE (ra.contextid = :contextid $parentcontexts)
+                   $roleselect
+                   $groupselect
+                   $extrawheretest
+          ORDER BY $sort";                  // join now so that we can just use fullname() later
+
+    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+}
+
+
 /**
  * Returns a HTML button.
  *
@@ -173,6 +312,5 @@ function backup_source($file){
      copy ($file,$file.'.orig');
 }
 function restore_source($file){
-	copy ($file,substr($file,-5));
+    copy ($file,substr($file,-5));
 }
-
