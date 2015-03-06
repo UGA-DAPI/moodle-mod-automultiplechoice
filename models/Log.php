@@ -111,7 +111,7 @@ class Log {
                     if (!$pdf) {
                         return [];
                     }
-                    if ($this->read('scoringsystem') > $pdf) {
+                    if ($this->read('saving') > $pdf) {
                         $messages[] = "Le choix du barème a été modifié depuis la dernière préparation des sujets PDF.";
                     }
                     break;
@@ -127,6 +127,16 @@ class Log {
                         $messages[] = "Le dernier verrouillage du QCM a eu lieu après le dernier dépôt des copies.";
                     }
                     break;
+                
+                case 'associating':
+                    $associating = $this->read('associating');
+                    if (!$associating) {
+                        return [];
+                    }
+                    if ($this->read('upload') > $associating) {
+                        $messages[] = "Des copies d'étudiant ont été déposées depuis la dernière association. Relancer l'association ?";
+                    }
+                    
                 case 'grading':
                     $grading = $this->read('grading');
                     if (!$grading) {
@@ -135,13 +145,13 @@ class Log {
                     if ($this->read('upload') > $grading) {
                         $messages[] = "Des copies d'étudiant ont été déposées depuis la dernière notation. Relancer la correction ?";
                     }
-                    if ($this->read('scoringsystem') > $grading) {
+                    if ($this->read('scoring') > $grading) {
                         $messages[] = "Le barème a été modifié depuis la dernière notation. Relancer la correction ?";
-		    }
-		    break;
-		case 'annotating':
-                    $annotating = $this->read('correction');
-		    if ($this->read('grading') > $annotating) {
+                    }
+                    break;
+                case 'annotating':
+                    $annotating = $this->read('annotating');
+                    if ($this->read('grading') > $annotating) {
                         $messages[] = "La dernière notation est plus récente que les copies annotées. Re-générer les copies corrigées ?";
                     }
                     break;
@@ -163,7 +173,7 @@ class Log {
      * @throws \Exception
      */
     private function isValidAction($action) {
-        $valid = array('process', 'pdf', 'scoringsystem', 'upload', 'grading', 'correction', 'lock', 'unlock');
+        $valid = array('process', 'pdf', 'saving','scoring', 'upload','associating', 'grading','annotating', 'correction', 'lock', 'unlock');
         if (!in_array($action, $valid)) {
             throw new \Exception("L'action $action n'est pas valide.");
         }

@@ -154,7 +154,7 @@ class Quizz
             $this->id = $DB->insert_record(self::TABLENAME, $record);
         }
         $amclog = Log::build($this->id);
-        $amclog->write('scoringsystem');
+        $amclog->write('saving');
 
         /** @TODO
          * vérifier si la modification impacte le barème (scoringsystem)
