@@ -65,6 +65,8 @@ class AmcProcessAnnotate extends AmcProcess
         $res = $this->shellExecAmc('annote', $parameters);
         if ($res) {
             $this->log('annote', '');
+            $amclog = Log::build($this->quizz->id);
+            $amclog->write('annotating');
         }
         return $res;
     }

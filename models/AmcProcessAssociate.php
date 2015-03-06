@@ -77,7 +77,7 @@ class AmcProcessAssociate extends AmcProcess
             }
         }
         fclose($studentList);
-        if !($this->amcNote()){
+        if (!$this->amcNote()){
             amc\FlashMessageManager::addMessage('error', "Erreur lors du calcul des notes");
             return $res;
         }else{

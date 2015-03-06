@@ -160,7 +160,7 @@ function has_students($context) {
  * @param array $whereorsortparams any paramter values used by $sort or $extrawheretest.
  * @return array
  */
-function get_role_users($roleid, context $context, $parent = false, $fields = '',
+function amc_get_role_users($roleid, context $context, $parent = false, $fields = '',
         $sort = null, $all = true, $group = '',
         $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereorsortparams = array()) {
     global $DB;
