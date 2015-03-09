@@ -37,6 +37,7 @@ $process = new amc\AmcProcessAssociate($quizz);
         redirect(new moodle_url('associating.php', array('a' => $quizz->id)));
     }
 } 
+$process->get_association();
 
 
 // Output starts here
@@ -44,7 +45,7 @@ echo $output->header();
 
 echo $OUTPUT->box_start('informationbox well');
 echo $OUTPUT->heading("Association", 2)
-    . "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
+    . "<p>" . count($process->copyauto)." copies automatiquement identifiés, ".count($process->copymanual) . " copies manuellement identifiées et " . count($process->copyunknown) . " non identifiées. </p>";
 $warnings = amc\Log::build($quizz->id)->check('associating');
 if ($warnings) {
     echo '<div class="informationbox notifyproblem alert alert-error">';
@@ -53,11 +54,16 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'associating', 'associate', 'process');
+    echo HtmlHelper::buttonWithAjaxCheck('Relancer l\'associtation automatique', $quizz->id, 'associating', 'associate', 'process');
     echo "</div>";
-}else{
+}else if (count($process->copyauto)){
 echo HtmlHelper::buttonWithAjaxCheck('Lancer l\'association', $quizz->id, 'associating', 'associate', 'process');
+}else{
+echo HtmlHelper::buttonWithAjaxCheck('Relancer l\'association', $quizz->id, 'associating', 'associate', 'process');
 }
+
+
+
 echo $OUTPUT->box_end();
 
 

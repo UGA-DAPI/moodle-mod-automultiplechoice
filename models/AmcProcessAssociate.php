@@ -18,7 +18,7 @@ class AmcProcessAssociate extends AmcProcess
 
     public $copyauto = array();
     public $copymanual = array();
-    public $copyunknown =array()
+    public $copyunknown =array();
     const CSV_SEPARATOR = ';';
   
 
@@ -57,19 +57,21 @@ class AmcProcessAssociate extends AmcProcess
             '--list', 
         );
         $escapedCmd = escapeshellcmd('auto-multiple-choice '.'association' );
-        $escapedParams = array_map('escapeshellarg', $params);
+        $escapedParams = array_map('escapeshellarg', $parameters);
         $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
         $lines = array();
         $returnVal = 0;
         exec($shellCmd, $lines, $returnVal);
         foreach ($lines as $l){
             $split = get_list_row($l);
-            $id = $row['student'].':'.$row['copy'];
-            if ($split['status']=='manual'){
-                $this->copymanual[$id] = $row['idnumber'];
-            }else if ($split['status']=='manual'){
-                $this->copyauto[$id] = $row['idnumber'];
-            }
+	    if (isset($split['student'])){
+		    $id = $split['student'].':'.$split['copy'];
+		    if ($split['status']=='manual'){
+			    $this->copymanual[$id] = $split['idnumber'];
+		    }else if ($split['status']=='auto'){
+			    $this->copyauto[$id] = $split['idnumber'];
+		    }
+	    }
         }
         return $returnVal;
     }
@@ -138,22 +140,12 @@ class AmcProcessAssociate extends AmcProcess
             $this->copyunknown = array_diff_key(array_merge($this->copymanual,$this->copyauto),$allcopy);
             
         }else{
-            $allcopy = array_keys(array_map('get_code',glob($this->workdir . '/cr/name-*.jpg')),'');
-            if ($this->amcAssociation_list()){
-                $this->copyunknown = array_diff_key(array_merge($this->copymanual,$this->copyauto),$allcopy);
+            $allcopy = array_fill_keys(array_map('get_code',glob($this->workdir . '/cr/name-*.jpg')),'');
+            if ($this->amcAssociation_list()==0){
+                $this->copyunknown = array_diff_key($allcopy,array_merge($this->copymanual,$this->copyauto));
             }
         }
     }
 
 
-    protected function get_code($name) {
-        preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
-        return $res['student'].':'.$res['copy'];
-
-    }
-
-    
-    protected function get_list_row($list) {
-        preg_match('/(?P<student>[0-9]+):(?P<copy>[0-9]+)\s*(?P<idnumber>[0-9]+)\s*\((?P<status>.*)\)/', $list,$res);
-    }
 }

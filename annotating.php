@@ -130,8 +130,8 @@ if ($process->hasAnotatedFiles()) {
 
         if ($user_selector) {
             $url = new moodle_url('annotating.php', array('a' => $quizz->id));
-            groups_print_activity_menu($cm, $url, $return=false, $hideallparticipants=false);
-            amc_get_students_select($url, $course, $userid, $groupid);// $renderer = $PAGE->get_renderer('gradereport_user');
+            groups_print_activity_menu($cm->getContext(), $url, $return=false, $hideallparticipants=false);
+            amc_get_students_select($url, $cm->getContext(), $userid, $currentgroup);// $renderer = $PAGE->get_renderer('gradereport_user');
             //echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, true);
         }
 
@@ -145,8 +145,8 @@ if ($process->hasAnotatedFiles()) {
 
         if ($user_selector) {
             $url = new moodle_url('annotating.php', array('a' => $quizz->id));
-            groups_print_activity_menu($cm, $url, $return=false, $hideallparticipants=false);
-            amc_get_students_select($url, $course, $userid, $groupid);
+            groups_print_activity_menu($cm->getContext(), $url, $return=false, $hideallparticipants=false);
+	    amc_get_students_select($url, $cm->getContext(), $userid, $currentgroup);
             /*$renderer = $PAGE->get_renderer('gradereport_user');
             $showallusersoptions = true;
             echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, $showallusersoptions);*/

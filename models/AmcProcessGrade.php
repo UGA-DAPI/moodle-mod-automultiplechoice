@@ -163,7 +163,7 @@ class AmcProcessGrade extends AmcProcess
      * @return boolean
      */
     public function isGraded() {
-        if (amc\Log::build($this->quizz->id)->read('grading')){
+        if (Log::build($this->quizz->id)->read('grading')){
             return true;
         }else{
              return false;
