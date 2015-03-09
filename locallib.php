@@ -160,39 +160,18 @@ function has_students($context) {
  * @param array $whereorsortparams any paramter values used by $sort or $extrawheretest.
  * @return array
  */
-function amc_get_role_users($roleid, context $context, $parent = false, $fields = '',
-        $sort = null, $all = true, $group = '',
-        $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereorsortparams = array()) {
+function amc_get_student_users(context $context, $parent = false, $group = '',
+        $limitfrom = '', $limitnum = '' ) {
     global $DB;
 
-    if (empty($fields)) {
-        $allnames = get_all_user_name_fields(true, 'u');
-        $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .
-                  'u.maildisplay, u.mailformat, u.maildigest, u.email, u.emailstop, u.city, '.
-                  'u.country, u.picture, u.idnumber, u.department, u.institution, '.
-                  'u.lang, u.timezone, u.lastaccess, u.mnethostid, r.name AS rolename, r.sortorder, '.
-                  'r.shortname AS roleshortname, rn.name AS rolecoursealias';
-    }
+    $allnames = get_all_user_name_fields(true, 'u');
+    $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .'u.idnumber';
 
-    // Prevent wrong function uses.
-    if ((empty($roleid) || is_array($roleid)) && strpos($fields, 'ra.id') !== 0) {
-        debugging('get_role_users() without specifying one single roleid needs to be called prefixing ' .
-            'role assignments id (ra.id) as unique field, you can use $fields param for it.');
-
-        if (!empty($roleid)) {
-            // Solving partially the issue when specifying multiple roles.
-            $users = array();
-            foreach ($roleid as $id) {
-                // Ignoring duplicated keys keeping the first user appearance.
-                $users = $users + get_role_users($id, $context, $parent, $fields, $sort, $all, $group,
-                    $limitfrom, $limitnum, $extrawheretest, $whereorsortparams);
-            }
-            return $users;
-        }
-    }
+    $role = array_column(get_archetype_roles('student'),'id');
+            
 
     $parentcontexts = '';
-    if ($parent) {
+    if ($parent) {$showonlyactiveenrol ||
         $parentcontexts = substr($context->path, 1); // kill leading slash
         $parentcontexts = str_replace('/', ',', $parentcontexts);
         if ($parentcontexts !== '') {
@@ -224,7 +203,7 @@ function amc_get_role_users($roleid, context $context, $parent = false, $fields 
     }
 
     $params['contextid'] = $context->id;
-
+/*
     if ($extrawheretest) {
         $extrawheretest = ' AND ' . $extrawheretest;
     }
@@ -233,24 +212,24 @@ function amc_get_role_users($roleid, context $context, $parent = false, $fields 
         $params = array_merge($params, $whereorsortparams);
     }
 
-    if (!$sort) {
+    if (!$sort) {*/
         list($sort, $sortparams) = users_order_by_sql('u');
         $params = array_merge($params, $sortparams);
-    }
+  /*  }
 
     if ($all === null) {
         // Previously null was used to indicate that parameter was not used.
         $all = true;
     }
-    if (!$all and $coursecontext) {
+    if (!$all and $coursecontext) {*/
         // Do not use get_enrolled_sql() here for performance reasons.
         $ejoin = "JOIN {user_enrolments} ue ON ue.userid = u.id
                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :ecourseid)";
         $params['ecourseid'] = $coursecontext->instanceid;
-    } else {
+/*    } else {
         $ejoin = "";
     }
-
+*/
     $sql = "SELECT DISTINCT $fields, ra.roleid
               FROM {role_assignments} ra
               JOIN {user} u ON u.id = ra.userid
@@ -261,12 +240,39 @@ function amc_get_role_users($roleid, context $context, $parent = false, $fields 
              WHERE (ra.contextid = :contextid $parentcontexts)
                    $roleselect
                    $groupselect
-                   $extrawheretest
           ORDER BY $sort";                  // join now so that we can just use fullname() later
 
-    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
-}
+    $availableusers = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    $modinfo = get_fast_modinfo($cm->course);
+    $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
+    $availableusers = $info->filter_user_list($availableusers);
+    return $availableusers;
+     }
+function amc_get_students_select($url, $cm, $userid, $groupid, $includeall=true) {
+    global $USER, $CFG;
 
+    if (is_null($userid)) {
+        $userid = $USER->id;
+    }
+    $menu = array(); // Will be a list of userid => user name
+    $users = amc_get_student_users( $cm, $parent = false, $groupid)
+    $label = get_string('selectauser', 'automultiplechoice');
+    if ($includeall) {
+        $menu[0] = get_string('allusers', 'automultiplechoice');
+        $label = get_string('selectalloroneuser', 'automultiplechoice');
+    }
+    forearch ($users as $userdata) {
+        $user = $userdata->user;
+        $userfullname = fullname($user);
+        $menu[$user->id] = $userfullname;
+        
+    }
+
+    $select = new single_select($url, 'userid', $menu, $userid);
+    $select->label = $label;
+    $select->formid = 'choosestudent';
+    return $select;
+}
 
 /**
  * Returns a HTML button.

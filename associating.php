@@ -9,7 +9,7 @@
 use \mod\automultiplechoice as amc;
 
 require_once(__DIR__ . '/locallib.php');
-require_once __DIR__ . '/models/Grade.php';
+
 require_once __DIR__ . '/models/AmcProcessAssociate.php';
 
 global $DB, $OUTPUT, $PAGE;
@@ -45,8 +45,19 @@ echo $output->header();
 echo $OUTPUT->box_start('informationbox well');
 echo $OUTPUT->heading("Association", 2)
     . "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
-;
-echo HtmlHelper::buttonWithAjaxCheck('Relancer l\'association', $quizz->id, 'associating', 'associate', 'process');
+$warnings = amc\Log::build($quizz->id)->check('associating');
+if ($warnings) {
+    echo '<div class="informationbox notifyproblem alert alert-error">';
+    foreach ($warnings as $warning) {
+        echo $warning;
+    }
+
+    echo "<br /><br />";
+    echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'associating', 'associate', 'process');
+    echo "</div>";
+}else{
+echo HtmlHelper::buttonWithAjaxCheck('Lancer l\'association', $quizz->id, 'associating', 'associate', 'process');
+}
 echo $OUTPUT->box_end();
 
 
