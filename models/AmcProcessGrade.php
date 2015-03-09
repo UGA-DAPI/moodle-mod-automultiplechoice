@@ -15,9 +15,7 @@ require_once __DIR__ . '/AmcFormat/Api.php';
 
 class AmcProcessGrade extends AmcProcess
 {
-    const PATH_AMC_CSV = '/exports/grades.csv';
-    const PATH_AMC_ODS = '/exports/grades.ods';
-    const PATH_APOGEE_CSV = '/exports/grades_apogee.csv';
+    
     const CSV_SEPARATOR = ';';
 
     protected $grades = array();
@@ -26,7 +24,7 @@ class AmcProcessGrade extends AmcProcess
 
     protected $format;
     private $actions;
-    private $exportedFiles;
+    
 
     /**
      * Constructor
@@ -42,48 +40,9 @@ class AmcProcessGrade extends AmcProcess
         }
         $this->format->quizz = $this->quizz;
         $this->format->codelength = $this->codelength;
+    }
+
     
-        $this->actions = new \stdClass();
-        if ($this->isGraded()) {
-            $this->exportedFiles = (object) array(
-                'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
-                'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
-                'grades_apogee.csv' => $this->getFileUrl(AmcProcessGrade::PATH_APOGEE_CSV),
-            );
-        }
-    }
-
-    /**
-     * @return boolean
-     */
-    public function grade() {
-        $this->actions = array(
-            'scoringset' => (boolean) $this->amcPrepareBareme(),
-            'scoring' => (boolean) $this->amcNote(),
-            'studentlist' =>(boolean) $this->writeFileStudentsList(),
-            'export' => (boolean) $this->amcExport(),
-        'csv' => (boolean) $this->writeFileApogeeCsv(),
-        'gradebook' =>(boolean) $this->writeGrades()
-        );
-        $this->exportedFiles = (object) array(
-            'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
-            'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
-            'grades_apogee.csv' => $this->getFileUrl(AmcProcessGrade::PATH_APOGEE_CSV),
-        );
-        return (array_sum($this->actions) === count($this->actions));
-    }
-
-
-    /**
-     * @return StdClass
-     */
-    public function getResults() {
-        return (object) array(
-            'actions' => $this->actions,
-            'csv' => $this->exportedFiles,
-        );
-    }
-
     /**
      * @global core_renderer $OUTPUT
      * @return string
@@ -94,7 +53,6 @@ class AmcProcessGrade extends AmcProcess
 
         // error messages
         $errorMsg = array(
-            'scoringset' => "Erreur lors de l'extraction du barème",
             'scoring' => "Erreur lors du calcul des notes",
             'export' => "Erreur lors de l'export CSV des notes",
             'csv' => "Erreur lors de la création du fichier CSV des notes",
@@ -107,17 +65,6 @@ class AmcProcessGrade extends AmcProcess
         return $html;
     }
 
-    /**
-     * @return string
-     */
-    public function getHtmlCsvLinks() {
-        $html = '<ul class="amc-files">';
-        foreach ((array) $this->exportedFiles as $name => $url) {
-            $html .= "<li>" . \html_writer::link($url, $name) . "</li>";
-        }
-        $html .= "</ul>\n";
-        return $html;
-    }
 
     /**
      * computes and display statistics indicators
@@ -525,8 +472,6 @@ class AmcProcessGrade extends AmcProcess
 	return true;
     } 
     
-    
-    
     /**
      * returns an array to fill the Moodle grade system from the raw marks .
      *
@@ -547,17 +492,16 @@ class AmcProcessGrade extends AmcProcess
         return $namedGrades;
     }
 
-
-
-
     /**
      * @return boolean
      */
     public function isGraded() {
-        return (file_exists($this->workdir . AmcProcessGrade::PATH_AMC_CSV));
+        if (amc\Log::build($this->quizz->id)->read('grading')){
+            return true;
+        }else{
+             return false;
+        }
     }
-
-
 
     /**
      * Computes several statistics indicators from an array

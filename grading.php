@@ -28,8 +28,8 @@ $PAGE->set_url('/mod/automultiplechoice/grading.php', array('id' => $cm->id));
 
 $process = new amc\AmcProcessGrade($quizz);
 if (!$process->isGraded() || $action === 'grade') {
-    $process->saveFormat('latex');
-    if ($process->grade()) {
+    
+    if ($process->amcNote()) {
         redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
     }
 } 
@@ -62,13 +62,19 @@ if ($warnings) {
     echo "</div>";
 }
 echo $OUTPUT->box_start('informationbox well');
-echo $OUTPUT->heading("Notes", 2)
-    . $OUTPUT->heading("Fichiers tableaux des notes", 3)
-    . "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>"
-    . $process->getHtmlCsvLinks()
-    . $OUTPUT->heading("Statistiques", 3)
-    . $stats
-    . "<p>
+echo $OUTPUT->heading("Notes", 2);
+echo $OUTPUT->heading("Fichiers tableaux des notes", 3);
+echo "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
+        
+echo  \html_writer::link($processs->getFileUrl(AmcProcess::PATH_AMC_CSV), 'csv',array('class'=>'btn','target'=>'_blank'));
+echo  \html_writer::link($processs->getFileUrl(AmcProcess::PATH_AMC_ODS), 'ods',array('class'=>'btn','target'=>'_blank'));
+echo  \html_writer::link($processs->getFileUrl(AmcProcess::PATH_APOGEE_CSV), 'apogee',array('class'=>'btn','target'=>'_blank'));
+
+
+
+echo $OUTPUT->heading("Statistiques", 3);
+echo $stats;
+echo "<p>
         Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
     </p>";
 ;

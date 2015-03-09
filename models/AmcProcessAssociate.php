@@ -16,8 +16,9 @@ require_once __DIR__ . '/AmcFormat/Api.php';
 class AmcProcessAssociate extends AmcProcess
 {
 
-    public $usersknown = 0;
-    public $usersunknown = 0;
+    public $copyauto = array();
+    public $copymanual = array();
+    public $copyunknown =array()
     const CSV_SEPARATOR = ';';
   
 
@@ -45,7 +46,33 @@ class AmcProcessAssociate extends AmcProcess
         }
         return $res;
     }
-
+    /**
+     * Shell-executes 'amc association-auto'
+     * @return bool
+     */
+    protected function amcAssociation_list() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--data', $pre . '/data',
+            '--list', 
+        );
+        $escapedCmd = escapeshellcmd('auto-multiple-choice '.'association' );
+        $escapedParams = array_map('escapeshellarg', $params);
+        $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
+        $lines = array();
+        $returnVal = 0;
+        exec($shellCmd, $lines, $returnVal);
+        foreach ($lines as $l){
+            $split = get_list_row($l);
+            $id = $row['student'].':'.$row['copy'];
+            if ($split['status']=='manual'){
+                $this->copymanual[$id] = $row['idnumber'];
+            }else if ($split['status']=='manual'){
+                $this->copyauto[$id] = $row['idnumber'];
+            }
+        }
+        return $returnVal;
+    }
     /**
      * 
      *
@@ -88,26 +115,45 @@ class AmcProcessAssociate extends AmcProcess
     /**
      * @return boolean
      */
-    public function deleteFailed($scan) {
+    public function get_association() {
         if (extension_loaded('sqlite3')){   
-            $capture = new \SQLite3($this->workdir . '/data/scoring.sqlite',SQLITE3_OPEN_READ);
-            if ($scan=='all'){
-                $results = $capture->query('SELECT * FROM capture_failed');
-                while ($row = $results->fetchArray()) {
-                    $scan = substr($row[0],14);
-                    array_map('unlink', glob($this->workdir . '/scans/'.$scan));
-                }
-                return  $capture->exec('DELETE FROM capture_failed ');
-            }else{
-                $result = $capture->querySingle('SELECT * FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
-                if (substr($result,14)==$scan){
-                    unlink( glob($this->workdir . '/scans/'.$scan));
-                    return  $capture->exec('DELETE FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
-                }
+            $allcopy = array();
+            $assoc = new \SQLite3($this->workdir . '/data/association.sqlite',SQLITE3_OPEN_READ);
+            $score = new \SQLite3($this->workdir . '/data/scoring.sqlite',SQLITE3_OPEN_READ);
+            $assoc_association= $cassoc->query('SELECT student, copy, manual, auto  FROM association_association');
+            $score_code= $assoc->query('SELECT student, copy, value FROM scoring_code');
+            while ($row = $assoc_association->fetchArray()) {
+                $id = $row['student'].':'.$row['copy'];
+                    if ($row['manual']!=''){
+                        $this->copymanual[$id] = $row['manual'];
+                    }
+                    if ($row['auto']!=''){
+                        $this->copyauto[$id] = $row['auto'];
+                    }
             }
-        return false;
+            while ($row = $score_code->fetchArray()) {
+                $id = $row['student'].':'.$row['copy'];
+                $allcopy[$id] = $row['value'];
+            }
+            $this->copyunknown = array_diff_key(array_merge($this->copymanual,$this->copyauto),$allcopy);
+            
         }else{
-
+            $allcopy = array_keys(array_map('get_code',glob($this->workdir . '/cr/name-*.jpg')),'');
+            if ($this->amcAssociation_list()){
+                $this->copyunknown = array_diff_key(array_merge($this->copymanual,$this->copyauto),$allcopy);
+            }
         }
+    }
+
+
+    protected function get_code($name) {
+        preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
+        return $res['student'].':'.$res['copy'];
+
+    }
+
+    
+    protected function get_list_row($list) {
+        preg_match('/(?P<student>[0-9]+):(?P<copy>[0-9]+)\s*(?P<idnumber>[0-9]+)\s*\((?P<status>.*)\)/', $list,$res);
     }
 }

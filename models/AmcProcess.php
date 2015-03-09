@@ -31,6 +31,10 @@ class AmcProcess
 
     private $logger;
     const PATH_STUDENTLIST_CSV = '/exports/student_list.csv';
+    const PATH_AMC_CSV = '/exports/grades.csv';
+    const PATH_AMC_ODS = '/exports/grades.ods';
+    const PATH_APOGEE_CSV = '/exports/grades_apogee.csv';
+    
     /**
      * Constructor
      *
