@@ -255,13 +255,13 @@ function amc_get_students_select($url, $cm, $userid, $groupid, $includeall=true)
         $userid = $USER->id;
     }
     $menu = array(); // Will be a list of userid => user name
-    $users = amc_get_student_users( $cm, $parent = false, $groupid)
+    $users = amc_get_student_users($cm, $parent = false, $groupid);
     $label = get_string('selectauser', 'automultiplechoice');
     if ($includeall) {
         $menu[0] = get_string('allusers', 'automultiplechoice');
         $label = get_string('selectalloroneuser', 'automultiplechoice');
     }
-    forearch ($users as $userdata) {
+    foreach ($users as $userdata) {
         $user = $userdata->user;
         $userfullname = fullname($user);
         $menu[$user->id] = $userfullname;
@@ -320,3 +320,15 @@ function backup_source($file){
 function restore_source($file){
     copy ($file,substr($file,-5));
 }
+function get_code($name) {
+	preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
+	return $res['student'].':'.$res['copy'];
+
+}
+
+
+function get_list_row($list) {
+	preg_match('/(?P<student>[0-9]+):(?P<copy>[0-9]+)\s*(?P<idnumber>[0-9]+)\s*\((?P<status>.*)\)/', $list,$res);
+     return $res;
+}
+
