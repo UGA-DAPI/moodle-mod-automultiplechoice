@@ -16,9 +16,7 @@ require_once __DIR__ . '/AmcFormat/Api.php';
 
 class AmcProcessGrade extends AmcProcess
 {
-    const PATH_AMC_CSV = '/exports/grades.csv';
-    const PATH_AMC_ODS = '/exports/grades.ods';
-    const PATH_APOGEE_CSV = '/exports/grades_apogee.csv';
+    
     const CSV_SEPARATOR = ';';
 
     protected $grades = array();
@@ -27,7 +25,7 @@ class AmcProcessGrade extends AmcProcess
 
     protected $format;
     private $actions;
-    private $exportedFiles;
+    
 
         /**
      * Constructor
@@ -43,46 +41,9 @@ class AmcProcessGrade extends AmcProcess
         }
         $this->format->quizz = $this->quizz;
         $this->format->codelength = $this->codelength;
+    }
+
     
-        $this->actions = new \stdClass();
-        if ($this->isGraded()) {
-            $this->exportedFiles = (object) array(
-                'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
-                'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
-                'grades_apogee.csv' => $this->getFileUrl(AmcProcessGrade::PATH_APOGEE_CSV),
-            );
-        }
-    }
-
-    /**
-     * @return boolean
-     */
-    public function grade() {
-        $this->actions = array(
-            'scoring' => (boolean) $this->amcNote(),
-            'export' => (boolean) $this->amcExport(),
-        'csv' => (boolean) $this->writeFileApogeeCsv(),
-        'gradebook' =>(boolean) $this->writeGrades()
-        );
-        $this->exportedFiles = (object) array(
-            'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
-            'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),
-            'grades_apogee.csv' => $this->getFileUrl(AmcProcessGrade::PATH_APOGEE_CSV),
-        );
-        return (array_sum($this->actions) === count($this->actions));
-    }
-
-
-    /**
-     * @return StdClass
-     */
-    public function getResults() {
-        return (object) array(
-            'actions' => $this->actions,
-            'csv' => $this->exportedFiles,
-        );
-    }
-
     /**
      * @global core_renderer $OUTPUT
      * @return string
@@ -105,17 +66,7 @@ class AmcProcessGrade extends AmcProcess
         return $html;
     }
 
-    /**
-     * @return string
-     */
-    public function getHtmlCsvLinks() {
-        $html = '<ul class="amc-files">';
-        foreach ((array) $this->exportedFiles as $name => $url) {
-            $html .= "<li>" . \html_writer::link($url, $name) . "</li>";
-        }
-        $html .= "</ul>\n";
-        return $html;
-    }
+   
 
     /**
      * computes and display statistics indicators
@@ -192,6 +143,7 @@ class AmcProcessGrade extends AmcProcess
 >>>>>>> fix new tab
 
     /**
+<<<<<<< c4bad6127c287b69f4defa158ca213bc77a99e2d
      * Shell-executes 'amc export' to get a csv file
      * @return bool
      */
@@ -376,6 +328,8 @@ class AmcProcessGrade extends AmcProcess
     }
 
     /**
+=======
+>>>>>>> add students selector
      * Fills the "grades" property from the CSV.
      *
      * @return boolean
@@ -414,6 +368,7 @@ class AmcProcessGrade extends AmcProcess
         return true;
     }
 
+<<<<<<< c4bad6127c287b69f4defa158ca213bc77a99e2d
     /**
      * Return an array of students with added fields for identified users.
      *
@@ -429,7 +384,6 @@ class AmcProcessGrade extends AmcProcess
         if (!$studentList) {
             return false;
         }
-<<<<<<< de31e0c1a87a27fc12d72d90ac15d0237c5a01f5
         fputcsv($studentList, array('surname', 'name','patronomic', 'id', 'email','moodleid','groupslist'), self::CSV_SEPARATOR);
 	$codelength = get_config('mod_automultiplechoice', 'amccodelength');
     $sql = "SELECT u.idnumber ,u.firstname, u.lastname,u.alternatename,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
@@ -447,22 +401,6 @@ class AmcProcessGrade extends AmcProcess
                 foreach ($nums as $num){
                     fputcsv($studentList, array($user->lastname, $user->firstname,$user->alternatename, substr($num,-1*$codelength), $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
                 }
-=======
-        fputcsv($studentList, array('surname', 'name', 'id', 'email','moodleid','groupslist'), self::CSV_SEPARATOR);
-    $codelength = get_config('mod_automultiplechoice', 'amccodelength');
-    $sql = "SELECT RIGHT(u.idnumber,".$codelength.") as idnumber ,u.firstname, u.lastname,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
-                ."JOIN {user_enrolments} ue ON (ue.userid = u.id) "
-        ."JOIN {enrol} e ON (e.id = ue.enrolid) "
-        ."JOIN  groups_members gm ON u.id=gm.userid "
-        ."JOIN groups g ON g.id=gm.groupid "
-        ."WHERE u.idnumber != '' AND e.courseid = ? AND g.courseid=e.courseid "
-        ."GROUP BY u.id";
-        $users=  $DB->get_records_sql($sql, array($this->quizz->course));
-
-        if (!empty($users)) {
-        foreach ($users as $user) {
-                fputcsv($studentList, array($user->lastname, $user->firstname, $user->idnumber, $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
->>>>>>> continue new tabs + failed
             }
         }
         fclose($studentList);
@@ -543,6 +481,8 @@ class AmcProcessGrade extends AmcProcess
 
         return true;
     }
+=======
+>>>>>>> add students selector
     
     protected function writeGrades(){
 
@@ -552,8 +492,6 @@ class AmcProcessGrade extends AmcProcess
     \automultiplechoice_grade_item_update($record, $grades);
     return true;
     } 
-    
-    
     
     /**
      * returns an array to fill the Moodle grade system from the raw marks .
@@ -575,17 +513,16 @@ class AmcProcessGrade extends AmcProcess
         return $namedGrades;
     }
 
-
-
-
     /**
      * @return boolean
      */
     public function isGraded() {
-        return (file_exists($this->workdir . AmcProcessGrade::PATH_AMC_CSV));
+        if (amc\Log::build($this->quizz->id)->read('grading')){
+            return true;
+        }else{
+             return false;
+        }
     }
-
-
 
     /**
      * Computes several statistics indicators from an array
