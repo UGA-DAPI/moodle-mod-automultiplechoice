@@ -431,11 +431,11 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
     } elseif (preg_match('/grades\.csv$/', $filename)) {
-        $ret=$process->amcExport('csv');     
-        if ($ret){
+        //$ret=$process->amcExport('csv');     
+        //if ($ret){
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
-        }
-        return $ret;
+       // }
+       // return $ret;
      } elseif (preg_match('/apogee\.csv$/', $filename)) {
         $ret=$process->writeFileApogeeCsv();     
         if ($ret){
