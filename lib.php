@@ -368,7 +368,7 @@ function automultiplechoice_get_file_info($browser, $areas, $course, $cm, $conte
  */
 function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
     global $USER;
-    require_once __DIR__ . '/models/AmcProcessGrade.php';
+    require_once __DIR__ . '/models/AmcProcessExport.php';
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }
@@ -377,7 +377,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 
     $filename = array_pop($args);
     $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
-    $process = new AmcProcessExport();
+    $process = new \mod\automultiplechoice\AmcProcessExport($quizz);
 
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
     // and corrigé
@@ -421,7 +421,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
      } else if (preg_match('/^failed-.*\.pdf$/', $filename)) {
-        $ret=$process->makeFailedPdf();     
+        $ret = $process->makeFailedPdf();     
         if ($ret){
             send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
@@ -436,19 +436,19 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
     } else if (preg_match('/grades\.csv$/', $filename)) {
-        $ret=$process->amcExport('csv');     
+        $ret = $process->amcExport('csv');
         if ($ret){
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
         }
         return $ret;
      } else if (preg_match('/apogee\.csv$/', $filename)) {
-        $ret=$process->writeFileApogeeCsv();     
+        $ret = $process->writeFileApogeeCsv();     
         if ($ret){
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
         }
         return $ret;
     } else if (preg_match('/\.ods$/', $filename)) {
-        $ret=$process->amcExport('ods');     
+        $ret = $process->amcExport('ods');     
         if ($ret){
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'application/vnd.oasis.opendocument.spreadsheet') ;
         }

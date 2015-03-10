@@ -66,7 +66,7 @@ echo $OUTPUT->heading("Notes", 2);
 echo $OUTPUT->heading("Fichiers tableaux des notes", 3);
 echo "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
         
-echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_AMC_CSV), 'csv',array('class'=>'btn','target'=>'_blank'));
+echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_AMC_CSV), 'csv',array('class'=>'btn'));
 echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_AMC_ODS), 'ods',array('class'=>'btn','target'=>'_blank'));
 echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_APOGEE_CSV), 'apogee',array('class'=>'btn','target'=>'_blank'));
 
