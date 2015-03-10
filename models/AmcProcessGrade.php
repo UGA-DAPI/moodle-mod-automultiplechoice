@@ -17,9 +17,7 @@ require_once __DIR__ . '/AmcFormat/Api.php';
 class AmcProcessGrade extends AmcProcess
 {
     
-    const CSV_SEPARATOR = ';';
 
-    protected $grades = array();
     public $usersknown = 0;
     public $usersunknown = 0;
 
@@ -70,44 +68,6 @@ class AmcProcessGrade extends AmcProcess
 
 
 
-    /**
-     * Fills the "grades" property from the CSV.
-     *
-     * @return boolean
-     */
-    protected function readGrades() {
-
-        if (count($this->grades) > 0) {
-            return true;
-        }
-        $input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
-        if (!$input) {
-            return false;
-        }
-        $header = fgetcsv($input, 0, self::CSV_SEPARATOR);
-        if (!$header) {
-            return false;
-        }
-        $getCol = array_flip($header);
- 
-    $this->grades = array();
-        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
-            $idnumber = $data[$getCol['student.number']];
-        $userid=null;
-        $userid = $data[$getCol['moodleid']];
-        if ($userid) {
-            $this->usersknown++;
-        } else {
-            $this->usersunknown++;
-        }
-        $this->grades[] = (object) array(
-        'userid' => $userid,
-                'rawgrade' => str_replace(',', '.', $data[6])
-    );
-        }
-    fclose($input);
-        return true;
-    }
 
     
     protected function writeGrades(){
@@ -141,16 +101,6 @@ class AmcProcessGrade extends AmcProcess
 
 
 
-    private static function fopenRead($filename) {
-        if (!is_readable($filename)) {
-            return false;
-        }
-        $handle = fopen($filename, 'r');
-        if (!$handle) {
-            return false;
-        }
-        return $handle;
-    }
 
 
 }
