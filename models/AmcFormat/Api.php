@@ -36,7 +36,7 @@ abstract class Api
      */
     public $codelength;
 
-    public function __construct($quizz=null, $codelength=10) {
+    public function __construct($quizz=null, $codelength=8) {
         $this->quizz = $quizz;
         $this->codelength = $codelength;
     }

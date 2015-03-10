@@ -368,7 +368,7 @@ function automultiplechoice_get_file_info($browser, $areas, $course, $cm, $conte
  */
 function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
     global $USER;
-
+    require_once __DIR__ . '/models/AmcProcessGrade.php';
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }
@@ -377,7 +377,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 
     $filename = array_pop($args);
     $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
-    $process = new \mod\automultiplechoice\AmcProcessExport();
+    $process = new AmcProcessExport();
 
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
     // and corrigé
@@ -420,48 +420,52 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     if (preg_match('/^(sujet|corrige|catalog)-.*\.pdf$/', $filename)) {
         send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
-     } elseif (preg_match('/^failed-.*\.pdf$/', $filename)) {
+     } else if (preg_match('/^failed-.*\.pdf$/', $filename)) {
         $ret=$process->makeFailedPdf();     
         if ($ret){
             send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
         return $ret;
-     } elseif (preg_match('/^sujets-.*\.zip$/', $filename)) {
+     } else if (preg_match('/^sujets-.*\.zip$/', $filename)) {
         send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/zip') ;
         return true;
-     } elseif (preg_match('/^corrections-.*\.pdf$/', $filename)) {
+     } else if (preg_match('/^corrections-.*\.pdf$/', $filename)) {
         send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
-     } elseif (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
+     } else if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
-    } elseif (preg_match('/grades\.csv$/', $filename)) {
-        //$ret=$process->amcExport('csv');     
-        //if ($ret){
+    } else if (preg_match('/grades\.csv$/', $filename)) {
+        $ret=$process->amcExport('csv');     
+        if ($ret){
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
-       // }
-       // return $ret;
-     } elseif (preg_match('/apogee\.csv$/', $filename)) {
+        }
+        return $ret;
+     } else if (preg_match('/apogee\.csv$/', $filename)) {
         $ret=$process->writeFileApogeeCsv();     
         if ($ret){
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
         }
         return $ret;
-    } elseif (preg_match('/\.ods$/', $filename)) {
+    } else if (preg_match('/\.ods$/', $filename)) {
         $ret=$process->amcExport('ods');     
         if ($ret){
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'application/vnd.oasis.opendocument.spreadsheet') ;
         }
         return $ret;
-    } elseif (preg_match('/\.ppm$/', $filename)) {
+    } else if (preg_match('/\.ppm$/', $filename)) {
         send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/x-portable-pixmap') ;
         return true;
-    } elseif (preg_match('/\.pbm$/', $filename)) {
+    } else if (preg_match('/\.pbm$/', $filename)) {
         send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/x-portable-bitmap') ;
         return true;
-    } elseif (preg_match('/\.tif[f]*$/', $filename)) {
+    } else if (preg_match('/\.tif[f]*$/', $filename)) {
         send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/tiff') ;
         return true;
+    }else if (preg_match('/^name-[0-9]*:[0-9]*\.jpg$/', $filename)) {
+        send_file($process->workdir . '/cr/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
+        return true;
+        
     }
     send_file_not_found();
 }

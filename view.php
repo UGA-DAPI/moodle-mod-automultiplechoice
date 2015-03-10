@@ -24,7 +24,7 @@ $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('dashboard');
-$process = new amc\Grade($quizz);
+$process = new amc\amcProcess($quizz);
 
 if (!count($quizz->questions)) {
     redirect(new moodle_url('questions.php', array('a' => $quizz->id)));
