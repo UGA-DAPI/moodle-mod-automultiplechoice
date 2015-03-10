@@ -15,7 +15,7 @@
 use \mod\automultiplechoice as amc;
 
 require_once __DIR__ . '/locallib.php';
-require_once __DIR__ . '/models/Grade.php';
+require_once __DIR__ . '/models/AmcProcess.php';
 
 global $OUTPUT, $PAGE, $CFG;
 

@@ -17,9 +17,7 @@ require_once __DIR__ . '/AmcFormat/Api.php';
 class AmcProcessGrade extends AmcProcess
 {
     
-    const CSV_SEPARATOR = ';';
 
-    protected $grades = array();
     public $usersknown = 0;
     public $usersunknown = 0;
 
@@ -94,6 +92,7 @@ class AmcProcessGrade extends AmcProcess
         return $res;
     }
 
+<<<<<<< 1988cadf1219cf4b9e3a282c33b5bdf430613585
     /**
      * Shell-executes 'amc note'
      * @return bool
@@ -391,8 +390,6 @@ class AmcProcessGrade extends AmcProcess
     /**
      * Return an array of students with added fields for identified users.
      *
-=======
->>>>>>> continue fix new tabs
      * Initialize $this->grades.
      * Sets $this->usersknown and $this->usersunknown.
      *
@@ -414,7 +411,6 @@ class AmcProcessGrade extends AmcProcess
             return false;
         }
         $getCol = array_flip($header);
-<<<<<<< de31e0c1a87a27fc12d72d90ac15d0237c5a01f5
 	fputcsv($output, array('id','patronomic','name','surname','groups', 'mark'), self::CSV_SEPARATOR);
 	$this->grades = array();
         while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
@@ -433,27 +429,6 @@ class AmcProcessGrade extends AmcProcess
 		if ($data[$getCol['A:id']]!='NONE'){
 			fputcsv($output, array($data[$getCol['A:id']],$data[$getCol['patronomic']],$data[$getCol['name']],$data[$getCol['surname']],$data[$getCol['groupslist']], $data[$getCol['Mark']]), self::CSV_SEPARATOR);
 		}
-=======
-    fputcsv($output, array('id','name','surname','groups', 'mark'), self::CSV_SEPARATOR);
-    $this->grades = array();
-        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
-        $idnumber = $data[$getCol['student.number']];
-        $userid=null;
-        $userid = $data[$getCol['moodleid']];
-        if ($userid) {
-            $this->usersknown++;
-        } else {
-            $this->usersunknown++;
-    }
-    
-        $this->grades[] = (object) array(
-            'userid' => $userid,
-            'rawgrade' => str_replace(',', '.', $data[6])
-                                                    );
-        if ($data[$getCol['A:id']]!='NONE'){
-            fputcsv($output, array($data[$getCol['A:id']],$data[$getCol['name']],$data[$getCol['surname']],$data[$getCol['groupslist']], $data[6]), self::CSV_SEPARATOR);
-        }
->>>>>>> continue new tabs + failed
         }
         fclose($input);
         fclose($output);
@@ -461,8 +436,6 @@ class AmcProcessGrade extends AmcProcess
 
         return true;
     }
-=======
->>>>>>> add students selector
     
     protected function writeGrades(){
 
@@ -495,16 +468,6 @@ class AmcProcessGrade extends AmcProcess
 
 
 
-    private static function fopenRead($filename) {
-        if (!is_readable($filename)) {
-            return false;
-        }
-        $handle = fopen($filename, 'r');
-        if (!$handle) {
-            return false;
-        }
-        return $handle;
-    }
 
 
 }
