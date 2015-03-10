@@ -41,7 +41,7 @@ class Latex extends Api
         return "latex";
     }
 
-    public function __construct($quizz=null, $codelength=10) {
+    public function __construct($quizz=null, $codelength=8) {
         parent::__construct($quizz, $codelength);
         if (!empty($quizz->id)) {
             $this->tmpDir = $this->quizz->getDirName() . '/htmlimages';

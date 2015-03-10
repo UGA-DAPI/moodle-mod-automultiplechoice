@@ -68,26 +68,6 @@ class AmcProcessGrade extends AmcProcess
 
    
 
-    /**
-     * computes and display statistics indicators
-     * @return string html table with statistics indicators
-     */
-    public function getHtmlStats() {
-        $this->readGrades();
-        $mark = array();
-        foreach ($this->grades as $rawmark) {
-            $mark[] = $rawmark->rawgrade;
-        }
-
-        $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
-        $out = "<table class=\"generaltable\"><tbody>\n";
-        foreach ($indics as $indicen => $indicfr) {
-            $out .= '<tr><td>' . $indicfr. '</td><td>' . $this->mmmr($mark, $indicen) . '</td></tr>' . "\n";
-        }
-        $out .= "</tbody></table>\n";
-        return $out;
-    }
-
 
 <<<<<<< 3db4fb1cf26548b2c678ff1afe9159c88d4a2b8b
     /**
@@ -513,55 +493,7 @@ class AmcProcessGrade extends AmcProcess
         return $namedGrades;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isGraded() {
-        if (Log::build($this->quizz->id)->read('grading')){
-            return true;
-        }else{
-             return false;
-        }
-    }
 
-    /**
-     * Computes several statistics indicators from an array
-     *
-     * @param array $array
-     * @param string $output
-     * @return float
-     */
-    protected function mmmr($array, $output = 'mean'){
-        if (empty($array) || !is_array($array)) {
-            return FALSE;
-        } else {
-            switch($output){
-                case 'size':
-                    $res = count($array);
-                break;
-                case 'mean':
-                    $count = count($array);
-                    $sum = array_sum($array);
-                    $res = $sum / $count;
-                break;
-                case 'median':
-                    rsort($array);
-                    $middle = round(count($array) / 2);
-                    $res = $array[$middle-1];
-                break;
-                case 'mode':
-                    $v = array_count_values($array);
-                    arsort($v);
-                    list ($res) = each($v); // read the first key
-                break;
-                case 'range':
-                    sort($array, SORT_NUMERIC);
-                    $res = $array[0] . " - " . $array[count($array) - 1];
-                break;
-            }
-            return $res;
-        }
-    }
 
     private static function fopenRead($filename) {
         if (!is_readable($filename)) {

@@ -10,8 +10,8 @@ namespace mod\automultiplechoice;
 
 require_once __DIR__ . '/AmcProcess.php';
 require_once dirname(__DIR__) . '/locallib.php';
-require_once __DIR__ . '/Log.php';
-require_once __DIR__ . '/AmcFormat/Api.php';
+//require_once __DIR__ . '/Log.php';
+//require_once __DIR__ . '/AmcFormat/Api.php';
 
 class AmcProcessAssociate extends AmcProcess
 {
@@ -64,14 +64,14 @@ class AmcProcessAssociate extends AmcProcess
         exec($shellCmd, $lines, $returnVal);
         foreach ($lines as $l){
             $split = get_list_row($l);
-	    if (isset($split['student'])){
-		    $id = $split['student'].':'.$split['copy'];
-		    if ($split['status']=='manual'){
-			    $this->copymanual[$id] = $split['idnumber'];
-		    }else if ($split['status']=='auto'){
-			    $this->copyauto[$id] = $split['idnumber'];
-		    }
-	    }
+        if (isset($split['student'])){
+            $id = $split['student'].':'.$split['copy'];
+            if ($split['status']=='manual'){
+                $this->copymanual[$id] = $split['idnumber'];
+            }else if ($split['status']=='auto'){
+                $this->copyauto[$id] = $split['idnumber'];
+            }
+        }
         }
         return $returnVal;
     }
