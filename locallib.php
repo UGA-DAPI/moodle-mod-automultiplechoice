@@ -160,17 +160,15 @@ function has_students($context) {
  * @param array $whereorsortparams any paramter values used by $sort or $extrawheretest.
  * @return array
  */
-function amc_get_student_users(context $context, $parent = false, $group = '', $exclude=NULL) {
+function amc_get_student_users(context_module $context, $parent = false, $group = '', $exclude=NULL) {
     global $DB;
     $codelength = get_config('mod_automultiplechoice', 'amccodelength');
     $allnames = get_all_user_name_fields(true, 'u');
     $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .'RIGHT(u.idnumber,'.$codelength.') as idnumber';
 
-    $role = array_column(get_archetype_roles('student'),'id');
-            
-
+    $roleid =array_keys( get_archetype_roles('student'));
     $parentcontexts = '';
-    if ($parent) {$showonlyactiveenrol ||
+    if ($parent) {
         $parentcontexts = substr($context->path, 1); // kill leading slash
         $parentcontexts = str_replace('/', ',', $parentcontexts);
         if ($parentcontexts !== '') {
@@ -188,7 +186,7 @@ function amc_get_student_users(context $context, $parent = false, $group = '', $
     }
     
     if ($exclude) {
-        list($idnumberss, $excludeparams) = $DB->get_in_or_equal($exclude, SQL_PARAMS_NAMED, 'r',false);
+        list($idnumbers, $excludeparams) = $DB->get_in_or_equal($exclude, SQL_PARAMS_NAMED, 'r',false);
         $idnumberselect = "AND idnumber $idnumbers";
         $params = array_merge($params, $excludeparams);
     } else {
@@ -251,8 +249,8 @@ function amc_get_student_users(context $context, $parent = false, $group = '', $
                    $groupselect
           ORDER BY $sort";                  // join now so that we can just use fullname() later
 
-    $availableusers = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
-    $modinfo = get_fast_modinfo($cm->course);
+    $availableusers = $DB->get_records_sql($sql, $params);
+    $modinfo = get_fast_modinfo($context->course);
     $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
     $availableusers = $info->filter_user_list($availableusers);
     return $availableusers;
@@ -262,12 +260,12 @@ function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude=NULL) 
     global $USER, $CFG;
 
     $codelength = get_config('mod_automultiplechoice', 'amccodelength');
-    if (is_null($userid)) {
+    if (is_null($idnumber)) {
         $idnumber = $USER->idnumber;
     }
     $idnumber = substr($idnumber,-1*$codelength);//by security
     $menu = array(); // Will be a list of userid => user name
-    $users = amc_get_student_users($cm, $parent = false, $groupid,$include);
+    $users = amc_get_student_users($cm, $parent = false, $groupid,$exclude);
     $label = get_string('selectuser', 'automultiplechoice');
     if ($includeall) {
         $menu[0] = get_string('allusers', 'automultiplechoice');

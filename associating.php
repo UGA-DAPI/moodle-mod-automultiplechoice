@@ -22,6 +22,7 @@ $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('associating');
+$context = context_module::instance($cm->id);
 
 $action = optional_param('action', '', PARAM_ALPHA);
 $mode = optional_param('mode', 'unknown', PARAM_ALPHA);
@@ -74,13 +75,13 @@ $optionsmode =  array ('unknown'  => get_string('unknown', 'automultiplechoice')
 $selectmode = new single_select($url, 'mode', $optionsmode, $mode, null, "mode");
 $selectmode->set_label(get_string('associationmode', 'automultiplechoice'));
 if ($mode=='unknown'){
-    $namedisplay = $this->copyunknown;
+    $namedisplay = $process->copyunknown;
 }else if ($mode=='manual'){
-    $namedisplay = $this->copyamnual;
+    $namedisplay = $process->copyamnual;
 }else if ($mode=='auto'){
-    $namedisplay = $this->copymanual;
+    $namedisplay = $process->copymanual;
 }else if ($mode=='all'){
-    $namedisplay = array_merge($this->copyunknown,$this->copymanual,$this->copyauto);
+    $namedisplay = array_merge($process->copyunknown,$process->copymanual,$process->copyauto);
 }
 $optionsusermode =  array ('without'  => get_string('without', 'automultiplechoice'),
                   'all'   => get_string('all', 'automultiplechoice'));
@@ -95,7 +96,7 @@ echo $OUTPUT->render($paging);
 $namedisplay = array_slice($namedisplay,$page*$perpage, $perpage);
 echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
 foreach ($namedisplay as $name=>$idnumber){
-    $selectuser=  amc_get_students_select($url, $cm, $idnumber, $groupid, $usermode,array_merge($this->copymanual,$this->copyauto));
+    $selectuser=  amc_get_students_select($url, $context, $idnumber, '', $usermode,array_merge($process->copymanual,$process->copyauto));
     $selectuser->set_label(get_string('associationuser', 'automultiplechoice'));
 
     $thumbnailnutput = \html_writer::img("name-".$process->getFileUrl($name).".jpg",$name);
