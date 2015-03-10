@@ -161,7 +161,7 @@ class AmcProcess
      * Shell-executes 'amc note'
      * @return bool
      */
-    protected function amcNote() {
+    public function amcNote() {
         $pre = $this->workdir;
         $parameters = array(
             '--data', $pre . '/data',
@@ -283,7 +283,7 @@ class AmcProcess
         return true;
     }
 
-    private static function fopenRead($filename) {
+    protected static function fopenRead($filename) {
         if (!is_readable($filename)) {
             return false;
         }
