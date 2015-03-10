@@ -23,6 +23,7 @@ class AmcProcess
     public $workdir;
 
     protected $relworkdir;
+    protected $grades = array();
 
     /**
      * @var array
@@ -34,6 +35,7 @@ class AmcProcess
     const PATH_AMC_CSV = '/exports/grades.csv';
     const PATH_AMC_ODS = '/exports/grades.ods';
     const PATH_APOGEE_CSV = '/exports/grades_apogee.csv';
+    const CSV_SEPARATOR = ';';
     
     /**
      * Constructor
@@ -242,6 +244,56 @@ class AmcProcess
         return $out;
     }
 
+    /**
+     * Fills the "grades" property from the CSV.
+     *
+     * @return boolean
+     */
+    protected function readGrades() {
+
+        if (count($this->grades) > 0) {
+            return true;
+        }
+        $input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
+        if (!$input) {
+            return false;
+        }
+        $header = fgetcsv($input, 0, self::CSV_SEPARATOR);
+        if (!$header) {
+            return false;
+        }
+        $getCol = array_flip($header);
+ 
+    $this->grades = array();
+        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
+            $idnumber = $data[$getCol['student.number']];
+        $userid=null;
+        $userid = $data[$getCol['moodleid']];
+        if ($userid) {
+            $this->usersknown++;
+        } else {
+            $this->usersunknown++;
+        }
+        $this->grades[] = (object) array(
+        'userid' => $userid,
+                'rawgrade' => str_replace(',', '.', $data[6])
+    );
+        }
+    fclose($input);
+        return true;
+    }
+
+    private static function fopenRead($filename) {
+        if (!is_readable($filename)) {
+            return false;
+        }
+        $handle = fopen($filename, 'r');
+        if (!$handle) {
+            return false;
+        }
+        return $handle;
+    }
+    
     /**
      * Computes several statistics indicators from an array
      *

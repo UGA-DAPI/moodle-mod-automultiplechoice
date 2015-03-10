@@ -16,9 +16,7 @@ require_once __DIR__ . '/AmcFormat/Api.php';
 class AmcProcessGrade extends AmcProcess
 {
     
-    const CSV_SEPARATOR = ';';
 
-    protected $grades = array();
     public $usersknown = 0;
     public $usersunknown = 0;
 
@@ -96,6 +94,7 @@ class AmcProcessGrade extends AmcProcess
         return $res;
     }
 
+<<<<<<< 1988cadf1219cf4b9e3a282c33b5bdf430613585
     /**
      * Shell-executes 'amc note'
      * @return bool
@@ -474,16 +473,6 @@ class AmcProcessGrade extends AmcProcess
 
 
 
-    private static function fopenRead($filename) {
-        if (!is_readable($filename)) {
-            return false;
-        }
-        $handle = fopen($filename, 'r');
-        if (!$handle) {
-            return false;
-        }
-        return $handle;
-    }
 
 
 }
