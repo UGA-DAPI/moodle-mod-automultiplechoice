@@ -160,12 +160,11 @@ function has_students($context) {
  * @param array $whereorsortparams any paramter values used by $sort or $extrawheretest.
  * @return array
  */
-function amc_get_student_users(context $context, $parent = false, $group = '',
-        $limitfrom = '', $limitnum = '' ) {
+function amc_get_student_users(context $context, $parent = false, $group = '', $exclude=NULL) {
     global $DB;
-
+    $codelength = get_config('mod_automultiplechoice', 'amccodelength');
     $allnames = get_all_user_name_fields(true, 'u');
-    $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .'u.idnumber';
+    $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .'RIGHT(u.idnumber,'.$codelength.') as idnumber';
 
     $role = array_column(get_archetype_roles('student'),'id');
             
@@ -179,14 +178,24 @@ function amc_get_student_users(context $context, $parent = false, $group = '',
         }
     }
 
-    if ($roleid) {
+    
+     if ($roleid) {
         list($rids, $params) = $DB->get_in_or_equal($roleid, SQL_PARAMS_NAMED, 'r');
         $roleselect = "AND ra.roleid $rids";
     } else {
         $params = array();
         $roleselect = '';
     }
-
+    
+    if ($exclude) {
+        list($idnumberss, $excludeparams) = $DB->get_in_or_equal($exclude, SQL_PARAMS_NAMED, 'r',false);
+        $idnumberselect = "AND idnumber $idnumbers";
+        $params = array_merge($params, $excludeparams);
+    } else {
+        $excludeparams = array();
+        $idnumberleselect = '';
+    }
+    
     if ($coursecontext = $context->get_course_context(false)) {
         $params['coursecontext'] = $coursecontext->id;
     } else {
@@ -248,15 +257,18 @@ function amc_get_student_users(context $context, $parent = false, $group = '',
     $availableusers = $info->filter_user_list($availableusers);
     return $availableusers;
      }
-function amc_get_students_select($url, $cm, $userid, $groupid, $includeall=true) {
+     
+function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude=NULL) {
     global $USER, $CFG;
 
+    $codelength = get_config('mod_automultiplechoice', 'amccodelength');
     if (is_null($userid)) {
-        $userid = $USER->id;
+        $idnumber = $USER->idnumber;
     }
+    $idnumber = substr($idnumber,-1*$codelength);//by security
     $menu = array(); // Will be a list of userid => user name
-    $users = amc_get_student_users($cm, $parent = false, $groupid);
-    $label = get_string('selectauser', 'automultiplechoice');
+    $users = amc_get_student_users($cm, $parent = false, $groupid,$include);
+    $label = get_string('selectuser', 'automultiplechoice');
     if ($includeall) {
         $menu[0] = get_string('allusers', 'automultiplechoice');
         $label = get_string('selectalloroneuser', 'automultiplechoice');
@@ -264,11 +276,11 @@ function amc_get_students_select($url, $cm, $userid, $groupid, $includeall=true)
     foreach ($users as $userdata) {
         $user = $userdata->user;
         $userfullname = fullname($user);
-        $menu[$user->id] = $userfullname;
+        $menu[$user->idnumber] = $userfullname;
         
     }
 
-    $select = new single_select($url, 'userid', $menu, $userid);
+    $select = new single_select($url, 'idnumber', $menu, $idnumber);
     $select->label = $label;
     $select->formid = 'choosestudent';
     return $select;
@@ -321,14 +333,13 @@ function restore_source($file){
     copy ($file,substr($file,-5));
 }
 function get_code($name) {
-	preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
-	return $res['student'].':'.$res['copy'];
+    preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
+    return $res['student'].':'.$res['copy'];
 
 }
 
 
 function get_list_row($list) {
-	preg_match('/(?P<student>[0-9]+):(?P<copy>[0-9]+)\s*(?P<idnumber>[0-9]+)\s*\((?P<status>.*)\)/', $list,$res);
+    preg_match('/(?P<student>[0-9]+):(?P<copy>[0-9]+)\s*(?P<idnumber>[0-9]+)\s*\((?P<status>.*)\)/', $list,$res);
      return $res;
 }
-
