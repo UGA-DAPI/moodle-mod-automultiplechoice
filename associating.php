@@ -93,14 +93,14 @@ echo $OUTPUT->render($selectmode);
 echo $OUTPUT->render($selectusermode);
 echo $OUTPUT->render($paging);
 $namedisplay = array_slice($namedisplay,$page*$perpage, $perpage);
-$excudeusers = ($usermode=='all') '' : array_merge($process->copymanual,$process->copyauto;
+$excludeusers = ($usermode=='all') ? '' : array_merge($process->copymanual,$process->copyauto);
 echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
 foreach ($namedisplay as $name=>$idnumber){
    
-    $thumbnailoutput = \html_writer::img("name-".$process->getFileUrl($name).".jpg",$name);
-    $thumbnailoutput .= $output->students_select($url, $cm, $idnumber, '',$excudeusers ));
+    $thumbnailoutput = \html_writer::img($process->getFileUrl('name-'.$name).".jpg",$name);
+    $thumbnailoutput .= $output->students_selector($url, $cm, $idnumber, '',$excludeusers );
     $thumbnaildiv= \html_writer::div($thumbnailoutput,'thumbnail');
-    echo html_writer::tag('li', $sthumbnaildiv ,array('class'=>'span4')); 
+    echo html_writer::tag('li', $thumbnaildiv ,array('class'=>'span4')); 
 }
 echo html_writer::end_tag('ul');
 echo $OUTPUT->box_end();

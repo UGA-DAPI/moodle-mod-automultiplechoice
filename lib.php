@@ -375,7 +375,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 
     require_login($course, true, $cm);
 
-    $filename = array_pop($args);
+    $filename = rawurldecode(array_pop($args));
     $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
     $process = new \mod\automultiplechoice\AmcProcessExport($quizz);
 
@@ -462,8 +462,9 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     } else if (preg_match('/\.tif[f]*$/', $filename)) {
         send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/tiff') ;
         return true;
-    }else if (preg_match('/^name-[0-9]*:[0-9]*\.jpg$/', $filename)) {
-        send_file($process->workdir . '/cr/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
+    }else if (preg_match('/^name-[0-9]*-[0-9]*\.jpg$/', $filename)) {
+	    $filename=preg_replace('/(^name-[0-9]+)-([0-9]*\.jpg$)/', '\1:\2',  $filename);
+	    send_file($process->workdir . '/cr/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
         return true;
         
     }
