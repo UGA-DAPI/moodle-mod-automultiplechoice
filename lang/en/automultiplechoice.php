@@ -112,6 +112,7 @@ $string['manual'] = 'Identification manuelle';
 $string['auto'] = 'Ientification automatique';
 
 $string['without'] = 'Sans copie';
+$string['selectuser'] = 'Asoocier l\'étudiant';
 
 $string['questionoperations'] = 'Before selecting questions, you may...';
 $string['importfilequestions'] = 'Import file';

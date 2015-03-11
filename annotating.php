@@ -102,14 +102,14 @@ if ($process->hasAnotatedFiles()) {
     );
     echo $OUTPUT->box_end();
 
-    $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
-    $currentgroup = groups_get_course_group($course, true);
+    $groupmode    = groups_get_activity_groupmode($cm);   // Groups are being used
+    $currentgroup = groups_get_activity_group($cm, true);
 
     if (!$currentgroup) {      // To make some other functions work better later
         $currentgroup = NULL;
     }
     $context = context_module::instance($cm->id);
-    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
+    $isseparategroups = ($cm->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
     
     if (has_students($context)==0) {
                 $user_selector = false;
@@ -130,8 +130,8 @@ if ($process->hasAnotatedFiles()) {
 
         if ($user_selector) {
             $url = new moodle_url('annotating.php', array('a' => $quizz->id));
-            groups_print_activity_menu($cm, $url, $return=false, $hideallparticipants=false);
-             echo $output->students_select($url, $cm, $idnumber, $currentgroup);
+	    groups_print_activity_menu($cm, $url);
+	    echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
             //echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, true);
         }
 
@@ -145,8 +145,8 @@ if ($process->hasAnotatedFiles()) {
 
         if ($user_selector) {
             $url = new moodle_url('annotating.php', array('a' => $quizz->id));
-            groups_print_activity_menu($cm, $url, $return=false, $hideallparticipants=false);
-            echo $output->students_select($url, $cm, $idnumber, $currentgroup);
+            groups_print_activity_menu($cm, $url);
+            echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
             /*$renderer = $PAGE->get_renderer('gradereport_user');
             $showallusersoptions = true;
             echo $output->graded_users_selector('user', $course, $userid, $currentgroup, $showallusersoptions);*/

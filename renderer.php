@@ -98,9 +98,9 @@ EOL;
     }
 
 
-    public function students_selector( $cm, $userid, $groupid, $exclude) {
+    public function students_selector($url, $cm, $idnumber, $groupid, $exclude=NULL) {
 
-        $select = amc_get_students_select( $cm, $idnumber, $groupid, $exclude);
+        $select = amc_get_students_select( $url,$cm, $idnumber, $groupid, $exclude);
         $output = html_writer::tag('div', $this->output->render($select), array('id'=>'amc_students_selector'));
         $output .= html_writer::tag('p', '', array('style'=>'page-break-after: always;'));
 
