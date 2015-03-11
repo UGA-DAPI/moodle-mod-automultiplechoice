@@ -22,7 +22,6 @@ $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('associating');
-$context = context_module::instance($cm->id);
 
 $action = optional_param('action', '', PARAM_ALPHA);
 $mode = optional_param('mode', 'unknown', PARAM_ALPHA);
@@ -71,7 +70,7 @@ echo HtmlHelper::buttonWithAjaxCheck('Relancer l\'association', $quizz->id, 'ass
 $optionsmode =  array ('unknown'  => get_string('unknown', 'automultiplechoice'),
                   'manual' => get_string('manual', 'automultiplechoice'),
                   'auto' => get_string('auto', 'automultiplechoice'),
-                  'all'   => get_string('all', 'automultiplechoice'));
+                  'all'   => get_string('all'));
 $selectmode = new single_select($url, 'mode', $optionsmode, $mode, null, "mode");
 $selectmode->set_label(get_string('associationmode', 'automultiplechoice'));
 if ($mode=='unknown'){
@@ -84,7 +83,7 @@ if ($mode=='unknown'){
     $namedisplay = array_merge($process->copyunknown,$process->copymanual,$process->copyauto);
 }
 $optionsusermode =  array ('without'  => get_string('without', 'automultiplechoice'),
-                  'all'   => get_string('all', 'automultiplechoice'));
+                  'all'   => get_string('all'));
 $selectusermode = new single_select($url, 'usermode', $optionsusermode, $usermode, null, "usermode");
 $selectusermode->set_label(get_string('associationusermode', 'automultiplechoice'));
 $paging =  new paging_bar(count($namedisplay), $page, 20, $url, 'page');
@@ -94,14 +93,13 @@ echo $OUTPUT->render($selectmode);
 echo $OUTPUT->render($selectusermode);
 echo $OUTPUT->render($paging);
 $namedisplay = array_slice($namedisplay,$page*$perpage, $perpage);
+$excudeusers = ($usermode=='all') '' : array_merge($process->copymanual,$process->copyauto;
 echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
 foreach ($namedisplay as $name=>$idnumber){
-    $selectuser=  amc_get_students_select($url, $context, $idnumber, '', $usermode,array_merge($process->copymanual,$process->copyauto));
-    $selectuser->set_label(get_string('associationuser', 'automultiplechoice'));
-
-    $thumbnailnutput = \html_writer::img("name-".$process->getFileUrl($name).".jpg",$name);
-    $thumbnailnutput .= \html_writer::img("name-".$process->getFileUrl($name).".jpg",$name);
-    $thumbnaildiv= \html_writer::div($thumbnailnutput,'thumbnail');
+   
+    $thumbnailoutput = \html_writer::img("name-".$process->getFileUrl($name).".jpg",$name);
+    $thumbnailoutput .= $output->students_select($url, $cm, $idnumber, '',$excudeusers ));
+    $thumbnaildiv= \html_writer::div($thumbnailoutput,'thumbnail');
     echo html_writer::tag('li', $sthumbnaildiv ,array('class'=>'span4')); 
 }
 echo html_writer::end_tag('ul');

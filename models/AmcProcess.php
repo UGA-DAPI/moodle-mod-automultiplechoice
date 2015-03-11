@@ -212,7 +212,23 @@ class AmcProcess
             return null;
         }
     }
-
+    /**
+    * returns the name of pdf anotated file matching user (upon $idnumber)
+    * @param string $idnumber
+    * @return string (matching user file) OR FALSE if no matching file
+    */
+   public function getUserAnotatedSheet($idnumber) {
+       $numid = substr($idnumber,-1*$this->codelength);
+       $files = glob($this->workdir . '/cr/corrections/jpg/cr-*.jpg');
+       foreach ($files as $file) {
+           if (preg_match('@/(cr-([0-9]+)-[^/]+\.pdf)$@', $file, $matches)) {
+               if ($numid === (int) $matches[2]) {
+                   return $matches[1];
+               }
+           }
+       }
+       return false;
+   }
     /**
      * @return boolean
      */
