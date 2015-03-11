@@ -104,6 +104,15 @@ $string['analyse'] = 'Dépôt des copies des étudiants';
 $string['note'] = 'Notes et copies corrigées';
 $string['export'] = 'Rapports';
 
+$string['associationusermode'] = 'Afficchage des &eacute;tudiants';
+$string['associationmode'] = 'Mode d\'association';
+
+$string['unknown'] = 'Non identifi&eacute;s';
+$string['manual'] = 'Identification manuelle';
+$string['auto'] = 'Ientification automatique';
+
+$string['without'] = 'Sans copie';
+
 $string['questionoperations'] = 'Avant de sélectionner des questions, vous pouvez enrichir la banque de questions par…';
 $string['importfilequestions'] = 'Importer un fichier de questions';
 $string['importquestions'] = 'Import/ Création de questions';

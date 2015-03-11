@@ -104,6 +104,15 @@ $string['analyse'] = 'Submit student copies';
 $string['note'] = 'Grades and annotated copies';
 $string['export'] = 'Reports';
 
+$string['associationusermode'] = 'Afficchage des &eacute;tudiants';
+$string['associationmode'] = 'Mode d\'association';
+
+$string['unknown'] = 'Non identifi&eacute;s';
+$string['manual'] = 'Identification manuelle';
+$string['auto'] = 'Ientification automatique';
+
+$string['without'] = 'Sans copie';
+
 $string['questionoperations'] = 'Before selecting questions, you may...';
 $string['importfilequestions'] = 'Import file';
 $string['importquestions'] = 'Import questions';

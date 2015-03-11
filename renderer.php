@@ -98,11 +98,10 @@ EOL;
     }
 
 
-    public function users_selector($report, $course, $userid, $groupid, $includeall) {
-        global $USER;
+    public function students_selector( $cm, $userid, $groupid, $exclude) {
 
-        $select = grade_get_graded_users_select($report, $course, $userid, $groupid, $includeall);
-        $output = html_writer::tag('div', $this->output->render($select), array('id'=>'graded_users_selector'));
+        $select = amc_get_students_select( $cm, $idnumber, $groupid, $exclude);
+        $output = html_writer::tag('div', $this->output->render($select), array('id'=>'amc_students_selector'));
         $output .= html_writer::tag('p', '', array('style'=>'page-break-after: always;'));
 
         return $output;
