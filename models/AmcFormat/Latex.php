@@ -108,8 +108,8 @@ $options
 \\let\\mydate\\@date
 \\makeatother
 
-$customlayout
 $shortTitles
+$customlayout
 $multi
 \\AMCrandomseed{{$rand}}
 
