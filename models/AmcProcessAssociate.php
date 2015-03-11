@@ -65,7 +65,7 @@ class AmcProcessAssociate extends AmcProcess
         foreach ($lines as $l){
             $split = get_list_row($l);
         if (isset($split['student'])){
-            $id = $split['student'].':'.$split['copy'];
+            $id = $split['student'].'-'.$split['copy'];
             if ($split['status']=='manual'){
                 $this->copymanual[$id] = $split['idnumber'];
             }else if ($split['status']=='auto'){
@@ -125,7 +125,7 @@ class AmcProcessAssociate extends AmcProcess
             $assoc_association= $cassoc->query('SELECT student, copy, manual, auto  FROM association_association');
             $score_code= $assoc->query('SELECT student, copy, value FROM scoring_code');
             while ($row = $assoc_association->fetchArray()) {
-                $id = $row['student'].':'.$row['copy'];
+                $id = $row['student'].'-'.$row['copy'];
                     if ($row['manual']!=''){
                         $this->copymanual[$id] = $row['manual'];
                     }
@@ -134,7 +134,7 @@ class AmcProcessAssociate extends AmcProcess
                     }
             }
             while ($row = $score_code->fetchArray()) {
-                $id = $row['student'].':'.$row['copy'];
+                $id = $row['student'].'-'.$row['copy'];
                 $allcopy[$id] = $row['value'];
             }
             $this->copyunknown = array_diff_key(array_merge($this->copymanual,$this->copyauto),$allcopy);

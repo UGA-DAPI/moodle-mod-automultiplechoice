@@ -184,14 +184,13 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
         $params = array();
         $roleselect = '';
     }
-    
     if ($exclude) {
-        list($idnumbers, $excludeparams) = $DB->get_in_or_equal($exclude, SQL_PARAMS_NAMED, 'r',false);
-        $idnumberselect = "AND idnumber $idnumbers";
+        list($idnumbers, $excludeparams) = $DB->get_in_or_equal($exclude, SQL_PARAMS_NAMED, 'excl',false);
+        $idnumberselect = " AND RIGHT(u.idnumber,".$codelength.") $idnumbers ";
         $params = array_merge($params, $excludeparams);
     } else {
         $excludeparams = array();
-        $idnumberleselect = '';
+        $idnumberselect = '';
     }
     
     if ($coursecontext = $context->get_course_context(false)) {
@@ -239,7 +238,8 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
 */
     $sql = "SELECT DISTINCT $fields, ra.roleid
               FROM {role_assignments} ra
-              JOIN {user} u ON u.id = ra.userid
+              JOIN {user} u ON u.id = ra.userid 
+               $idnumberselect
               JOIN {role} r ON ra.roleid = r.id
             $ejoin
          LEFT JOIN {role_names} rn ON (rn.contextid = :coursecontext AND rn.roleid = r.id)
@@ -251,31 +251,33 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
 
     $availableusers = $DB->get_records_sql($sql, $params);
     $modinfo = get_fast_modinfo($cm->course);
-    $info = new \core_availability\info_module($modinfo->get_cm($context->id));
+    $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
     $availableusers = $info->filter_user_list($availableusers);
     return $availableusers;
-     }
+}
      
-function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude=NULL) {
+function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude=NULL,$includeall=false) {
     global $USER, $CFG;
 
     $codelength = get_config('mod_automultiplechoice', 'amccodelength');
     if (is_null($idnumber)) {
         $idnumber = $USER->idnumber;
     }
-    $idnumber = substr($idnumber,-1*$codelength);//by security
+    if (count($idnumber)>$codelength){
+	    $idnumber = substr($idnumber,-1*$codelength);//by security
+    }
     $menu = array(); // Will be a list of userid => user name
-    $users = amc_get_student_users($cm,false, $groupid,$exclude);
+    $users = amc_get_student_users($cm,true, $groupid,$exclude);
     $label = get_string('selectuser', 'automultiplechoice');
     if ($includeall) {
         $menu[0] = get_string('allusers', 'automultiplechoice');
         $label = get_string('selectalloroneuser', 'automultiplechoice');
     }
-    foreach ($users as $userdata) {
-        $user = $userdata->user;
+    foreach ($users as $user) {
+        //$user = $userdata->user;
         $userfullname = fullname($user);
         $menu[$user->idnumber] = $userfullname;
-        
+
     }
 
     $select = new single_select($url, 'idnumber', $menu, $idnumber);
@@ -332,7 +334,7 @@ function restore_source($file){
 }
 function get_code($name) {
     preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
-    return $res['student'].':'.$res['copy'];
+    return $res['student'].'-'.$res['copy'];
 
 }
 
