@@ -23,7 +23,7 @@ $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('annotating');
 $action = optional_param('action', '', PARAM_ALPHA);
-$userid = optional_param('userid', '', PARAM_INT);
+$idnumber= optional_param('idnumber', '', PARAM_INT);
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
@@ -119,7 +119,7 @@ if ($process->hasAnotatedFiles()) {
 
     
     $showonlyactiveenrol = !has_capability('moodle/course:viewsuspendedusers', $context);
-    if (empty($userid)) {
+    if (empty($idnumber)) {
         /*$gui = new graded_users_iterator($course, null, $currentgroup);
         $gui->require_active_enrolment($showonlyactiveenrol);
         $gui->init();
@@ -130,8 +130,8 @@ if ($process->hasAnotatedFiles()) {
 
         if ($user_selector) {
             $url = new moodle_url('annotating.php', array('a' => $quizz->id));
-            groups_print_activity_menu($cm->getContext(), $url, $return=false, $hideallparticipants=false);
-            amc_get_students_select($url, $cm->getContext(), $userid, $currentgroup);// $renderer = $PAGE->get_renderer('gradereport_user');
+            groups_print_activity_menu($cm, $url, $return=false, $hideallparticipants=false);
+             echo $output->students_select($url, $cm, $idnumber, $currentgroup);
             //echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, true);
         }
 
@@ -145,11 +145,11 @@ if ($process->hasAnotatedFiles()) {
 
         if ($user_selector) {
             $url = new moodle_url('annotating.php', array('a' => $quizz->id));
-            groups_print_activity_menu($cm->getContext(), $url, $return=false, $hideallparticipants=false);
-	    amc_get_students_select($url, $cm->getContext(), $userid, $currentgroup);
+            groups_print_activity_menu($cm, $url, $return=false, $hideallparticipants=false);
+            echo $output->students_select($url, $cm, $idnumber, $currentgroup);
             /*$renderer = $PAGE->get_renderer('gradereport_user');
             $showallusersoptions = true;
-            echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, $showallusersoptions);*/
+            echo $output->graded_users_selector('user', $course, $userid, $currentgroup, $showallusersoptions);*/
         }
         
         
