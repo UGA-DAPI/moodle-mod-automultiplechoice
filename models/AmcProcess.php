@@ -42,7 +42,7 @@ class AmcProcess
      *
      * @param Quizz $quizz
      */
-    public function __construct(Quizz $quizz) {
+    public function __construct(Quizz $quizz,$formatName = 'latex') {
         if (empty($quizz->id)) {
             throw new Exception("No quizz ID");
         }
@@ -54,7 +54,12 @@ class AmcProcess
         $this->initWorkdir();
 
         $this->codelength = (int) get_config('mod_automultiplechoice', 'amccodelength');
-        /**
+	$this->format = amcFormat\buildFormat($formatName, $quizz);
+         if (!$this->format) {
+	             throw new \Exception("Erreur, pas de format de QCM pour AMC.");
+	            }
+        $this->format->quizz = $this->quizz;
+        $this->format->codelength = $this->codelength;	/**
          * @todo error if codelength == 0
          */
     }
@@ -135,7 +140,7 @@ class AmcProcess
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
      * @return bool
      */
-    protected function amcPrepareBareme() {
+    public function amcPrepareBareme() {
         $pre = $this->workdir;
         $parameters = array(
             '--n-copies', (string) $this->quizz->amcparams->copies,
