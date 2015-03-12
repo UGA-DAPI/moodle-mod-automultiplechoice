@@ -95,15 +95,17 @@ echo $OUTPUT->render($selectusermode);
 echo $OUTPUT->render($paging);
 $namedisplay = array_slice($namedisplay,$page*$perpage, $perpage);
 $excludeusers = ($usermode=='all') ? '' : array_merge($process->copymanual,$process->copyauto);
+echo html_writer::start_div('amc_thumbnails');
 echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
 foreach ($namedisplay as $name=>$idnumber){
    
     $thumbnailoutput = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
-    $thumbnailoutput .= $output->students_selector($url, $cm, $idnumber, '',$excludeusers );
+    $thumbnailoutput .= \html_writer::div($output->students_selector($url, $cm, $idnumber, '',$excludeusers ),'caption');
     $thumbnaildiv= \html_writer::div($thumbnailoutput,'thumbnail');
-    echo html_writer::tag('li', $thumbnaildiv ,array('class'=>'span3')); 
+    echo html_writer::tag('li', $thumbnaildiv ); 
 }
 echo html_writer::end_tag('ul');
+echo html_writer::end_div();
 echo $OUTPUT->box_end();
 
 
