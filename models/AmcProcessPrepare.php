@@ -62,7 +62,38 @@ class AmcProcessPrepare extends AmcProcess
         return $res;
     }
 
+    /**
+     *      * Shell-executes 'amc prepare' for creating pdf files
+     *           *
+     *                * @param string $formatName "txt" | "latex"
+     *                     * @return bool
+     *                          */
+    public function amcCreateCorrection($formatName) {
+	    $this->errors = array();
 
+
+	    $pre = $this->workdir;
+	    $res = $this->shellExecAmc('prepare',
+		    array(
+			    '--n-copies', (string) $this->quizz->amcparams->copies,
+			    '--with', 'xelatex',
+			    '--filter', $format->getFiltername(),
+			    '--mode', 'k',
+			    '--prefix', $pre,
+			    '--out-corrige', $pre . '/' . $this->normalizeFilename('corrige'),
+			    '--latex-stdout',
+			    $pre . '/' . $format->getFilename()
+		    )
+	    );
+	    if ($res) {
+		    $amclog = Log::build($this->quizz->id);
+		    $this->log('prepare:pdf', 'corrige ');
+		    $amclog->write('pdf');
+	    } else {
+		    $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
+	    }
+	    return $res;
+    }
     /**
      * Executes "amc imprime" then zip the resulting files
      * @return bool

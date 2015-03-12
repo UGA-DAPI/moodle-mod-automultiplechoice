@@ -161,6 +161,24 @@ dt:after {
 	content: " :";
 }
 
+.amc_students_selector .singleselect label {
+	    display: inline-block;
+}
+.amc_students_selector{
+	float:right;
+}
+.amc_thumbnails .thumbnails > li,.amc_thumbnails .thumbnails > li:first-child{
+    margin-left:10px!important;
+    margin-bottom:10px;
+}
+.amc_thumbnails .thumbnail > img{
+    height:120px;
+}
+
+.amc_thumbnails .thumbnail .caption{
+	overflow:hidden;
+}
+
 /* action column for questions datatable */
 .qactions {
 	width: 120px;

@@ -267,6 +267,9 @@ function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude=NULL,$
 	    $idnumber = substr($idnumber,-1*$codelength);//by security
     }
     $menu = array(); // Will be a list of userid => user name
+    if ($exclude and $idnumber){
+	    $exclude= array_diff($exclude, array($idnumber));
+    }
     $users = amc_get_student_users($cm,true, $groupid,$exclude);
     $label = get_string('selectuser', 'automultiplechoice');
     if ($includeall) {
@@ -334,7 +337,7 @@ function restore_source($file){
 }
 function get_code($name) {
     preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
-    return $res['student'].'-'.$res['copy'];
+    return $res['student'].'_'.$res['copy'];
 
 }
 
