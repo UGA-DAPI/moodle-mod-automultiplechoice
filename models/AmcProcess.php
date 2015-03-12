@@ -641,6 +641,7 @@ class AmcProcess
         $links = array(
             \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), $this->normalizeFilename('sujet'), $opts),
             \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), $this->normalizeFilename('catalog'), $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), $this->normalizeFilename('corrige'), $opts),
         );
         return <<<EOL
         <ul class="amc-files">

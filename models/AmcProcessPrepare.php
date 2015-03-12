@@ -42,9 +42,8 @@ class AmcProcessPrepare extends AmcProcess
                 '--n-copies', (string) $this->quizz->amcparams->copies,
                 '--with', $path,
                 '--filter', $format->getFiltername(),
-                '--mode', 's[sc]',
+                '--mode', 's[c]',
                 '--prefix', $pre,
-                '--out-corrige', $pre . '/' . $this->normalizeFilename('corrige'),
                 '--out-sujet', $pre . '/' . $this->normalizeFilename('sujet'),
                 '--out-catalog', $pre . '/' . $this->normalizeFilename('catalog'),
                 '--out-calage', $pre . '/prepare-calage.xy',
@@ -62,50 +61,18 @@ class AmcProcessPrepare extends AmcProcess
         return $res;
     }
 
-    /**
-     *      * Shell-executes 'amc prepare' for creating pdf files
-     *           *
-     *                * @param string $formatName "txt" | "latex"
-     *                     * @return bool
-     *                          */
-    public function amcCreateCorrection($formatName) {
-	    $this->errors = array();
-
-
-	    $pre = $this->workdir;
-	    $res = $this->shellExecAmc('prepare',
-		    array(
-			    '--n-copies', (string) $this->quizz->amcparams->copies,
-			    '--with', 'xelatex',
-			    '--filter', $format->getFiltername(),
-			    '--mode', 'k',
-			    '--prefix', $pre,
-			    '--out-corrige', $pre . '/' . $this->normalizeFilename('corrige'),
-			    '--latex-stdout',
-			    $pre . '/' . $format->getFilename()
-		    )
-	    );
-	    if ($res) {
-		    $amclog = Log::build($this->quizz->id);
-		    $this->log('prepare:pdf', 'corrige ');
-		    $amclog->write('pdf');
-	    } else {
-		    $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
-	    }
-	    return $res;
-    }
+    
     /**
      * Executes "amc imprime" then zip the resulting files
      * @return bool
      */
-    public function printAndZip() 
-    {
+    public function printAndZip() {
         $pre = $this->workdir;
         if (!is_dir($pre . '/imprime')) {
             mkdir($pre . '/imprime');
         }
         if (!$this->amcMeptex()) {
-           $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
+            $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
         }
 
         $mask = $pre . "/imprime/*.pdf";
@@ -141,11 +108,11 @@ class AmcProcessPrepare extends AmcProcess
     protected function amcImprime() {
         $pre = $this->workdir;
         $params = array(
-                    '--data', $pre . '/data',
-                    '--sujet', $pre . '/' . $this->normalizeFilename('sujet'),
-                    '--methode', 'file',
-                    '--output', $pre . '/imprime/sujet-%e.pdf'
-                );
+            '--data', $pre . '/data',
+            '--sujet', $pre . '/' . $this->normalizeFilename('sujet'),
+            '--methode', 'file',
+            '--output', $pre . '/imprime/sujet-%e.pdf'
+        );
         // $params[] = '--split'; // M#2076 a priori jamais nécessaire
         $res = $this->shellExecAmc('imprime', $params);
         if ($res) {

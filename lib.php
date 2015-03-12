@@ -417,10 +417,22 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     require_capability('mod/automultiplechoice:update', $context);
 
     // whitelist security
-    if (preg_match('/^(sujet|corrige|catalog)-.*\.pdf$/', $filename)) {
+    if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) {
         send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
-     } else if (preg_match('/^failed-.*\.pdf$/', $filename)) {
+     }else if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
+        $target = $process->workdir . '/' . $filename;
+        if (!file_exists($target)) {
+           $ret = $process->amcCreateCorrection();     
+            if ($ret){
+                send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+            }
+        return $ret; 
+        }
+        send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        return true;
+     } 
+     else if (preg_match('/^failed-.*\.pdf$/', $filename)) {
         $ret = $process->makeFailedPdf();     
         if ($ret){
             send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
@@ -463,11 +475,11 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/tiff') ;
         return true;
     }else if (preg_match('/^name-[0-9]*_[0-9]*\.jpg$/', $filename)) {
-	    $filename=preg_replace('/(^name-[0-9]+)_([0-9]*\.jpg$)/', '\1:\2',  $filename);
-	    send_file($process->workdir . '/cr/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
+        $filename=preg_replace('/(^name-[0-9]+)_([0-9]*\.jpg$)/', '\1:\2',  $filename);
+        send_file($process->workdir . '/cr/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
         return true;
     }else if (preg_match('/^page-[0-9]*-[0-9]*-[0-9]*\.jpg$/', $filename)) {
-	    send_file($process->workdir . '/cr/corrections/jpg/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
+        send_file($process->workdir . '/cr/corrections/jpg/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
         return true;
     }
     send_file_not_found();
