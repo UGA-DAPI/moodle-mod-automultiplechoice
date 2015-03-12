@@ -17,48 +17,39 @@ require_once __DIR__ . '/Log.php';
 class AmcProcessExport extends AmcProcess
 {
 
-/**
-     *      * @return boolean
-     *           */
-    public function makeFailedPdf() {
-        if (extension_loaded('sqlite3')){   
-            $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
-            $results = $capture->query('SELECT * FROM capture_failed');
-            $scans = array();
-            while ($row = $results->fetchArray()) {
-                $scans[] = $this->workdir.substr($row[0],7);
-
-            }
-            $output = $this->normalizeFilename('failed');
-            $scans[] = $this->workdir.'/'.$output;
-            $res = $this->shellExec('convert ',$scans);
-            return $res;
-        }
-        return false;
-    }
-
-/**
+ /**
      * Shell-executes 'amc prepare' for creating pdf files
      *
      * @param string $formatName "txt" | "latex"
      * @return bool
      */
-    public function amcCreateCorrection() {
-        $this->errors = array();
-
-        
-
+    public function amcCreatePdf($formatName) {
         $pre = $this->workdir;
+        $file = $pre . '/' . $this->normalizeFilename('sujet');
+        $this->errors = array();
+        $amclog = Log::build($this->quizz->id);
+        $res = $amclog->check('pdf')
+        if (!$res and file_exists($file)){
+            return true;
+        }
+        $format = $this->saveFormat($formatName);
+        if (!$format) {
+            return false;
+        }
+        $this->getLogger()->clear();
+
         $res = $this->shellExecAmc('prepare',
             array(
                 '--n-copies', (string) $this->quizz->amcparams->copies,
                 '--with', 'xelatex',
-                '--filter', $this->format->getFiltername(),
-                '--mode', 'k',
+                '--filter', $format->getFiltername(),
+                '--mode', 's[c]',
                 '--prefix', $pre,
-                '--out-corrige', $pre . '/' . $this->normalizeFilename('corriges'),
+                '--out-sujet', $file,
+                '--out-catalog', $pre . '/' . $this->normalizeFilename('catalog'),
+                '--out-calage', $pre . '/prepare-calage.xy',
                 '--latex-stdout',
-                $pre . '/' . $this->format->getFilename()
+                $pre . '/' . $format->getFilename()
             )
         );
         if ($res) {
@@ -71,6 +62,141 @@ class AmcProcessExport extends AmcProcess
         return $res;
     }
 
+    /**
+     * Shell-executes 'amc prepare' for creating pdf files
+     *
+     * @param string $formatName "txt" | "latex"
+     * @return bool
+     */
+    public function amcCreateCorrection() {
+        $pre = $this->workdir;
+        $file = $pre . '/' . $this->normalizeFilename('corriges');
+        $this->errors = array();
+        $amclog = Log::build($this->quizz->id);
+        $res = $amclog->check('pdf')
+        if (!$res and file_exists($file)){
+            return true;
+        }
+        $res = $this->shellExecAmc('prepare',
+            array(
+                '--n-copies', (string) $this->quizz->amcparams->copies,
+                '--with', 'xelatex',
+                '--filter', $this->format->getFiltername(),
+                '--mode', 'k',
+                '--prefix', $pre,
+                '--out-corrige', $file,
+                '--latex-stdout',
+                $pre . '/' . $this->format->getFilename()
+            )
+        );
+        if ($res) {
+            $this->log('prepare:pdf', 'catalog corrige sujet');
+            $amclog->write('pdf');
+        } else {
+            $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
+        }
+        return $res;
+    }
+
+    /**
+     * Executes "amc imprime" then zip the resulting files
+     * @return bool
+     */
+    public function zip() {
+        $pre = $this->workdir;
+        $file = $pre . '/' . $this->normalizeFilename('corriges');
+        $amclog = Log::build($this->quizz->id);
+        $res = $amclog->check('zip')
+        if (!$res and file_exists($file)){
+            return true;
+        }
+                // clean up, or some obsolete files will stay in the zip
+        $zipName = $pre . '/' . $this->normalizeFilename('sujets');
+        if (file_exists($zipName)) {
+            unlink($zipName);
+        }
+        $mask = $pre . "/imprime/*.pdf";
+            $zip = new \ZipArchive();
+            $ret = $zip->open($zipName, \ZipArchive::CREATE);
+            if ( ! $ret ) {
+                $this->errors[] ="Echec lors de l'ouverture de l'archive $ret\n";
+            } else {
+                $options = array('add_path' => 'sujets_amc/', 'remove_all_path' => true);
+                $zip->addGlob($mask, GLOB_BRACE, $options);
+                // echo "Zip status: [" . $zip->status . "]<br />\n";
+                // echo "Zip statusSys: [" . $zip->statusSys . "]<br />\n";
+                $this->errors[] = "<p>Zip de [" . $zip->numFiles . "] fichiers dans [" . basename($zip->filename) . "]</p>\n";
+                $zip->close();
+            }
+            if (!file_exists($zipName)) {
+                $this->errors[] = "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
+            }
+        return $ret;
+    }
+
+    /**
+     * Shell-executes 'amc imprime'
+     * @return bool
+     */
+    public function amcImprime() {
+        $pre = $this->workdir;
+        $file = $pre . '/' . $this->normalizeFilename('corriges');
+        $amclog = Log::build($this->quizz->id);
+        $amclog = Log::build($this->quizz->id);
+        $res = $amclog->check('imprime')
+        if (!$res and file_exists($file)){
+            return true;
+        }
+            $pre = $this->workdir;
+            if (!is_dir($pre . '/imprime')) {
+                mkdir($pre . '/imprime');
+            }
+            if (!$this->amcMeptex()) {
+                $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
+            }
+    
+            $mask = $pre . "/imprime/*.pdf";
+            array_map('unlink', glob($mask));
+            
+            $params = array(
+                '--data', $pre . '/data',
+                '--sujet', $pre . '/' . $this->normalizeFilename('sujet'),
+                '--methode', 'file',
+                '--output', $pre . '/imprime/sujet-%e.pdf'
+            );
+            // $params[] = '--split'; // M#2076 a priori jamais nécessaire
+            $res = $this->shellExecAmc('imprime', $params);
+            if ($res) {
+                $this->log('imprime', '');
+            }
+        return $res;
+    }
+    /**
+     *      * @return boolean
+     *           */
+    public function makeFailedPdf() {
+        $file = $this->workdir.'/' .$this->normalizeFilename('failed');
+        $amclog = Log::build($this->quizz->id);
+        $res = $amclog->check('failed')
+        if (!$res and file_exists($file)){
+            return true;
+        }
+        if (extension_loaded('sqlite3')){   
+            $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
+            $results = $capture->query('SELECT * FROM capture_failed');
+            $scans = array();
+            while ($row = $results->fetchArray()) {
+                $scans[] = $this->workdir.substr($row[0],7);
+
+            }
+            $scans[] = $file;
+            $res = $this->shellExec('convert ',$scans);
+            return $res;
+        }
+        return $res;
+    }
+
+
 
     /**
      * Shell-executes 'amc export' to get a csv file
@@ -78,7 +204,7 @@ class AmcProcessExport extends AmcProcess
      */
     public function amcExport($type='csv') {
     $file =($type=='csv')? $pre . self::PATH_AMC_CSV : $pre . self::PATH_AMC_ODS;
-        $warnings = Log::build($this->quizz->id)->check('exporting');
+    $warnings = Log::build($this->quizz->id)->check('exporting');
     if (!$warnings and file_exists($file)) {
         return true;
     }

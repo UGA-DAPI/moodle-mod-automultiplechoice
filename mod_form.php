@@ -160,7 +160,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         $mform->addElement('textarea', 'amc[customlayout]', get_string('amc_customlayout', 'automultiplechoice'), array('rows'=>'3', 'cols'=>'64'));
         $mform->setType('amc[customlayout]', PARAM_TEXT);
-	$mform->addHelpButton('amc[customlayout]', 'amc_customlayout', 'automultiplechoice');
+        $mform->addHelpButton('amc[customlayout]', 'amc_customlayout', 'automultiplechoice');
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();

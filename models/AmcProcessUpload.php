@@ -22,11 +22,11 @@ class AmcProcessUpload extends AmcProcess
         $captureFile = $this->workdir . "/data/capture.sqlite";
         if (!file_exists($captureFile)) {
             if (file_exists($captureFile.'.orig')) {
-		    copy ($capture.'.orig',$capture);
-	    }else{
-		    $this->amcMeptex();
-	    }
-	}
+            copy ($captureFile.'.orig',$captureFile);
+        }else{
+            $this->amcMeptex();
+        }
+    }
         $this->nbPages = $this->amcGetimages($filename);
         if (!$this->nbPages) {
             $this->errors[] = "Erreur découpage scan (amc getimages)";
@@ -70,6 +70,9 @@ class AmcProcessUpload extends AmcProcess
         $captureFile = $this->workdir . "/data/capture.sqlite";
         if (file_exists($captureFile)) {
             unlink($captureFile);
+            if (file_exists($captureFile.'.orig')) {
+                copy ($captureFile.'.orig',$captureFile);
+            }
         }
         return $this->deleteGrades();
     }
