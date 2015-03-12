@@ -43,7 +43,7 @@ class AmcProcessExport extends AmcProcess
      * @param string $formatName "txt" | "latex"
      * @return bool
      */
-    public function amcCreateCorrection($formatName) {
+    public function amcCreateCorrection() {
         $this->errors = array();
 
         
@@ -53,12 +53,12 @@ class AmcProcessExport extends AmcProcess
             array(
                 '--n-copies', (string) $this->quizz->amcparams->copies,
                 '--with', 'xelatex',
-                '--filter', $format->getFiltername(),
+                '--filter', $this->format->getFiltername(),
                 '--mode', 'k',
                 '--prefix', $pre,
-                '--out-corrige', $pre . '/' . $this->normalizeFilename('corrige'),
+                '--out-corrige', $pre . '/' . $this->normalizeFilename('corriges'),
                 '--latex-stdout',
-                $pre . '/' . $format->getFilename()
+                $pre . '/' . $this->format->getFilename()
             )
         );
         if ($res) {

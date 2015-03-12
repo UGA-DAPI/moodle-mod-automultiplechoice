@@ -527,6 +527,8 @@ class AmcProcess
                 return 'sujet-' . $this->normalizeText($this->quizz->name) . '.pdf';
             case 'corrige':
                 return 'corrige-' . $this->normalizeText($this->quizz->name) . '.pdf';
+            case 'corriges':
+                return 'corriges-' . $this->normalizeText($this->quizz->name) . '.pdf';
             case 'catalog':
                 return 'catalog-' . $this->normalizeText($this->quizz->name) . '.pdf';
             case 'sujets': // !!! plural 
@@ -641,7 +643,7 @@ class AmcProcess
         $links = array(
             \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), $this->normalizeFilename('sujet'), $opts),
             \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), $this->normalizeFilename('catalog'), $opts),
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), $this->normalizeFilename('corrige'), $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('corriges')), $this->normalizeFilename('corriges'), $opts),
         );
         return <<<EOL
         <ul class="amc-files">
@@ -651,7 +653,11 @@ class AmcProcess
             </li>
             <li>
                 $links[1]
-                <div>Le corrigé de référence.</div>
+                <div>Le catalogue de questions.</div>
+            </li>
+            <li>
+                $links[2]
+                <div>Les  corrigés des différentes versions.</div>
             </li>
         </ul>
 EOL;
