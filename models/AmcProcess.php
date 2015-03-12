@@ -36,6 +36,11 @@ class AmcProcess
     const PATH_AMC_ODS = '/exports/grades.ods';
     const PATH_APOGEE_CSV = '/exports/grades_apogee.csv';
     const CSV_SEPARATOR = ';';
+
+ 
+    public $copyauto = array();
+    public $copymanual = array();
+    public $copyunknown =array();
     
     /**
      * Constructor
@@ -54,12 +59,12 @@ class AmcProcess
         $this->initWorkdir();
 
         $this->codelength = (int) get_config('mod_automultiplechoice', 'amccodelength');
-	$this->format = amcFormat\buildFormat($formatName, $quizz);
+    $this->format = amcFormat\buildFormat($formatName, $quizz);
          if (!$this->format) {
-	             throw new \Exception("Erreur, pas de format de QCM pour AMC.");
-	            }
+                 throw new \Exception("Erreur, pas de format de QCM pour AMC.");
+                }
         $this->format->quizz = $this->quizz;
-        $this->format->codelength = $this->codelength;	/**
+        $this->format->codelength = $this->codelength;  /**
          * @todo error if codelength == 0
          */
     }
@@ -189,6 +194,72 @@ class AmcProcess
         }
         return $res;
     }
+
+   
+    
+    /**
+     * Shell-executes 'amc association-auto'
+     * @return bool
+     */
+    protected function amcAssociation_list() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--data', $pre . '/data',
+            '--list', 
+        );
+        $escapedCmd = escapeshellcmd('auto-multiple-choice '.'association' );
+        $escapedParams = array_map('escapeshellarg', $parameters);
+        $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
+        $lines = array();
+        $returnVal = 0;
+        exec($shellCmd, $lines, $returnVal);
+        foreach ($lines as $l){
+            $split = get_list_row($l);
+        if (isset($split['student'])){
+            $id = $split['student'].'-'.$split['copy'];
+            if ($split['status']=='manual'){
+                $this->copymanual[$id] = $split['idnumber'];
+            }else if ($split['status']=='auto'){
+                $this->copyauto[$id] = $split['idnumber'];
+            }
+        }
+        }
+        return $returnVal;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function get_association() {
+        if (extension_loaded('sqlite3')){   
+            $allcopy = array();
+            $assoc = new \SQLite3($this->workdir . '/data/association.sqlite',SQLITE3_OPEN_READ);
+            $score = new \SQLite3($this->workdir . '/data/scoring.sqlite',SQLITE3_OPEN_READ);
+            $assoc_association= $cassoc->query('SELECT student, copy, manual, auto  FROM association_association');
+            $score_code= $assoc->query('SELECT student, copy, value FROM scoring_code');
+            while ($row = $assoc_association->fetchArray()) {
+                $id = $row['student'].'-'.$row['copy'];
+                    if ($row['manual']!=''){
+                        $this->copymanual[$id] = $row['manual'];
+                    }
+                    if ($row['auto']!=''){
+                        $this->copyauto[$id] = $row['auto'];
+                    }
+            }
+            while ($row = $score_code->fetchArray()) {
+                $id = $row['student'].'-'.$row['copy'];
+                $allcopy[$id] = $row['value'];
+            }
+            $this->copyunknown = array_diff_key(array_merge($this->copymanual,$this->copyauto),$allcopy);
+            
+        }else{
+            $allcopy = array_fill_keys(array_map('get_code',glob($this->workdir . '/cr/name-*.jpg')),'');
+            if ($this->amcAssociation_list()==0){
+                $this->copyunknown = array_diff_key($allcopy,array_merge($this->copymanual,$this->copyauto));
+            }
+        }
+    }
+
     /**
      * returns stat() information (number and dates) on scanned (ppm) files already stored
      * @return array with keys: count, time, timefr ; null if nothing was uploaded

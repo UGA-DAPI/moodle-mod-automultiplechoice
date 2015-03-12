@@ -30,7 +30,7 @@ $process = new amc\AmcProcessGrade($quizz);
 if (!$process->isGraded() || $action === 'grade') {
     
     if ($process->amcNote()) {
-        redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
+        redirect($PAGE->url);
     }
 } 
 
