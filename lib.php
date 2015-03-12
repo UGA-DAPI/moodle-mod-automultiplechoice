@@ -420,7 +420,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) {
         send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
-     }else if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
+     }else if (preg_match('/^corriges-.*\.pdf$/', $filename)) {
         $target = $process->workdir . '/' . $filename;
         if (!file_exists($target)) {
            $ret = $process->amcCreateCorrection();     
