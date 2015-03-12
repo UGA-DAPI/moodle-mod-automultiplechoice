@@ -233,10 +233,10 @@ class AmcProcess
     public function get_association() {
         if (extension_loaded('sqlite3')){   
             $allcopy = array();
-            $assoc = new \SQLite3($this->workdir . '/data/association.sqlite',SQLITE3_OPEN_READ);
-            $score = new \SQLite3($this->workdir . '/data/scoring.sqlite',SQLITE3_OPEN_READ);
-            $assoc_association= $cassoc->query('SELECT student, copy, manual, auto  FROM association_association');
-            $score_code= $assoc->query('SELECT student, copy, value FROM scoring_code');
+            $assoc = new \SQLite3($this->workdir . '/data/association.sqlite',SQLITE3_OPEN_READONLY);
+            $score = new \SQLite3($this->workdir . '/data/scoring.sqlite',SQLITE3_OPEN_READONLY);
+            $assoc_association= $assoc->query('SELECT student, copy, manual, auto  FROM association_association');
+            $score_code= $score->query('SELECT student, copy, value FROM scoring_code');
             while ($row = $assoc_association->fetchArray()) {
                 $id = $row['student'].'_'.$row['copy'];
                     if ($row['manual']!=''){
