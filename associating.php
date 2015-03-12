@@ -61,12 +61,18 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo HtmlHelper::buttonWithAjaxCheck('Relancer l\'associtation automatique', $quizz->id, 'associating', 'associate', 'process');
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php'),
+                                array( 'a'=>$quizz->id, 'action'=> 'associate')
+                                , 'Relancer l\'association');
     echo "</div>";
 }else if (count($process->copyauto)){
-echo HtmlHelper::buttonWithAjaxCheck('Lancer l\'association', $quizz->id, 'associating', 'associate', 'process');
+echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php'),
+                                array( 'a'=>$quizz->id, 'action'=> 'associate')
+                                , 'Lancer l\'association');
 }else{
-echo HtmlHelper::buttonWithAjaxCheck('Relancer l\'association', $quizz->id, 'associating', 'associate', 'process');
+echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php'),
+                                array( 'a'=>$quizz->id, 'action'=> 'associate')
+                                , 'Relancer l\'association');
 }
 $optionsmode =  array ('unknown'  => get_string('unknown', 'automultiplechoice'),
                   'manual' => get_string('manual', 'automultiplechoice'),

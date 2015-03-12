@@ -70,7 +70,9 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'annotating', 'anotate', 'process');
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php'),
+                                array( 'a'=>$quizz->id, 'action'=> 'annotate')
+                                , 'Regénérer les copies corrigées');
     echo "</div>";
 }
 if ($process->hasAnotatedFiles()) {
@@ -80,8 +82,10 @@ if ($process->hasAnotatedFiles()) {
         . $OUTPUT->heading("Fichiers", 3)
         . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
     echo "<p><b>" . $process->countIndividualAnotations() . "</b> copies individuelles annotées (pdf) disponibles.</p>";
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php'),
+                                array( 'a'=>$quizz->id, 'action'=> 'annotate')
+                                , 'Mettre à jour les copies corrigées (annotées)');
 
-    echo HtmlHelper::buttonWithAjaxCheck('Mettre à jour les copies corrigées (annotées)', $quizz->id, 'annotating', 'anotate', 'process');
 
     echo $OUTPUT->heading("Accès aux copies", 3);
     echo "<p>Permettre l'accès de chaque étudiant</p>\n";
@@ -119,10 +123,10 @@ if ($process->hasAnotatedFiles()) {
     $users = amc_get_student_users($cm,true, $group);
     $noenrol = false;
     if (count($users) == 0){
-	    $noenrol =true;
+        $noenrol =true;
     }else{
-	   $process->get_association();
-	   $userscopy= array_flip(array_merge($process->copymanual,$process->copyauto));
+       $process->get_association();
+       $userscopy= array_flip(array_merge($process->copymanual,$process->copyauto));
     }
 
     if (empty($idnumber) and empty($copy)) {
@@ -131,9 +135,9 @@ if ($process->hasAnotatedFiles()) {
              $users = array_map('get_code',glob($process->workdir . '/cr/name-*.jpg'));       
        
        }else{
-	       $url = new moodle_url('annotating.php', array('a' => $quizz->id));
-	       groups_print_activity_menu($cm, $url);
-	       echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
+           $url = new moodle_url('annotating.php', array('a' => $quizz->id));
+           groups_print_activity_menu($cm, $url);
+           echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
        }
 
        $paging =  new paging_bar(count($users), $page, 20, $url, 'page');
@@ -143,17 +147,17 @@ if ($process->hasAnotatedFiles()) {
        echo html_writer::start_div('amc_thumbnails');
        echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
        foreach ($usersdisplay as $user){
-	       if (!$noenrol){
-		       if (isset($userscopy[$user->idnumber])){
-			      $name= $userscopy[$user->idnumber]; 
-		       }else{
-		      $name="0_0"; 
-		       }
-	       }
-	       $copy = explode('_',$name);
-	       $thumbnailimg = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
-	       $thumbnailoutput = \html_writer::link(new moodle_url('annotating.php', array('a' => $quizz->id,'copy'=>$copy[0],'idnumber'=>$copy[1])),$thumbnailimg,array('class'=>'thumbnail'));
-	       echo html_writer::tag('li', $thumbnailoutput ); 
+           if (!$noenrol){
+               if (isset($userscopy[$user->idnumber])){
+                  $name= $userscopy[$user->idnumber]; 
+               }else{
+              $name="0_0"; 
+               }
+           }
+           $copy = explode('_',$name);
+           $thumbnailimg = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
+           $thumbnailoutput = \html_writer::link(new moodle_url('annotating.php', array('a' => $quizz->id,'copy'=>$copy[0],'idnumber'=>$copy[1])),$thumbnailimg,array('class'=>'thumbnail'));
+           echo html_writer::tag('li', $thumbnailoutput ); 
        }
        echo html_writer::end_tag('ul');
         echo html_writer::end_div();
@@ -165,15 +169,15 @@ if ($process->hasAnotatedFiles()) {
             groups_print_activity_menu($cm, $url);
             echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
         }
-	if (!$copy){
-		$name = $userscopy[$idnumber];
-		list($copy,$idnumber) = explode('_',$name);
-	}
-	$pages = glob($process->workdir . '/cr/corrections/jpg/page-'.$copy.'-*-'.$idnumber.'.jpg');
-//var_dump($pages);		error($pages);
-	foreach ($pages as $page){
-	    echo \html_writer::img($process->getFileUrl(basename($page)),$page);
-	}
+    if (!$copy){
+        $name = $userscopy[$idnumber];
+        list($copy,$idnumber) = explode('_',$name);
+    }
+    $pages = glob($process->workdir . '/cr/corrections/jpg/page-'.$copy.'-*-'.$idnumber.'.jpg');
+//var_dump($pages);     error($pages);
+    foreach ($pages as $page){
+        echo \html_writer::img($process->getFileUrl(basename($page)),$page);
+    }
        
     }
 
@@ -182,7 +186,9 @@ if ($process->hasAnotatedFiles()) {
 
     
 } else {
-    echo HtmlHelper::buttonWithAjaxCheck('Générer les copies corrigées (annotées)', $quizz->id, 'annotating', 'anotate', 'process');
+        echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php'),
+                                array( 'a'=>$quizz->id, 'action'=> 'annotate')
+                                , 'Générer les copies corrigées');
 }
 
 echo $output->footer();

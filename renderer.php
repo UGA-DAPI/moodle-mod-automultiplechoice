@@ -33,7 +33,9 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
      */
     public function __construct(moodle_page $page, $target) 
     {
-        // load it for the entire mod
+	
+        parent::__construct($page, $target);        
+	// load it for the entire mod
         $page->requires->css(new moodle_url('/mod/automultiplechoice/assets/amc.css'));
         // do not know why this is necessary... since it is already included by moodle
         $page->requires->jquery();
@@ -44,7 +46,6 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
         $page->requires->js(
             new moodle_url('/mod/automultiplechoice/assets/main.js')
         );
-        parent::__construct($page, $target);
     }
 
     /**

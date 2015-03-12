@@ -58,18 +58,21 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/grading.php'),
+                                array( 'a'=>$quizz->id, 'action'=> 'grade')
+                                , 'Relancer la correction');
     echo "</div>";
 }
 echo $OUTPUT->box_start('informationbox well');
 echo $OUTPUT->heading("Notes", 2);
 echo $OUTPUT->heading("Fichiers tableaux des notes", 3);
 echo "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
-        
-echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_AMC_CSV), 'csv',array('class'=>'btn'));
-echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_AMC_ODS), 'ods',array('class'=>'btn','target'=>'_blank'));
-echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_APOGEE_CSV), 'apogee',array('class'=>'btn','target'=>'_blank'));
-
+$opt = array('class'=>'btn','target'=>'_blank');
+echo  \html_writer::start_div('btn-group');
+echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_AMC_CSV), 'csv',$opt);
+echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_AMC_ODS), 'ods',$opt);
+echo  \html_writer::link($process->getFileUrl(amc\AmcProcess::PATH_APOGEE_CSV), 'apogee',$opt);
+echo  \html_writer::end_div();
 
 
 echo $OUTPUT->heading("Statistiques", 3);
@@ -78,7 +81,9 @@ echo "<p>
         Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
     </p>";
 ;
-echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/grading.php'),
+                                array( 'a'=>$quizz->id, 'action'=> 'grade')
+                                , 'Relancer la correction');
 echo $OUTPUT->box_end();
 
 

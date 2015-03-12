@@ -418,19 +418,17 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 
     // whitelist security
     if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) {
-        send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-        return true;
-     }else if (preg_match('/^corriges-.*\.pdf$/', $filename)) {
-        $target = $process->workdir . '/' . $filename;
-        if (!file_exists($target)) {
-           $ret = $process->amcCreateCorrection();     
-            if ($ret){
-                send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-            }
-        return $ret; 
+        $ret = $process->amcCreatePdf();     
+        if ($ret){
+             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
-        send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-        return true;
+        return $res;
+     }else if (preg_match('/^corriges-.*\.pdf$/', $filename)) {
+        $ret = $process->amcCreateCorrection();     
+        if ($ret){
+             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        }
+        return $res;
      } 
      else if (preg_match('/^failed-.*\.pdf$/', $filename)) {
         $ret = $process->makeFailedPdf();     
@@ -439,8 +437,11 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         }
         return $ret;
      } else if (preg_match('/^sujets-.*\.zip$/', $filename)) {
-        send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/zip') ;
-        return true;
+        $ret = $process->amcImprine() && $process->zip();
+            if ($ret){
+             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        }
+        return $ret;
      } else if (preg_match('/^corrections-.*\.pdf$/', $filename)) {
         send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
