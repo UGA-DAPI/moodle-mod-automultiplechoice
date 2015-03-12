@@ -25,22 +25,6 @@ class AmcProcessGrade extends AmcProcess
     private $actions;
     
 
-        /**
-     * Constructor
-     *
-     * @param Quizz $quizz
-     * @param string $formatName "txt" | "latex"
-     */
-    public function __construct(Quizz $quizz, $formatName = 'latex') {
-        parent::__construct($quizz);
-        $this->format = amcFormat\buildFormat($formatName, $quizz);
-        if (!$this->format) {
-            throw new \Exception("Erreur, pas de format de QCM pour AMC.");
-        }
-        $this->format->quizz = $this->quizz;
-        $this->format->codelength = $this->codelength;
-    }
-
     
     /**
      * @global core_renderer $OUTPUT
@@ -64,10 +48,6 @@ class AmcProcessGrade extends AmcProcess
         return $html;
     }
 
-   
-
-
-<<<<<<< 3db4fb1cf26548b2c678ff1afe9159c88d4a2b8b
     /**
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
      * @return bool
@@ -92,7 +72,6 @@ class AmcProcessGrade extends AmcProcess
         return $res;
     }
 
-<<<<<<< 1988cadf1219cf4b9e3a282c33b5bdf430613585
     /**
      * Shell-executes 'amc note'
      * @return bool
@@ -118,8 +97,6 @@ class AmcProcessGrade extends AmcProcess
         }
         return $res;
     }
-=======
->>>>>>> fix new tab
 
     /**
 <<<<<<< c4bad6127c287b69f4defa158ca213bc77a99e2d
@@ -186,8 +163,6 @@ class AmcProcessGrade extends AmcProcess
         return $res;
     }
 
-<<<<<<< 8512f539664eb91853aada6f9e91cb1d92a1d3a7
-<<<<<<< de31e0c1a87a27fc12d72d90ac15d0237c5a01f5
     /**
      * low-level Shell-executes 'amc annote'
      * fills the cr/corrections/jpg directory with individual annotated copies
@@ -307,8 +282,6 @@ class AmcProcessGrade extends AmcProcess
     }
 
     /**
-=======
->>>>>>> add students selector
      * Fills the "grades" property from the CSV.
      *
      * @return boolean
@@ -347,11 +320,9 @@ class AmcProcessGrade extends AmcProcess
         return true;
     }
 
-<<<<<<< c4bad6127c287b69f4defa158ca213bc77a99e2d
     /**
      * Return an array of students with added fields for identified users.
      *
-<<<<<<< 8512f539664eb91853aada6f9e91cb1d92a1d3a7
      *
      *
      * @return boolean Success?
