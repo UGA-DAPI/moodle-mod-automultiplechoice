@@ -73,7 +73,7 @@ if ($warnings) {
     echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'annotating', 'anotate', 'process');
     echo "</div>";
 }
-if ($process->hasAnotatedFiles()) {
+/*if ($process->hasAnotatedFiles()) {
     $url = $process->getFileUrl( $process->normalizeFilename('corrections'));
     echo $OUTPUT->box_start('informationbox well');
     echo $OUTPUT->heading("Copies corrigées", 2)
@@ -106,7 +106,7 @@ if ($process->hasAnotatedFiles()) {
         'post'
     );
     echo $OUTPUT->box_end();
-
+ */
     $groupmode    = groups_get_activity_groupmode($cm);   // Groups are being used
     $currentgroup = groups_get_activity_group($cm, true);
 
@@ -116,63 +116,60 @@ if ($process->hasAnotatedFiles()) {
     $context = context_module::instance($cm->id);
     $isseparategroups = ($cm->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
     
-    if (has_students($context)==0) {
-            $user_selector = false;
-
-    } else {
-        $user_selector = true;
+    $users = amc_get_student_users($cm,true, $group);
+    $noenrol = false;
+    if (count($users) == 0){
+	    $noenrol =true;
+    }else{
+	   $process->get_association();
+	   $userscopy= array_flip(array_merge($process->copymanual,$process->copyauto));
     }
 
-    
     if (empty($idnumber) and empty($copy)) {
-        /*$gui = new graded_users_iterator($course, null, $currentgroup);
-        $gui->require_active_enrolment($showonlyactiveenrol);
-        $gui->init();
-        // Add tabs
-        print_grade_page_head($courseid, 'report', 'user');
-        */
-       $process->get_association();
 
-        $namedisplay = array_merge($process->copyunknown,$process->copymanual,$process->copyauto);
-        if ($user_selector) {
-            $url = new moodle_url('annotating.php', array('a' => $quizz->id));
-        groups_print_activity_menu($cm, $url);
-        echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
-            //echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, true);
-        }
-        
-        $paging =  new paging_bar(count($namedisplay), $page, 20, $url, 'page');
+       if ($noenrol) {
+             $users = array_map('get_code',glob($process->workdir . '/cr/name-*.jpg'));       
        
-        echo $OUTPUT->render($paging);
-        $namedisplay = array_slice($namedisplay,$page*$perpage, $perpage);
-        echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
-        foreach ($namedisplay as $name=>$idnumber){
-           
-            $thumbnailimg = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
-            $thumbnailoutput = \html_writer::link(new moodle_url('annotating.php', array('a' => $quizz->id,'copy'=>$name)),$thumbnailimg);
-            $thumbnaildiv= \html_writer::div($thumbnailoutput,'thumbnail');
-            echo html_writer::tag('li', $thumbnaildiv ,array('class'=>'span3')); 
-        }
-        echo html_writer::end_tag('ul');
+       }else{
+	       $url = new moodle_url('annotating.php', array('a' => $quizz->id));
+	       groups_print_activity_menu($cm, $url);
+	       echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
+       }
 
+       $paging =  new paging_bar(count($users), $page, 20, $url, 'page');
+
+       echo $OUTPUT->render($paging);
+       $usersdisplay = array_slice($users,$page*$perpage, $perpage);
+       echo html_writer::start_div('amc_thumbnails');
+       echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
+       foreach ($usersdisplay as $user){
+	       if (!$noenrol){
+	           $name = $userscopy[$user->idnumber];
+	       }
+	       $copy = explode('_',$name);
+	       $thumbnailimg = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
+	       $thumbnailoutput = \html_writer::link(new moodle_url('annotating.php', array('a' => $quizz->id,'copy'=>$copy[0],'idnumber'=>$copy[1])),$thumbnailimg,array('class'=>'thumbnail'));
+	       echo html_writer::tag('li', $thumbnailoutput ); 
+       }
+       echo html_writer::end_tag('ul');
+        echo html_writer::end_div();
       
     } else { // Only show one user's report
-        //$report = new grade_report_user($courseid, $gpr, $context, $userid);
 
-       // $studentnamelink = html_writer::link(new moodle_url('/user/view.php', array('id' => $report->user->id, 'course' => $courseid)), fullname($report->user));
-        //print_grade_page_head($courseid, 'report', 'user', get_string('pluginname', 'gradereport_user') . ' - ' . $studentnamelink);
-        //groups_print_activity_menu($cm, $urlroot, $return=false, $hideallparticipants=false);
-
-        if ($user_selector) {
+        if (!$noenrol) {
             $url = new moodle_url('annotating.php', array('a' => $quizz->id));
             groups_print_activity_menu($cm, $url);
             echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
-            /*$renderer = $PAGE->get_renderer('gradereport_user');
-            $showallusersoptions = true;
-            echo $output->graded_users_selector('user', $course, $userid, $currentgroup, $showallusersoptions);*/
         }
-        
-        
+	if (!$copy){
+		$name = $userscopy[$idnumber];
+		list($copy,$idnumber) = explode('_',$name);
+	}
+	$pages = glob($process->workdir . '/cr/corrections/jpg/page-'.$copy.'-*-'.$idnumber.'.jpg');
+//var_dump($pages);		error($pages);
+	foreach ($pages as $page){
+	    echo \html_writer::img($process->getFileUrl(basename($page)),$page);
+	}
        
     }
 

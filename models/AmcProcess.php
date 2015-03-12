@@ -216,7 +216,7 @@ class AmcProcess
         foreach ($lines as $l){
             $split = get_list_row($l);
         if (isset($split['student'])){
-            $id = $split['student'].'-'.$split['copy'];
+            $id = $split['student'].'_'.$split['copy'];
             if ($split['status']=='manual'){
                 $this->copymanual[$id] = $split['idnumber'];
             }else if ($split['status']=='auto'){
@@ -238,7 +238,7 @@ class AmcProcess
             $assoc_association= $cassoc->query('SELECT student, copy, manual, auto  FROM association_association');
             $score_code= $assoc->query('SELECT student, copy, value FROM scoring_code');
             while ($row = $assoc_association->fetchArray()) {
-                $id = $row['student'].'-'.$row['copy'];
+                $id = $row['student'].'_'.$row['copy'];
                     if ($row['manual']!=''){
                         $this->copymanual[$id] = $row['manual'];
                     }
@@ -247,15 +247,15 @@ class AmcProcess
                     }
             }
             while ($row = $score_code->fetchArray()) {
-                $id = $row['student'].'-'.$row['copy'];
+                $id = $row['student'].'_'.$row['copy'];
                 $allcopy[$id] = $row['value'];
             }
-            $this->copyunknown = array_diff_key(array_merge($this->copymanual,$this->copyauto),$allcopy);
+            $this->copyunknown = array_diff_key($allcopy,$this->copymanual,$this->copyauto);
             
         }else{
             $allcopy = array_fill_keys(array_map('get_code',glob($this->workdir . '/cr/name-*.jpg')),'');
             if ($this->amcAssociation_list()==0){
-                $this->copyunknown = array_diff_key($allcopy,array_merge($this->copymanual,$this->copyauto));
+                $this->copyunknown = array_diff_key($allcopy,$this->copymanual,$this->copyauto);
             }
         }
     }
