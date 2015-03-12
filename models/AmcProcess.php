@@ -124,20 +124,28 @@ class AmcProcess
      * Shell-executes 'amc meptex'
      * @return bool
      */
-    public function amcMeptex() {
+    public function amcMeptex($force=false) {
         $pre = $this->workdir;
-        $res = $this->shellExecAmc('meptex',
-                array(
-                    '--data', $pre . '/data',
-                    '--progression-id', 'MEP',
-                    '--progression', '1',
-                    '--src', $pre . '/prepare-calage.xy',
-                )
-        );
-        if ($res) {
-            $this->log('meptex', '');
+
+        $captureFile = $pre. "/data/capture.sqlite";
+        if (!file_exists($captureFile)) {
+            if (file_exists($captureFile.'.orig')) {
+                copy ($capture.'.orig',$capture);
+            }else{
+                $res = $this->shellExecAmc('meptex',
+                        array(
+                            '--data', $pre . '/data',
+                            '--progression-id', 'MEP',
+                            '--progression', '1',
+                            '--src', $pre . '/prepare-calage.xy',
+                        )
+                );
+                if ($res) {
+                    $this->log('meptex', '');
+                }
+                return $res;
+            }
         }
-        return $res;
     }
 
     
@@ -177,7 +185,7 @@ class AmcProcess
             '--data', $pre . '/data',
             '--progression-id', 'notation',
             '--progression', '1',
-            '--seuil', '0.5', // black ratio threshold
+            '--seuil', '0.85', // black ratio threshold
             '--grain', $this->quizz->amcparams->gradegranularity,
             '--arrondi', $this->quizz->amcparams->graderounding,
             '--notemin', $this->quizz->amcparams->minscore,
@@ -639,11 +647,11 @@ class AmcProcess
      * @return string
      */
     public function getHtmlPdfLinks() {
-        $opts = array('target' => '_blank');
+        $opts = $opt;
         $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), $this->normalizeFilename('sujet'), $opts),
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), $this->normalizeFilename('catalog'), $opts),
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('corriges')), $this->normalizeFilename('corriges'), $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), 'Sujet', $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), 'Catalogue', $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('corriges')), 'Corrig&eacute;s', $opts),
         );
         return <<<EOL
         <ul class="amc-files">
@@ -671,7 +679,7 @@ EOL;
      */
     public function getHtmlZipLink() {
         $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), $this->normalizeFilename('sujets')),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), 'sujets',array('class'=>'btn')),
         );
         return <<<EOL
         <ul class="amc-files">

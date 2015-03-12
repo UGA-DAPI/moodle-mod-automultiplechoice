@@ -32,8 +32,6 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
      * @param string $target one of rendering target constants
      */
     public function __construct(moodle_page $page, $target) {
-        $page->requires->jquery();
-        $page->requires->js(new moodle_url('assets/async.js'));
         parent::__construct($page, $target);
     }
 

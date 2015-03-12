@@ -115,6 +115,15 @@ class Log {
                         $messages[] = "Le choix du barème a été modifié depuis la dernière préparation des sujets PDF.";
                     }
                     break;
+                case 'meptex':
+                    $meptex = $this->read('meptex');
+                    if (!$meptex) {
+                        return [];
+                    }
+                    if ($this->read('pdf') > $meptex) {
+                        $messages[] = "Le PDF du QCM a été modifié depuis la dernière analyse des sujets.";
+                    }
+                    break;
                 case 'upload':
                     $upload = $this->read('upload');
                     if (!$upload) {
@@ -149,13 +158,13 @@ class Log {
                         $messages[] = "Le barème a été modifié depuis la dernière notation. Relancer la correction ?";
                     }
                     break;
-		case 'exporting':
+                case 'exporting':
                     $exporting = $this->read('exporting');
                     if ($this->read('grading') > $exporting) {
                         $messages[] = "La dernière notation est plus récente que les exports. Re-générer les exports ?";
                     }
                     break;
-		case 'annotating':
+                case 'annotating':
                     $annotating = $this->read('annotating');
                     if ($this->read('grading') > $annotating) {
                         $messages[] = "La dernière notation est plus récente que les copies annotées. Re-générer les copies corrigées ?";
@@ -179,7 +188,7 @@ class Log {
      * @throws \Exception
      */
     private function isValidAction($action) {
-        $valid = array('process', 'pdf', 'saving','scoring', 'upload','associating', 'grading','exporting','annotating', 'correction', 'lock', 'unlock');
+        $valid = array('process', 'pdf','meptex','saving','scoring', 'upload','associating', 'grading','exporting','annotating', 'correction', 'lock', 'unlock');
         if (!in_array($action, $valid)) {
             throw new \Exception("L'action $action n'est pas valide.");
         }

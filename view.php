@@ -84,11 +84,17 @@ if (!$quizz->validate()) {
 
 if ($quizz->isLocked()) {
     // cannot put a button if we use $OUTPUT->notification
+    $unlockurl = new \moodle_url('documents.php', array('a' => $quizz->id, 'action' => 'unlock'));
+    $unlockbutton= new \single_button($unlockurl, 'Déverrouiller (permettre les modifications du questionnaire)');
+    $message =amc\Log::build($quizz->id)->check('unlock');
+    if ($message){
+        $unlockbutton->add_confirm_action($message);
+    }
     echo '<div class="informationbox notifyproblem alert alert-info">'
         . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
         . " Vous pouvez accéder aux documents via l'onglet <em>Sujets</em>."
-        . HtmlHelper::buttonWithAjaxCheck('Déverrouiller (permettre les modifications du questionnaire)', $quizz->id, 'documents', 'unlock', 'unlock'),
-        "</div>\n";
+        . $OUTPUT->render($unlockbutton)
+        . "</div>\n";
 }
 
 echo $OUTPUT->heading("1. " . get_string('settings'), 3);
@@ -106,7 +112,7 @@ if ($quizz->isLocked()) {
     echo $process->getHtmlZipLink();
     echo $process->getHtmlPdfLinks();
     echo '<div>'
-        . HtmlHelper::buttonWithAjaxCheck('Déverrouiller (permettre les modifications du questionnaire)', $quizz->id, 'documents', 'unlock', 'unlock')
+        . $OUTPUT->render($unlockbutton)
         . '</div>';
 } else {
     if ( $quizz->hasDocuments() ) {
