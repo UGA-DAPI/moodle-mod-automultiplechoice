@@ -73,8 +73,8 @@ if ($warnings) {
     echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'annotating', 'anotate', 'process');
     echo "</div>";
 }
-/*if ($process->hasAnotatedFiles()) {
-    $url = $process->getFileUrl( $process->normalizeFilename('corrections'));
+if ($process->hasAnotatedFiles()) {
+/*    $url = $process->getFileUrl( $process->normalizeFilename('corrections'));
     echo $OUTPUT->box_start('informationbox well');
     echo $OUTPUT->heading("Copies corrigées", 2)
         . $OUTPUT->heading("Fichiers", 3)
@@ -144,7 +144,11 @@ if ($warnings) {
        echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
        foreach ($usersdisplay as $user){
 	       if (!$noenrol){
-	           $name = $userscopy[$user->idnumber];
+		       if (isset($userscopy[$user->idnumber])){
+			      $name= $userscopy[$user->idnumber]; 
+		       }else{
+		      $name="0_0"; 
+		       }
 	       }
 	       $copy = explode('_',$name);
 	       $thumbnailimg = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
