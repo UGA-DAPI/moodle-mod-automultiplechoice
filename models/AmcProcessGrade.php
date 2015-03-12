@@ -25,22 +25,6 @@ class AmcProcessGrade extends AmcProcess
     private $actions;
     
 
-        /**
-     * Constructor
-     *
-     * @param Quizz $quizz
-     * @param string $formatName "txt" | "latex"
-     */
-    public function __construct(Quizz $quizz, $formatName = 'latex') {
-        parent::__construct($quizz);
-        $this->format = amcFormat\buildFormat($formatName, $quizz);
-        if (!$this->format) {
-            throw new \Exception("Erreur, pas de format de QCM pour AMC.");
-        }
-        $this->format->quizz = $this->quizz;
-        $this->format->codelength = $this->codelength;
-    }
-
     
     /**
      * @global core_renderer $OUTPUT
@@ -63,11 +47,6 @@ class AmcProcessGrade extends AmcProcess
         }
         return $html;
     }
-
-   
-
-
-
 
     
     protected function writeGrades(){

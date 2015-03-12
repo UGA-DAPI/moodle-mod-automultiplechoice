@@ -23,12 +23,13 @@ $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('associating');
 
-$action = optional_param('action', '', PARAM_ALPHA);
-$mode = optional_param('mode', 'unknown', PARAM_ALPHA);
-$usermode = optional_param('usermode', 'without', PARAM_ALPHA);
-$idnumber= optional_param('idnumber', '',PARAM_ALPHA);
-$page         = optional_param('page', 0, PARAM_INT);
-$perpage      = optional_param('perpage', 20, PARAM_INT);        // how many per page
+$action         = optional_param('action', '', PARAM_ALPHA);
+$mode           = optional_param('mode', 'unknown', PARAM_ALPHA);
+$usermode       = optional_param('usermode', 'without', PARAM_ALPHA);
+$idnumber       = optional_param('idnumber', '',PARAM_ALPHA);
+$copy           = optional_param('copy', '', PARAM_INT);
+$page           = optional_param('page', 0, PARAM_INT);
+$perpage        = optional_param('perpage', 20, PARAM_INT);        // how many per page
     
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
@@ -36,7 +37,7 @@ require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 $PAGE->set_url('/mod/automultiplechoice/associating.php', array('id' => $cm->id));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
-$url = new moodle_url('associating.php', array('a' => $quizz->id));
+$url = new moodle_url('associating.php', array('a' => $quizz->id,'mode'=>$mode,'usermode'=>$usermode));
 $process = new amc\AmcProcessAssociate($quizz);
  if ($action === 'associate') {
     if ($process->associate()) {
@@ -76,9 +77,9 @@ $selectmode->set_label(get_string('associationmode', 'automultiplechoice'));
 if ($mode=='unknown'){
     $namedisplay = $process->copyunknown;
 }else if ($mode=='manual'){
-    $namedisplay = $process->copyamnual;
-}else if ($mode=='auto'){
     $namedisplay = $process->copymanual;
+}else if ($mode=='auto'){
+    $namedisplay = $process->copyauto;
 }else if ($mode=='all'){
     $namedisplay = array_merge($process->copyunknown,$process->copymanual,$process->copyauto);
 }
@@ -97,10 +98,10 @@ $excludeusers = ($usermode=='all') ? '' : array_merge($process->copymanual,$proc
 echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
 foreach ($namedisplay as $name=>$idnumber){
    
-    $thumbnailoutput = \html_writer::img($process->getFileUrl('name-'.$name).".jpg",$name);
+    $thumbnailoutput = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
     $thumbnailoutput .= $output->students_selector($url, $cm, $idnumber, '',$excludeusers );
     $thumbnaildiv= \html_writer::div($thumbnailoutput,'thumbnail');
-    echo html_writer::tag('li', $thumbnaildiv ,array('class'=>'span4')); 
+    echo html_writer::tag('li', $thumbnaildiv ,array('class'=>'span3')); 
 }
 echo html_writer::end_tag('ul');
 echo $OUTPUT->box_end();

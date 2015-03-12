@@ -22,8 +22,13 @@ $quizz = $controller->getQuizz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('annotating');
+
 $action = optional_param('action', '', PARAM_ALPHA);
-$idnumber= optional_param('idnumber', '', PARAM_INT);
+$idnumber = optional_param('idnumber', '', PARAM_INT);
+$copy = optional_param('copy', '', PARAM_INT);
+$group = optional_param('group', '', PARAM_INT);
+$page         = optional_param('page', 0, PARAM_INT);
+$perpage      = optional_param('perpage', 20, PARAM_INT);        // how many per page
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
@@ -35,13 +40,13 @@ $PAGE->requires->css(new moodle_url('assets/amc.css'));
 $process = new amc\AmcProcessAnnotate($quizz);
 if ($action === 'anotate') {
     if ($process->amcAnnotePDF()) {
-        redirect(new moodle_url('annotating.php', array('a' => $quizz->id)));
+        redirect($PAGE->url);
     }
 } else if ($action === 'setstudentaccess') {
     $quizz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
     $quizz->corrigeaccess = optional_param('corrigeaccess', false, PARAM_BOOL);
     $quizz->save();
-    redirect(new moodle_url('annotating.php', array('a' => $quizz->id)));
+    redirect($PAGE->url);
 } else if ($action === 'notification') {
     $studentsto = $process->getUsersIdsHavingAnotatedSheets();
     $okSends = $process->sendAnotationNotification($studentsto);
@@ -49,7 +54,7 @@ if ($action === 'anotate') {
         ($okSends == count($studentsto)) ? 'success' : 'error',
         $okSends . " messages envoyés pour " . count($studentsto) . " étudiants ayant une copie annotée."
     );
-    redirect(new moodle_url('annotating.php', array('a' => $quizz->id)));
+    redirect($PAGE->url);
 }
 
 
@@ -112,28 +117,43 @@ if ($process->hasAnotatedFiles()) {
     $isseparategroups = ($cm->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
     
     if (has_students($context)==0) {
-                $user_selector = false;
+            $user_selector = false;
+
     } else {
         $user_selector = true;
     }
 
     
-    $showonlyactiveenrol = !has_capability('moodle/course:viewsuspendedusers', $context);
-    if (empty($idnumber)) {
+    if (empty($idnumber) and empty($copy)) {
         /*$gui = new graded_users_iterator($course, null, $currentgroup);
         $gui->require_active_enrolment($showonlyactiveenrol);
         $gui->init();
         // Add tabs
         print_grade_page_head($courseid, 'report', 'user');
         */
-       
+       $process->get_association();
 
+        $namedisplay = array_merge($process->copyunknown,$process->copymanual,$process->copyauto);
         if ($user_selector) {
             $url = new moodle_url('annotating.php', array('a' => $quizz->id));
-	    groups_print_activity_menu($cm, $url);
-	    echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
+        groups_print_activity_menu($cm, $url);
+        echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
             //echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, true);
         }
+        
+        $paging =  new paging_bar(count($namedisplay), $page, 20, $url, 'page');
+       
+        echo $OUTPUT->render($paging);
+        $namedisplay = array_slice($namedisplay,$page*$perpage, $perpage);
+        echo html_writer::start_tag('ul',array('class'=>'thumbnails'));
+        foreach ($namedisplay as $name=>$idnumber){
+           
+            $thumbnailimg = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
+            $thumbnailoutput = \html_writer::link(new moodle_url('annotating.php', array('a' => $quizz->id,'copy'=>$name)),$thumbnailimg);
+            $thumbnaildiv= \html_writer::div($thumbnailoutput,'thumbnail');
+            echo html_writer::tag('li', $thumbnaildiv ,array('class'=>'span3')); 
+        }
+        echo html_writer::end_tag('ul');
 
       
     } else { // Only show one user's report
