@@ -28,7 +28,7 @@ class AmcProcessExport extends AmcProcess
         $file = $pre . '/' . $this->normalizeFilename('sujet');
         $this->errors = array();
         $amclog = Log::build($this->quizz->id);
-        $res = $amclog->check('pdf')
+        $res = $amclog->check('pdf');
         if (!$res and file_exists($file)){
             return true;
         }
@@ -73,7 +73,7 @@ class AmcProcessExport extends AmcProcess
         $file = $pre . '/' . $this->normalizeFilename('corriges');
         $this->errors = array();
         $amclog = Log::build($this->quizz->id);
-        $res = $amclog->check('pdf')
+        $res = $amclog->check('pdf');
         if (!$res and file_exists($file)){
             return true;
         }
@@ -106,7 +106,7 @@ class AmcProcessExport extends AmcProcess
         $pre = $this->workdir;
         $file = $pre . '/' . $this->normalizeFilename('corriges');
         $amclog = Log::build($this->quizz->id);
-        $res = $amclog->check('zip')
+        $res = $amclog->check('zip');
         if (!$res and file_exists($file)){
             return true;
         }
@@ -143,7 +143,7 @@ class AmcProcessExport extends AmcProcess
         $file = $pre . '/' . $this->normalizeFilename('corriges');
         $amclog = Log::build($this->quizz->id);
         $amclog = Log::build($this->quizz->id);
-        $res = $amclog->check('imprime')
+        $res = $amclog->check('imprime');
         if (!$res and file_exists($file)){
             return true;
         }
@@ -177,7 +177,7 @@ class AmcProcessExport extends AmcProcess
     public function makeFailedPdf() {
         $file = $this->workdir.'/' .$this->normalizeFilename('failed');
         $amclog = Log::build($this->quizz->id);
-        $res = $amclog->check('failed')
+        $res = $amclog->check('failed');
         if (!$res and file_exists($file)){
             return true;
         }
@@ -203,6 +203,7 @@ class AmcProcessExport extends AmcProcess
      * @return bool
      */
     public function amcExport($type='csv') {
+	    $pre = $this->workdir;
     $file =($type=='csv')? $pre . self::PATH_AMC_CSV : $pre . self::PATH_AMC_ODS;
     $warnings = Log::build($this->quizz->id)->check('exporting');
     if (!$warnings and file_exists($file)) {
@@ -214,7 +215,6 @@ class AmcProcessExport extends AmcProcess
                 return false;
             }
         }
-        $pre = $this->workdir;
         if (!is_writable($pre . '/exports')) {
             $this->errors[] = "Le répertoire /exports n'est pas accessible en écriture. Contactez l'administrateur.";
         }

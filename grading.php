@@ -58,8 +58,8 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/grading.php'),
-                                array( 'a'=>$quizz->id, 'action'=> 'grade')
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/grading.php',
+                                array( 'a'=>$quizz->id, 'action'=> 'grade'))
                                 , 'Relancer la correction');
     echo "</div>";
 }
@@ -81,8 +81,8 @@ echo "<p>
         Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
     </p>";
 ;
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/grading.php'),
-                                array( 'a'=>$quizz->id, 'action'=> 'grade')
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/grading.php',
+                                array( 'a'=>$quizz->id, 'action'=> 'grade'))
                                 , 'Relancer la correction');
 echo $OUTPUT->box_end();
 

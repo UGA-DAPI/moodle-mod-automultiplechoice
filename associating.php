@@ -61,17 +61,17 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php'),
-                                array( 'a'=>$quizz->id, 'action'=> 'associate')
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php',
+                                array( 'a'=>$quizz->id, 'action'=> 'associate'))
                                 , 'Relancer l\'association');
     echo "</div>";
 }else if (count($process->copyauto)){
-echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php'),
-                                array( 'a'=>$quizz->id, 'action'=> 'associate')
+echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php',
+                                array( 'a'=>$quizz->id, 'action'=> 'associate'))
                                 , 'Lancer l\'association');
 }else{
-echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php'),
-                                array( 'a'=>$quizz->id, 'action'=> 'associate')
+echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php',
+                                array( 'a'=>$quizz->id, 'action'=> 'associate'))
                                 , 'Relancer l\'association');
 }
 $optionsmode =  array ('unknown'  => get_string('unknown', 'automultiplechoice'),
