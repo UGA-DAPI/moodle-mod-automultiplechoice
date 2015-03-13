@@ -443,8 +443,11 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         }
         return $ret;
      } else if (preg_match('/^corrections-.*\.pdf$/', $filename)) {
-        send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-        return true;
+        $ret = $process->amcAnnotePdf();     
+        if ($ret){
+		send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+	}
+	return $res;
      } else if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;

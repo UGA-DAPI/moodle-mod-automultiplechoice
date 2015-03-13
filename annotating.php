@@ -38,7 +38,7 @@ $PAGE->set_url('/mod/automultiplechoice/annotating.php', array('id' => $cm->id))
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 $process = new amc\AmcProcessAnnotate($quizz);
-if ($action === 'anotate') {
+if ($action === 'annotate') {
     if ($process->amcAnnote()) {
         redirect($PAGE->url);
     }
@@ -75,13 +75,13 @@ if ($warnings) {
                                 , 'Regénérer les copies corrigées');
     echo "</div>";
 }
-if ($process->hasAnotatedFiles()) {
+if ($process->countAnnotatedFiles()>0) {
    $url = $process->getFileUrl( $process->normalizeFilename('corrections'));
     echo $OUTPUT->box_start('informationbox well');
     echo $OUTPUT->heading("Copies corrigées", 2)
         . $OUTPUT->heading("Fichiers", 3)
         . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
-    echo "<p><b>" . $process->countIndividualAnotations() . "</b> copies individuelles annotées (pdf) disponibles.</p>";
+    echo "<p><b>" . $process->countAnnotatedFiles() . "</b> copies individuelles annotées disponibles.</p>";
     echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php',
                                 array( 'a'=>$quizz->id, 'action'=> 'annotate'))
                                 , 'Mettre à jour les copies corrigées (annotées)');
