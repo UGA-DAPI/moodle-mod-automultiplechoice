@@ -70,8 +70,8 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php'),
-                                array( 'a'=>$quizz->id, 'action'=> 'annotate')
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php',
+                                array( 'a'=>$quizz->id, 'action'=> 'annotate'))
                                 , 'Regénérer les copies corrigées');
     echo "</div>";
 }
@@ -82,8 +82,8 @@ if ($process->hasAnotatedFiles()) {
         . $OUTPUT->heading("Fichiers", 3)
         . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
     echo "<p><b>" . $process->countIndividualAnotations() . "</b> copies individuelles annotées (pdf) disponibles.</p>";
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php'),
-                                array( 'a'=>$quizz->id, 'action'=> 'annotate')
+    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php',
+                                array( 'a'=>$quizz->id, 'action'=> 'annotate'))
                                 , 'Mettre à jour les copies corrigées (annotées)');
 
 
@@ -186,8 +186,8 @@ if ($process->hasAnotatedFiles()) {
 
     
 } else {
-        echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php'),
-                                array( 'a'=>$quizz->id, 'action'=> 'annotate')
+        echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php',
+                                array( 'a'=>$quizz->id, 'action'=> 'annotate'))
                                 , 'Générer les copies corrigées');
 }
 
