@@ -29,7 +29,7 @@ class AmcProcessExport extends AmcProcess
         $this->errors = array();
         $amclog = Log::build($this->quizz->id);
         $res = $amclog->check('pdf');
-        if (!$res and file_exists($file)){
+	if (!$res and file_exists($file)){
             return true;
         }
         $format = $this->saveFormat($formatName);
@@ -73,7 +73,6 @@ class AmcProcessExport extends AmcProcess
         $file = $pre . '/' . $this->normalizeFilename('corriges');
         $this->errors = array();
         $amclog = Log::build($this->quizz->id);
-        $res = $amclog->check('pdf');
         if (!$res and file_exists($file)){
             return true;
         }

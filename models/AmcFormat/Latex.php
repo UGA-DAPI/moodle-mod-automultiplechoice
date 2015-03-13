@@ -69,7 +69,9 @@ class Latex extends Api
             . ($params->shuffleq ? '%' : '')
             . ",noshuffle% stops the automatic shuffling of the answers for every question\n"
             . ($params->separatesheet ? '' : '%')
-        . ",separateanswersheet";
+        . ",separateanswersheet"
+            . ($params->separatesheet ? '' : '%')
+        . ",automarks";
     $customlayout=$params->customlayout;
         $shortTitles = '';
         if ($this->quizz->amcparams->answerSheetColumns > 2) {

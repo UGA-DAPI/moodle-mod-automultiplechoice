@@ -119,4 +119,4 @@ $string['importfilequestions'] = 'Importer un fichier de questions';
 $string['importquestions'] = 'Import/ Création de questions';
 $string['createquestions'] = "Création d'une question par formulaire";
 
-$string['errormeptex'] = "Erreur lors du calcul de mise en page (amc meptex)."
+$string['errormeptex'] = "Erreur lors du calcul de mise en page (amc meptex).";
