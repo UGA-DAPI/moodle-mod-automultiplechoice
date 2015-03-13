@@ -61,7 +61,7 @@ if ($quizz->isLocked()) {
     $unlockbutton= new \single_button($unlockurl, 'Déverrouiller (permettre les modifications du questionnaire)');
     $message =amc\Log::build($quizz->id)->check('unlock');
     if ($message){
-        $unlockbutton->add_confirm_action($message);
+        $unlockbutton->add_confirm_action(implode('\n',$message));
     }
     echo '<div class="informationbox notifyproblem alert alert-info">'
         . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
