@@ -418,7 +418,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
 
     // whitelist security
     if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) {
-        $ret = $process->amcCreatePdf();     
+        $ret = $process->amcCreatePdf('latex');     
         if ($ret){
              send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
