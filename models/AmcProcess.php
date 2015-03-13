@@ -198,7 +198,7 @@ class AmcProcess
         if ($res) {
             $this->log('note', 'OK.');
             $amclog = Log::build($this->quizz->id);
-             $amclog->write('grading');
+            $amclog->write('grading');
         }
         return $res;
     }
@@ -647,7 +647,7 @@ class AmcProcess
      * @return string
      */
     public function getHtmlPdfLinks() {
-        $opts = $opt;
+        $opts = array('class' => 'btn','target' =>'_blank');
         $links = array(
             \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), 'Sujet', $opts),
             \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), 'Catalogue', $opts),
