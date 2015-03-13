@@ -39,7 +39,7 @@ $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 $process = new amc\AmcProcessAnnotate($quizz);
 if ($action === 'anotate') {
-    if ($process->amcAnnotePDF()) {
+    if ($process->amcAnnote()) {
         redirect($PAGE->url);
     }
 } else if ($action === 'setstudentaccess') {
