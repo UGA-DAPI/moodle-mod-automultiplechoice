@@ -76,7 +76,7 @@ if ($warnings) {
     echo "</div>";
 }
 if ($process->hasAnotatedFiles()) {
-/*    $url = $process->getFileUrl( $process->normalizeFilename('corrections'));
+   $url = $process->getFileUrl( $process->normalizeFilename('corrections'));
     echo $OUTPUT->box_start('informationbox well');
     echo $OUTPUT->heading("Copies corrigées", 2)
         . $OUTPUT->heading("Fichiers", 3)
@@ -85,7 +85,7 @@ if ($process->hasAnotatedFiles()) {
     echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/annotating.php',
                                 array( 'a'=>$quizz->id, 'action'=> 'annotate'))
                                 , 'Mettre à jour les copies corrigées (annotées)');
-
+/*
 
     echo $OUTPUT->heading("Accès aux copies", 3);
     echo "<p>Permettre l'accès de chaque étudiant</p>\n";
