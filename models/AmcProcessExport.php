@@ -300,4 +300,84 @@ class AmcProcessExport extends AmcProcess
         return true;
     }
 
+  /**
+	  *      * lowl-level Shell-executes 'amc regroupe'
+	  *           * fills the cr/corrections/pdf directory with a global pdf file (parameter single==true) for all copies
+	  *                * or one pdf per student (single==false)
+	  *                     * @single bool
+	  *                          * @return bool
+	  *                               */
+    protected function amcRegroupe() {
+	    $pre = $this->workdir;    
+	    $parameters = array(
+		    /*'--id-file',  '', // undocumented option: only work with students whose ID is in this file*/
+		    '--no-compose',
+		    '--projet',  $pre,
+		    '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
+		    '--data', $pre.'/data',
+		    '--progression-id', 'regroupe',
+		    '--progression', '1',
+		    '--fich-noms', $this->get_students_list(),
+		    '--noms-encodage', 'UTF-8',
+		    '--sort', 'n',
+		    '--register',
+		    '--no-force-ascii',
+		    '--modele', 'cr-(ID).pdf'
+		    /* // useless with no-compose
+		     *               '--tex-src', $pre . '/' . $this->format->getFilename(),
+		     *                             '--filter', $this->format->getFilterName(),
+		     *                                           '--with', 'xelatex',
+		     *                                                         '--filtered-source', $pre.'/prepare-source_filtered.tex',
+		     *                                                                       '--n-copies', (string) $this->quizz->amcparams->copies,
+		     *                                                                                      */
+	    );
+	    $res = $this->shellExecAmc('regroupe', $parameters);
+	    if ($res) {
+		    $this->log('regroup', '');
+		    $amclog = Log::build($this->quizz->id);
+		    $amclog->write('correction');
+	    }
+	    return $res;
+    }
+
+    /**
+     *      * (high-level) executes "amc annote" then "amc regroupe" to get one or several pdf files
+     *           * for the moment, only one variant is possible : ONE global file, NO compose
+     *                * @todo (maybe) manages all variants
+     *                     * @return bool
+     *                          */
+    public function amcAnnotePdf() {
+	    $pre = $this->workdir;    
+        $file = $pre.'/' .$this->normalizeFilename('corrections');
+        $amclog = Log::build($this->quizz->id);
+        $res = $amclog->check('annotatePdf');
+        if (!$res and file_exists($file)){
+            return true;
+        }
+	    array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
+
+	    if (!$this->amcRegroupe()) {
+		    return false;
+	    }
+	    $cmd  = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
+		    ." -sOutputFile=".$pre.'/'.$this->normalizeFilename('corrections')
+		    ." ".$pre."/cr/corrections/pdf/cr-*.pdf";
+	    $lines = array();
+	    $returnVal = 0;
+	    exec($cmd, $lines, $returnVal);
+
+	    $this->getLogger()->write($this->formatShellOutput($cmd, $lines, $returnVal));
+	    if ($returnVal === 0) {
+		    return true;
+		    $amclog = Log::build($this->quizz->id);
+		    $amclog->write('annotePdf');
+	    } else {
+		    /**
+		     *              * @todo Fill $this->errors instead of outputing HTML on the fly
+		     *                           */
+		    $this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_NORMAL);
+		    return false;
+	    }
+    }
+
 }
