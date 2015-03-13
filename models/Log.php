@@ -160,13 +160,28 @@ class Log {
                     break;
                 case 'exporting':
                     $exporting = $this->read('exporting');
+                    if (!$exporting) {
+                        return [];
+                    }
                     if ($this->read('grading') > $exporting) {
                         $messages[] = "La dernière notation est plus récente que les exports. Re-générer les exports ?";
                     }
                     break;
                 case 'annotating':
                     $annotating = $this->read('annotating');
+                    if (!$annotating) {
+                        return [];
+                    }
                     if ($this->read('grading') > $annotating) {
+                        $messages[] = "La dernière notation est plus récente que les copies annotées. Re-générer les copies corrigées ?";
+                    }
+                    break;
+                case 'annotatePdf':
+                    $annotatePdf = $this->read('annotatePdf');
+                    if (!$annotatePdf) {
+                        return [];
+                    }
+                    if ($this->read('annotating') > $annotatePdf) {
                         $messages[] = "La dernière notation est plus récente que les copies annotées. Re-générer les copies corrigées ?";
                     }
                     break;
@@ -188,7 +203,7 @@ class Log {
      * @throws \Exception
      */
     private function isValidAction($action) {
-        $valid = array('process', 'pdf','meptex','saving','scoring', 'upload','associating', 'grading','exporting','annotating', 'correction', 'lock', 'unlock');
+        $valid = array('process', 'pdf','meptex','saving','scoring', 'upload','associating', 'grading','exporting','annotating','annotatePdf', 'correction', 'lock', 'unlock');
         if (!in_array($action, $valid)) {
             throw new \Exception("L'action $action n'est pas valide.");
         }
