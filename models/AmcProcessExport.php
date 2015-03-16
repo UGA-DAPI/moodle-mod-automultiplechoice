@@ -103,20 +103,14 @@ class AmcProcessExport extends AmcProcess
      */
     public function zip() {
         $pre = $this->workdir;
-        $file = $pre . '/' . $this->normalizeFilename('corriges');
-        $amclog = Log::build($this->quizz->id);
-        $res = $amclog->check('zip');
-        if (!$res and file_exists($file)){
+        $zipfile = $pre . '/' . $this->normalizeFilename('sujets');
+        if (file_exists($zipfile)){
             return true;
         }
                 // clean up, or some obsolete files will stay in the zip
-        $zipName = $pre . '/' . $this->normalizeFilename('sujets');
-        if (file_exists($zipName)) {
-            unlink($zipName);
-        }
         $mask = $pre . "/imprime/*.pdf";
             $zip = new \ZipArchive();
-            $ret = $zip->open($zipName, \ZipArchive::CREATE);
+            $ret = $zip->open($zipfile, \ZipArchive::CREATE);
             if ( ! $ret ) {
                 $this->errors[] ="Echec lors de l'ouverture de l'archive $ret\n";
             } else {
@@ -127,7 +121,7 @@ class AmcProcessExport extends AmcProcess
                 $this->errors[] = "<p>Zip de [" . $zip->numFiles . "] fichiers dans [" . basename($zip->filename) . "]</p>\n";
                 $zip->close();
             }
-            if (!file_exists($zipName)) {
+            if (!file_exists($zipfile)) {
                 $this->errors[] = "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
             }
         return $ret;
@@ -139,23 +133,18 @@ class AmcProcessExport extends AmcProcess
      */
     public function amcImprime() {
         $pre = $this->workdir;
-        $file = $pre . '/' . $this->normalizeFilename('corriges');
-        $amclog = Log::build($this->quizz->id);
-        $amclog = Log::build($this->quizz->id);
-        $res = $amclog->check('imprime');
-        if (!$res and file_exists($file)){
+        $file = $pre . '/' . $this->normalizeFilename('sujets');
+        if ( file_exists($file)){
             return true;
         }
-            $pre = $this->workdir;
             if (!is_dir($pre . '/imprime')) {
                 mkdir($pre . '/imprime');
             }
             if (!$this->amcMeptex()) {
                 $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
+		return false;
             }
     
-            $mask = $pre . "/imprime/*.pdf";
-            array_map('unlink', glob($mask));
             
             $params = array(
                 '--data', $pre . '/data',
@@ -165,9 +154,9 @@ class AmcProcessExport extends AmcProcess
             );
             // $params[] = '--split'; // M#2076 a priori jamais nécessaire
             $res = $this->shellExecAmc('imprime', $params);
-            if ($res) {
-                $this->log('imprime', '');
-            }
+	    if ($res) {
+		    $this->log('imprime', '');
+	    }
         return $res;
     }
     /**

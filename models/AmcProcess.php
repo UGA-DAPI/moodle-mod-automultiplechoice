@@ -126,12 +126,7 @@ class AmcProcess
      */
     public function amcMeptex($force=false) {
         $pre = $this->workdir;
-
-        $captureFile = $pre. "/data/capture.sqlite";
-        if (!file_exists($captureFile)) {
-            if (file_exists($captureFile.'.orig')) {
-                copy ($capture.'.orig',$capture);
-            }else{
+             $amclog = Log::build($this->quizz->id);
                 $res = $this->shellExecAmc('meptex',
                         array(
                             '--data', $pre . '/data',
@@ -142,10 +137,9 @@ class AmcProcess
                 );
                 if ($res) {
                     $this->log('meptex', '');
+             $amclog->write('meptex');
                 }
                 return $res;
-            }
-        }
     }
 
     
