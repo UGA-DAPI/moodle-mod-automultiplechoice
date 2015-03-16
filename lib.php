@@ -432,9 +432,9 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         }
         return $ret;
      } else if (preg_match('/^sujets-.*\.zip$/', $filename)) {
-        $ret = $process->amcImprine() && $process->zip();
+	     $ret = $process->amcImprime() &&  $process->zip();
             if ($ret){
-             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/zip') ;
         }
         return $ret;
      } else if (preg_match('/^corrections-.*\.pdf$/', $filename)) {
