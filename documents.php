@@ -43,6 +43,12 @@ if ($action === 'lock') {
 } else if ($action === 'randomize') {
     $quizz->amcparams->randomize();
     $quizz->save();
+    $zipfile = $process->workdir.'/'.$process->normaliseFileName('sujets');
+    if (file_exists($zipfile)){
+	unlink($zipfile); 
+    }
+    $mask = $pre . "/imprime/*.pdf";
+    array_map('unlink', glob($mask));
     redirect(new moodle_url('documents.php', array('a' => $quizz->id)));
 } else if ($action === 'restore') {
     array_map('restore_source', glob($quizz->getDirName() . '/*.orig'));
