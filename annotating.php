@@ -128,6 +128,7 @@ if ($process->countAnnotatedFiles()>0) {
        $process->get_association();
        $userscopy= array_flip(array_merge($process->copymanual,$process->copyauto));
     }
+    $url = new moodle_url('annotating.php', array('a' => $quizz->id));
 
     if (empty($idnumber) and empty($copy)) {
 
@@ -135,7 +136,6 @@ if ($process->countAnnotatedFiles()>0) {
              $users = array_map('get_code',glob($process->workdir . '/cr/name-*.jpg'));       
        
        }else{
-           $url = new moodle_url('annotating.php', array('a' => $quizz->id));
            groups_print_activity_menu($cm, $url);
            echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
        }
@@ -153,7 +153,9 @@ if ($process->countAnnotatedFiles()>0) {
                }else{
               $name="0_0"; 
                }
-           }
+	   }else{
+	   	$name = $user;
+	   }
            $copy = explode('_',$name);
            $thumbnailimg = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
            $thumbnailoutput = \html_writer::link(new moodle_url('annotating.php', array('a' => $quizz->id,'copy'=>$copy[0],'idnumber'=>$copy[1])),$thumbnailimg,array('class'=>'thumbnail'));
@@ -165,7 +167,6 @@ if ($process->countAnnotatedFiles()>0) {
     } else { // Only show one user's report
 
         if (!$noenrol) {
-            $url = new moodle_url('annotating.php', array('a' => $quizz->id));
             groups_print_activity_menu($cm, $url);
             echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
         }
