@@ -207,6 +207,7 @@ class AmcProcessGrade extends AmcProcess
      * @return bool
      */
     protected function amcRegroupe() {
+        $pre = $this->workdir;
         $parameters = array(
             //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
             '--no-compose',
@@ -273,16 +274,26 @@ class AmcProcessGrade extends AmcProcess
         if (!$this->amcRegroupe()) {
             return false;
 	}
-	$parameters = array(
-            '-q',
-            '-dNOPAUSE', 
-            '-dBATCH', 
-            '-sDEVICE=pdfwrite',
-            '-sOutputFile='.$pre.$this->normalizeFilemane('corrections'),
-            $pre."/cr/corrections/pdf/cr-*.pdf"           
-        );
-   
-	return $this->shellExecAmc('gs', $parameters ,true);
+	$cmd  = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
+		." -sOutputFile=".$pre.'/cr/corrections/pdf/'.$this->normalizeFilename('corrections')
+		." ".$pre."/cr/corrections/pdf/cr-*.pdf";
+	$lines = array();
+	$returnVal = 0;
+	exec($cmd, $lines, $returnVal);
+
+	$this->getLogger()->write($this->formatShellOutput($cmd, $lines, $returnVal));
+	if ($output) {
+		$this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_DEVELOPER);
+	}
+	if ($returnVal === 0) {
+		return true;
+	} else {
+		/**
+		 *       * @todo Fill $this->errors instead of outputing HTML on the fly
+		 *             */
+		$this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_NORMAL);
+		return false;
+	}
     }
 
     /**
