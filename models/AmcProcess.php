@@ -481,7 +481,7 @@ class AmcProcess
         if (file_exists($this->workdir . self::PATH_STUDENTLIST_CSV)){
         return $this->workdir . self::PATH_STUDENTLIST_CSV;
     }else{
-        return '';
+        return ' ';
     }
     }
     /**

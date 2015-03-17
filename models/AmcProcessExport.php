@@ -209,30 +209,42 @@ class AmcProcessExport extends AmcProcess
         $oldcwd = getcwd();
         chdir($pre . '/exports');
 
-
-        $parameters = array(
+        $csv = $this->get_students_list();
+	$parameters = array(
             '--data', $pre . '/data',
             '--useall', '0',
             '--sort', 'n',
             '--no-rtl',
             '--output', $file,
             '--option-out', 'encodage=UTF-8',
-            '--fich-noms', $this->get_students_list(),
             '--noms-encodage', 'UTF-8',
         );
+        if ($csv !=' '){
+	    $parameters[] = '--fich-noms';
+	    $parameters[] = $csv;
+	}
         $parametersCsv = array_merge($parameters, array(
             '--module', 'CSV',
             '--csv-build-name', '(nom|surname) (prenom|name)',
-            '--option-out', 'columns=student.copy,student.key,name,surname,moodleid,groupslist',
             '--option-out', 'separateur=' . self::CSV_SEPARATOR,
             '--option-out', 'decimal=,',
             '--option-out', 'ticked=',
         ));
         $parametersOds = array_merge($parameters, array(
             '--module', 'ods',
-            '--option-out', 'columns=student.copy,student.key,name,surname,groupslist',
             '--option-out', 'stats=1',
         ));
+        if ($csv !=' '){
+		$parametersCsv[] = '--option-out';
+		$parametersCsv[] = 'columns=student.copy,student.key,name,surname,moodleid,groupslist';
+		$parametersOds[] = '--option-out';
+		$parametersOds[] = 'columns=student.copy,student.key,name,surname,groupslist';
+	}else{
+		$parametersCsv[] = '--option-out';
+		$parametersCsv[] = 'columns=student.copy,student.key';
+		$parametersOds[] = '--option-out';
+		$parametersOds[] = 'columns=student.copy,student.key';
+	}
         if ($type =='csv'){
             $res = $this->shellExecAmc('export', $parametersCsv);
         }else{
@@ -311,14 +323,14 @@ class AmcProcessExport extends AmcProcess
 		    '--sort', 'n',
 		    '--register',
 		    '--no-force-ascii',
-		    '--modele', 'cr-(ID).pdf'
+		    '--modele', 'cr-(N).pdf'
 		    /* // useless with no-compose
-		     *               '--tex-src', $pre . '/' . $this->format->getFilename(),
-		     *                             '--filter', $this->format->getFilterName(),
-		     *                                           '--with', 'xelatex',
-		     *                                                         '--filtered-source', $pre.'/prepare-source_filtered.tex',
-		     *                                                                       '--n-copies', (string) $this->quizz->amcparams->copies,
-		     *                                                                                      */
+                    '--tex-src', $pre . '/' . $this->format->getFilename(),
+                    '--filter', $this->format->getFilterName(),
+                    '--with', 'xelatex',
+                    '--filtered-source', $pre.'/prepare-source_filtered.tex',
+                    '--n-copies', (string) $this->quizz->amcparams->copies,
+	            */
 	    );
 	    $res = $this->shellExecAmc('regroupe', $parameters);
 	    if ($res) {
