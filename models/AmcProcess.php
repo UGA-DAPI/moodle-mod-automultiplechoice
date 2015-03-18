@@ -38,9 +38,7 @@ class AmcProcess
     const CSV_SEPARATOR = ';';
 
  
-    public $copyauto = array();
-    public $copymanual = array();
-    public $copyunknown =array();
+
     
     /**
      * Constructor
@@ -137,7 +135,8 @@ class AmcProcess
                 );
                 if ($res) {
                     $this->log('meptex', '');
-             $amclog->write('meptex');
+                    $amclog = Log::build($this->quizz->id);
+                    $amclog->write('meptex');
                 }
                 return $res;
     }
@@ -198,70 +197,6 @@ class AmcProcess
     }
 
    
-    
-    /**
-     * Shell-executes 'amc association-auto'
-     * @return bool
-     */
-    protected function amcAssociation_list() {
-        $pre = $this->workdir;
-        $parameters = array(
-            '--data', $pre . '/data',
-            '--list', 
-        );
-        $escapedCmd = escapeshellcmd('auto-multiple-choice '.'association' );
-        $escapedParams = array_map('escapeshellarg', $parameters);
-        $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
-        $lines = array();
-        $returnVal = 0;
-        exec($shellCmd, $lines, $returnVal);
-        foreach ($lines as $l){
-            $split = get_list_row($l);
-        if (isset($split['student'])){
-            $id = $split['student'].'_'.$split['copy'];
-            if ($split['status']=='manual'){
-                $this->copymanual[$id] = $split['idnumber'];
-            }else if ($split['status']=='auto'){
-                $this->copyauto[$id] = $split['idnumber'];
-            }
-        }
-        }
-        return $returnVal;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function get_association() {
-        if (extension_loaded('sqlite3')){   
-            $allcopy = array();
-            $assoc = new \SQLite3($this->workdir . '/data/association.sqlite',SQLITE3_OPEN_READONLY);
-            $score = new \SQLite3($this->workdir . '/data/scoring.sqlite',SQLITE3_OPEN_READONLY);
-            $assoc_association= $assoc->query('SELECT student, copy, manual, auto  FROM association_association');
-            $score_code= $score->query('SELECT student, copy, value FROM scoring_code');
-            while ($row = $assoc_association->fetchArray()) {
-                $id = $row['student'].'_'.$row['copy'];
-                    if ($row['manual']!=''){
-                        $this->copymanual[$id] = $row['manual'];
-                    }
-                    if ($row['auto']!=''){
-                        $this->copyauto[$id] = $row['auto'];
-                    }
-            }
-            while ($row = $score_code->fetchArray()) {
-                $id = $row['student'].'_'.$row['copy'];
-                $allcopy[$id] = $row['value'];
-            }
-            $this->copyunknown = array_diff_key($allcopy,$this->copymanual,$this->copyauto);
-            
-        }else{
-            $allcopy = array_fill_keys(array_map('get_code',glob($this->workdir . '/cr/name-*.jpg')),'');
-            if ($this->amcAssociation_list()==0){
-                $this->copyunknown = array_diff_key($allcopy,$this->copymanual,$this->copyauto);
-            }
-        }
-    }
-
     /**
      * returns stat() information (number and dates) on scanned (ppm) files already stored
      * @return array with keys: count, time, timefr ; null if nothing was uploaded

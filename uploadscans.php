@@ -39,10 +39,7 @@ if ($action === 'deleteUploads') {
     $process->deleteUploads();
     redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
 }
-if ($action === 'failed') {
-    $process->downloadFailed();
-    redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
-}
+
 if ($action === 'delete') {
     $scan =  optional_param('scan', 'all', PARAM_FILE);
     $process->deleteFailed($scan);

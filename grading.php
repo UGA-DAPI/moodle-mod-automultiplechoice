@@ -44,14 +44,6 @@ $stats = $process->getHtmlStats();
 // Output starts here
 echo $output->header();
 
-$checklock = json_encode(array('a' => $quizz->id, 'actions' => 'process'));
-$button = '<form action="' . htmlspecialchars(new moodle_url('/mod/automultiplechoice/grading.php', array('a' => $quizz->id)))
-    . '" method="post" class="checklock" data-checklock="' . htmlspecialchars($checklock) . '">
-<p>
-<input type="hidden" name="action" value="%s" />
-<button type="submit">%s</button>
-</p>
-</form>';
 
 //echo $process->getHtmlErrors();
 $warnings = amc\Log::build($quizz->id)->check('grading');

@@ -111,8 +111,11 @@ class Log {
                     if (!$pdf) {
                         return [];
                     }
-                    if ($this->read('saving') > $pdf) {
+                    if ($this->read('scoring') > $pdf) {
                         $messages[] = "Le choix du barème a été modifié depuis la dernière préparation des sujets PDF.";
+                    }
+                    if ($this->read('saving') > $pdf) {
+                        $messages[] = "La selection de question été modifié depuis la dernière préparation des sujets PDF.";
                     }
                     break;
                 case 'meptex':
@@ -135,17 +138,10 @@ class Log {
                     if ($this->read('lock') > $upload) {
                         $messages[] = "Le dernier verrouillage du QCM a eu lieu après le dernier dépôt des copies.";
                     }
+                    if ($this->read('meptex') > $upload) {
+                        $messages[] = "La derni&egrave;re analyse du sujet a eu lieu après le dernier dépôt des copies.";
+                    }
                     break;
-                
-                case 'associating':
-                    $associating = $this->read('associating');
-                    if (!$associating) {
-                        return [];
-                    }
-                    if ($this->read('upload') > $associating) {
-                        $messages[] = "Des copies d'étudiant ont été déposées depuis la dernière association. Relancer l'association ?";
-                    }
-                    
                 case 'grading':
                     $grading = $this->read('grading');
                     if (!$grading) {
@@ -158,6 +154,22 @@ class Log {
                         $messages[] = "Le barème a été modifié depuis la dernière notation. Relancer la correction ?";
                     }
                     break;
+                case 'associating':
+                    $associating = $this->read('associating');
+                    if (!$associating) {
+                        return [];
+                    }
+                    if ($this->read('upload') > $associating) {
+                        $messages[] = "Des copies d'étudiant ont été déposées depuis la dernière association. Relancer l'association ?";
+                    }
+                    if ($this->read('grading') > $associating) {
+                        $messages[] = "Des copies d'étudiant ont été not&eacute;es depuis la dernière association. Relancer l'association ?";
+                    }
+                    if (!$this->read('grading') ) {
+                        $messages[] = "Les copies d'étudiant n'ont pas encore été not&eacute;es.";
+                    }
+                    break;
+                
                 case 'exporting':
                     $exporting = $this->read('exporting');
                     if (!$exporting) {
@@ -182,7 +194,7 @@ class Log {
                         return [];
                     }
                     if ($this->read('annotating') > $annotatePdf) {
-                        $messages[] = "La dernière notation est plus récente que les copies annotées. Re-générer les copies corrigées ?";
+                        $messages[] = "La dernière annotation est plus récente que les copies annotées PDF. Re-générer les copies corrigées PDF?";
                     }
                     break;
                 case 'unlock':
@@ -203,7 +215,7 @@ class Log {
      * @throws \Exception
      */
     private function isValidAction($action) {
-        $valid = array('process', 'pdf','meptex','saving','scoring', 'upload','associating', 'grading','exporting','annotating','annotatePdf', 'correction', 'lock', 'unlock');
+        $valid = array('process', 'pdf','meptex','saving','scoring', 'upload', 'grading','associating','exporting','annotating','annotatePdf', 'correction', 'lock', 'unlock');
         if (!in_array($action, $valid)) {
             throw new \Exception("L'action $action n'est pas valide.");
         }

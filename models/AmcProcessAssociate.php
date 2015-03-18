@@ -13,7 +13,7 @@ require_once dirname(__DIR__) . '/locallib.php';
 //require_once __DIR__ . '/Log.php';
 //require_once __DIR__ . '/AmcFormat/Api.php';
 
-class AmcProcessAssociate extends AmcProcess
+class AmcProcessUsers extends AmcProcess
 {
     /**
      * 
