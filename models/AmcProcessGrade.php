@@ -356,9 +356,9 @@ class AmcProcessGrade extends AmcProcess
 	$sql = "SELECT RIGHT(u.idnumber,".$codelength.") as idnumber ,u.firstname, u.lastname,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
                 ."JOIN {user_enrolments} ue ON (ue.userid = u.id) "
 		."JOIN {enrol} e ON (e.id = ue.enrolid) "
-		."JOIN  groups_members gm ON u.id=gm.userid "
-		."JOIN groups g ON g.id=gm.groupid "
-		."WHERE u.idnumber != '' AND e.courseid = ? AND g.courseid=e.courseid "
+		."LEFT JOIN  groups_members gm ON u.id=gm.userid "
+		."LEFT JOIN groups g ON g.id=gm.groupid  AND g.courseid=e.courseid " 
+		."WHERE u.idnumber != '' AND e.courseid = ? "
 		."GROUP BY u.id";
         $users=  $DB->get_records_sql($sql, array($this->quizz->course));
 
