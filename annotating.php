@@ -9,7 +9,7 @@
 use \mod\automultiplechoice as amc;
 
 require_once(__DIR__ . '/locallib.php');
-require_once __DIR__ . '/models/AmcProcessAnnotate.php';
+require_once __DIR__ . '/models/AmcProcessUsers.php';
 
 
 global $DB, $OUTPUT, $PAGE;

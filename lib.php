@@ -19,7 +19,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/ScoringSystem.php';
 require_once __DIR__ . '/models/AmcProcess.php';
-require_once __DIR__ . '/models/AmcProcessGrade.php';
 
 /* @var $DB moodle_database */
 
@@ -445,9 +444,9 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
      } else if (preg_match('/^corrections-.*\.pdf$/', $filename)) {
         $ret = $process->amcAnnotePdf();     
         if ($ret){
-		send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-	}
-	return $res;
+        send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+    }
+    return $res;
      } else if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;

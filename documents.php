@@ -11,7 +11,7 @@
 use \mod\automultiplechoice as amc;
 
 require_once __DIR__ . '/locallib.php';
-require_once __DIR__ . '/models/AmcProcessPrepare.php';
+require_once __DIR__ . '/models/AmcProcess.php';
 
 global $DB, $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
@@ -26,7 +26,7 @@ $output = $controller->getRenderer('documents');
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 $action = optional_param('action', '', PARAM_ALPHA);
-$process = new amc\AmcProcessPrepare($quizz);
+$process = new amc\AmcProcess($quizz);
 if ($action === 'lock') {
     $quizz->amcparams->locked = true;
     amc\Log::build($quizz->id)->write('lock');
@@ -43,9 +43,10 @@ if ($action === 'lock') {
 } else if ($action === 'randomize') {
     $quizz->amcparams->randomize();
     $quizz->save();
+    amc\Log::build($this->quizz->id)->write('saving');
     $zipfile = $process->workdir.'/'.$process->normaliseFileName('sujets');
     if (file_exists($zipfile)){
-	unlink($zipfile); 
+    unlink($zipfile); 
     }
     $mask = $pre . "/imprime/*.pdf";
     array_map('unlink', glob($mask));
