@@ -36,7 +36,19 @@ $amclog = new \mod\automultiplechoice\Log($quizz->id);
 
 $action = optional_param('action', '', PARAM_ALPHA);
 if ($action === 'deleteUploads') {
-    $process->deleteUploads();
+    if ($process->deleteUploads()) {
+        amc\FlashMessageManager::addMessage('success', "Les copies déposées dans ce QCM ont été supprimées.");
+    } else {
+        amc\FlashMessageManager::addMessage('error', "Une erreur est survenue lors de la suppression des copies.");
+    }
+    redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
+} else if ($action === 'analyzeImages') {
+    $process->analyzeImages($_POST['bwThreshold']);
+    if ($process->getLastErrors()) {
+        amc\FlashMessageManager::addMessage('error', "Erreur lors de l'analyse des copies scannées.\n" . print_r($process->getLastErrors(), true));
+    } else {
+        amc\FlashMessageManager::addMessage('success', "Les copies scannées ont été réanalysées.");
+    }
     redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
 }
 
@@ -119,6 +131,25 @@ if ($scansStats) {
         <div>
             <input type="hidden" name="action" value="deleteUploads" />
             <button type="submit" onclick="return confirm('Supprimer définitivement les copies déposées sur le serveur ?');">Effacer les copies déposées</button>
+        </div>
+    </form>
+    <?php
+    echo $OUTPUT->heading("Ré-analyser les copies", 3);
+    ?>
+    <form action="?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
+        <p>
+            Vous pouvez analyser à nouveau les copies déjà déposées.
+            Cela peut remédier à une reconnaissance incomplète du texte, grâce à la valeur si dessous :
+        </p>
+        <div>
+            <div>
+                <label for="analyzeImages-bwThreshold">
+                    Seuil de gris distinguant N&amp;B :
+                    <input type="text" name="bwThreshold" value="0.6" />
+                </label>
+            </div>
+            <input type="hidden" name="action" value="analyzeImages" />
+            <button type="submit">Ré-analyser les copies déposées</button>
         </div>
     </form>
     <?php
