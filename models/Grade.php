@@ -37,6 +37,7 @@ class Grade extends AmcProcessGrade
             'scoring' => (boolean) $this->amcNote(),
             'export' => (boolean) $this->amcExport(),
             'csv' => (boolean) $this->writeFileWithIdentifiedStudents(),
+            'gradebook' =>(boolean) $this->writeGrades(),
         );
         $this->exportedFiles = (object) array(
             'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
@@ -58,9 +59,6 @@ class Grade extends AmcProcessGrade
         if (!$this->actions->anotate) {
             return false;
         }
-        $grades = $this->getMarks();
-        $record = $DB->get_record('automultiplechoice', array('id' => $this->quizz->id), '*');
-        \automultiplechoice_grade_item_update($record, $grades);
         return true;
     }
 

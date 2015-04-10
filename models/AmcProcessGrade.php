@@ -418,6 +418,16 @@ class AmcProcessGrade extends AmcProcess
         return $namedGrades;
     }
 
+    /**
+     * Write the grades into Moodle.
+     */
+    public function writeGrades() {
+        global $DB;
+        $grades = $this->getMarks();
+        $record = $DB->get_record('automultiplechoice', array('id' => $this->quizz->id), '*');
+        \automultiplechoice_grade_item_update($record, $grades);
+        return true;
+    }
 
     /**
      * @return boolean
