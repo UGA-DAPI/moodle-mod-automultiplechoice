@@ -72,10 +72,9 @@ class Latex extends Api
             . ",separateanswersheet";
         $shortTitles = '';
         if ($this->quizz->amcparams->answerSheetColumns > 2) {
-            $shortTitles = '\makeatletter
-  \def\AMC@loc@qf#1{\textbf{Q. #1 :}}
-  %\def\AMC@loc@q#1#2{\textbf{Q. #1} #2}
-\makeatother
+            $shortTitles = '
+\def\AMCformQuestion#1{\vspace{\AMCformVSpace}\par{\bf Q.{#1}:}}
+\def\AMCformAnswer#1{\hspace{\AMCformHSpace}#1}
 ';
         }
         $header = <<<EOL
