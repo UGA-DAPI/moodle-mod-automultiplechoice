@@ -110,6 +110,7 @@ $options
 \\let\\mydate\\@date
 \\makeatother
 
+{$params->customlayout}
 $shortTitles
 $multi
 \\AMCrandomseed{{$rand}}

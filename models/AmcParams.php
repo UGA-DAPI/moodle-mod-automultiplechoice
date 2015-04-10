@@ -85,6 +85,8 @@ class AmcParams
 
     public $instructionsprefixformat = 2; // FORMAT_PLAIN
 
+    public $customlayout;
+
     /**
      * Validate the instance and update $this->errors.
      *
@@ -136,7 +138,7 @@ class AmcParams
      */
     public function readFromForm($input)
     {
-        foreach (['displaypoints', 'copies', 'questionsColumns', 'answerSheetColumns', 'minscore', 'grademax'] as $col) {
+        foreach (['displaypoints', 'copies', 'questionsColumns', 'answerSheetColumns', 'minscore', 'grademax', 'customlayout'] as $col) {
             if (isset($input[$col])) {
                 $this->$col = (int) $input[$col];
             }
