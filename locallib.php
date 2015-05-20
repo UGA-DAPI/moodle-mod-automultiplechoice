@@ -151,3 +151,10 @@ function displayGradeInfo(amc\AmcProcess $process) {
         echo "<div>Correction des copies déjà effectuée le " . amc\AmcProcess::isoDate($gradetime) . "</div>\n";
     }
 }
+
+function get_code($name) {
+	    preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
+	        return $res['student'].'_'.$res['copy'];
+
+}
+

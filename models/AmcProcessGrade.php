@@ -77,7 +77,7 @@ class AmcProcessGrade extends AmcProcess
             '--data', $pre . '/data',
             '--progression-id', 'notation',
             '--progression', '1',
-            '--seuil', '0.5', // black ratio threshold
+            '--seuil', '0.86', // black ratio threshold
             '--grain', $this->quizz->amcparams->gradegranularity,
             '--arrondi', $this->quizz->amcparams->graderounding,
             '--notemin', $this->quizz->amcparams->minscore,
@@ -175,7 +175,7 @@ class AmcProcessGrade extends AmcProcess
             '--ch-sign', '4',
             '--cr', $pre . '/cr',
             '--data', $pre.'/data',
-            //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
+            '--id-file', $pre. '/student.txt'  , // undocumented option: only work with students whose ID is in this file
             '--taille-max', '1000x1500',
             '--qualite', '90',
             '--line-width', '2',
@@ -187,7 +187,7 @@ class AmcProcessGrade extends AmcProcess
             '--verdict', '%(ID) Note: %s/%m (score total : %S/%M)',
             '--verdict-question', '"%s / %m"',
             '--no-rtl',
-            '--changes-only',
+            '--no-changes-only',
             '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
             //'--noms-encodage', 'UTF-8',
             //'--csv-build-name', 'surname name',
@@ -198,45 +198,56 @@ class AmcProcessGrade extends AmcProcess
         }
         return $res;
     }
-
      /**
-     * lowl-level Shell-executes 'amc regroupe'
-     * fills the cr/corrections/pdf directory with a global pdf file (parameter single==true) for all copies
-     * or one pdf per student (single==false)
-     * @single bool
-     * @return bool
-     */
-    protected function amcRegroupe() {
-        $pre = $this->workdir;
-        $parameters = array(
-            //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
-            '--no-compose',
-            '--projet',  $pre,
-            '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
-            '--data', $pre.'/data',
-            '--progression-id', 'regroupe',
-            '--progression', '1',
-            '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
-            '--noms-encodage', 'UTF-8',
-            '--sort', 'n',
-            '--register',
-            '--no-force-ascii',
-	    '--modele', 'cr-(moodleid).pdf'
-            /* // useless with no-compose
-              '--tex-src', $pre . '/' . $this->format->getFilename(),
-              '--filter', $this->format->getFilterName(),
-              '--with', 'xelatex',
-              '--filtered-source', $pre.'/prepare-source_filtered.tex',
-              '--n-copies', (string) $this->quizz->amcparams->copies,
-               */
-        );
-        $res = $this->shellExecAmc('regroupe', $parameters);
-        if ($res) {
-            $this->log('regroup', '');
-            $amclog = Log::build($this->quizz->id);
-            $amclog->write('correction');
-        }
-        return $res;
+	     *      * lowl-level Shell-executes 'amc regroupe'
+	     *           * fills the cr/corrections/pdf directory with a global pdf file (parameter single==true) for all copies
+	     *                * or one pdf per student (single==false)
+	     *                     * @single bool
+	     *                          * @return bool
+	     *                               */
+    protected function amcRegroupe($single=true) {
+	    $pre = $this->workdir;
+	    if ($single) {
+		    $addon = array(
+			    '--single-output', $this->normalizeFilename('corrections'), // merge all sheets into one file that rules them all
+		    );
+	    } else {
+		    $addon = array(
+			    '--modele', 'cr-(N).pdf', // "(ID)" is replaced by the complete name
+			    '--id-file', $pre. '/student.txt'  , // undocumented option: only work with students whose ID is in this file
+			   // '--csv-build-name', '(nom|id)-(prenom|surname)', // defines the complete name as the columns "id-surname" of the CSV
+		    );
+	    }
+	    $parameters = array_merge(
+		    array(
+			    '--no-compose',
+			    '--projet',  $pre,
+			    '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
+			    '--data', $pre.'/data',
+			    '--progression-id', 'regroupe',
+			    '--progression', '1',
+			    '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
+			    '--noms-encodage', 'UTF-8',
+			    '--sort', 'n',
+			    '--register',
+			    '--no-force-ascii'
+			    /* // useless with no-compose
+			  '--tex-src', $pre . '/' . $this->format->getFilename(),
+			'--filter', $this->format->getFilterName(),
+			      '--with', 'xelatex',
+			    '--filtered-source', $pre.'/prepare-source_filtered.tex',
+			 '--n-copies', (string) $this->quizz->amcparams->copies,
+		     */
+		    ),
+		    $addon
+	    );
+	    $res = $this->shellExecAmc('regroupe', $parameters);
+	    if ($res) {
+		    $this->log('regroup', '');
+		    $amclog = Log::build($this->quizz->id);
+		    $amclog->write('correction');
+	    }
+	    return $res;
     }
 
      /**
@@ -265,35 +276,21 @@ class AmcProcessGrade extends AmcProcess
      */
     protected function amcAnnotePdf() {
 	$pre = $this->workdir;    
-	array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
+	//array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
         array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
-
-        if (!$this->amcAnnote()) {
-            return false;
-        }
-        if (!$this->amcRegroupe()) {
-            return false;
+        $allcopy = array_map('get_code',glob($pre . '/cr/name-*.jpg'));
+	foreach($allcopy as $copy){
+		$fp = fopen($pre . '/student.txt', 'w');
+		fwrite($fp,str_replace('_',':',$copy));
+		fclose($fp);	
+		if (!$this->amcAnnote()) {
+			return false;
+		}
+		if (!$this->amcRegroupe(false)) {
+			return false;
+		}
 	}
-	$cmd  = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
-		." -sOutputFile=".$pre.'/cr/corrections/pdf/'.$this->normalizeFilename('corrections')
-		." ".$pre."/cr/corrections/pdf/cr-*.pdf";
-	$lines = array();
-	$returnVal = 0;
-	exec($cmd, $lines, $returnVal);
-
-	$this->getLogger()->write($this->formatShellOutput($cmd, $lines, $returnVal));
-	if ($output) {
-		$this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_DEVELOPER);
-	}
-	if ($returnVal === 0) {
-		return true;
-	} else {
-		/**
-		 *       * @todo Fill $this->errors instead of outputing HTML on the fly
-		 *             */
-		$this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_NORMAL);
-		return false;
-	}
+	return $this->amcRegroupe(true);
     }
 
     /**
@@ -328,7 +325,7 @@ class AmcProcessGrade extends AmcProcess
 	    }
 	    $this->grades[] = (object) array(
 		'userid' => $userid,
-                'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
+                'rawgrade' => str_replace(',', '.', $data[6])
 	);
         }
 	fclose($input);

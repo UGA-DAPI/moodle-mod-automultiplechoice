@@ -206,7 +206,7 @@ class HtmlToTex
             return $res;
         }
         $imgSrc = $e->getAttribute('src');
-        $imgTmpname = $this->tmpDir . '/' . md5($imgSrc);
+        $imgTmpname = $this->tmpDir . '/' . md5($imgSrc).'.png';
 
         $curl = curl_init($imgSrc);
         $fp = fopen($imgTmpname, "w");

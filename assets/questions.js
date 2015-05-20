@@ -1,7 +1,6 @@
 /* 
  * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
  */
-
 $(document).ready(function() {
 	var lang = $('html').first().attr('lang');
 	var oLanguage = {};
@@ -86,3 +85,4 @@ $(document).ready(function() {
         Section.add();
     });
 } );
+

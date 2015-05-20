@@ -115,7 +115,7 @@ class AmcProcessUpload extends AmcProcess
             $parammultiple,
             '--tol-marque', '0.2,0.2',
             '--prop', '0.8',
-            '--bw-threshold', '0.6',
+            '--bw-threshold', '0.9',
             '--progression-id' , 'analyse',
             '--progression', '1',
             '--n-procs', '0',

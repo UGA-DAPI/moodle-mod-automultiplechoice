@@ -53,8 +53,9 @@ $PAGE->set_cacheable(false);
 $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin('ui');
 $PAGE->requires->jquery_plugin('ui-css');
-$PAGE->requires->js(new moodle_url('assets/dataTables/jquery.dataTables.min.js'));
-$PAGE->requires->css(new moodle_url('assets/dataTables/css/jquery.dataTables.css'));
+$PAGE->requires->jquery_plugin('dataTables','mod_automultiplechoice'); //new moodle_url('assets/dataTables/jquery.dataTables.min.js'));
+//$PAGE->requires->css(new moodle_url('assets/dataTables/css/jquery.dataTables.css'));
+
 
 $PAGE->requires->js(new moodle_url('assets/questions.js'));
 $PAGE->requires->css(new moodle_url('assets/amc.css'));
@@ -69,31 +70,31 @@ echo $output->header();
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('questionoperations', 'automultiplechoice'));
 echo '<p>' . $OUTPUT->action_link(
-	new moodle_url('/question/import.php', array('courseid' => $course->id)),
-	get_string('importfilequestions', 'automultiplechoice'),
-	null,
-	array('target' => '_blank')
-) . '</p>';
+        new moodle_url('/question/import.php', array('courseid' => $course->id)),
+        get_string('importfilequestions', 'automultiplechoice'),
+        null,
+        array('target' => '_blank')
+    ) . '</p>';
 echo '<p>' . $OUTPUT->action_link(
-	new moodle_url('/local/questionssimplified/edit_wysiwyg.php', array('courseid' => $course->id)),
-	get_string('importquestions', 'automultiplechoice'),
-	null,
-	array('target' => '_blank')
-) . '</p>';
+        new moodle_url('/local/questionssimplified/edit_wysiwyg.php', array('courseid' => $course->id)),
+        get_string('importquestions', 'automultiplechoice'),
+        null,
+        array('target' => '_blank')
+    ) . '</p>';
 echo '<p>' . $OUTPUT->action_link(
-	new moodle_url('/local/questionssimplified/edit_standard.php', array('courseid' => $course->id)),
-	get_string('createquestions', 'automultiplechoice'),
-	null,
-	array('target' => '_blank')
-) . '</p>';
+        new moodle_url('/local/questionssimplified/edit_standard.php', array('courseid' => $course->id)),
+        get_string('createquestions', 'automultiplechoice'),
+        null,
+        array('target' => '_blank')
+    ) . '</p>';
 echo '<p>' . $OUTPUT->action_link(
-	new moodle_url('/question/edit.php', array('courseid' => $course->id)),
-	get_string('questionbank', 'question'),
-	null,
-	array('target' => '_blank')
-) . '</p>';
+        new moodle_url('/question/edit.php', array('courseid' => $course->id)),
+        get_string('questionbank', 'question'),
+        null,
+        array('target' => '_blank')
+    ) . '</p>';
 echo "<p>Si vos questions récentes n'apparaissent pas, "
-	. "pensez à rafraichir la page de votre navigateur (F5) et à trier par date descendante.</p>";
+        . "pensez à rafraichir la page de votre navigateur (F5) et à trier par date descendante.</p>";
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->box_start('generalbox', 'questions-part-selecting');
