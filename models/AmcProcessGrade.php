@@ -221,7 +221,7 @@ class AmcProcessGrade extends AmcProcess
             '--sort', 'n',
             '--register',
             '--no-force-ascii',
-	    '--modele', 'cr-(moodleid).pdf'
+        '--modele', 'cr-(moodleid).pdf'
             /* // useless with no-compose
               '--tex-src', $pre . '/' . $this->format->getFilename(),
               '--filter', $this->format->getFilterName(),
@@ -264,8 +264,8 @@ class AmcProcessGrade extends AmcProcess
      * @return bool
      */
     protected function amcAnnotePdf() {
-	$pre = $this->workdir;    
-	array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
+    $pre = $this->workdir;    
+    array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
         array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
 
         if (!$this->amcAnnote()) {
@@ -273,27 +273,27 @@ class AmcProcessGrade extends AmcProcess
         }
         if (!$this->amcRegroupe()) {
             return false;
-	}
-	$cmd  = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
-		." -sOutputFile=".$pre.'/cr/corrections/pdf/'.$this->normalizeFilename('corrections')
-		." ".$pre."/cr/corrections/pdf/cr-*.pdf";
-	$lines = array();
-	$returnVal = 0;
-	exec($cmd, $lines, $returnVal);
+    }
+    $cmd  = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
+        ." -sOutputFile=".$pre.'/cr/corrections/pdf/'.$this->normalizeFilename('corrections')
+        ." ".$pre."/cr/corrections/pdf/cr-*.pdf";
+    $lines = array();
+    $returnVal = 0;
+    exec($cmd, $lines, $returnVal);
 
-	$this->getLogger()->write($this->formatShellOutput($cmd, $lines, $returnVal));
-	if ($output) {
-		$this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_DEVELOPER);
-	}
-	if ($returnVal === 0) {
-		return true;
-	} else {
-		/**
-		 *       * @todo Fill $this->errors instead of outputing HTML on the fly
-		 *             */
-		$this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_NORMAL);
-		return false;
-	}
+    $this->getLogger()->write($this->formatShellOutput($cmd, $lines, $returnVal));
+    if ($output) {
+        $this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_DEVELOPER);
+    }
+    if ($returnVal === 0) {
+        return true;
+    } else {
+        /**
+         *       * @todo Fill $this->errors instead of outputing HTML on the fly
+         *             */
+        $this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_NORMAL);
+        return false;
+    }
     }
 
     /**
@@ -316,22 +316,22 @@ class AmcProcessGrade extends AmcProcess
         }
         $getCol = array_flip($header);
  
-	$this->grades = array();
+    $this->grades = array();
         while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
             $idnumber = $data[$getCol['student.number']];
-	    $userid=null;
-	    $userid = $data[$getCol['moodleid']];
-	    if ($userid) {
-		    $this->usersknown++;
-	    } else {
-		    $this->usersunknown++;
-	    }
-	    $this->grades[] = (object) array(
-		'userid' => $userid,
-                'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
-	);
+        $userid=null;
+        $userid = $data[$getCol['moodleid']];
+        if ($userid) {
+            $this->usersknown++;
+        } else {
+            $this->usersunknown++;
         }
-	fclose($input);
+        $this->grades[] = (object) array(
+        'userid' => $userid,
+                'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
+    );
+        }
+    fclose($input);
         return true;
     }
 
@@ -345,26 +345,29 @@ class AmcProcessGrade extends AmcProcess
      * @return boolean Success?
      */
     protected function writeFileStudentsList() {
-	global $DB;
+    global $DB;
         
         $studentList = fopen($this->workdir . self::PATH_STUDENTLIST_CSV, 'w');
         if (!$studentList) {
             return false;
         }
         fputcsv($studentList, array('surname', 'name', 'id', 'email','moodleid','groupslist'), self::CSV_SEPARATOR);
-	$codelength = get_config('mod_automultiplechoice', 'amccodelength');
-	$sql = "SELECT RIGHT(u.idnumber,".$codelength.") as idnumber ,u.firstname, u.lastname,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
+    $codelength = get_config('mod_automultiplechoice', 'amccodelength');
+    $sql = "SELECT u.idnumber ,u.firstname, u.lastname,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
                 ."JOIN {user_enrolments} ue ON (ue.userid = u.id) "
-		."JOIN {enrol} e ON (e.id = ue.enrolid) "
-		."LEFT JOIN  groups_members gm ON u.id=gm.userid "
-		."LEFT JOIN groups g ON g.id=gm.groupid  AND g.courseid=e.courseid " 
-		."WHERE u.idnumber != '' AND e.courseid = ? "
-		."GROUP BY u.id";
+        ."JOIN {enrol} e ON (e.id = ue.enrolid) "
+        ."LEFT JOIN  groups_members gm ON u.id=gm.userid "
+        ."LEFT JOIN groups g ON g.id=gm.groupid  AND g.courseid=e.courseid " 
+        ."WHERE u.idnumber != '' AND e.courseid = ? "
+        ."GROUP BY u.id";
         $users=  $DB->get_records_sql($sql, array($this->quizz->course));
 
         if (!empty($users)) {
-		foreach ($users as $user) {
-				fputcsv($studentList, array($user->lastname, $user->firstname, $user->idnumber, $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
+        foreach ($users as $user) {
+                $nums=explode(";",$user->idnumber);
+                foreach ($nums as $num){
+                    fputcsv($studentList, array($user->lastname, $user->firstname, $num, $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
+                }
             }
         }
         fclose($studentList);
@@ -396,24 +399,24 @@ class AmcProcessGrade extends AmcProcess
             return false;
         }
         $getCol = array_flip($header);
-	fputcsv($output, array('id','name','surname','groups', 'mark'), self::CSV_SEPARATOR);
-	$this->grades = array();
+    fputcsv($output, array('id','name','surname','groups', 'mark'), self::CSV_SEPARATOR);
+    $this->grades = array();
         while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
-		$idnumber = $data[$getCol['student.number']];
-		$userid=null;
-		$userid = $data[$getCol['moodleid']];
-		if ($userid) {
-			$this->usersknown++;
-		} else {
-			$this->usersunknown++;
-		}
-		$this->grades[] = (object) array(
-			'userid' => $userid,
-			'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
-										            );
-		if ($data[$getCol['A:id']]!='NONE'){
-			fputcsv($output, array($data[$getCol['A:id']],$data[$getCol['name']],$data[$getCol['surname']],$data[$getCol['groupslist']], $data[$getCol['Mark']]), self::CSV_SEPARATOR);
-		}
+        $idnumber = $data[$getCol['student.number']];
+        $userid=null;
+        $userid = $data[$getCol['moodleid']];
+        if ($userid) {
+            $this->usersknown++;
+        } else {
+            $this->usersunknown++;
+        }
+        $this->grades[] = (object) array(
+            'userid' => $userid,
+            'rawgrade' => str_replace(',', '.', $data[$getCol['Mark']])
+                                                    );
+        if ($data[$getCol['A:id']]!='NONE'){
+            fputcsv($output, array($data[$getCol['A:id']],$data[$getCol['name']],$data[$getCol['surname']],$data[$getCol['groupslist']], $data[$getCol['Mark']]), self::CSV_SEPARATOR);
+        }
         }
         fclose($input);
         fclose($output);
@@ -424,11 +427,11 @@ class AmcProcessGrade extends AmcProcess
     
     protected function writeGrades(){
 
-	global $DB;
-	$grades = $this->getMarks();
-	$record = $DB->get_record('automultiplechoice', array('id' => $this->quizz->id), '*');
-	\automultiplechoice_grade_item_update($record, $grades);
-	return true;
+    global $DB;
+    $grades = $this->getMarks();
+    $record = $DB->get_record('automultiplechoice', array('id' => $this->quizz->id), '*');
+    \automultiplechoice_grade_item_update($record, $grades);
+    return true;
     } 
     
     
@@ -504,7 +507,7 @@ class AmcProcessGrade extends AmcProcess
         $files = glob($this->workdir . '/cr/corrections/pdf/cr-*.pdf');
         $userids = array();
         foreach ($files as $file) {
-	    $userids[] = (int) substr($file,3,-4);
+        $userids[] = (int) substr($file,3,-4);
         }
 
         return $userids;

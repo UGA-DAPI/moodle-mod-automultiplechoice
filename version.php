@@ -13,7 +13,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2014102300;      // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2012120300;      // Requires this Moodle version
-$module->cron      = 0;               // Period for cron to check this module (secs)
-$module->component = 'mod_automultiplechoice'; // To check on upgrade, that module sits in correct place
+$plugin->version   = 2016020400;      // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2012120300;      // Requires this Moodle version
+$plugin->cron      = 0;               // Period for cron to check this plugin (secs)
+$plugin->component = 'mod_automultiplechoice'; // To check on upgrade, that plugin sits in correct place
