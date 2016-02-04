@@ -350,7 +350,7 @@ class AmcProcessGrade extends AmcProcess
         }
         fputcsv($studentList, array('surname', 'name', 'id', 'email','moodleid','groupslist'), self::CSV_SEPARATOR);
 	$codelength = get_config('mod_automultiplechoice', 'amccodelength');
-	$sql = "SELECT RIGHT(u.idnumber,".$codelength.") as idnumber ,u.firstname, u.lastname,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
+    $sql = "SELECT u.idnumber ,u.firstname, u.lastname,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
                 ."JOIN {user_enrolments} ue ON (ue.userid = u.id) "
 		."JOIN {enrol} e ON (e.id = ue.enrolid) "
 		."LEFT JOIN  groups_members gm ON u.id=gm.userid "
@@ -361,7 +361,10 @@ class AmcProcessGrade extends AmcProcess
 
         if (!empty($users)) {
 		foreach ($users as $user) {
-				fputcsv($studentList, array($user->lastname, $user->firstname, $user->idnumber, $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
+                $nums=explode(";",$user->idnumber);
+                foreach ($nums as $num){
+                    fputcsv($studentList, array($user->lastname, $user->firstname, substr($num,-1*$codelength)$num, $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
+                }
             }
         }
         fclose($studentList);
