@@ -67,6 +67,8 @@ $string['amc_lstudent_default'] = "Veuillez coder votre numéro d'étudiant ci-c
 $string['amc_lname_default'] = 'Nom et prénom';
 $string['amc_markmulti'] = 'Marque pour réponses multiples';
 $string['amc_markmulti_help'] = 'Un trèfle sera affiché quand une question a plusieurs bonnes réponses.';
+$string['amc_score'] = 'Affichage du mode de barème';
+$string['amc_score_help'] = 'Affiche le texte descriptif du barème sur le sujet.';
 
 $string['amc_customlayout'] = 'Personnalisation de la mise en pages';
 $string['amc_customlayout_help'] = 'Personnalise la mise en page du questionnaire en changeant les valeurs par défaut.';

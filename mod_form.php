@@ -157,6 +157,9 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         $mform->addElement('advcheckbox', 'amc[markmulti]', get_string('amc_markmulti', 'automultiplechoice'));
         $mform->setType('amc[markmulti]', PARAM_BOOL);
+	
+	$mform->addElement('advcheckbox', 'amc[score]', get_string('amc_score', 'automultiplechoice'));
+        $mform->setType('amc[score]', PARAM_BOOL);
 
         $mform->addElement('textarea', 'amc[customlayout]', get_string('amc_customlayout', 'automultiplechoice'), array('rows'=>'3', 'cols'=>'64'));
         $mform->setType('amc[customlayout]', PARAM_TEXT);
@@ -195,7 +198,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                         array(
                             'qnumber', 'amc[copies]', 'amc[shuffleq]', 'amc[shufflea]',
                             'amc[separatesheet]', 'amc[displaypoints]', 'amc[markmulti]',
-                            'amc[customlayout]'// 'score', 'amc[scoringset]', 'amc[minscore]',
+                            'amc[customlayout]','amc[score]'// 'score', 'amc[scoringset]', 'amc[minscore]',
                         )
                 );
             }

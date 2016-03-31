@@ -64,6 +64,9 @@ class AmcParams
     public $markmulti = false;
 
     /** @var boolean */
+    public $score = false;
+    
+    /** @var boolean */
     public $locked = false;
 
     /** @var integer */
@@ -142,7 +145,7 @@ class AmcParams
                 $this->$col = (int) $input[$col];
             }
         }
-        foreach (['shuffleq', 'shufflea', 'separatesheet', 'markmulti'] as $col) {
+        foreach (['shuffleq', 'shufflea', 'separatesheet', 'markmulti','score'] as $col) {
             if (isset($input[$col])) {
                 $this->$col = (bool) $input[$col];
             }

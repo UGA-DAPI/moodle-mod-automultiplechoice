@@ -170,11 +170,10 @@ EOL;
         } else {
             $scoring = $this->scoringset->findMatchingRule($question)->getExpression($question);
         }
-        if ($scoring) {
-            $scoring .= ',b=' . $question->score;
-        } else {
-            $scoring = $question->score;
-        }
+        if (!$scoring) {
+            $scoring = 'b=' . $question->score;
+        } 
+        
         $questionText = ($scoring ? '    \\scoring{' . $scoring . "}\n" : '')
                 . ($dp == \mod\automultiplechoice\AmcParams::DISPLAY_POINTS_BEGIN ? $pointsTxt . ' ' : '')
                 . $this->htmlToLatex(format_text($question->questiontext, $question->questiontextformat, ['filter' => false]))
