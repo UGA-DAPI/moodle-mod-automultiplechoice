@@ -1,145 +1,145 @@
 {
-	"__comment": "Allowed types: macro, env, raw, hide, skip, custom. With 'custom', the parameter 'method' is expected, but defaults to 'tag<tagname>ToTex'. The call passes the DOMElement.",
-	"a": {
-		"type": "raw",
-		"tex": ["{}", "{}"]
-	},
-	"b": {
-		"type": "macro",
-		"tex": "textbf"
-	},
-	"blockquote": {
-		"type": "env",
-		"tex": "quote"
-	},
-	"body": {
-		"type": "skip"
-	},
-	"br": {
-		"type": "macro",
-		"tex": "newline"
-	},
-	"center": {
-		"type": "env",
-		"tex": "center"
-	},
-	"code.tex": {
-		"type": "custom",
-		"method": "embeddedTex"
-	},
-	"code": {
-		"type": "env",
-		"tex": "verbatim"
-	},
-	"dd": {
-		"type": "raw",
-		"tex": [" ", "\n"]
-	},
-	"div": {
-		"type": "raw",
-		"tex": ["\n\n", "\n\n"]
-	},
-	"dl": {
-		"type": "env",
-		"tex": "description"
-	},
-	"dt": {
-		"type": "raw",
-		"tex": ["\\item[", "]"]
-	},
-	"em": {
-		"type": "macro",
-		"tex": "emph"
-	},
-	"h1": {
-		"type": "macro",
-		"tex": "section*"
-	},
-	"h2": {
-		"type": "macro",
-		"tex": "subsection*"
-	},
-	"h3": {
-		"type": "macro",
-		"tex": "subsubsection*"
-	},
-	"h4": {
-		"type": "macro",
-		"tex": "paragraph*"
-	},
-	"h5": {
-		"type": "macro",
-		"tex": "subparagraph*"
-	},
-	"h6": {
-		"type": "raw",
-		"tex": ["{\\bf{}", "}"]
-	},
-	"head": {
-		"type": "hide"
-	},
-	"html": {
-		"type": "skip"
-	},
-	"i": {
-		"type": "macro",
-		"tex": "textit"
-	},
-	"img": {
-		"type": "custom"
-	},
-	"li": {
-		"type": "raw",
-		"tex": ["\\item[]", ""]
-	},
-	"meta": {
-		"type": "hide"
-	},
-	"ol": {
-		"type": "env",
-		"tex": "enumerate"
-	},
-	"p": {
-		"type": "raw",
-		"tex": ["\n\n", "\n\n"]
-	},
-	"pre": {
-		"type": "env",
-		"tex": "verbatim"
-	},
-	"script": {
-		"type": "kill"
-	},
-	"span": {
-		"type": "raw",
-		"tex": ["{}", "{}"]
-	},
-	"strong": {
-		"type": "raw",
-		"tex": ["{\\bf{}", "}"]
-	},
-	"table": {
-		"type": "custom"
-	},
-	"tbody": {
-		"type": "skip"
-	},
-	"thead": {
-		"type": "skip"
-	},
-	"td": {
-		"type": "skip"
-	},
-	"th": {
-		"type": "raw",
-		"tex": ["{\\bf{}", "}"]
-	},
-	"tr": {
-		"type": "raw",
-		"tex": [" \\\\ ", ""]
-	},
-	"ul": {
-		"type": "env",
-		"tex": "itemize"
-	}
+    "__comment": "Allowed types: macro, env, raw, hide, skip, custom. With 'custom', the parameter 'method' is expected, but defaults to 'tag<tagname>ToTex'. The call passes the DOMElement.",
+    "a": {
+        "type": "raw",
+        "tex": ["{}", "{}"]
+    },
+    "b": {
+        "type": "macro",
+        "tex": "textbf"
+    },
+    "blockquote": {
+        "type": "env",
+        "tex": "quote"
+    },
+    "body": {
+        "type": "skip"
+    },
+    "br": {
+        "type": "raw",
+        "tex": ["\\", "\n"]
+    },
+    "center": {
+        "type": "env",
+        "tex": "center"
+    },
+    "code.tex": {
+        "type": "custom",
+        "method": "embeddedTex"
+    },
+    "code": {
+        "type": "env",
+        "tex": "verbatim"
+    },
+    "dd": {
+        "type": "raw",
+        "tex": [" ", "\n"]
+    },
+    "div": {
+        "type": "raw",
+        "tex": ["\n\n", "\n\n"]
+    },
+    "dl": {
+        "type": "env",
+        "tex": "description"
+    },
+    "dt": {
+        "type": "raw",
+        "tex": ["\\item[", "]"]
+    },
+    "em": {
+        "type": "macro",
+        "tex": "emph"
+    },
+    "h1": {
+        "type": "macro",
+        "tex": "section*"
+    },
+    "h2": {
+        "type": "macro",
+        "tex": "subsection*"
+    },
+    "h3": {
+        "type": "macro",
+        "tex": "subsubsection*"
+    },
+    "h4": {
+        "type": "macro",
+        "tex": "paragraph*"
+    },
+    "h5": {
+        "type": "macro",
+        "tex": "subparagraph*"
+    },
+    "h6": {
+        "type": "raw",
+        "tex": ["{\\bf{}", "}"]
+    },
+    "head": {
+        "type": "hide"
+    },
+    "html": {
+        "type": "skip"
+    },
+    "i": {
+        "type": "macro",
+        "tex": "textit"
+    },
+    "img": {
+        "type": "custom"
+    },
+    "li": {
+        "type": "raw",
+        "tex": ["\\item[]", ""]
+    },
+    "meta": {
+        "type": "hide"
+    },
+    "ol": {
+        "type": "env",
+        "tex": "enumerate"
+    },
+    "p": {
+        "type": "raw",
+        "tex": ["\n\n", "\n\n"]
+    },
+    "pre": {
+        "type": "env",
+        "tex": "verbatim"
+    },
+    "script": {
+        "type": "kill"
+    },
+    "span": {
+        "type": "raw",
+        "tex": ["{}", "{}"]
+    },
+    "strong": {
+        "type": "raw",
+        "tex": ["{\\bf{}", "}"]
+    },
+    "table": {
+        "type": "custom"
+    },
+    "tbody": {
+        "type": "skip"
+    },
+    "thead": {
+        "type": "skip"
+    },
+    "td": {
+        "type": "skip"
+    },
+    "th": {
+        "type": "raw",
+        "tex": ["{\\bf{}", "}"]
+    },
+    "tr": {
+        "type": "raw",
+        "tex": [" \\\\ ", ""]
+    },
+    "ul": {
+        "type": "env",
+        "tex": "itemize"
+    }
 }

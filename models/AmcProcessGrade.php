@@ -363,7 +363,7 @@ class AmcProcessGrade extends AmcProcess
 		foreach ($users as $user) {
                 $nums=explode(";",$user->idnumber);
                 foreach ($nums as $num){
-                    fputcsv($studentList, array($user->lastname, $user->firstname, substr($num,-1*$codelength)$num, $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
+                    fputcsv($studentList, array($user->lastname, $user->firstname, substr($num,-1*$codelength), $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
                 }
             }
         }

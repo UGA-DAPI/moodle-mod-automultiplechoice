@@ -103,5 +103,6 @@ $string['note'] = 'Grades and annotated copies';
 $string['export'] = 'Reports';
 
 $string['questionoperations'] = 'Before selecting questions, you may...';
+$string['importfilequestions'] = 'Import file with questions'; 
 $string['importquestions'] = 'Import questions';
 $string['createquestions'] = 'Create questions';

@@ -53,8 +53,9 @@ $PAGE->set_cacheable(false);
 $PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin('ui');
 $PAGE->requires->jquery_plugin('ui-css');
-$PAGE->requires->jquery_plugin('dataTables','mod_automultiplechoice'); //new moodle_url('assets/dataTables/jquery.dataTables.min.js'));
-//$PAGE->requires->css(new moodle_url('assets/dataTables/css/jquery.dataTables.css'));
+$PAGE->requires->jquery_plugin('dataTables','mod_automultiplechoice');
+//$PAGE->requires->js(new \moodle_url('/mod/automultiplechoice/assets/dataTables/jquery.dataTables.min.js'));
+//$PAGE->requires->css(new \moodle_url('/mod/automultiplechoice/assets/dataTables/css/jquery.dataTables.css'));
 
 
 $PAGE->requires->js(new moodle_url('assets/questions.js'));
