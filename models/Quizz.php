@@ -131,7 +131,7 @@ class Quizz
      */
     public function getInstructions($filter = true) {
         $scoringset = ScoringSystem::read()->getScoringSet($this->amcparams->scoringset);
-        if ($scoringset) {
+        if (($this->amcparams->score)&&($scoringset)) {
             $suffix =  "\n\n" . $scoringset->description;
         } else {
             $suffix = '';

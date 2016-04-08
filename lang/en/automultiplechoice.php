@@ -68,6 +68,9 @@ $string['amc_lname_default'] = 'Name and surname';
 $string['amc_markmulti'] = 'Mark when multiple answers';
 $string['amc_markmulti_help'] = 'A clover leaf will appear when a question has more than one right answer.';
 
+$string['amc_score'] = 'Show instructions score';
+$string['amc_score_help'] = 'The instructions of calculate score print on the subject.';
+
 $string['amc_customlayout'] = 'Custom layout';
 $string['amc_customlayout_help'] = ' Customize QCM layout.';
 
