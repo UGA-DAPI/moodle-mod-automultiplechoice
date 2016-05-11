@@ -91,7 +91,7 @@ class Quizz
      * @return array
      */
     public function findScannedFiles() {
-        return glob($this->getDirName() . "/scans/*.{jpg,pbm,ppm,tif,tiff}", GLOB_BRACE);
+        return glob($this->getDirName() . "/scans/*.{png,jpg,pbm,ppm,tif,tiff}", GLOB_BRACE);
     }
 
     /**
