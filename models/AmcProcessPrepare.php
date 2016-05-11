@@ -55,11 +55,15 @@ class AmcProcessPrepare extends AmcProcess
         }
         $this->getLogger()->clear();
 
+	$path = get_config('mod_automulitplechoice','xelatexpath');
+	if ($path==''){
+		$path = 'xelatex';
+	}
         $pre = $this->workdir;
         $res = $this->shellExecAmc('prepare',
             array(
                 '--n-copies', (string) $this->quizz->amcparams->copies,
-                '--with', 'xelatex',
+                '--with', $path,
                 '--filter', $format->getFiltername(),
                 '--mode', 's[sc]',
                 '--prefix', $pre,

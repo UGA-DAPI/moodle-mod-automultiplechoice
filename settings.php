@@ -13,6 +13,16 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/automultiplechoice/locallib.php');
 
+    $s = new admin_setting_configtext(
+        'xelatexpath',
+        'Chemin vers XelateX',
+        'Chemin vers le moteur LateX XelateX',
+        '',
+        PARAM_TEXT
+    );
+    $s->plugin = 'mod_automultiplechoice';
+    $settings->add($s);
+    
     $defaulttpl = __DIR__ . '/amctemplate';
     $s = new admin_setting_configtext(
         'amctemplate',
