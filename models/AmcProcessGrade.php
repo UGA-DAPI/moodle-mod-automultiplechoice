@@ -325,7 +325,7 @@ class AmcProcessGrade extends AmcProcess
 	    }
 	    $this->grades[] = (object) array(
 		'userid' => $userid,
-                'rawgrade' => str_replace(',', '.', $data[6])
+                'rawgrade' => str_replace(',', '.', $data[7])
 	);
         }
 	fclose($input);
