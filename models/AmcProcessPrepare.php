@@ -55,7 +55,7 @@ class AmcProcessPrepare extends AmcProcess
         }
         $this->getLogger()->clear();
 
-	$path = get_config('mod_automulitplechoice','xelatexpath');
+	$path = get_config('mod_automultiplechoice','xelatexpath');
 	if ($path==''){
 		$path = 'xelatex';
 	}
