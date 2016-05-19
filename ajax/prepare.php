@@ -1,60 +1,49 @@
 <?php
 
-/*
- * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
+/**
+ * @package    mod_automultiplechoice
+ * @copyright  2014 Silecs
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-global $CFG;
+use \mod\automultiplechoice as amc;
 
-require_once dirname(dirname(dirname(__DIR__))) . '/config.php';
-require_once dirname(__DIR__) . '/models/Quizz.php';
+require_once dirname(__DIR__) . '/locallib.php';
 require_once dirname(__DIR__) . '/models/AmcProcessPrepare.php';
 
-$a  = optional_param('a', 0, PARAM_INT);  // automultiplechoice instance ID
+global $DB, $OUTPUT, $PAGE;
+/* @var $PAGE moodle_page */
+/* @var $OUTPUT core_renderer */
+
+$controller = new amc\Controller();
+$quizz = $controller->getQuizz();
+$cm = $controller->getCm();
+$course = $controller->getCourse();
+
+require_capability('mod/automultiplechoice:update', $controller->getContext());
+
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $redirect = optional_param('redirect', false, PARAM_BOOL);
 
-if ($a) {
-    $quizz = \mod\automultiplechoice\Quizz::findById($a);
-    $course     = $DB->get_record('course', array('id' => $quizz->course), '*', MUST_EXIST);
-    $cm         = get_coursemodule_from_instance('automultiplechoice', $quizz->id, $course->id, false, MUST_EXIST);
-} else {
-    echo $OUTPUT->error_text('You must specify an instance ID');
-    exit();
-}
-
-require_login($course, true, $cm);
-$context = context_module::instance($cm->id);
-require_capability('mod/automultiplechoice:view', $context);
-
-$process = new \mod\automultiplechoice\AmcProcessPrepare($quizz);
+$process = new amc\AmcProcessPrepare($quizz);
 
 if ($action == 'prepare') {
-    if ($process->saveAmctxt()) {
-        debugging("Fichier source enregistré.", DEBUG_NORMAL);
-    } else {
-        echo $OUTPUT->error_text("Erreur sur le fichier source.");
-        exit();
-    }
-
-    if ($process->createPdf()) {
+    if ($process->amcCreatePdf("latex")) {
         echo "<h3>Fichiers PDF nouvellement créés</h3>";
-        echo $process->htmlPdfLinks();
+        echo $process->getHtmlPdfLinks();
     } else {
-        echo $OUTPUT->error_text("Erreur lors de la création des fichiers PDF.");
+        echo $OUTPUT->error_text("Erreur lors de la création des fichiers PDF :" . $process->getLastError());
         exit();
     }
 
-    if ($process->amcMeptex()) {
-        debugging("Mise en page (amc meptex) terminée.", DEBUG_NORMAL);
-    } else {
+    if (!$process->amcMeptex()) {
         echo $OUTPUT->error_text("Erreur lors du calcul de mise en page (amc meptex).");
         exit();
     }
 } else if ($action == 'zip') {
     if ($process->printAndZip()) {
         echo "<h3>Archive Zip créée</h3>";
-        echo $process->htmlZipLink();
+        echo $process->getHtmlZipLink();
     } else {
         echo $OUTPUT->error_text("Erreur lors de la création de l'archive.");
         exit();
@@ -62,5 +51,5 @@ if ($action == 'prepare') {
 }
 
 if ($redirect) {
-    redirect('/mod/automultiplechoice/prepare.php?a=' . $quizz->id);
+    redirect('/mod/automultiplechoice/documents.php?a=' . $quizz->id);
 }

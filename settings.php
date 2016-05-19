@@ -13,6 +13,16 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/automultiplechoice/locallib.php');
 
+    $s = new admin_setting_configtext(
+        'xelatexpath',
+        'Chemin vers XelateX',
+        'Chemin vers le moteur LateX XelateX',
+        '',
+        PARAM_TEXT
+    );
+    $s->plugin = 'mod_automultiplechoice';
+    $settings->add($s);
+    
     $defaulttpl = __DIR__ . '/amctemplate';
     $s = new admin_setting_configtext(
         'amctemplate',
@@ -71,7 +81,7 @@ if ($ADMIN->fulltree) {
             . "The first line of each block will be the title displayed in the dropdown list. Example:<pre>"
             . "Concours\nVous avez 4 heures.\nL'anonymat est garanti.\n---\nFirst Test\nPlease use a pencil and gray each selected case completely.</pre>",
         "",
-        PARAM_TEXT
+        PARAM_RAW
     );
     $s->plugin = 'mod_automultiplechoice';
     $settings->add($s);

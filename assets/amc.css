@@ -1,22 +1,78 @@
+.region-content h3 {
+	text-align: left;
+	font-variant: small-caps;
+}
+
+/* page questions : start */
+
+#questions-part-selecting {
+	float: left;
+	width: 49%;
+}
+#questions-part-selecting button {
+	width: 38px;
+}
+#questions-part-selected {
+	float: right;
+	width: 48%;
+}
+#questions-part-selected button[type="submit"] {
+	font-size: 110%;
+	font-weight: bold;
+}
+#questions-part-selected > p > button {
+	margin-left: 30%;
+}
 .datatable-end {
 	clear: both;
 	margin-bottom: 1.5ex;
 }
+ol#questions-selected {
+	counter-reset: li;
+	list-style: none;
+}
 #questions-selected > li {
 	clear: both;
 	max-width: 120ex;
-	line-height: 21px;
+	line-height: 2.3em;
+}
+#questions-selected > li:not(.question-section):before {
+	content: counter(li);
+	counter-increment: li;
+	display: inline-block;
+	position: absolute;
+	margin-left: -2.5em;
+	text-align: center;
+	padding: 2px 4px;
+	height: 1.4em;
+	width: 1.2em;
+	line-height: 1.8em;
+	border: .3em solid #97ceeb;
+	border-radius: 2em;
+	background: #97deeb;
+	color: black;
+	font-weight: bold;
 }
 #questions-selected > li button {
 	float: right;
 }
-#questions-selected > li label {
-	margin-left: 1.5em;
-	margin-right: 2.0em;
-}
 #questions-selected label.qscore {
 	float: right;
 }
+#questions-selected label {
+	margin-left: 2ex;
+}
+.question-section label {
+	display: inline-block;
+	width: 6em;
+	vertical-align: top;
+	font-weight: bold;
+}
+.question-section button {
+	height: 14ex;
+}
+/* page questions : end */
+
 
 .ui-icon {
 	position: absolute;
@@ -27,10 +83,17 @@
 	display: block;
 }
 
-th.score-mismatch {
+.score-mismatch {
 	background-color: #FF4040;
 }
 
+table.quizz-summary {
+	width: 100%;
+}
+table.quizz-summary th {
+	width: 30ex;
+	text-align: left;
+}
 td ul {
 	margin: 2px 4px 2px 2em;
 }
@@ -43,6 +106,9 @@ td ul {
 }
 
 .async-target {
+	display: none;
+}
+.async-post-load {
 	display: none;
 }
 .jsenabled .async-target {
@@ -78,4 +144,19 @@ td ul {
 #main-actions li.amc-process-next {
 	font-size: 200%;
 	width: auto;
+}
+
+#form-uploadscans > div {
+	width: 80ex;
+	text-align: right;
+}
+#form-uploadscans input#scanfile {
+	width: 50ex;
+}
+
+dt {
+	font-weight: bold;
+}
+dt:after {
+	content: " :";
 }

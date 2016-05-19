@@ -46,17 +46,18 @@ Here are the requirements, expressed as Debian packages:
 * texlive-xetex
 * lmodern
 * texlive-fonts-recommended
+* poppler-utils
 
 
 Installation
 ------------
 
-Put the source directory under the `local/` path of a Moodle instance.
+Put the source directory under the `mod/` path of a Moodle instance.
 
 ```
 cd /path/to/moodle
-cd local
-git clone https://github.com/UPMF/moodle-questionssimplified.git questionssimplified
+cd mod
+git clone https://github.com/UPMF/moodle-mod-automultiplechoicce automultiplechoice
 ```
 
 Then connect as an admin, and Moodle will complete the installation.

@@ -47,10 +47,13 @@ class ScoringSet
     /**
      * Finds a matching rule for a question.
      *
-     * @param type $question
-     * @return \mod\automultiplechoice\ScoringRule
+     * @param Question $question
+     * @return ScoringRule
      */
     public function findMatchingRule($question) {
+        if ($question->score == 0) {
+            return '';
+        }
         foreach ($this->rules as $rule) {
             if ($rule->match($question)) {
                 return $rule;

@@ -1,0 +1,58 @@
+Récapitulatif des processus "automultiplechoice" lancés
+
+@ = racine des données du compte
+  = .../moodledata/local/automultiplechoice/automultiplechoice_NNNNN 
+  (avec NNNNN = numéro de l'instance, ex. 00123)
+[] fichiers sqlite, placés sous @/data/*.sqlite
+NORM = nom du QCM normalisé par normalizeFilename() de $quizz->name
+
+
+amcCreatePdf   ->  @/ prepare-source.tex prepare-calage.xy , sujet-NORM.pdf catalog-NORM.pdf corrige-NORM.pdf , amc-compiled.*
+    V
+    V
+amcMeptex      ->  [capture, layout] créés
+    V
+    V
+amcImprime      -> @/sujets-NORM.zip , @/imprime/sujet-%e.pdf
+    V
+    V
+
+(upload copies)  -> /tmp/filename.pdf (par ex.)
+    V
+    V
+amcMeptex          [capture, layout] modifiés
+    V
+    V
+amcGetimages     -> @/scanlist , @/scans/NORMSCAN-page-*.ppm (pages brutes)
+    V
+    V
+amcAnalyse       -> @/cr/name-*.jpg, @/cr/page-*.jpg    N x (zone nom, page + surlignage coches)
+    V               [capture] modifié  (blobs images)
+    V
+
+amcPrepareBareme -> amc-compiled.* : pdf,xy créés ; .amc,.log mis à jour
+    V               [capture] modifié ; [scoring] créé
+    V
+amcNote          -> [capture, scoring] modifiés
+    V
+    V
+amcExport         -> @/exports/scores.csv  ;  amc-compiled.log,.pdf modifiés
+    V                [association] créé ; [capture, scoring] modifiés
+    V
+writeFileWithIdentifiedStudents  -> @exports/ : score_names.csv, student_list.csv
+    V
+    V
+amcAssociation  ???
+
+    V
+    V
+amcAnnotePdf
+[ amcAnnote   ]   -> @/cr/corrections/jpg/page-*.jpg
+[ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-NORM.pdf  (--single-output)
+[ amcRegroupe ]   -> @/cr/corrections/pdf/corrections-IDNUMBER-NOM.pdf  (normal)
+    V
+    V
+amcAssociation  ???
+
+
+note : l'appel à amcAssociation reste à préciser

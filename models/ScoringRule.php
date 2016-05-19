@@ -96,12 +96,12 @@ class ScoringRule
     }
 
     /**
-     * Returns true if the scroring rule can be applied to this question.
+     * Returns true if the scoring rule can be applied to this question.
      *
-     * @param object $question
+     * @param Question $question
      * @return boolean
      */
-    public function match($question) {
+    public function match(Question $question) {
         $this->errors = array();
         if (!isset($question->single)) {
             $this->errors[] = "Cannot apply a rule to a question that has no type single/multiple.";

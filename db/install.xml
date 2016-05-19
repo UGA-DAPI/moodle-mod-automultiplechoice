@@ -10,12 +10,15 @@
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="name of this question set" />
         <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="plain text description to display on each printed question sheet" />
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="1=HTML, 2=PLAIN..." />
         <FIELD NAME="comment" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="plain text comment for teachers - not to be printed" />
         <FIELD NAME="qnumber" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="number of questions" />
         <FIELD NAME="score" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="global score" />
         <FIELD NAME="amcparams" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="amc parameters, as a json serialized field" />
         <FIELD NAME="questions" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="question list, as a json serialized field" />
         <FIELD NAME="author" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="user.id of the question set author" />
+        <FIELD NAME="studentaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="1 if students are allowed to see their work" />
+        <FIELD NAME="corrigeaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="1 if students are allowed to see the corrige" />
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
       </FIELDS>
@@ -24,6 +27,22 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="author" UNIQUE="false" FIELDS="author"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="automultiplechoice_log" COMMENT="record of amc actions to define dependency checks and locks">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
+        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="foreign key automultiplechoice.id" />
+        <FIELD NAME="action" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="action name" />
+        <FIELD NAME="actiontime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="instance_fk" TYPE="foreign" FIELDS="instanceid" REFTABLE="automultiplechoice" REFFIELDS="id" />
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_instance_action" UNIQUE="true" FIELDS="instanceid, action" COMMENT="For a given instanceid and action, timestamp must be unique"/>
       </INDEXES>
     </TABLE>
   </TABLES>

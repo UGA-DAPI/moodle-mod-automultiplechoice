@@ -8,6 +8,9 @@
 
 namespace mod\automultiplechoice;
 
+require_once __DIR__ . '/Log.php';
+require_once __DIR__ . '/AmcLogfile.php';
+
 class AmcProcess
 {
     /**
@@ -26,23 +29,38 @@ class AmcProcess
      */
     protected $errors = array();
 
+    private $logger;
+
     /**
      * Constructor
      *
      * @param Quizz $quizz
      */
-    public function __construct($quizz) {
-        global $CFG;
+    public function __construct(Quizz $quizz) {
+        if (empty($quizz->id)) {
+            throw new Exception("No quizz ID");
+        }
         $this->quizz = $quizz;
 
-        $dir = sprintf('automultiplechoice_%05d', $this->quizz->id);
-        $this->workdir = $CFG->dataroot . '/local/automultiplechoice/' . $dir;
-        $this->relworkdir = '/local/automultiplechoice/' . $dir;
+        $this->workdir = $quizz->getDirName(true);
+        $this->relworkdir = $quizz->getDirName(false);
+
+        $this->initWorkdir();
 
         $this->codelength = (int) get_config('mod_automultiplechoice', 'amccodelength');
         /**
          * @todo error if codelength == 0
          */
+    }
+
+    /**
+     * @return AmcLogfile
+     */
+    public function getLogger() {
+        if (!isset($this->logger)) {
+            $this->logger = new AmcLogfile($this->workdir);
+        }
+        return $this->logger;
     }
 
     /**
@@ -54,13 +72,21 @@ class AmcProcess
     }
 
     /**
+     * Return the single error of the last command.
+     *
+     * @return string
+     */
+    public function getLastError() {
+        return end($this->errors);
+    }
+
+    /**
      * Shell-executes 'amc meptex'
      * @return bool
      */
     public function amcMeptex() {
         $pre = $this->workdir;
-        $res = $this->shellExec(
-                'auto-multiple-choice meptex',
+        $res = $this->shellExecAmc('meptex',
                 array(
                     '--data', $pre . '/data',
                     '--progression-id', 'MEP',
@@ -75,41 +101,11 @@ class AmcProcess
     }
 
     /**
-     * Shell-executes 'amc getimages'
-     * @param string $scanfile name, uploaded by the user
-     * @return bool
-     */
-    public function amcGetimages($scanfile) {
-        $pre = $this->workdir;
-        $scanlist = $pre . '/scanlist';
-        if (file_exists($scanlist)) {
-            unlink($scanlist);
-        }
-        $mask = $pre . "/scans/*.ppm"; // delete all previous ppm files
-        array_map('unlink', glob( $mask ));
-
-        $res = $this->shellExec('auto-multiple-choice getimages', array(
-            '--progression-id', 'analyse',
-            '--vector-density', '250',
-            '--orientation', 'portrait',
-            '--list', $scanlist,
-            '--copy-to', $pre . '/scans/',
-            $scanfile
-            ), true);
-        if ($res) {
-            $nscans = count(file($scanlist));
-            $this->log('getimages', $nscans . ' pages');
-            return $nscans;
-        }
-        return $res;
-    }
-
-    /**
      * returns stat() information (number and dates) on scanned (ppm) files already stored
      * @return array with keys: count, time, timefr ; null if nothing was uploaded
      */
     public function statScans() {
-        $ppmfiles = glob($this->workdir . '/scans/*.p[bp]m');
+        $ppmfiles = $this->findScannedFiles();
         $tsmax = 0;
         $tsmin = PHP_INT_MAX;
         foreach ($ppmfiles as $file) {
@@ -123,42 +119,14 @@ class AmcProcess
         }
         if ($ppmfiles) {
             return array(
-                'count' => count($ppmfiles), 'time' => $tsmax, 'timefr' => self::isoDate($tsmax)
+                'nbidentified' => count(glob($this->workdir . '/cr/page-*.jpg')),
+                'count' => count($ppmfiles),
+                'time' => $tsmax,
+                'timefr' => self::isoDate($tsmax)
             );
         } else {
             return null;
         }
-    }
-
-    /**
-     * Shell-executes 'amc analyse'
-     * @param bool $multiple (see AMC) if multiple copies of the same sheet are possible
-     * @return bool
-     */
-    public function amcAnalyse($multiple = true) {
-        $pre = $this->workdir;
-        $scanlist = $pre . '/scanlist';
-        $parammultiple = '--' . ($multiple ? '' : 'no-') . 'multiple';
-        $parameters = array(
-            $parammultiple,
-            '--tol-marque', '0.2,0.2',
-            '--prop', '0.8',
-            '--bw-threshold', '0.6',
-            '--progression-id' , 'analyse',
-            '--progression', '1',
-            '--n-procs', '0',
-            '--data', $pre . '/data',
-            '--projet', $pre,
-            '--cr', $pre . '/cr',
-            '--liste-fichiers', $scanlist,
-            '--no-ignore-red',
-            );
-        //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
-        $res = $this->shellExec('auto-multiple-choice analyse', $parameters, true);
-        if ($res) {
-            $this->log('analyse', 'OK.');
-        }
-        return $res;
     }
 
     /**
@@ -214,56 +182,6 @@ class AmcProcess
     }
 
     /**
-     *
-     * @param string $cmd
-     * @param array $params List of strings.
-     * @return boolean Success?
-     */
-    protected function shellExec($cmd, $params, $output=false) {
-        $escapedCmd = escapeshellcmd($cmd);
-        $escapedParams = array_map('escapeshellarg', $params);
-        $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
-        $lines = array();
-        $returnVal = 0;
-        exec($shellCmd, $lines, $returnVal);
-            if ($output) {
-                $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_DEVELOPER);
-            }
-        if ($returnVal === 0) {
-            return true;
-        } else {
-            /**
-             * @todo Fill $this->errors
-             */
-            $this->shellOutput($shellCmd, $returnVal, $lines, DEBUG_NORMAL);
-            return false;
-        }
-    }
-
-    /**
-     * Displays a block containing the shell output
-     *
-     * @param string $cmd
-     * @param integer $returnVal shell return value
-     * @param array $lines output lines to be displayed
-     */
-    protected function shellOutput($cmd, $returnVal, $lines, $debuglevel) {
-        if (get_config('core', 'debugdisplay') == 0) {
-            return false;
-        }
-        $html = '<pre style="margin:2px; padding:2px; border:1px solid grey;">' . " \n";
-        $html .= $cmd . " \n";
-        $i=0;
-        foreach ($lines as $line) {
-            $i++;
-            $html .= sprintf("%03d.", $i) . " " . $line . "\n";
-        }
-        $html .= "Return value = <b>" . $returnVal. "</b\n";
-        $html .= "</pre> \n";
-        debugging($html, $debuglevel);
-    }
-
-    /**
      * Format a timestamp into a fr datetime.
      *
      * @param integer $timestamp
@@ -280,15 +198,20 @@ class AmcProcess
      * @return (guess what ?)
      */
     public function normalizeText($text) {
-        setlocale(LC_ALL, 'fr_FR.utf8');
-        $text = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
-        $text = strtr($text, array(' '=>'_', "'"=>'-',
-            '.'=>'-', ','=>'-', ';'=>'-', ':'=>'-', '?'=>'-', '!'=>'-') );
+        setlocale(LC_CTYPE, 'fr_FR.utf8');
+        if (extension_loaded("iconv")) {
+            $text = @iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+        }
+        $text = strtr(
+                $text,
+                array(' '=>'_', "'"=>'-', '.'=>'-', ','=>'-', ';'=>'-', ':'=>'-', '?'=>'-', '!'=>'-')
+        );
         $text = strtolower($text);
         $text = preg_replace('/-+/', '-', $text);
         $text = trim ($text, '-');
         $text = preg_replace('/[^\w\d-]/si', '', $text); //remove all illegal chars
         $text = substr($text, 0, 50);
+        setlocale(LC_CTYPE, 'C');
         return $text;
     }
 
@@ -301,20 +224,171 @@ class AmcProcess
         switch ($filetype) {
             case 'sujet':
                 return 'sujet-' . $this->normalizeText($this->quizz->name) . '.pdf';
-                break;
             case 'corrige':
                 return 'corrige-' . $this->normalizeText($this->quizz->name) . '.pdf';
-                break;
             case 'catalog':
                 return 'catalog-' . $this->normalizeText($this->quizz->name) . '.pdf';
-                break;
             case 'sujets': // !!! plural 
                 return 'sujets-' . $this->normalizeText($this->quizz->name) . '.zip';
-                break;
             case 'corrections':
                 return 'corrections-' . $this->normalizeText($this->quizz->name) . '.pdf';
-                break;
         }
     }
 
+    /**
+     * Displays a block containing the shell output
+     *
+     * @param string $cmd
+     * @param array $lines output lines to be displayed
+     * @param integer $returnVal shell return value
+     * @return string
+     */
+    protected function formatShellOutput($cmd, $lines, $returnVal) {
+        $txt = $cmd . " \n---------OUTPUT---------\n";
+        $i=0;
+        foreach ($lines as $line) {
+            $i++;
+            $txt .= sprintf("%03d.", $i) . " " . $line . "\n";
+        }
+        $txt .= "------RETURN VALUE------\n" . $returnVal. "\n";
+        return $txt;
+    }
+    /**
+     * Displays a block containing the shell output
+     *
+     * @param string $cmd
+     * @param array $lines output lines to be displayed
+     * @param integer $returnVal shell return value
+     * @param int $debuglevel
+     */
+    protected function displayShellOutput($cmd, $lines, $returnVal, $debuglevel) {
+        if (get_config('core', 'debugdisplay') == 0) {
+            return false;
+        }
+        $html = '<pre style="margin:2px; padding:2px; border:1px solid grey;">' . " \n"
+            . $this->formatShellOutput($cmd, $returnVal, $lines)
+            . "</pre>"
+            . "-------CALL TRACE-------\n";
+        debugging($html, $debuglevel);
+    }
+
+    /**
+     *
+     * @param string $cmd
+     * @param array $params List of strings.
+     * @return boolean Success?
+     */
+    protected function shellExec($cmd, $params, $output=false) {
+        $escapedCmd = escapeshellcmd($cmd);
+        $escapedParams = array_map('escapeshellarg', $params);
+        $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
+        $lines = array();
+        $returnVal = 0;
+        exec($shellCmd, $lines, $returnVal);
+
+        $this->getLogger()->write($this->formatShellOutput($shellCmd, $lines, $returnVal));
+        if ($output) {
+            $this->displayShellOutput($shellCmd, $lines, $returnVal, DEBUG_DEVELOPER);
+        }
+        if ($returnVal === 0) {
+            return true;
+        } else {
+            /**
+             * @todo Fill $this->errors instead of outputing HTML on the fly
+             */
+            $this->displayShellOutput($shellCmd, $lines, $returnVal, DEBUG_NORMAL);
+            return false;
+        }
+    }
+
+    /**
+     * Wrapper around shellExec() including lock write
+     * @param string $cmd auto-multiple-choice subcommand
+     * @param array $params List of strings.
+     * @param boolean (opt, false) Write a log as a side-effect (ugly, will probably be written before the HTML starts).
+     * @return boolean Success?
+     */
+    protected function shellExecAmc($cmd, $params, $output=false) {
+        $amclog = Log::build($this->quizz->id);
+        $amclog->write('process');
+        $res = $this->shellExec('auto-multiple-choice ' . $cmd,
+            $params,
+            $output
+        );
+        $amclog->write('process', 0);
+        return $res;
+    }
+
+    /**
+     * Find all the pictures in the scan dir.
+     *
+     * @return array
+     */
+    protected function findScannedFiles() {
+        return $this->quizz->findScannedFiles();
+    }
+
+    /**
+     * Return the HTML that lists links to the PDF files.
+     *
+     * @return string
+     */
+    public function getHtmlPdfLinks() {
+        $opts = array('target' => '_blank');
+        $links = array(
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), $this->normalizeFilename('sujet'), $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), $this->normalizeFilename('catalog'), $opts),
+        );
+        return <<<EOL
+        <ul class="amc-files">
+            <li>
+                $links[0]
+                <div>Ce fichier contient tous les énoncés regroupés. <span class="warning">Ne pas utiliser ce fichier pour distribuer aux étudiants.</span></div>
+            </li>
+            <li>
+                $links[1]
+                <div>Le corrigé de référence.</div>
+            </li>
+        </ul>
+EOL;
+    }
+
+    /**
+     * Return the HTML that for the link to the ZIP file.
+     *
+     * @return string
+     */
+    public function getHtmlZipLink() {
+        $links = array(
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), $this->normalizeFilename('sujets')),
+        );
+        return <<<EOL
+        <ul class="amc-files">
+            <li>
+                $links[0]
+                <div>Cette archive contient un PDF par variante de l'énoncé.</div>
+            </li>
+        </ul>
+EOL;
+    }
+
+    /**
+     * Initialize the data directory $this->workdir with the template structure.
+     */
+    protected function initWorkdir() {
+        if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
+            $parent = dirname($this->workdir);
+            if (!is_dir($parent)) {
+                if (!mkdir($parent, 0777, true)) {
+                    error("Could not create directory. Please contact the administrator.");
+                }
+            }
+            if (!is_writeable($parent)) {
+                error("Could not write in directory. Please contact the administrator.");
+            } else {
+                $templatedir = get_config('mod_automultiplechoice', 'amctemplate');
+                $this->shellExec('cp', array('-r', $templatedir, $this->workdir));
+            }
+        }
+    }
 }

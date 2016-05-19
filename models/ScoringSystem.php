@@ -72,7 +72,7 @@ class ScoringSystem
     public function toHtmlSelect($name, $value) {
         $html = '<select name="' . $name . '">'
                 . '<option value=""></option>';
-        foreach($this->sets as $rank => $scoringSet) {
+        foreach(self::$sets as $rank => $scoringSet) {
             /* @var $scoringSet ScoringSet */
             $html .= '<option value="' . $rank . '"'
                 . ($value !== '' && $value == $rank ? ' selected="selected">' : '>')
@@ -93,7 +93,7 @@ class ScoringSystem
     public function getScoringSet($rank) {
         $rank = (int) $rank;
         if (!isset(self::$sets[$rank])) {
-            throw new Exception("This scoring group does not exist.");
+            throw new \Exception("This scoring group $rank does not exist.");
         }
         return self::$sets[$rank];
     }

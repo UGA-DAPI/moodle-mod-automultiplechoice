@@ -19,6 +19,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/ScoringSystem.php';
 require_once __DIR__ . '/models/AmcProcess.php';
+require_once __DIR__ . '/models/AmcProcessGrade.php';
 
 /* @var $DB moodle_database */
 
@@ -41,6 +42,7 @@ function automultiplechoice_supports($feature) {
         case FEATURE_MOD_INTRO:         return false;
         case FEATURE_GRADE_HAS_GRADE:   return true;
         case FEATURE_GRADE_OUTCOMES:    return false;
+        case FEATURE_BACKUP_MOODLE2:    return true;
 
         default:                        return null;
     }
@@ -69,7 +71,13 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
     $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
     $automultiplechoice->amcparams = $params->toJson();
-    return $DB->insert_record('automultiplechoice', $automultiplechoice);
+    $quizz = new mod\automultiplechoice\Quizz();
+    $quizz->readFromRecord($automultiplechoice);
+    if ($quizz->save()) {
+        return $quizz->id;
+    } else {
+        throw new Exception("ERROR");
+    }
 }
 
 /**
@@ -86,12 +94,22 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
 function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null) {
     global $DB;
 
+    $quizz = mod\automultiplechoice\Quizz::findById($automultiplechoice->instance);
+    $quizz->readFromForm($automultiplechoice);
+    $quizz->timemodified = $_SERVER['REQUEST_TIME'];
+    return $quizz->save();
+
+
     $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->id = $automultiplechoice->instance;
 
     $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
+    $params->scoringset = $quizz->amcparams->scoringset;
     $automultiplechoice->amcparams = $params->toJson();
+    if (isset($automultiplechoice->questions)) {
+        unset($automultiplechoice->questions);
+    }
 
     return $DB->update_record('automultiplechoice', $automultiplechoice);
 }
@@ -227,14 +245,7 @@ function automultiplechoice_get_extra_capabilities() {
  * @return bool true if the scale is used by the given automultiplechoice instance
  */
 function automultiplechoice_scale_used($automultiplechoiceid, $scaleid) {
-    global $DB;
-
-    /** @example */
-    if ($scaleid and $DB->record_exists('automultiplechoice', array('id' => $automultiplechoiceid, 'grade' => -$scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
+    return false;
 }
 
 /**
@@ -246,14 +257,7 @@ function automultiplechoice_scale_used($automultiplechoiceid, $scaleid) {
  * @return boolean true if the scale is used by any automultiplechoice instance
  */
 function automultiplechoice_scale_used_anywhere($scaleid) {
-    global $DB;
-
-    /** @example */
-    if ($scaleid and $DB->record_exists('automultiplechoice', array('grade' => -$scaleid))) {
-        return true;
-    } else {
-        return false;
-    }
+    return false;
 }
 
 /**
@@ -358,18 +362,42 @@ function automultiplechoice_get_file_info($browser, $areas, $course, $cm, $conte
  * @param array $options additional options affecting the file serving
  */
 function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
-    global $DB, $CFG;
+    global $USER;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }
 
     require_login($course, true, $cm);
-    require_capability('mod/automultiplechoice:view', $context);
 
     $filename = array_pop($args);
     $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
-    $process = new \mod\automultiplechoice\AmcProcess($quizz);
+    $process = new \mod\automultiplechoice\AmcProcessGrade($quizz, "latex");
+
+    // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
+    // and corrigé
+    if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
+        $target = $process->workdir . '/cr/corrections/pdf/' . $filename;
+        if (!file_exists($target)) {
+            send_file_not_found();
+        }
+        if (has_capability('mod/automultiplechoice:update', $context)
+            || (  $quizz->studentaccess && $USER->id.".pdf" === basename($filename))
+            ) {
+            send_file($target, $filename, 10, 0, false, false, 'application/pdf') ;
+            return true;
+        }
+    }
+    if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
+        if (   $quizz->corrigeaccess && file_exists("cr-".$USER->id.".pdf") )
+            {
+            send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+            return true;
+         }
+     }
+
+    // Then teacher only use cases
+    require_capability('mod/automultiplechoice:update', $context);
 
     // whitelist security
     if (preg_match('/^(sujet|corrige|catalog)-.*\.pdf$/', $filename)) {
@@ -381,8 +409,14 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
      } elseif (preg_match('/^corrections-.*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
+     } elseif (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
+        send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        return true;
     } elseif (preg_match('/\.csv$/', $filename)) {
         send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
+        return true;
+    } elseif (preg_match('/\.ods$/', $filename)) {
+        send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'application/vnd.oasis.opendocument.spreadsheet') ;
         return true;
     }
     send_file_not_found();

@@ -15,6 +15,9 @@
  * @see upgrade_plugins_modules()
  */
 function xmldb_automultiplechoice_install() {
+    if (version_compare(phpversion(), '5.4.0') < 0) {
+        error("This module requires PHP 5.4. It won't work with an older PHP.");
+    }
 }
 
 /**

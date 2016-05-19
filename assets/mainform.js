@@ -20,9 +20,10 @@ jQuery(function($) {
     function updateInstrPrefix() {
         var v = $("#id_instructions").val();
 		$("#id_amc_instructionsprefix").html(v);
+		tinyMCE.get("id_amc_instructionsprefix").setContent(v);
     }
     $("#id_instructions").on("click", updateInstrPrefix);
-    updateInstrPrefix();
+    //updateInstrPrefix();
 
 	$("#id_anonymous").on("click", function(){
 		if ($("#id_anonymous").is(':checked')) {
