@@ -266,7 +266,7 @@ class AmcProcess
             return false;
         }
         $html = '<pre style="margin:2px; padding:2px; border:1px solid grey;">' . " \n"
-            . $this->formatShellOutput($cmd, $returnVal, $lines)
+            . $this->formatShellOutput($cmd, $lines, $returnVal)
             . "</pre>"
             . "-------CALL TRACE-------\n";
         debugging($html, $debuglevel);
