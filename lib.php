@@ -382,7 +382,6 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     $filename = rawurldecode(array_pop($args));
     $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
     $process = new \mod\automultiplechoice\AmcProcessExport($quizz);
-
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
     // and corrigé
     if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
@@ -421,7 +420,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     require_capability('mod/automultiplechoice:update', $context);
 
     // whitelist security
-    if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) {
+    if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) { 
         $ret = $process->amcCreatePdf('latex');     
         if ($ret){
              send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
@@ -481,6 +480,12 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         return true;
     } else if (preg_match('/\.tif[f]*$/', $filename)) {
         send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/tiff') ;
+        return true;
+    } else if (preg_match('/\.png$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/png') ;
+        return true;
+    } else if (preg_match('/\.jp(e|)g$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/jpeg') ;
         return true;
     }else if (preg_match('/^name-[0-9]*_[0-9]*\.jpg$/', $filename)) {
         $filename=preg_replace('/(^name-[0-9]+)_([0-9]*\.jpg$)/', '\1:\2',  $filename);

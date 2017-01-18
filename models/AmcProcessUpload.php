@@ -86,14 +86,14 @@ class AmcProcessUpload extends AmcProcess
             if ($scan=='all'){
                 $results = $capture->query('SELECT * FROM capture_failed');
                 while ($row = $results->fetchArray()) {
-                    $scan = substr($row[0],14);
-                    array_map('unlink', glob($this->workdir . '/scans/'.$scan));
+                    $scan = substr($row[0],8);
+                    array_map('unlink', glob($this->workdir . '/'.$scan));
                 }
                 return  $capture->exec('DELETE FROM capture_failed ');
             }else{
                 $result = $capture->querySingle('SELECT * FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
-                if (substr($result,14)==$scan){
-                    unlink( glob($this->workdir . '/scans/'.$scan));
+                if (substr($result,8)==$scan){
+                    unlink( glob($this->workdir . '/'.$scan));
                     return  $capture->exec('DELETE FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
                 }
             }
@@ -112,7 +112,7 @@ class AmcProcessUpload extends AmcProcess
         $results = $capture->query('SELECT * FROM capture_failed');
         $scan=array();
         while ($row = $results->fetchArray()) {
-            $scan[] = substr($row[0],14);
+            $scan[] = substr($row[0],8);
             
         }
         return $scan;

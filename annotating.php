@@ -10,7 +10,7 @@ use \mod\automultiplechoice as amc;
 
 require_once(__DIR__ . '/locallib.php');
 require_once __DIR__ . '/models/AmcProcessUsers.php';
-
+require_once __DIR__ . '/models/AmcProcessAnnotate.php';
 
 global $DB, $OUTPUT, $PAGE;
 /* @var $DB moodle_database */
@@ -153,9 +153,9 @@ if ($process->countAnnotatedFiles()>0) {
                }else{
               $name="0_0"; 
                }
-	   }else{
-	   	$name = $user;
-	   }
+       }else{
+        $name = $user;
+       }
            $copy = explode('_',$name);
            $thumbnailimg = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"),$name);
            $thumbnailoutput = \html_writer::link(new moodle_url('annotating.php', array('a' => $quizz->id,'copy'=>$copy[0],'idnumber'=>$copy[1])),$thumbnailimg,array('class'=>'thumbnail'));

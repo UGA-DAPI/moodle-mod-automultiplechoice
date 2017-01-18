@@ -27,9 +27,13 @@ class AmcProcessExport extends AmcProcess
         $pre = $this->workdir;
         $file = $pre . '/' . $this->normalizeFilename('sujet');
         $this->errors = array();
+        $path = get_config('mod_automultiplechoice','xelatexpath');
+        if ($path==''){
+            $path = 'xelatex';
+        }
         $amclog = Log::build($this->quizz->id);
         $res = $amclog->check('pdf');
-	if (!$res and file_exists($file)){
+        if (!$res and file_exists($file)){
             return true;
         }
         $format = $this->saveFormat($formatName);
@@ -41,7 +45,7 @@ class AmcProcessExport extends AmcProcess
         $res = $this->shellExecAmc('prepare',
             array(
                 '--n-copies', (string) $this->quizz->amcparams->copies,
-                '--with', 'xelatex',
+                '--with', $path,
                 '--filter', $format->getFiltername(),
                 '--mode', 's[c]',
                 '--prefix', $pre,
@@ -72,6 +76,10 @@ class AmcProcessExport extends AmcProcess
         $pre = $this->workdir;
         $file = $pre . '/' . $this->normalizeFilename('corriges');
         $this->errors = array();
+        $path = get_config('mod_automultiplechoice','xelatexpath');
+        if ($path==''){
+            $path = 'xelatex';
+        }
         $amclog = Log::build($this->quizz->id);
         if (!$res and file_exists($file)){
             return true;
@@ -79,7 +87,7 @@ class AmcProcessExport extends AmcProcess
         $res = $this->shellExecAmc('prepare',
             array(
                 '--n-copies', (string) $this->quizz->amcparams->copies,
-                '--with', 'xelatex',
+                '--with', $path,
                 '--filter', $this->format->getFiltername(),
                 '--mode', 'k',
                 '--prefix', $pre,
@@ -142,7 +150,7 @@ class AmcProcessExport extends AmcProcess
             }
             if (!$this->amcMeptex()) {
                 $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
-		return false;
+        return false;
             }
     
             
@@ -154,9 +162,9 @@ class AmcProcessExport extends AmcProcess
             );
             // $params[] = '--split'; // M#2076 a priori jamais nécessaire
             $res = $this->shellExecAmc('imprime', $params);
-	    if ($res) {
-		    $this->log('imprime', '');
-	    }
+        if ($res) {
+            $this->log('imprime', '');
+        }
         return $res;
     }
     /**
@@ -191,7 +199,7 @@ class AmcProcessExport extends AmcProcess
      * @return bool
      */
     public function amcExport($type='csv') {
-	    $pre = $this->workdir;
+        $pre = $this->workdir;
     $file =($type=='csv')? $pre . self::PATH_AMC_CSV : $pre . self::PATH_AMC_ODS;
     $warnings = Log::build($this->quizz->id)->check('exporting');
     if (!$warnings and file_exists($file)) {
@@ -210,7 +218,7 @@ class AmcProcessExport extends AmcProcess
         chdir($pre . '/exports');
 
         $csv = $this->get_students_list();
-	$parameters = array(
+    $parameters = array(
             '--data', $pre . '/data',
             '--useall', '0',
             '--sort', 'n',
@@ -220,9 +228,9 @@ class AmcProcessExport extends AmcProcess
             '--noms-encodage', 'UTF-8',
         );
         if ($csv !=' '){
-	    $parameters[] = '--fich-noms';
-	    $parameters[] = $csv;
-	}
+        $parameters[] = '--fich-noms';
+        $parameters[] = $csv;
+    }
         $parametersCsv = array_merge($parameters, array(
             '--module', 'CSV',
             '--csv-build-name', '(nom|surname) (prenom|name)',
@@ -235,16 +243,16 @@ class AmcProcessExport extends AmcProcess
             '--option-out', 'stats=1',
         ));
         if ($csv !=' '){
-		$parametersCsv[] = '--option-out';
-		$parametersCsv[] = 'columns=student.copy,student.key,name,surname,moodleid,groupslist';
-		$parametersOds[] = '--option-out';
-		$parametersOds[] = 'columns=student.copy,student.key,name,surname,groupslist';
-	}else{
-		$parametersCsv[] = '--option-out';
-		$parametersCsv[] = 'columns=student.copy,student.key';
-		$parametersOds[] = '--option-out';
-		$parametersOds[] = 'columns=student.copy,student.key';
-	}
+        $parametersCsv[] = '--option-out';
+        $parametersCsv[] = 'columns=student.copy,student.key,name,surname,moodleid,groupslist';
+        $parametersOds[] = '--option-out';
+        $parametersOds[] = 'columns=student.copy,student.key,name,surname,groupslist';
+    }else{
+        $parametersCsv[] = '--option-out';
+        $parametersCsv[] = 'columns=student.copy,student.key';
+        $parametersOds[] = '--option-out';
+        $parametersOds[] = 'columns=student.copy,student.key';
+    }
         if ($type =='csv'){
             $res = $this->shellExecAmc('export', $parametersCsv);
         }else{
@@ -302,43 +310,43 @@ class AmcProcessExport extends AmcProcess
     }
 
   /**
-	  *      * lowl-level Shell-executes 'amc regroupe'
-	  *           * fills the cr/corrections/pdf directory with a global pdf file (parameter single==true) for all copies
-	  *                * or one pdf per student (single==false)
-	  *                     * @single bool
-	  *                          * @return bool
-	  *                               */
+      *      * lowl-level Shell-executes 'amc regroupe'
+      *           * fills the cr/corrections/pdf directory with a global pdf file (parameter single==true) for all copies
+      *                * or one pdf per student (single==false)
+      *                     * @single bool
+      *                          * @return bool
+      *                               */
     protected function amcRegroupe() {
-	    $pre = $this->workdir;    
-	    $parameters = array(
-		    /*'--id-file',  '', // undocumented option: only work with students whose ID is in this file*/
-		    '--no-compose',
-		    '--projet',  $pre,
-		    '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
-		    '--data', $pre.'/data',
-		    '--progression-id', 'regroupe',
-		    '--progression', '1',
-		    '--fich-noms', $this->get_students_list(),
-		    '--noms-encodage', 'UTF-8',
-		    '--sort', 'n',
-		    '--register',
-		    '--no-force-ascii',
-		    '--modele', 'cr-(N).pdf'
-		    /* // useless with no-compose
+        $pre = $this->workdir;    
+        $parameters = array(
+            /*'--id-file',  '', // undocumented option: only work with students whose ID is in this file*/
+            '--no-compose',
+            '--projet',  $pre,
+            '--sujet', $pre. '/' . $this->normalizeFilename('sujet'),
+            '--data', $pre.'/data',
+            '--progression-id', 'regroupe',
+            '--progression', '1',
+            '--fich-noms', $this->get_students_list(),
+            '--noms-encodage', 'UTF-8',
+            '--sort', 'n',
+            '--register',
+            '--no-force-ascii',
+            '--modele', 'cr-(N).pdf'
+            /* // useless with no-compose
                     '--tex-src', $pre . '/' . $this->format->getFilename(),
                     '--filter', $this->format->getFilterName(),
                     '--with', 'xelatex',
                     '--filtered-source', $pre.'/prepare-source_filtered.tex',
                     '--n-copies', (string) $this->quizz->amcparams->copies,
-	            */
-	    );
-	    $res = $this->shellExecAmc('regroupe', $parameters);
-	    if ($res) {
-		    $this->log('regroup', '');
-		    $amclog = Log::build($this->quizz->id);
-		    $amclog->write('correction');
-	    }
-	    return $res;
+                */
+        );
+        $res = $this->shellExecAmc('regroupe', $parameters);
+        if ($res) {
+            $this->log('regroup', '');
+            $amclog = Log::build($this->quizz->id);
+            $amclog->write('correction');
+        }
+        return $res;
     }
 
     /**
@@ -348,37 +356,37 @@ class AmcProcessExport extends AmcProcess
      *                     * @return bool
      *                          */
     public function amcAnnotePdf() {
-	    $pre = $this->workdir;    
+        $pre = $this->workdir;    
         $file = $pre.'/' .$this->normalizeFilename('corrections');
         $amclog = Log::build($this->quizz->id);
         $res = $amclog->check('annotatePdf');
         if (!$res and file_exists($file)){
             return true;
         }
-	    array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
+        array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
 
-	    if (!$this->amcRegroupe()) {
-		    return false;
-	    }
-	    $cmd  = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
-		    ." -sOutputFile=".$pre.'/'.$this->normalizeFilename('corrections')
-		    ." ".$pre."/cr/corrections/pdf/cr-*.pdf";
-	    $lines = array();
-	    $returnVal = 0;
-	    exec($cmd, $lines, $returnVal);
+        if (!$this->amcRegroupe()) {
+            return false;
+        }
+        $cmd  = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite "
+            ." -sOutputFile=".$pre.'/'.$this->normalizeFilename('corrections')
+            ." ".$pre."/cr/corrections/pdf/cr-*.pdf";
+        $lines = array();
+        $returnVal = 0;
+        exec($cmd, $lines, $returnVal);
 
-	    $this->getLogger()->write($this->formatShellOutput($cmd, $lines, $returnVal));
-	    if ($returnVal === 0) {
-		    return true;
-		    $amclog = Log::build($this->quizz->id);
-		    $amclog->write('annotePdf');
-	    } else {
-		    /**
-		     *              * @todo Fill $this->errors instead of outputing HTML on the fly
-		     *                           */
-		    $this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_NORMAL);
-		    return false;
-	    }
+        $this->getLogger()->write($this->formatShellOutput($cmd, $lines, $returnVal));
+        if ($returnVal === 0) {
+            return true;
+            $amclog = Log::build($this->quizz->id);
+            $amclog->write('annotePdf');
+        } else {
+            /**
+             *              * @todo Fill $this->errors instead of outputing HTML on the fly
+             *                           */
+            $this->displayShellOutput($cmd, $lines, $returnVal, DEBUG_NORMAL);
+            return false;
+        }
     }
 
 }

@@ -32,17 +32,17 @@ if ($questions) {
         /**
          * @todo warn that modification is not allowed on a locked quizz.
          */
-        redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+        //redirect(new moodle_url('view.php', array('a' => $quizz->id)));
     }
     $quizz->questions = $questions;
  
     if ($quizz->save()) {
-        amc\Log::build($this->quizz->id)->write('saving');
-        if ($quizz->score > 0) {
+        amc\Log::build($quizz->id)->write('saving');
+        /*if ($quizz->score > 0) {
             redirect(new moodle_url('view.php', array('a' => $quizz->id)));
         } else {
             redirect(new moodle_url('scoringsystem.php', array('a' => $quizz->id)));
-        }
+        }*/
     } else {
         die("Could not save into automultiplechoice");
     }
