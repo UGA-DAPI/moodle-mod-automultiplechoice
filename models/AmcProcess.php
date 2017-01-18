@@ -10,6 +10,7 @@ namespace mod\automultiplechoice;
 
 require_once __DIR__ . '/Log.php';
 require_once __DIR__ . '/AmcLogfile.php';
+require_once __DIR__ . '/AmcFormat/Api.php';
 
 class AmcProcess
 {
@@ -28,7 +29,7 @@ class AmcProcess
     /**
      * @var array
      */
-    protected $errors = array();
+    public $errors = array();
 
     private $logger;
     const PATH_STUDENTLIST_CSV = '/exports/student_list.csv';
@@ -147,6 +148,10 @@ class AmcProcess
      * @return bool
      */
     public function amcPrepareBareme() {
+        $path = get_config('mod_automultiplechoice','xelatexpath');
+    if ($path==''){
+        $path = 'xelatex';
+    }
         $pre = $this->workdir;
         $parameters = array(
             '--n-copies', (string) $this->quizz->amcparams->copies,
@@ -155,7 +160,7 @@ class AmcProcess
             '--filtered-source', $pre . '/prepare-source_filtered.tex', // for AMC-txt, the LaTeX will be written in this file
             '--progression-id', 'bareme',
             '--progression', '1',
-            '--with', 'xelatex',
+            '--with', $path,
             '--filter', $this->format->getFilterName(),
             $pre . '/' . $this->format->getFilename()
             );
@@ -405,10 +410,10 @@ class AmcProcess
         return \moodle_url::make_pluginfile_url(
                 $contextid,
                 'mod_automultiplechoice',
-                '',
-                NULL,
-                '',
-                $this->relworkdir . '/' . ltrim($filename, '/'),
+                'local',
+                $this->quizz->id,
+                '/',
+                ltrim($filename, '/'),
                 $forcedld
         );
     }
@@ -508,7 +513,7 @@ class AmcProcess
             return false;
         }
         $html = '<pre style="margin:2px; padding:2px; border:1px solid grey;">' . " \n"
-            . $this->formatShellOutput($cmd, $returnVal, $lines)
+            . $this->formatShellOutput($cmd,  $lines, $returnVal)
             . "</pre>"
             . "-------CALL TRACE-------\n";
         debugging($html, $debuglevel);

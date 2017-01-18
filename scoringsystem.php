@@ -45,10 +45,10 @@ if (isset($_POST['score'])) {
             if (!$res){
                  amc\FlashMessageManager::addMessage('error',"Erreur lors de l'extraction du barème");
             }else{
-                amc\Log::build($this->quizz->id)->write('scoring');
+                amc\Log::build($quizz->id)->write('scoring');
                 amc\FlashMessageManager::addMessage('success', "Les modification du barème ont été enregistrées.");
             }
-            redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+            //redirect(new moodle_url('view.php', array('a' => $quizz->id)));
         } else {
             die("Could not save into automultiplechoice");
         }

@@ -31,11 +31,11 @@ if ($action === 'lock') {
     $quizz->amcparams->locked = true;
     amc\Log::build($quizz->id)->write('lock');
     $quizz->save();
-    array_map('backup_source', glob($quizz->getDirName() . '/prepare-source*'));
+    array_map('backup_source', glob($quizz->getDirName() . '/prepare-source.*'));
     if (!$process->amcMeptex()) {
             $process->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
         }
-    copy($quizz->getDirName().'/data/capture.sqlite',$quizz->getDirName().'data/capture.sqlite.orig');
+    copy($quizz->getDirName().'/data/capture.sqlite',$quizz->getDirName().'/data/capture.sqlite.orig');
 } else if ($action === 'unlock') {
     $quizz->amcparams->locked = false;
     $quizz->save();

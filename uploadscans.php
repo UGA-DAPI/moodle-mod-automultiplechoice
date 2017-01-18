@@ -32,7 +32,6 @@ $PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 $process = new \mod\automultiplechoice\AmcProcessUpload($quizz);
 $amclog = new \mod\automultiplechoice\Log($quizz->id);
-//var_dump($process);
 
 $action = optional_param('action', '', PARAM_ALPHA);
 if ($action === 'deleteUploads') {
@@ -41,7 +40,7 @@ if ($action === 'deleteUploads') {
 }
 
 if ($action === 'delete') {
-    $scan =  optional_param('scan', 'all', PARAM_FILE);
+    $scan =  optional_param('scan', 'all', PARAM_PATH);
     $process->deleteFailed($scan);
     redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
 }
@@ -139,14 +138,20 @@ if (($scansStats) && (($scansStats['count']-$scansStats['nbidentified'])>0)){
         $downloadfailedurl = $process->getFileUrl($process->normalizeFilename('failed'));
         $failedoutput .= $OUTPUT->render($deleteallbutton);
         $failedoutput .= \html_writer::link($downloadfailedurl, 'Télécharger tous les scans non reconnus',array('class'=>'btn','target'=>'_blank'));
-        $failedoutput .= \html_writer::start_tag('ul',array('class'=>'unlist'));
+        $failedoutput .= \html_writer::start_div('amc_thumbnails_failed row');
+        $failedoutput .= \html_writer::start_div('thumbnails ');
         foreach ($array_failed as $scan) {
             $url = new \moodle_url('uploadscans.php', array('a'=>$quizz->id,'action'=>'delete', 'scan'=>$scan));
             $deleteicon = $OUTPUT->action_icon($url,new \pix_icon('t/delete',get_string('delete')),new \confirm_action(get_string('confirm')));
-            $scanoutput = \html_writer::link($process->getFileUrl($scan),$scan);
-            $failedoutput .= \html_writer::tag('li', $scanoutput . $deleteicon); 
+            $scanoutput = \html_writer::link($process->getFileUrl($scan),\html_writer::img($process->getFileUrl($scan),$scan));
+            $scanoutput .= \html_writer::div($deleteicon,'caption');
+    
+            $failedoutput .= \html_writer::div($scanoutput,'thumbnail col-xs-12 col-sm-6 col-md-4 col-lg-3');
+    
+            
         }
-        $failedoutput .= \html_writer::end_tag('ul' );
+        $failedoutput .= \html_writer::end_div();
+        $failedoutput .= \html_writer::end_div();
         $failedoutput .= \html_writer::end_div();
     }else{
         $failedoutput = 'Demandez à votre administrateur système d\'installer php-sqlite3 pour voir les fichiers non reconnus';

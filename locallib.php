@@ -12,8 +12,9 @@
 
 use \mod\automultiplechoice as amc;
 
+global $DB,$CFG;
 require_once dirname(dirname(__DIR__)) . '/config.php';
-require_once "$CFG->libdir/formslib.php";
+require_once($CFG->libdir . '/formslib.php');
 require_once __DIR__ . '/lib.php';
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/AmcProcess.php';
@@ -264,11 +265,11 @@ function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude=NULL,$
         $idnumber = $USER->idnumber;
     }
     if (count($idnumber)>$codelength){
-	    $idnumber = substr($idnumber,-1*$codelength);//by security
+        $idnumber = substr($idnumber,-1*$codelength);//by security
     }
     $menu = array(); // Will be a list of userid => user name
     if ($exclude and $idnumber){
-	    $exclude= array_diff($exclude, array($idnumber));
+        $exclude= array_diff($exclude, array($idnumber));
     }
     $users = amc_get_student_users($cm,true, $groupid,$exclude);
     $label = get_string('selectuser', 'automultiplechoice');
