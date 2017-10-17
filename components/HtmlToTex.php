@@ -153,7 +153,7 @@ class HtmlToTex
     protected function textToTex($htmlText) {
         return str_replace(
             ['{',  '}',  '\\',                '%'  , '&',  '~',  '[',  ']',  '_',  '^',    '$',  '#',  "\n"],
-            ['\{', '\}', '\\textbackslash{}', '\%' , '\&', '\~', '\[', '\]', '\_', '\^{}', '\$', '\#', " "],
+            ['\{', '\}', '\\textbackslash{}', '\%' , '\&', '\~', '[', ']', '\_', '\^{}', '\$', '\#', " "],
             $htmlText
         );
     }

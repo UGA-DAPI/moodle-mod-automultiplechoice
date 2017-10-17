@@ -51,13 +51,14 @@ class AmcProcessPrepare extends AmcProcess
 
         $format = $this->saveFormat($formatName);
         if (!$format) {
+            $this->errors[] = "Generate  source file failed";
             return false;
         }
         $this->getLogger()->clear();
 
 	$path = get_config('mod_automultiplechoice','xelatexpath');
 	if ($path==''){
-		$path = 'xelatex';
+		$path = '/usr/bin/xelatex';
 	}
         $pre = $this->workdir;
         $res = $this->shellExecAmc('prepare',
