@@ -33,7 +33,8 @@ class AmcProcessGrade extends AmcProcess
      * @param Quizz $quizz
      * @param string $formatName "txt" | "latex"
      */
-    public function __construct(Quizz $quizz, $formatName) {
+    public function __construct(Quizz $quizz, $formatName) 
+    {
         parent::__construct($quizz);
         $this->format = amcFormat\buildFormat($formatName, $quizz);
         if (!$this->format) {
@@ -45,9 +46,11 @@ class AmcProcessGrade extends AmcProcess
 
     /**
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
+     * 
      * @return bool
      */
-    protected function amcPrepareBareme() {
+    protected function amcPrepareBareme() 
+    {
         $pre = $this->workdir;
         $parameters = array(
             '--n-copies', (string) $this->quizz->amcparams->copies,
@@ -69,9 +72,11 @@ class AmcProcessGrade extends AmcProcess
 
     /**
      * Shell-executes 'amc note'
+     * 
      * @return bool
      */
-    protected function amcNote() {
+    protected function amcNote() 
+    {
         $pre = $this->workdir;
         $parameters = array(
             '--data', $pre . '/data',
@@ -95,9 +100,11 @@ class AmcProcessGrade extends AmcProcess
 
     /**
      * Shell-executes 'amc export' to get a csv file
+     * 
      * @return bool
      */
-    protected function amcExport() {
+    protected function amcExport() 
+    {
         $pre = $this->workdir;
         if (!is_writable($pre . '/exports')) {
             $this->errors[] = "Le répertoire /exports n'est pas accessible en écriture. Contactez l'administrateur.";
@@ -129,21 +136,30 @@ class AmcProcessGrade extends AmcProcess
             '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
             '--noms-encodage', 'UTF-8',
         );
-        $parametersCsv = array_merge($parameters, array(
-            '--module', 'CSV',
-            '--output', $csvfile,
-            '--csv-build-name', '(nom|surname) (prenom|name)',
-            '--option-out', 'columns=student.copy,student.key,patronomic,name,surname,moodleid,groupslist',
-            '--option-out', 'separateur=' . self::CSV_SEPARATOR,
-            '--option-out', 'decimal=,',
-            '--option-out', 'ticked=',
-        ));
-        $parametersOds = array_merge($parameters, array(
-            '--module', 'ods',
-            '--output', $odsfile,
-            '--option-out', 'columns=student.copy,student.key,patronomic,name,surname,groupslist',
-            '--option-out', 'stats=1',
-        ));
+
+        $parametersCsv = array_merge(
+            $parameters, 
+            array(
+                '--module', 'CSV',
+                '--output', $csvfile,
+                '--csv-build-name', '(nom|surname) (prenom|name)',
+                '--option-out', 'columns=student.copy,student.key,patronomic,name,surname,moodleid,groupslist',
+                '--option-out', 'separateur=' . self::CSV_SEPARATOR,
+                '--option-out', 'decimal=,',
+                '--option-out', 'ticked=',
+            )
+        );
+
+        $parametersOds = array_merge(
+            $parameters, 
+            array(
+                '--module', 'ods',
+                '--output', $odsfile,
+                '--option-out', 'columns=student.copy,student.key,patronomic,name,surname,groupslist',
+                '--option-out', 'stats=1',
+            )
+        );
+
         $res = $this->shellExecAmc('export', $parametersCsv) && $this->shellExecAmc('export', $parametersOds);
         chdir($oldcwd);
         if ($res) {
@@ -158,11 +174,13 @@ class AmcProcessGrade extends AmcProcess
     }
 
     /**
-     * low-level Shell-executes 'amc annote'
+     * Shell-executes low-level 'amc annote'
      * fills the cr/corrections/jpg directory with individual annotated copies
+     * 
      * @return bool
      */
-    private function amcAnnote() {
+    private function amcAnnotate()
+    {
         $pre = $this->workdir;
         if (!is_dir($pre. '/cr/corrections/jpg')) { // amc-annote will silently fail if the dir does not exist
             mkdir($pre. '/cr/corrections/jpg', 0777, true);
@@ -171,41 +189,47 @@ class AmcProcessGrade extends AmcProcess
             mkdir($pre. '/cr/corrections/pdf', 0777, true);
         }
         $parameters = array(
-            '--projet', $pre,
-            '--ch-sign', '4',
+            '--project', $pre,
+            '--n-digits', '4',
             '--cr', $pre . '/cr',
-            '--data', $pre.'/data',
+            '--data', $pre .'/data',
+            '--pdf-dir', $pre. '/cr/corrections/pdf',
             '--id-file', $pre. '/student.txt'  , // undocumented option: only work with students whose ID is in this file
-            '--taille-max', '1000x1500',
-            '--qualite', '90',
+            '--embedded-max-size', '1000x1500',
+            '--embedded-jpeg-quality', '90',
             '--line-width', '2',
             '--indicatives', '1',
             '--symbols', '0-0:none/#000000,0-1:circle/#ff0000,1-0:mark/#ff0000,1-1:mark/#00ff00',
             '--position', 'case',
-            '--ecart', '10',
-            '--pointsize-nl', '80',
+            '--dist-margin', '-1cm',
             '--verdict', '%(ID) Note: %s/%m (score total : %S/%M)',
             '--verdict-question', '"%s / %m"',
             '--no-rtl',
             '--no-changes-only',
-            '--fich-noms', $pre . self::PATH_STUDENTLIST_CSV,
-            //'--noms-encodage', 'UTF-8',
-            //'--csv-build-name', 'surname name',
+            '--names-file', $pre . self::PATH_STUDENTLIST_CSV,
+            '--subject', $pre. '/' . $this->normalizeFilename('sujet'),
+            '--names-encoding', 'UTF-8',
+            '--no-force-ascii',
+            '--sort', 'n',
+            '--filename-model', 'cr-(N).pdf'
         );
-        $res = $this->shellExecAmc('annote', $parameters,true);
+        $res = $this->shellExecAmc('annotate', $parameters, true);
         if ($res) {
-            $this->log('annote', '');
+            $this->log('annotate', '');
         }
         return $res;
     }
-     /**
-	     *      * lowl-level Shell-executes 'amc regroupe'
-	     *           * fills the cr/corrections/pdf directory with a global pdf file (parameter single==true) for all copies
-	     *                * or one pdf per student (single==false)
-	     *                     * @single bool
-	     *                          * @return bool
-	     *                               */
-    protected function amcRegroupe($single=true) {
+
+    /** 
+     * Shell-executes lowl-level  'amc regroupe'
+     * Fills the cr/corrections/pdf directory with a global pdf file (parameter single==true) for all copies
+     * or one pdf per student (single==false)
+     * 
+     * @param bool $single 
+     * 
+     * @return bool
+     */ 
+ /*   protected function amcRegroupe($single=true) {
 	    $pre = $this->workdir;
 	    if ($single) {
 		    $addon = array(
@@ -237,7 +261,7 @@ class AmcProcessGrade extends AmcProcess
 			      '--with', 'xelatex',
 			    '--filtered-source', $pre.'/prepare-source_filtered.tex',
 			 '--n-copies', (string) $this->quizz->amcparams->copies,
-		     */
+		   
 		    ),
 		    $addon
 	    );
@@ -249,12 +273,16 @@ class AmcProcessGrade extends AmcProcess
 	    }
 	    return $res;
     }
-
-     /**
+*/
+     
+    /**
      * Shell-executes 'amc association-auto'
+     * 
      * @return bool
+     *
      */
-    protected function amcAssociation() {
+    protected function amcAssociation() 
+    {
         $pre = $this->workdir;
         $parameters = array(
             '--data', $pre . '/data',
@@ -274,7 +302,8 @@ class AmcProcessGrade extends AmcProcess
      * @todo (maybe) manages all variants
      * @return bool
      */
-    protected function amcAnnotePdf() {
+    protected function amcAnnotePdf() 
+    {
 	$pre = $this->workdir;    
 	//array_map('unlink', glob($pre.  "/cr/corrections/jpg/*.jpg"));
         array_map('unlink', glob($pre.  "/cr/corrections/pdf/*.pdf"));
@@ -283,7 +312,7 @@ class AmcProcessGrade extends AmcProcess
 		$fp = fopen($pre . '/student.txt', 'w');
 		fwrite($fp,str_replace('_',':',$copy));
 		fclose($fp);	
-		if (!$this->amcAnnote()) {
+		if (!$this->amcAnnotate()) {
 			return false;
 		}
 		if (!$this->amcRegroupe(false)) {
