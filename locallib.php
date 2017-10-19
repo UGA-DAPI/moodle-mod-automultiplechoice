@@ -153,7 +153,7 @@ function displayGradeInfo(amc\AmcProcess $process) {
 }
 
 function get_code($name) {
-	    preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
+	    preg_match('/name-(?P<student>[0-9]+)[:-](?P<copy>[0-9]+).jpg$/', $name, $res);
 	        return $res['student'].'_'.$res['copy'];
 
 }

@@ -22,6 +22,17 @@ if ($ADMIN->fulltree) {
     );
     $s->plugin = 'mod_automultiplechoice';
     $settings->add($s);
+
+    $options = ['1.2', '1.3'];
+    $s = new admin_setting_configselect(
+        'amcversion',
+        'Version AMC',
+        'Choix de la version d\'AMC',
+        1,
+        $options
+    );
+    $s->plugin = 'mod_automultiplechoice';
+    $settings->add($s);
     
     $defaulttpl = __DIR__ . '/amctemplate';
     $s = new admin_setting_configtext(
