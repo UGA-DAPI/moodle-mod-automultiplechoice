@@ -9,11 +9,11 @@
         <tbody>
             <tr>
                 <th><?= get_string('score', 'automultiplechoice') ?></th>
-                <td><input type="text" id="expected-total-score" class="qscore" name="score" value="<?= $quizz->score ?>" /></td>
+                <td><input id="expected-total-score" type="number" class="form-control qscore" name="score" value="<?= $quizz->score ?>" /></td>
             </tr>
             <tr>
                 <th><?= get_string('amc_grademax', 'automultiplechoice') ?></th>
-                <td><input type="text" id="amc-grademax" name="amc[grademax]" value="<?= $quizz->amcparams->grademax ?>" /></td>
+                <td><input type="number" class="form-control" id="amc-grademax" name="amc[grademax]" value="<?= $quizz->amcparams->grademax ?>" /></td>
             </tr>
             <tr>
                 <th><?= get_string('amc_gradegranularity', 'automultiplechoice') ?></th>
@@ -53,7 +53,14 @@
             <tr>
                 <th>#</th>
                 <th><?= get_string('qscore', 'automultiplechoice') ?></th>
-                <th><?= get_string('qtitle', 'automultiplechoice') ?><div><button type="button" id="toggle-answers">Afficher/masquer les réponses</button></div></th>
+                <th>
+                    <?= get_string('qtitle', 'automultiplechoice') ?>
+                    <div>
+                        <button type="button" role="button" class="btn btn-default" id="toggle-answers">
+                            Afficher/masquer les réponses
+                        </button>
+                    </div>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -69,7 +76,7 @@
                 } else {
                     echo '<td>' . $k . '</td>
                         <td class="q-score">
-                            <input name="q[score][]" type="text" class="qscore" value="' . $q->score . '" />
+                            <input name="q[score][]" class="form-control" type="number" class="qscore" value="' . $q->score . '" />
                         </td>
                         <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
                             . HtmlHelper::listAnswers($q);
@@ -88,12 +95,16 @@
                     <span id="computed-total-score"><?= $quizz->score ?></span> /
                     <span id="total-score"><?= $quizz->score ?></span>
                 </th>
-            <td>
-                <button type="button" id="scoring-distribution">Répartir les points</button>
-            </td>
+                <td>
+                    <button type="button" role="button" class="btn btn-default" id="scoring-distribution">Répartir les points</button>
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <div><button type="submit"><?= get_string('savechanges') ?></button></div>
+    <div>
+        <button type="submit" class="btn btn-default">
+            <?= get_string('savechanges') ?>
+        </button>
+    </div>
 </form>

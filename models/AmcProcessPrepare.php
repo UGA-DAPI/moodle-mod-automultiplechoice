@@ -90,7 +90,8 @@ class AmcProcessPrepare extends AmcProcess
      * Executes "amc imprime" then zip the resulting files
      * @return bool
      */
-    public function printAndZip() {
+    public function printAndZip() 
+    {
         $pre = $this->workdir;
         if (!is_dir($pre . '/imprime')) {
             mkdir($pre . '/imprime');
@@ -108,13 +109,11 @@ class AmcProcessPrepare extends AmcProcess
 
         $zip = new \ZipArchive();
         $ret = $zip->open($zipName, \ZipArchive::CREATE);
-        if ( ! $ret ) {
+        if (!$ret) {
             printf("Echec lors de l'ouverture de l'archive %d", $ret);
         } else {
             $options = array('add_path' => 'sujets_amc/', 'remove_all_path' => true);
             $zip->addGlob($mask, GLOB_BRACE, $options);
-            // echo "Zip status: [" . $zip->status . "]<br />\n";
-            // echo "Zip statusSys: [" . $zip->statusSys . "]<br />\n";
             echo "<p>Zip de [" . $zip->numFiles . "] fichiers dans [" . basename($zip->filename) . "]</p>\n";
             $zip->close();
         }

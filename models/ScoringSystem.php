@@ -28,7 +28,8 @@ class ScoringSystem
     /**
      * Constructor. Reads Moodle config if necessary.
      */
-    public function __construct() {
+    public function __construct() 
+    {
         if (!self::$parsedConfig) {
             $text = get_config('mod_automultiplechoice', 'scoringrules');
             self::$sets = $this->parseConfig($text);
@@ -103,7 +104,8 @@ class ScoringSystem
      *
      * @return array of ScoringSet instances.
      */
-    protected function parseConfig($rawText) {
+    protected function parseConfig($rawText) 
+    {
         $blocks = preg_split('/\n-{3,}\s*\n/', $rawText);
         $scoringSets = array();
         foreach ($blocks as $block) {

@@ -37,14 +37,21 @@ require_once __DIR__ . '/models/AmcProcessGrade.php';
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed true if the feature is supported, null if unknown
  */
-function automultiplechoice_supports($feature) {
+function automultiplechoice_supports($feature) 
+{
     switch($feature) {
-        case FEATURE_MOD_INTRO:         return false;
-        case FEATURE_GRADE_HAS_GRADE:   return true;
-        case FEATURE_GRADE_OUTCOMES:    return false;
-        case FEATURE_BACKUP_MOODLE2:    return true;
+    
+    case FEATURE_GRADE_OUTCOMES:
+    case FEATURE_MOD_INTRO:
+        return false;
+    
+    case FEATURE_BACKUP_MOODLE2:
+    case FEATURE_GRADE_HAS_GRADE:
+        return true;
 
-        default:                        return null;
+    default:
+        return null;
+            
     }
 }
 
@@ -99,7 +106,6 @@ function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_au
     $quizz->timemodified = $_SERVER['REQUEST_TIME'];
     return $quizz->save();
 
-
     $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->id = $automultiplechoice->instance;
 
@@ -133,7 +139,6 @@ function automultiplechoice_delete_instance($id) {
     }
 
     # Delete any dependent records here #
-
     $DB->delete_records('automultiplechoice', array('id' => $automultiplechoice->id));
 
     return true;

@@ -160,3 +160,14 @@ dt {
 dt:after {
 	content: " :";
 }
+
+/* action column for questions datatable */
+.qactions {
+	width: 120px;
+}
+
+/* used in documents.php to set space between all buttons */
+.form-field {
+	margin-top: 5px;
+	margin-bottom: 5px; 
+}

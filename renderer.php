@@ -31,9 +31,19 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
      * @param moodle_page $page
      * @param string $target one of rendering target constants
      */
-    public function __construct(moodle_page $page, $target) {
+    public function __construct(moodle_page $page, $target) 
+    {
+        // load it for the entire mod
+        $page->requires->css(new moodle_url('/mod/automultiplechoice/assets/amc.css'));
+        // do not know why this is necessary... since it is already included by moodle
         $page->requires->jquery();
-        $page->requires->js(new moodle_url('assets/async.js'));
+        $page->requires->js(
+            new moodle_url('/mod/automultiplechoice/assets/async.js')
+        );
+        // main js file for the plugin. Can handle shared vars values for example
+        $page->requires->js(
+            new moodle_url('/mod/automultiplechoice/assets/main.js')
+        );
         parent::__construct($page, $target);
     }
 

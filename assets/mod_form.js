@@ -3,7 +3,8 @@
  */
 
 jQuery(function($) {
-    function updateScoringDescription() {
+	console.log('mod_form');
+	function updateScoringDescription() {
         var id = $("#id_amc_scoringset").val();
         $.ajax({
 			url: "../mod/automultiplechoice/ajax/scoring.php?scoringsetid=" + id,
@@ -23,7 +24,6 @@ jQuery(function($) {
 		tinyMCE.get("id_amc_instructionsprefix").setContent(v);
     }
     $("#id_instructions").on("click", updateInstrPrefix);
-    //updateInstrPrefix();
 
 	$("#id_anonymous").on("click", function(){
 		if ($("#id_anonymous").is(':checked')) {

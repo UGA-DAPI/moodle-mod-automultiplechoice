@@ -27,6 +27,7 @@ require_capability('mod/automultiplechoice:addinstance', $controller->getContext
 // form submitted?
 $questions = \mod\automultiplechoice\QuestionList::fromForm('question');
 if ($questions) {
+    
     if ($quizz->isLocked()) { // no modification allowed
         /**
          * @todo warn that modification is not allowed on a locked quizz.
@@ -34,6 +35,7 @@ if ($questions) {
         redirect(new moodle_url('view.php', array('a' => $quizz->id)));
     }
     $quizz->questions = $questions;
+ 
     if ($quizz->save()) {
         if ($quizz->score > 0) {
             redirect(new moodle_url('view.php', array('a' => $quizz->id)));
@@ -45,21 +47,13 @@ if ($questions) {
     }
 }
 
-// add_to_log($course->id, 'automultiplechoice', 'view', "questions.php?id={$cm->id}", $quizz->name, $cm->id);
-
 $PAGE->set_url('/mod/automultiplechoice/questions.php', array('a' => $quizz->id));
 $PAGE->set_cacheable(false);
-
-$PAGE->requires->jquery();
 $PAGE->requires->jquery_plugin('ui');
 $PAGE->requires->jquery_plugin('ui-css');
-$PAGE->requires->jquery_plugin('dataTables','mod_automultiplechoice');
-//$PAGE->requires->js(new \moodle_url('/mod/automultiplechoice/assets/dataTables/jquery.dataTables.min.js'));
-//$PAGE->requires->css(new \moodle_url('/mod/automultiplechoice/assets/dataTables/css/jquery.dataTables.css'));
-
-
+$PAGE->requires->jquery_plugin('dataTables', 'mod_automultiplechoice');
 $PAGE->requires->js(new moodle_url('assets/questions.js'));
-$PAGE->requires->css(new moodle_url('assets/amc.css'));
+$PAGE->requires->css(new moodle_url('assets/datatable-override.css'));
 
 // remove deleted questions
 $quizz->validate();
@@ -122,26 +116,37 @@ if ($questions && $questions->errors) {
     </thead>
     <tbody>
         <?php
-        $editicon = $OUTPUT->pix_icon('i/edit', get_string('edit'));
+        
         $stringAdd = format_string(get_string('add'));
         $stringRemove = format_string(get_string('remove'));
         foreach ($available_questions as $q) {
             $editurl = new moodle_url(
-                    '/local/questionssimplified/edit_standard.php',
-                    array('questions' => $q->id, 'courseid' => $course->id)
+                '/local/questionssimplified/edit_standard.php',
+                array('questions' => $q->id, 'courseid' => $course->id)
             );
+
+            // add a trash / delete button idf question belongs to the selected ones 
             if ($quizz->questions->contains($q->id)) {
-                $button = '<button type="button" data-qid="' . $q->id . '" data-selected="true" title="' . $stringRemove .'">&#x2A2F;</button>'
-                        . ' <a href="' . $editurl->out() . '" target="_blank">' . $editicon . '</a>';
+                $actions = '<div class="btn-group" role="group">';
+                $actions .= '<button class="btn btn-sm btn-danger" role="button" type="button" data-qid="' . $q->id . '" data-selected="true" title="' . $stringRemove .'">';
+                $actions .= ' <span class="fa fa-trash"></span>';
+                $actions .= '</button>';
+                $actions .= ' <a href="' . $editurl->out() . '" class="btn btn-sm btn-default" target="_blank"><span class="fa fa-pencil"></span></a>';
+                $actions .= '</div>';
             } else {
-                $button = '<button type="button" data-qid="' . $q->id . '" title="' . $stringAdd .'">&gt;&gt;</button>'
-                        . ' <a href="' . $editurl->out() . '" target="_blank">' . $editicon . '</a>';
+                // add a plus button if the question does not belong to the quiz
+                $actions = '<div class="btn-group" role="group">';
+                $actions .= '<button class="btn btn-sm btn-default" role="button" type="button" data-qid="' . $q->id . '" title="' . $stringAdd .'">';
+                $actions .= ' <span class="fa fa-plus"></span>';
+                $actions .= '</button>';
+                $actions .= ' <a href="' . $editurl->out() . '" class="btn btn-sm btn-default" target="_blank"><span class="fa fa-pencil"></span></a>';
+                $actions .= '</div>';
             }
             echo '<tr id="q-' . $q->id . '">'
                 . '<td>' . format_string($q->categoryname) . '</td>'
                 . '<td class="qtitle">' . format_string($q->title) . '</td>'
                 . '<td>' . date('Y-m-d h:i', $q->timemodified) . '</td>'
-                . '<td>' . $button .'</td>'
+                . '<td class="qactions">' . $actions .'</td>'
                 . '</tr>';
         }
         ?>
@@ -161,7 +166,9 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
 <form name="questions-form" action="questions.php" method="post">
 <p>
     <input name="a" value="<?php echo $quizz->id; ?>" type="hidden" />
-    <button type="submit"><?php echo get_string('savesel', 'automultiplechoice'); ?></button>
+    <button class="btn btn-default" type="submit">
+        <?php echo get_string('savesel', 'automultiplechoice'); ?>
+    </button>
 </p>
 <ol id="questions-selected">
     <?php
@@ -177,7 +184,9 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
     ?>
 </ol>
 <p>
-    <button type="button" id="insert-section"><?php echo get_string('insertsection', 'automultiplechoice'); ?></button>
+    <button type="button" role="button" class="btn btn-default" id="insert-section">
+        <?php echo get_string('insertsection', 'automultiplechoice'); ?>
+    </button>
 </p>
 </form>
 

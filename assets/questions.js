@@ -16,9 +16,9 @@ $(document).ready(function() {
 			{ "aTargets": [ 3 ], "bSortable": false, "sWidth": "5ex" }
 		],
 		"oLanguage": oLanguage
-	};
+    };
+    
     $("#questions-list").dataTable(dataTableConfig);
-
     $("#questions-selected").sortable();
 
     var Question = {
@@ -38,25 +38,33 @@ $(document).ready(function() {
         },
         remove: function(qid) {
             $("#qsel-" + qid).remove();
-			$("#q-" + qid + " button").data("selected", false).text("+");
         }
     };
 	Question.initTemplate();
 
+    // handle add / remove actions click event on each question dataTable row
     $("#questions-list").on("click", "button", function(e) {
-		var bton = $(e.target);
-		var qid = $(e.target).data("qid");
-        if (bton.data("selected")) {
-			bton.text(">>");
-            bton.removeData("selected");
+		var btn = $(e.target);
+        var qid = btn.data("qid");
+        console.log('button clicked');
+        if (btn.data("selected")) {
+            // remove question from qcm
+            btn.removeClass('btn-danger');
+            btn.addClass('btn-default');
+            btn.html('<span class="fa fa-plus"></span>');
+            btn.removeData("selected");
             Question.remove(qid);
         } else {
-			var qtitle = bton.closest('tr').children('td.qtitle').first().text();
-			bton.html("&#x2A2F;");
-            bton.data("selected", true);
+            // add question to qcm
+            var qtitle = btn.closest('tr').children('td.qtitle').first().text();
+            btn.removeClass('btn-default');
+            btn.addClass('btn-danger');
+            btn.html('<span class="fa fa-trash"></span>');
+            btn.data("selected", true);
             Question.add(qid, qtitle);
         }
     });
+
     $("#questions-selected").on("click", "button", function(e) {
         var qid = $(this).closest('li').find('input.qid').first().val();
 		if (qid) {
@@ -84,5 +92,4 @@ $(document).ready(function() {
 	$("#insert-section").on("click", function(e) {
         Section.add();
     });
-} );
-
+});

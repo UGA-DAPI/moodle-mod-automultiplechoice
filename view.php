@@ -31,13 +31,16 @@ if (!count($quizz->questions)) {
 }
 
 $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
-$PAGE->requires->jquery();
-$PAGE->requires->js(new moodle_url('assets/scoring.js'));
-$PAGE->requires->css(new moodle_url('assets/amc.css'));
+$PAGE->requires->js(
+    new moodle_url('/mod/automultiplechoice/assets/scoringsystem.js')
+);
+$PAGE->requires->js(
+    new moodle_url('assets/amc-modal-scripts.js')
+);
 
 $viewContext = $controller->getContext();
 require_capability('mod/automultiplechoice:view', $viewContext);
-if ( ! has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple étudiant
+if (!has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple étudiant
     $anotatedfile = "cr-".$USER->id.".pdf";
     if ($quizz->studentaccess && $anotatedfile) {
         $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
@@ -136,5 +139,17 @@ if ($scans && $process->isGraded()) {
 } else {
     echo "<div>Aucune copie n'a encore été notée ou corrigée.</div>";
 }
+
+// Toggle AMCCompution modal
+echo $OUTPUT->heading("7. " . get_string('amcscripts', 'automultiplechoice'), 3);
+echo '<div class="row">';
+echo '  <div class="col-md-12 text-center">';
+echo '      <button class="btn btn-default" type="button" data-toggle="modal" data-target="#amcModal">';
+echo            get_string('amcmodaltoggle', 'automultiplechoice');
+echo '      </button>';
+echo '  </div>';
+echo ' </div>';
+
+HtmlHelper::generateAmcModal();
 
 echo $output->footer();
