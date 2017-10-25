@@ -23,7 +23,7 @@ $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('annotating');
 $action = optional_param('action', '', PARAM_ALPHA);
-$userid   = optional_param('userid', $USER->id, PARAM_INT);
+$userid = optional_param('userid', '', PARAM_INT);
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
@@ -57,9 +57,20 @@ if ($action === 'anotate') {
 // Output starts here
 echo $output->header();
 
+$warnings = amc\Log::build($quizz->id)->check('annotating');
+if ($warnings) {
+	echo '<div class="informationbox notifyproblem alert alert-error">';
+	foreach ($warnings as $warning) {
+		echo $warning;
+	}
 
+	echo "<br /><br />";
+	echo HtmlHelper::buttonWithAjaxCheck('Relancer la correction', $quizz->id, 'grading', 'grade', 'process');
+	echo HtmlHelper::buttonWithAjaxCheck('Regénérer les copies corrigées', $quizz->id, 'grading', 'anotate', 'process');
+	echo "</div>";
+}
 if ($process->hasAnotatedFiles()) {
-    $url = $process->getFileUrl('cr/corrections/pdf/' . $process->normalizeFilename('corrections'));
+    $url = $process->getFileUrl( $process->normalizeFilename('corrections'));
     echo $OUTPUT->box_start('informationbox well');
     echo $OUTPUT->heading("Copies corrigées", 2)
         . $OUTPUT->heading("Fichiers", 3)
@@ -91,7 +102,7 @@ if ($process->hasAnotatedFiles()) {
         'post'
     );
     echo $OUTPUT->box_end();
-
+/*
     $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
     $currentgroup = groups_get_course_group($course, true);
 
@@ -140,7 +151,7 @@ if ($process->hasAnotatedFiles()) {
        
     }
 
-
+ */
 
 
     

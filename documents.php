@@ -29,10 +29,12 @@ $process = new amc\AmcProcessPrepare($quizz);
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 $action = optional_param('action', '', PARAM_ALPHA);
+$process = new amc\AmcProcessPrepare($quizz);
 if ($action === 'lock') {
     $quizz->amcparams->locked = true;
     amc\Log::build($quizz->id)->write('lock');
     $quizz->save();
+    array_map('backup_source', glob($quizz->getDirName() . '/prepare-source*'));
 } else if ($action === 'unlock') {
     $quizz->amcparams->locked = false;
     $quizz->save();
@@ -45,12 +47,18 @@ if ($action === 'lock') {
     $quizz->save();
     array_map('unlink', glob($quizz->getDirName() . '/sujet*'));
     redirect(new moodle_url('documents.php', array('a' => $quizz->id)));
+} else if ($action === 'restore') {
+    array_map('restore_source', glob($quizz->getDirName() . '/*.orig'));
 }
 
 $PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));
 
 echo $output->header();
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4bb8a11... dev backup source
 if ($quizz->isLocked()) {
     echo '<div class="informationbox notifyproblem alert alert-info">'
         . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."

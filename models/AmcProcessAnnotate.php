@@ -33,9 +33,16 @@ class AmcProcessAnnotate extends AmcProcess
         if (!is_dir($pre. '/cr/corrections/pdf')) {
             mkdir($pre. '/cr/corrections/pdf', 0777, true);
         }
-        $parameters = array(
+	if ($this->quizz->amcparams->answerSheetColumns > 2) {
+		$ecart='8';
+		$pointsize='110';
+	}else{
+		$ecart='10';
+		$pointsize='80';
+	}
+	$parameters = array(
             '--projet', $pre,
-            '--ch-sign', '4',
+            '--ch-sign', '2',
             '--cr', $pre . '/cr',
             '--data', $pre.'/data',
             //'--id-file',  '', // undocumented option: only work with students whose ID is in this file
@@ -45,8 +52,8 @@ class AmcProcessAnnotate extends AmcProcess
             '--indicatives', '1',
             '--symbols', '0-0:none/#000000,0-1:circle/#ff0000,1-0:mark/#ff0000,1-1:mark/#00ff00',
             '--position', 'case',
-            '--ecart', '10',
-            '--pointsize-nl', '80',
+            '--ecart', $ecart,
+            '--pointsize-nl', $pointsize,
             '--verdict', '%(ID) Note: %s/%m (score total : %S/%M)',
             '--verdict-question', '"%s / %m"',
             '--no-rtl',
@@ -144,7 +151,7 @@ class AmcProcessAnnotate extends AmcProcess
      * @return boolean
      */
     public function hasAnotatedFiles() {
-        return (file_exists($this->workdir . '/cr/corrections/pdf/' . $this->normalizeFilename('corrections')));
+        return (count(glob($this->workdir . '/cr/corrections/jpg/page-*.jpg'))>0);
     }
 
     /**
