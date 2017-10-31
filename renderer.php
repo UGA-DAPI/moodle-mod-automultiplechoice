@@ -11,9 +11,9 @@ require_once __DIR__ . '/components/FlashMessageManager.php';
 class mod_automultiplechoice_renderer extends plugin_renderer_base
 {
     /**
-     * @var mod_automultiplechoice\local\models\quiz $quiz an automultiplechoice object.
+     * @var mod\automultiplechoice\Quizz $quizz an automultiplechoice object.
      */
-    public $quiz;
+    public $quizz;
 
     /**
      * @var stdClass A record of the module..
@@ -31,11 +31,7 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
      * @param moodle_page $page
      * @param string $target one of rendering target constants
      */
-    public function __construct(moodle_page $page, $target) 
-    {
-        // load it for the entire mod
-        $page->requires->css(new moodle_url('/mod/automultiplechoice/assets/amc.css'));
-        // do not know why this is necessary... since it is already included by moodle
+    public function __construct(moodle_page $page, $target) {
         $page->requires->jquery();
         $page->requires->js(
             new moodle_url('/mod/automultiplechoice/assets/async.js')
@@ -107,6 +103,15 @@ EOL;
         return $output;
     }
 
+
+    public function students_selector($url, $cm, $idnumber, $groupid, $exclude=NULL) {
+
+        $select = amc_get_students_select( $url,$cm, $idnumber, $groupid, $exclude);
+        $output = html_writer::div( $this->output->render($select), 'amc_students_selector');
+        $output .= html_writer::tag('p', '', array('style'=>'page-break-after: always;'));
+
+        return $output;
+    }
     /**
       * Returns the footer
       * @return string

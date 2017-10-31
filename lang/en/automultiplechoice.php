@@ -34,7 +34,9 @@ $string['automultiplechoice:view'] = 'View a quizz or one\'s marked work';
 $string['dashboard'] = 'Dashboard';
 $string['documents'] = 'Documents';
 $string['uploadscans'] = 'Upload answers';
+$string['associating'] = 'Associating';
 $string['grading'] = 'Grading';
+$string['annotating'] = 'Annotating';
 
 $string['instructionsheader'] = 'Instructions';
 $string['automultiplechoicename'] = 'Nom du questionnaire';
@@ -112,7 +114,17 @@ $string['analyse'] = 'Submit student copies';
 $string['note'] = 'Grades and annotated copies';
 $string['export'] = 'Reports';
 
+$string['associationusermode'] = 'Afficchage des &eacute;tudiants';
+$string['associationmode'] = 'Mode d\'association';
+
+$string['unknown'] = 'Non identifi&eacute;s';
+$string['manual'] = 'Identification manuelle';
+$string['auto'] = 'Ientification automatique';
+
+$string['without'] = 'Sans copie';
+$string['selectuser'] = 'Asoocier l\'étudiant';
+
 $string['questionoperations'] = 'Before selecting questions, you may...';
-$string['importfilequestions'] = 'Import file with questions'; 
+$string['importfilequestions'] = 'Import file';
 $string['importquestions'] = 'Import questions';
 $string['createquestions'] = 'Create questions';

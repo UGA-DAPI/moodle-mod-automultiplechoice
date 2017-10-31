@@ -36,7 +36,12 @@ if ($action === 'deleteUploads') {
     redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
 }
 
-if (isset($_FILES['scanfile']) ) { // Fichier reçu ?
+if ($action === 'delete') {
+    $scan =  optional_param('scan', 'all', PARAM_PATH);
+    $process->deleteFailed($scan);
+    redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
+}
+if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
     $errors = array();
 
     if ($_FILES['scanfile']["error"] > 0) {
@@ -119,5 +124,37 @@ if ($scansStats) {
     </form>
     <?php
 }
+if (($scansStats) && (($scansStats['count']-$scansStats['nbidentified'])>0)){
+    $array_failed= $process->get_failed_scans();
+    if ($array_failed){
+        $failedoutput = $OUTPUT->heading('Scans non reconnus',3,'helptitle');
+        $failedoutput .= \html_writer::start_div('box generalbox boxaligncenter');
+        $deleteallurl = new \moodle_url('uploadscans.php', array('a' => $quizz->id, 'action' => 'delete','scan'=>'all'));
+        $deleteallbutton= new \single_button($deleteallurl, 'Effacer tous les scans non reconnus');
+        $deleteallbutton->add_confirm_action(get_string('confirm'));
+        $downloadfailedurl = $process->getFileUrl($process->normalizeFilename('failed'));
+        $failedoutput .= $OUTPUT->render($deleteallbutton);
+        $failedoutput .= \html_writer::link($downloadfailedurl, 'Télécharger tous les scans non reconnus',array('class'=>'btn','target'=>'_blank'));
+        $failedoutput .= \html_writer::start_div('amc_thumbnails_failed row');
+        $failedoutput .= \html_writer::start_div('thumbnails ');
+        foreach ($array_failed as $scan) {
+            $url = new \moodle_url('uploadscans.php', array('a'=>$quizz->id,'action'=>'delete', 'scan'=>$scan));
+            $deleteicon = $OUTPUT->action_icon($url,new \pix_icon('t/delete',get_string('delete')),new \confirm_action(get_string('confirm')));
+            $scanoutput = \html_writer::link($process->getFileUrl($scan),\html_writer::img($process->getFileUrl($scan),$scan));
+            $scanoutput .= \html_writer::div($deleteicon,'caption');
+    
+            $failedoutput .= \html_writer::div($scanoutput,'thumbnail col-xs-12 col-sm-6 col-md-4 col-lg-3');
+    
+            
+        }
+        $failedoutput .= \html_writer::end_div();
+        $failedoutput .= \html_writer::end_div();
+        $failedoutput .= \html_writer::end_div();
+    }else{
+        $failedoutput = 'Demandez à votre administrateur système d\'installer php-sqlite3 pour voir les fichiers non reconnus';
+    }
 
+        echo $failedoutput;
+    
+}
 echo $output->footer();

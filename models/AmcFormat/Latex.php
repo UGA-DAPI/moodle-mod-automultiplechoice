@@ -41,7 +41,7 @@ class Latex extends Api
         return "latex";
     }
 
-    public function __construct($quizz=null, $codelength=10) {
+    public function __construct($quizz=null, $codelength=8) {
         parent::__construct($quizz, $codelength);
         if (!empty($quizz->id)) {
             $this->tmpDir = $this->quizz->getDirName() . '/htmlimages';
@@ -69,12 +69,14 @@ class Latex extends Api
             . ($params->shuffleq ? '%' : '')
             . ",noshuffle% stops the automatic shuffling of the answers for every question\n"
             . ($params->separatesheet ? '' : '%')
-	    . ",separateanswersheet";
-	$customlayout=$params->customlayout;
+        . ",separateanswersheet"
+            . ($params->separatesheet ? '' : '%')
+        . ",automarks";
+    $customlayout=$params->customlayout;
         $shortTitles = '';
         if ($this->quizz->amcparams->answerSheetColumns > 2) {
-		$shortTitles = '\def\AMCformQuestion#1{\vspace{\AMCformVSpace}\par{\bf Q.#1 :}}
-\def\AMCformAnswer#1{\hspace{\AMCformHSpace}#1}\makeatletter';
+        $shortTitles = '\def\AMCformQuestion#1{\vspace{\AMCformVSpace}\par{\bf Q.#1 :}}
+\def\AMCformAnswer#1{\hspace{\AMCformHSpace}#1}';
         }
         $header = <<<EOL
 \\documentclass[a4paper]{article}
@@ -108,8 +110,8 @@ $options
 \\let\\mydate\\@date
 \\makeatother
 
-$customlayout
 $shortTitles
+$customlayout
 $multi
 \\AMCrandomseed{{$rand}}
 
@@ -172,8 +174,7 @@ EOL;
         }
         if (!$scoring) {
             $scoring = 'b=' . $question->score;
-        } 
-        
+        }
         $questionText = ($scoring ? '    \\scoring{' . $scoring . "}\n" : '')
                 . ($dp == \mod\automultiplechoice\AmcParams::DISPLAY_POINTS_BEGIN ? $pointsTxt . ' ' : '')
                 . $this->htmlToLatex(format_text($question->questiontext, $question->questiontextformat, ['filter' => false]))
@@ -335,9 +336,9 @@ EOL;
             $append = "P" . self::$sectionCounter;
         } else {
             self::$questionCounter++;
-            $append = "Q" . self::$questionCounter;
+            $append = "-" . self::$questionCounter;
         }
-        return preg_replace('/[^a-zA-Z]+/', '',
+        return preg_replace('/[^a-zA-Z0-9]+/', '',
                 @iconv('UTF-8', 'ASCII//TRANSLIT',
                         substr( html_entity_decode(strip_tags($text)), 0, 30 )
         )) . "-" . $append;

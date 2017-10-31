@@ -43,29 +43,42 @@ $tabs = array(
         "5. " . get_string('uploadscans', 'automultiplechoice')
     ),
     new tabobject(
+        'associating',
+        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/associating.php?a={$quizz->id}"),
+        "6. " . get_string('associating', 'automultiplechoice')
+    ),
+    new tabobject(
         'grading',
-        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/grading.php?a={$quiz->id}"),
-        "6. " . get_string('grading', 'automultiplechoice')
+        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/grading.php?a={$quizz->id}"),
+        "7. " . get_string('grading', 'automultiplechoice')
+    ),
+    new tabobject(
+        'annotating',
+        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/annotating.php?a={$quizz->id}"),
+        "8. " . get_string('annotating', 'automultiplechoice')
     ),
 );
 
 $inactive = array();
 $activated = array();
-if (empty($quiz->name)) {
+if (empty($quizz->name)) {
     $currenttab = 'dashboard';
-    $inactive = array('dashboard', 'questions', 'scoringsystem', 'documents', 'uploadscans', 'grading');
-} else if (empty($quiz->questions)) {
+    $inactive = array('dashboard', 'questions', 'scoringsystem', 'documents', 'uploadscans', 'associating','grading','annotating');
+} else if (empty($quizz->questions)) {
     $currenttab = 'questions';
-    $inactive = array('dashboard', 'scoringsystem', 'documents', 'uploadscans', 'grading');
-} else if (!$quiz->validate()) {
-    $inactive = array('documents', 'uploadscans', 'grading');
-} else if (!empty($quiz->errors) || !$quiz->isLocked()) {
-    $inactive = array('uploadscans', 'grading');
-} else if (!$quiz->hasScans()) {
-    $inactive = array('grading');
+    $inactive = array('dashboard', 'scoringsystem', 'documents', 'uploadscans','associating','grading','annotating');
+} else if (!$quizz->validate()) {
+    $inactive = array('documents', 'uploadscans','associating','grading','annotating');
+} else if (!empty($quizz->errors) || !$quizz->isLocked()) {
+    $inactive = array('uploadscans', 'associating','grading','annotating');
+} else if (!$quizz->hasScans()) {
+    $inactive = array('associating','grading','annotating');
 }
-if ($quiz->isLocked()) {
+if ($quizz->isLocked()) {
     $inactive[] = 'questions';
+}
+if (has_students($context)==0){
+    $inactive = array('associating');
 }
 if (!isset($currenttab)) {
     $currenttab = 'dashboard';

@@ -12,10 +12,10 @@
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-//use \mod\automultiplechoice as amc;
+use \mod\automultiplechoice as amc;
 
 require_once __DIR__ . '/locallib.php';
-require_once __DIR__ . '/models/Grade.php';
+require_once __DIR__ . '/models/AmcProcess.php';
 
 global $OUTPUT, $PAGE, $CFG;
 
@@ -41,7 +41,8 @@ $PAGE->requires->js(
 $viewContext = $controller->getContext();
 require_capability('mod/automultiplechoice:view', $viewContext);
 if (!has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple étudiant
-    $anotatedfile = "cr-".$USER->id.".pdf";
+    //$anotatedfile = "cr-".$USER->id.".pdf";
+    $anotatedfile = $process->getUserAnotatedSheet($USER->idnumber);
     if ($quiz->studentaccess && $anotatedfile) {
         $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
         echo $output->header();
@@ -86,21 +87,27 @@ if (!$quiz->validate()) {
 
 if ($quiz->isLocked()) {
     // cannot put a button if we use $OUTPUT->notification
+    $unlockurl = new \moodle_url('documents.php', array('a' => $quizz->id, 'action' => 'unlock'));
+    $unlockbutton= new \single_button($unlockurl, 'Déverrouiller (permettre les modifications du questionnaire)');
+    $message =amc\Log::build($quizz->id)->check('unlock');
+    if ($message){
+        $unlockbutton->add_confirm_action(implode('\n',$message));
+    }
     echo '<div class="informationbox notifyproblem alert alert-info">'
         . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
         . " Vous pouvez accéder aux documents via l'onglet <em>Sujets</em>."
-        . HtmlHelper::buttonWithAjaxCheck('Déverrouiller (permettre les modifications du questionnaire)', $quiz->id, 'documents', 'unlock', 'unlock'),
-        "</div>\n";
+        . $OUTPUT->render($unlockbutton)
+        . "</div>\n";
 }
 
 echo $OUTPUT->heading("1. " . get_string('settings'), 3);
-HtmlHelper::printTableQuiz($quiz, array('instructions', 'description'));
+HtmlHelper::printTableQuizz($quizz, array('instructions', 'description'));
 
 echo $OUTPUT->heading("2. " . get_string('questions', 'question'), 3);
-HtmlHelper::printTableQuiz($quiz, array('qnumber'));
+HtmlHelper::printTableQuizz($quizz, array('qnumber'));
 
 echo $OUTPUT->heading("3. " . get_string('scoringsystem', 'automultiplechoice'), 3);
-HtmlHelper::printTableQuiz($quiz, array('score', 'grademax', 'scoringset'));
+HtmlHelper::printTableQuizz($quizz, array('score', 'grademax', 'scoringset'));
 
 echo $OUTPUT->heading("4. " . get_string('documents', 'automultiplechoice'), 3);
 if ($quiz->isLocked()) {
@@ -108,7 +115,7 @@ if ($quiz->isLocked()) {
     echo $process->getHtmlZipLink();
     echo $process->getHtmlPdfLinks();
     echo '<div>'
-        . HtmlHelper::buttonWithAjaxCheck('Déverrouiller (permettre les modifications du questionnaire)', $quiz->id, 'documents', 'unlock', 'unlock')
+        . $OUTPUT->render($unlockbutton)
         . '</div>';
 } else {
     if ( $quiz->hasDocuments() ) {
@@ -132,24 +139,15 @@ if ($scans) {
 } else {
     echo "<div>Aucune copie n'a encore été déposée.</div>";
 }
+echo $OUTPUT->heading( "6. " . get_string('associating', 'automultiplechoice'), 3);
 
-echo $OUTPUT->heading("6. " . get_string('grading', 'automultiplechoice'), 3);
+
+echo $OUTPUT->heading("7. " . get_string('grading', 'automultiplechoice'), 3);
 if ($scans && $process->isGraded()) {
     echo $process->getHtmlStats();
 } else {
     echo "<div>Aucune copie n'a encore été notée ou corrigée.</div>";
 }
-
-// Toggle AMCCompution modal
-echo $OUTPUT->heading("7. " . get_string('amcscripts', 'automultiplechoice'), 3);
-echo '<div class="row">';
-echo '  <div class="col-md-12 text-center">';
-echo '      <button class="btn btn-default" type="button" data-toggle="modal" data-target="#amcModal">';
-echo            get_string('amcmodaltoggle', 'automultiplechoice');
-echo '      </button>';
-echo '  </div>';
-echo ' </div>';
-
-HtmlHelper::generateAmcModal();
+echo $OUTPUT->heading( "8. " . get_string('annotating', 'automultiplechoice'), 3);
 
 echo $output->footer();

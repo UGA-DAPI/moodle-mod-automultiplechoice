@@ -33,7 +33,9 @@ $string['automultiplechoice:view'] = 'Consulter un QCM ou sa copie';
 $string['dashboard'] = 'Tableau de bord';
 $string['documents'] = 'Sujets';
 $string['uploadscans'] = 'Dépôt des copies';
-$string['grading'] = 'Correction';
+$string['associating'] = 'Identification';
+$string['grading'] = 'Notation';
+$string['annotating'] = 'Correction';
 
 $string['instructionsheader'] = 'Rédaction de la consigne';
 $string['automultiplechoicename'] = 'Nom du questionnaire';
@@ -110,7 +112,20 @@ $string['analyse'] = 'Dépôt des copies des étudiants';
 $string['note'] = 'Notes et copies corrigées';
 $string['export'] = 'Rapports';
 
+$string['associationusermode'] = 'Affichage des &eacute;tudiants';
+$string['associationmode'] = 'Mode d\'identification';
+
+$string['unknown'] = 'Non identifi&eacute;s';
+$string['manual'] = 'Identification manuelle';
+$string['auto'] = 'Identification automatique';
+
+$string['without'] = 'Sans copie';
+$string['selectuser'] = 'Choisir l\'étudiant';
+
 $string['questionoperations'] = 'Avant de sélectionner des questions, vous pouvez enrichir la banque de questions par…';
+$string['importfilequestions'] = 'Importer un fichier de questions';
 $string['importquestions'] = 'Import/ Création de questions';
 $string['importfilequestions'] = 'Import d\'un fichier de question'; 
 $string['createquestions'] = "Création d'une question par formulaire";
+
+$string['errormeptex'] = "Erreur lors du calcul de mise en page (amc meptex).";

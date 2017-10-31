@@ -19,7 +19,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/models/ScoringSystem.php';
 require_once __DIR__ . '/models/AmcProcess.php';
-require_once __DIR__ . '/models/AmcProcessGrade.php';
 
 /* @var $DB moodle_database */
 
@@ -284,6 +283,11 @@ function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $gra
     $item['grademax']  = $automultiplechoice->score;
     $item['grademin']  = 0;
 
+    if ($grades  === 'reset') {
+        $item['reset'] = true;
+        $grades = NULL;
+    }
+
     grade_update('mod/automultiplechoice', $automultiplechoice->course, 'mod', 'automultiplechoice',
             $automultiplechoice->id, 0, $grades, $item);
 }
@@ -368,17 +372,16 @@ function automultiplechoice_get_file_info($browser, $areas, $course, $cm, $conte
  */
 function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
     global $USER;
-
+    require_once __DIR__ . '/models/AmcProcessExport.php';
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }
 
     require_login($course, true, $cm);
 
-    $filename = array_pop($args);
+    $filename = rawurldecode(array_pop($args));
     $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
-    $process = new \mod\automultiplechoice\AmcProcessGrade($quizz, "latex");
-
+    $process = new \mod\automultiplechoice\AmcProcessExport($quizz);
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
     // and corrigé
     if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
@@ -390,6 +393,18 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
             || (  $quizz->studentaccess && $USER->id.".pdf" === basename($filename))
             ) {
             send_file($target, $filename, 10, 0, false, false, 'application/pdf') ;
+            return true;
+        }
+    }
+    if (preg_match('/^page-[0-9]*-[0-9]*-[0-9]*\.jpg$/', $filename)) {
+        $target = $process->workdir . '/cr/corrections/jpg/' . $filename;
+        if (!file_exists($target)) {
+            send_file_not_found();
+        }
+        if (has_capability('mod/automultiplechoice:update', $context)
+            || (  $quizz->studentaccess && $USER->id.".jpg" === basename($filename))
+            ) {
+            send_file($target, $filename, 10, 0, false, false, 'application/jpg') ;
             return true;
         }
     }
@@ -405,23 +420,79 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     require_capability('mod/automultiplechoice:update', $context);
 
     // whitelist security
-    if (preg_match('/^(sujet|corrige|catalog)-.*\.pdf$/', $filename)) {
-        send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-        return true;
-     } elseif (preg_match('/^sujets-.*\.zip$/', $filename)) {
-        send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/zip') ;
-        return true;
-     } elseif (preg_match('/^corrections-.*\.pdf$/', $filename)) {
+    if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) { 
+        $ret = $process->amcCreatePdf('latex');     
+        if ($ret){
+             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        }
+        return $res;
+     }else if (preg_match('/^corriges-.*\.pdf$/', $filename)) {
+        $ret = $process->amcCreateCorrection();     
+        if ($ret){
+             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        }
+        return $res;
+     } 
+     else if (preg_match('/^failed-.*\.pdf$/', $filename)) {
+        $ret = $process->makeFailedPdf();     
+        if ($ret){
+            send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        }
+        return $ret;
+     } else if (preg_match('/^sujets-.*\.zip$/', $filename)) {
+         $ret = $process->amcImprime() &&  $process->zip();
+            if ($ret){
+             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/zip') ;
+        }
+        return $ret;
+     } else if (preg_match('/^corrections-.*\.pdf$/', $filename)) {
+        $ret = $process->amcAnnotePdf();     
+        if ($ret){
+        send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+    }
+    return $res;
+     } else if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
-     } elseif (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
-        send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+    } else if (preg_match('/grades\.csv$/', $filename)) {
+        $ret = $process->amcExport('csv');
+        if ($ret){
+            send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
+        }
+        return $ret;
+     } else if (preg_match('/apogee\.csv$/', $filename)) {
+        $ret = $process->writeFileApogeeCsv();     
+        if ($ret){
+            send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
+        }
+        return $ret;
+    } else if (preg_match('/\.ods$/', $filename)) {
+        $ret = $process->amcExport('ods');     
+        if ($ret){
+            send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'application/vnd.oasis.opendocument.spreadsheet') ;
+        }
+        return $ret;
+    } else if (preg_match('/\.ppm$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/x-portable-pixmap') ;
         return true;
-    } elseif (preg_match('/\.csv$/', $filename)) {
-        send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
+    } else if (preg_match('/\.pbm$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/x-portable-bitmap') ;
         return true;
-    } elseif (preg_match('/\.ods$/', $filename)) {
-        send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'application/vnd.oasis.opendocument.spreadsheet') ;
+    } else if (preg_match('/\.tif[f]*$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/tiff') ;
+        return true;
+    } else if (preg_match('/\.png$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/png') ;
+        return true;
+    } else if (preg_match('/\.jp(e|)g$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/jpeg') ;
+        return true;
+    }else if (preg_match('/^name-[0-9]*_[0-9]*\.jpg$/', $filename)) {
+        $filename=preg_replace('/(^name-[0-9]+)_([0-9]*\.jpg$)/', '\1:\2',  $filename);
+        send_file($process->workdir . '/cr/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
+        return true;
+    }else if (preg_match('/^page-[0-9]*-[0-9]*-[0-9]*\.jpg$/', $filename)) {
+        send_file($process->workdir . '/cr/corrections/jpg/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
         return true;
     }
     send_file_not_found();
@@ -466,4 +537,197 @@ function automultiplechoice_questions_in_use($questionids) {
         }
     }
     return false;
+}
+
+
+
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the data.
+ *
+ * @param $mform form passed by reference
+ */
+function automultiplechoice_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'dataheader', get_string('modulenameplural', 'automultiplechoice'));
+    $mform->addElement('checkbox', 'reset_automultiplechoice', get_string('deleteallentries','automultiplechoice'));
+
+    $mform->addElement('checkbox', 'reset_automultiplechoice_documents', get_string('deletenotenrolled', 'automultiplechoice'));
+    $mform->disabledIf('reset_automultiplechoice_notenrolled', 'reset_automultiplechoice', 'checked');
+
+    $mform->addElement('checkbox', 'reset_automultiplechoice_scans', get_string('deleteallratings'));
+    $mform->disabledIf('reset_automultiplechoice_ratings', 'reset_automultiplechoice', 'checked');
+
+    $mform->addElement('checkbox', 'reset_automultiplechoice_log', get_string('deleteallcomments'));
+    $mform->disabledIf('reset_automultiplechoice_log', 'reset_automultiplechoice', 'checked');
+}
+
+/**
+ * Course reset form defaults.
+ * @return array
+ */
+function automultiplechoice_reset_course_form_defaults($course) {
+    return array('reset_automultiplechoice'=>0, 'reset_automultiplechoice_scans'=>1, 'reset_automultiplechoice_log'=>1, 'reset_dautomultiplechoice_douments'=>0);
+}
+
+/**
+ * Removes all grades from gradebook
+ *
+ * @global object
+ * @global object
+ * @param int $courseid
+ * @param string $type optional type
+ */
+function automultiplechoice_reset_gradebook($courseid, $type='') {
+    global $CFG, $DB;
+
+    $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
+              FROM {automultiplechoice} a, {course_modules} cm, {modules} m
+             WHERE m.name='automultiplechoice' AND m.id=cm.module AND cm.instance=a.id AND d.course=?";
+
+    if ($datas = $DB->get_records_sql($sql, array($courseid))) {
+        foreach ($datas as $data) {
+            automultiplechoice_grade_item_update($data, 'reset');
+        }
+    }
+}
+
+/**
+ * Actual implementation of the reset course functionality, delete all the
+ * data responses for course $data->courseid.
+ *
+ * @global object
+ * @global object
+ * @param object $data the data submitted from the reset course.
+ * @return array status array
+ */
+function automultiplechoice_reset_userdata($data) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/filelib.php');
+    require_once($CFG->dirroot.'/rating/lib.php');
+
+    $componentstr = get_string('modulenameplural', 'data');
+    $status = array();
+
+    $allrecordssql = "SELECT al.id
+                        FROM {automultiplechoice_log} al
+                             INNER JOIN {automultiplechoice} a ON al.instanceid = a.id
+                       WHERE a.course = ?";
+
+    $alldatassql = "SELECT a.id
+                      FROM {automultiplechoice} a
+                     WHERE a.course=?";
+
+    $rm = new rating_manager();
+    $ratingdeloptions = new stdClass;
+    $ratingdeloptions->component = 'mod_data';
+    $ratingdeloptions->ratingarea = 'entry';
+
+    // Set the file storage - may need it to remove files later.
+    $fs = get_file_storage();
+
+    // delete entries if requested
+    if (!empty($data->reset_automultiplechoice)) {
+        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
+        $DB->delete_records_select('data_content', "recordid IN ($allrecordssql)", array($data->courseid));
+        $DB->delete_records_select('data_records', "dataid IN ($alldatassql)", array($data->courseid));
+
+        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
+            foreach ($datas as $dataid=>$unused) {
+                if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
+                    continue;
+                }
+                $datacontext = context_module::instance($cm->id);
+
+                // Delete any files that may exist.
+                $fs->delete_area_files($datacontext->id, 'mod_data', 'content');
+
+                $ratingdeloptions->contextid = $datacontext->id;
+                $rm->delete_ratings($ratingdeloptions);
+            }
+        }
+
+        if (empty($data->reset_gradebook_grades)) {
+            // remove all grades from gradebook
+            data_reset_gradebook($data->courseid);
+        }
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallentries', 'data'), 'error'=>false);
+    }
+
+    // remove entries by users not enrolled into course
+    if (!empty($data->reset_automultiplechoice_documents)) {
+        $recordssql = "SELECT r.id, r.userid, r.dataid, u.id AS userexists, u.deleted AS userdeleted
+                         FROM {data_records} r
+                              JOIN {data} d ON r.dataid = d.id
+                              LEFT JOIN {user} u ON r.userid = u.id
+                        WHERE d.course = ? AND r.userid > 0";
+
+        $course_context = context_course::instance($data->courseid);
+        $notenrolled = array();
+        $fields = array();
+        $rs = $DB->get_recordset_sql($recordssql, array($data->courseid));
+        foreach ($rs as $record) {
+            if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
+              or !is_enrolled($course_context, $record->userid)) {
+                //delete ratings
+                if (!$cm = get_coursemodule_from_instance('data', $record->dataid)) {
+                    continue;
+                }
+                $datacontext = context_module::instance($cm->id);
+                $ratingdeloptions->contextid = $datacontext->id;
+                $ratingdeloptions->itemid = $record->id;
+                $rm->delete_ratings($ratingdeloptions);
+
+                // Delete any files that may exist.
+                if ($contents = $DB->get_records('data_content', array('recordid' => $record->id), '', 'id')) {
+                    foreach ($contents as $content) {
+                        $fs->delete_area_files($datacontext->id, 'mod_data', 'content', $content->id);
+                    }
+                }
+                $notenrolled[$record->userid] = true;
+
+                $DB->delete_records('comments', array('itemid' => $record->id, 'commentarea' => 'database_entry'));
+                $DB->delete_records('data_content', array('recordid' => $record->id));
+                $DB->delete_records('data_records', array('id' => $record->id));
+            }
+        }
+        $rs->close();
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotenrolled', 'data'), 'error'=>false);
+    }
+
+    // remove all ratings
+    if (!empty($data->reset_automultiplechoice_scans)) {
+        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
+            foreach ($datas as $dataid=>$unused) {
+                if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
+                    continue;
+                }
+                $datacontext = context_module::instance($cm->id);
+
+                $ratingdeloptions->contextid = $datacontext->id;
+                $rm->delete_ratings($ratingdeloptions);
+            }
+        }
+
+        if (empty($data->reset_gradebook_grades)) {
+            // remove all grades from gradebook
+            data_reset_gradebook($data->courseid);
+        }
+
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallratings'), 'error'=>false);
+    }
+
+    // remove all comments
+    if (!empty($data->reset_data_comments)) {
+        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
+    }
+
+    // updating dates - shift may be negative too
+    if ($data->timeshift) {
+        shift_course_mod_dates('data', array('timeavailablefrom', 'timeavailableto', 'timeviewfrom', 'timeviewto'), $data->timeshift, $data->courseid);
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+    }
+
+    return $status;
 }

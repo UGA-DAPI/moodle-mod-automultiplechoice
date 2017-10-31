@@ -10,6 +10,7 @@ namespace mod\automultiplechoice;
 
 require_once __DIR__ . '/Log.php';
 require_once __DIR__ . '/AmcLogfile.php';
+require_once __DIR__ . '/AmcFormat/Api.php';
 
 class AmcProcess
 {
@@ -23,20 +24,29 @@ class AmcProcess
     public $workdir;
 
     protected $relworkdir;
+    protected $grades = array();
 
     /**
      * @var array
      */
-    protected $errors = array();
+    public $errors = array();
 
     private $logger;
+    const PATH_STUDENTLIST_CSV = '/exports/student_list.csv';
+    const PATH_AMC_CSV = '/exports/grades.csv';
+    const PATH_AMC_ODS = '/exports/grades.ods';
+    const PATH_APOGEE_CSV = '/exports/grades_apogee.csv';
+    const CSV_SEPARATOR = ';';
 
+ 
+
+    
     /**
      * Constructor
      *
      * @param Quizz $quizz
      */
-    public function __construct(Quizz $quizz) {
+    public function __construct(Quizz $quizz,$formatName = 'latex') {
         if (empty($quizz->id)) {
             throw new Exception("No quizz ID");
         }
@@ -48,11 +58,40 @@ class AmcProcess
         $this->initWorkdir();
 
         $this->codelength = (int) get_config('mod_automultiplechoice', 'amccodelength');
-        /**
+    $this->format = amcFormat\buildFormat($formatName, $quizz);
+         if (!$this->format) {
+                 throw new \Exception("Erreur, pas de format de QCM pour AMC.");
+                }
+        $this->format->quizz = $this->quizz;
+        $this->format->codelength = $this->codelength;  /**
          * @todo error if codelength == 0
          */
     }
+ /**
+     * Save the AmcTXT source file.
+     *
+     * @param string $formatName "txt" | "latex"
+     * @return amcFormat\Api
+     */
+    public function saveFormat($formatName) {
+        try {
+            $format = amcFormat\buildFormat($formatName, $this->quizz);
+            $format->quizz = $this->quizz;
+            $format->codelength = $this->codelength;
+        } catch (\Exception $e) {
+            // error
+            $this->errors[] = $e->getMessage();
+            return null;
+        }
 
+        $filename = $this->workdir . "/" . $format->getFilename();
+        if (file_put_contents($filename, $format->getContent())) {
+            return $format;
+        } else {
+            $this->errors[] = "Could not write the file for AMC. Disk full?";
+            return null;
+        }
+    }
     /**
      * @return AmcLogfile
      */
@@ -84,22 +123,85 @@ class AmcProcess
      * Shell-executes 'amc meptex'
      * @return bool
      */
-    public function amcMeptex() {
+    public function amcMeptex($force=false) {
         $pre = $this->workdir;
-        $res = $this->shellExecAmc('meptex',
-                array(
-                    '--data', $pre . '/data',
-                    '--progression-id', 'MEP',
-                    '--progression', '1',
-                    '--src', $pre . '/prepare-calage.xy',
-                )
-        );
+             $amclog = Log::build($this->quizz->id);
+                $res = $this->shellExecAmc('meptex',
+                        array(
+                            '--data', $pre . '/data',
+                            '--progression-id', 'MEP',
+                            '--progression', '1',
+                            '--src', $pre . '/prepare-calage.xy',
+                        )
+                );
+                if ($res) {
+                    $this->log('meptex', '');
+                    $amclog = Log::build($this->quizz->id);
+                    $amclog->write('meptex');
+                }
+                return $res;
+    }
+
+    
+    /**
+     * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
+     * @return bool
+     */
+    public function amcPrepareBareme() {
+        $path = get_config('mod_automultiplechoice','xelatexpath');
+    if ($path==''){
+        $path = 'xelatex';
+    }
+        $pre = $this->workdir;
+        $parameters = array(
+            '--n-copies', (string) $this->quizz->amcparams->copies,
+            '--mode', 'b',
+            '--data', $pre . '/data',
+            '--filtered-source', $pre . '/prepare-source_filtered.tex', // for AMC-txt, the LaTeX will be written in this file
+            '--progression-id', 'bareme',
+            '--progression', '1',
+            '--with', $path,
+            '--filter', $this->format->getFilterName(),
+            $pre . '/' . $this->format->getFilename()
+            );
+        $res = $this->shellExecAmc('prepare', $parameters);
         if ($res) {
-            $this->log('meptex', '');
+            $this->log('prepare:bareme', 'OK.');
+             $amclog = Log::build($this->quizz->id);
+             $amclog->write('scoring');
         }
         return $res;
     }
 
+    /**
+     * Shell-executes 'amc note'
+     * @return bool
+     */
+    public function amcNote() {
+        $pre = $this->workdir;
+        $parameters = array(
+            '--data', $pre . '/data',
+            '--progression-id', 'notation',
+            '--progression', '1',
+            '--seuil', '0.85', // black ratio threshold
+            '--grain', $this->quizz->amcparams->gradegranularity,
+            '--arrondi', $this->quizz->amcparams->graderounding,
+            '--notemin', $this->quizz->amcparams->minscore,
+            '--notemax', $this->quizz->amcparams->grademax,
+            //'--plafond', // removed as grades ares scaled from min to max
+            '--postcorrect-student', '', //FIXME inutile ?
+            '--postcorrect-copy', '',    //FIXME inutile ?
+            );
+        $res = $this->shellExecAmc('note', $parameters);
+        if ($res) {
+            $this->log('note', 'OK.');
+            $amclog = Log::build($this->quizz->id);
+            $amclog->write('grading');
+        }
+        return $res;
+    }
+
+   
     /**
      * returns stat() information (number and dates) on scanned (ppm) files already stored
      * @return array with keys: count, time, timefr ; null if nothing was uploaded
@@ -128,7 +230,142 @@ class AmcProcess
             return null;
         }
     }
+    /**
+    * returns the name of pdf anotated file matching user (upon $idnumber)
+    * @param string $idnumber
+    * @return string (matching user file) OR FALSE if no matching file
+    */
+   public function getUserAnotatedSheet($idnumber) {
+       $numid = substr($idnumber,-1*$this->codelength);
+       $files = glob($this->workdir . '/cr/corrections/jpg/cr-*.jpg');
+       foreach ($files as $file) {
+           if (preg_match('@/(cr-([0-9]+)-[^/]+\.pdf)$@', $file, $matches)) {
+               if ($numid === (int) $matches[2]) {
+                   return $matches[1];
+               }
+           }
+       }
+       return false;
+   }
+    /**
+     * @return boolean
+     */
+    public function isGraded() {
+        if (Log::build($this->quizz->id)->read('grading')){
+            return true;
+        }else{
+             return false;
+        }
+    }
 
+    /**
+     * computes and display statistics indicators
+     * @return string html table with statistics indicators
+     */
+    public function getHtmlStats() {
+        $this->readGrades();
+        $mark = array();
+        foreach ($this->grades as $rawmark) {
+            $mark[] = $rawmark->rawgrade;
+        }
+
+        $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
+        $out = "<table class=\"generaltable\"><tbody>\n";
+        foreach ($indics as $indicen => $indicfr) {
+            $out .= '<tr><td>' . $indicfr. '</td><td>' . $this->mmmr($mark, $indicen) . '</td></tr>' . "\n";
+        }
+        $out .= "</tbody></table>\n";
+        return $out;
+    }
+
+    /**
+     * Fills the "grades" property from the CSV.
+     *
+     * @return boolean
+     */
+    protected function readGrades() {
+
+        if (count($this->grades) > 0) {
+            return true;
+        }
+        $input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
+        if (!$input) {
+            return false;
+        }
+        $header = fgetcsv($input, 0, self::CSV_SEPARATOR);
+        if (!$header) {
+            return false;
+        }
+        $getCol = array_flip($header);
+ 
+    $this->grades = array();
+        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
+            $idnumber = $data[$getCol['student.number']];
+        $userid=null;
+        $userid = $data[$getCol['moodleid']];
+        if ($userid) {
+            $this->usersknown++;
+        } else {
+            $this->usersunknown++;
+        }
+        $this->grades[] = (object) array(
+        'userid' => $userid,
+                'rawgrade' => str_replace(',', '.', $data[6])
+    );
+        }
+    fclose($input);
+        return true;
+    }
+
+    protected static function fopenRead($filename) {
+        if (!is_readable($filename)) {
+            return false;
+        }
+        $handle = fopen($filename, 'r');
+        if (!$handle) {
+            return false;
+        }
+        return $handle;
+    }
+    
+    /**
+     * Computes several statistics indicators from an array
+     *
+     * @param array $array
+     * @param string $output
+     * @return float
+     */
+    protected function mmmr($array, $output = 'mean'){
+        if (empty($array) || !is_array($array)) {
+            return FALSE;
+        } else {
+            switch($output){
+                case 'size':
+                    $res = count($array);
+                break;
+                case 'mean':
+                    $count = count($array);
+                    $sum = array_sum($array);
+                    $res = $sum / $count;
+                break;
+                case 'median':
+                    rsort($array);
+                    $middle = round(count($array) / 2);
+                    $res = $array[$middle-1];
+                break;
+                case 'mode':
+                    $v = array_count_values($array);
+                    arsort($v);
+                    list ($res) = each($v); // read the first key
+                break;
+                case 'range':
+                    sort($array, SORT_NUMERIC);
+                    $res = $array[0] . " - " . $array[count($array) - 1];
+                break;
+            }
+            return $res;
+        }
+    }
     /**
      * log processed action
      * @param string $action ('prepare'...)
@@ -173,14 +410,20 @@ class AmcProcess
         return \moodle_url::make_pluginfile_url(
                 $contextid,
                 'mod_automultiplechoice',
-                '',
-                NULL,
-                '',
-                $this->relworkdir . '/' . ltrim($filename, '/'),
+                'local',
+                $this->quizz->id,
+                '/',
+                ltrim($filename, '/'),
                 $forcedld
         );
     }
-
+    protected function get_students_list(){
+        if (file_exists($this->workdir . self::PATH_STUDENTLIST_CSV)){
+        return $this->workdir . self::PATH_STUDENTLIST_CSV;
+    }else{
+        return ' ';
+    }
+    }
     /**
      * Format a timestamp into a fr datetime.
      *
@@ -226,12 +469,16 @@ class AmcProcess
                 return 'sujet-' . $this->normalizeText($this->quizz->name) . '.pdf';
             case 'corrige':
                 return 'corrige-' . $this->normalizeText($this->quizz->name) . '.pdf';
+            case 'corriges':
+                return 'corriges-' . $this->normalizeText($this->quizz->name) . '.pdf';
             case 'catalog':
                 return 'catalog-' . $this->normalizeText($this->quizz->name) . '.pdf';
             case 'sujets': // !!! plural 
                 return 'sujets-' . $this->normalizeText($this->quizz->name) . '.zip';
             case 'corrections':
                 return 'corrections-' . $this->normalizeText($this->quizz->name) . '.pdf';
+            case 'failed':
+                return 'failed-' . $this->normalizeText($this->quizz->name) . '.pdf';
         }
     }
 
@@ -266,7 +513,7 @@ class AmcProcess
             return false;
         }
         $html = '<pre style="margin:2px; padding:2px; border:1px solid grey;">' . " \n"
-            . $this->formatShellOutput($cmd, $lines, $returnVal)
+            . $this->formatShellOutput($cmd,  $lines, $returnVal)
             . "</pre>"
             . "-------CALL TRACE-------\n";
         debugging($html, $debuglevel);
@@ -334,10 +581,11 @@ class AmcProcess
      * @return string
      */
     public function getHtmlPdfLinks() {
-        $opts = array('target' => '_blank');
+        $opts = array('class' => 'btn','target' =>'_blank');
         $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), $this->normalizeFilename('sujet'), $opts),
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), $this->normalizeFilename('catalog'), $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), 'Sujet', $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), 'Catalogue', $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('corriges')), 'Corrig&eacute;s', $opts),
         );
         return <<<EOL
         <ul class="amc-files">
@@ -347,11 +595,16 @@ class AmcProcess
             </li>
             <li>
                 $links[1]
-                <div>Le corrigé de référence.</div>
+                <div>Le catalogue de questions.</div>
+            </li>
+            <li>
+                $links[2]
+                <div>Les  corrigés des différentes versions.</div>
             </li>
         </ul>
 EOL;
     }
+    
 
     /**
      * Return the HTML that for the link to the ZIP file.
@@ -360,7 +613,7 @@ EOL;
      */
     public function getHtmlZipLink() {
         $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), $this->normalizeFilename('sujets')),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), 'sujets',array('class'=>'btn')),
         );
         return <<<EOL
         <ul class="amc-files">

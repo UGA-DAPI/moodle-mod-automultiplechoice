@@ -32,16 +32,17 @@ if ($questions) {
         /**
          * @todo warn that modification is not allowed on a locked quizz.
          */
-        redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+        //redirect(new moodle_url('view.php', array('a' => $quizz->id)));
     }
     $quizz->questions = $questions;
  
     if ($quizz->save()) {
-        if ($quizz->score > 0) {
+        amc\Log::build($quizz->id)->write('saving');
+        /*if ($quizz->score > 0) {
             redirect(new moodle_url('view.php', array('a' => $quizz->id)));
         } else {
             redirect(new moodle_url('scoringsystem.php', array('a' => $quizz->id)));
-        }
+        }*/
     } else {
         die("Could not save into automultiplechoice");
     }
@@ -64,32 +65,37 @@ echo $output->header();
 
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('questionoperations', 'automultiplechoice'));
-echo '<p>' . $OUTPUT->action_link(
+$opt = array('class' => 'btn', 'target' =>'_blank');
+echo  \html_writer::start_div('btn-group');
+echo  $OUTPUT->action_link(
         new moodle_url('/question/import.php', array('courseid' => $course->id)),
         get_string('importfilequestions', 'automultiplechoice'),
         null,
-        array('target' => '_blank')
-    ) . '</p>';
-echo '<p>' . $OUTPUT->action_link(
+        $opt
+    ) ;
+echo  $OUTPUT->action_link(
         new moodle_url('/local/questionssimplified/edit_wysiwyg.php', array('courseid' => $course->id)),
         get_string('importquestions', 'automultiplechoice'),
         null,
-        array('target' => '_blank')
-    ) . '</p>';
-echo '<p>' . $OUTPUT->action_link(
+        $opt
+    ) ;
+echo  $OUTPUT->action_link(
         new moodle_url('/local/questionssimplified/edit_standard.php', array('courseid' => $course->id)),
         get_string('createquestions', 'automultiplechoice'),
         null,
-        array('target' => '_blank')
-    ) . '</p>';
-echo '<p>' . $OUTPUT->action_link(
+        $opt
+    ) ;
+echo   $OUTPUT->action_link(
         new moodle_url('/question/edit.php', array('courseid' => $course->id)),
         get_string('questionbank', 'question'),
         null,
-        array('target' => '_blank')
-    ) . '</p>';
-echo "<p>Si vos questions récentes n'apparaissent pas, "
-        . "pensez à rafraichir la page de votre navigateur (F5) et à trier par date descendante.</p>";
+        $opt
+    )  ;
+echo  \html_writer::end_div();
+echo  \html_writer::div("<p>Si vos questions récentes n'apparaissent pas, "
+        . "pensez à <strong>rafraichir la page</strong> de votre navigateur (<strong>F5</strong>) et à trier par date descendante.</p>",
+        'informationbox notifyproblem alert alert-info');
+
 echo $OUTPUT->box_end();
 
 echo $OUTPUT->box_start('generalbox', 'questions-part-selecting');

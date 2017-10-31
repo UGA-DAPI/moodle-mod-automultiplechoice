@@ -1,128 +1,128 @@
 .region-content h3 {
-	text-align: left;
-	font-variant: small-caps;
+    text-align: left;
+    font-variant: small-caps;
 }
 
 /* page questions : start */
 
 #questions-part-selecting {
-	float: left;
-	width: 49%;
+    float: left;
+    width: 49%;
 }
 #questions-part-selecting button {
-	width: 38px;
+    width: 38px;
 }
 #questions-part-selected {
-	float: right;
-	width: 48%;
+    float: right;
+    width: 48%;
 }
 #questions-part-selected button[type="submit"] {
-	font-size: 110%;
-	font-weight: bold;
+    font-size: 110%;
+    font-weight: bold;
 }
 #questions-part-selected > p > button {
-	margin-left: 30%;
+    margin-left: 30%;
 }
 .datatable-end {
-	clear: both;
-	margin-bottom: 1.5ex;
+    clear: both;
+    margin-bottom: 1.5ex;
 }
 ol#questions-selected {
-	counter-reset: li;
-	list-style: none;
+    counter-reset: li;
+    list-style: none;
 }
 #questions-selected > li {
-	clear: both;
-	max-width: 120ex;
-	line-height: 2.3em;
+    clear: both;
+    max-width: 120ex;
+    line-height: 2.3em;
 }
 #questions-selected > li:not(.question-section):before {
-	content: counter(li);
-	counter-increment: li;
-	display: inline-block;
-	position: absolute;
-	margin-left: -2.5em;
-	text-align: center;
-	padding: 2px 4px;
-	height: 1.4em;
-	width: 1.2em;
-	line-height: 1.8em;
-	border: .3em solid #97ceeb;
-	border-radius: 2em;
-	background: #97deeb;
-	color: black;
-	font-weight: bold;
+    content: counter(li);
+    counter-increment: li;
+    display: inline-block;
+    position: absolute;
+    margin-left: -2.5em;
+    text-align: center;
+    padding: 2px 4px;
+    height: 1.4em;
+    width: 1.2em;
+    line-height: 1.8em;
+    border: .3em solid #97ceeb;
+    border-radius: 2em;
+    background: #97deeb;
+    color: black;
+    font-weight: bold;
 }
 #questions-selected > li button {
-	float: right;
+    float: right;
 }
 #questions-selected label.qscore {
-	float: right;
+    float: right;
 }
 #questions-selected label {
-	margin-left: 2ex;
+    margin-left: 2ex;
 }
 .question-section label {
-	display: inline-block;
-	width: 6em;
-	vertical-align: top;
-	font-weight: bold;
+    display: inline-block;
+    width: 6em;
+    vertical-align: top;
+    font-weight: bold;
 }
 .question-section button {
-	height: 14ex;
+    height: 14ex;
 }
 /* page questions : end */
 
 
 .ui-icon {
-	position: absolute;
-	margin-top: 2px;
+    position: absolute;
+    margin-top: 2px;
 }
 
 .q-score label {
-	display: block;
+    display: block;
 }
 
 .score-mismatch {
-	background-color: #FF4040;
+    background-color: #FF4040;
 }
 
 table.quizz-summary {
-	width: 100%;
+    width: 100%;
 }
 table.quizz-summary th {
-	width: 30ex;
-	text-align: left;
+    width: 30ex;
+    text-align: left;
 }
 td ul {
-	margin: 2px 4px 2px 2em;
+    margin: 2px 4px 2px 2em;
 }
 
 .question-answers li.answer-right {
-	list-style-type: disc;
+    list-style-type: disc;
 }
 .question-answers li.answer-wrong {
-	list-style-type: circle;
+    list-style-type: circle;
 }
 
 .async-target {
-	display: none;
+    display: none;
 }
 .async-post-load {
-	display: none;
+    display: none;
 }
 .jsenabled .async-target {
-	display: block;
+    display: block;
 }
 .async-target > span.loading {
-	background-image: url(pix/ajax-loader.gif);
-	float: left;
-	width: 16px;
-	height: 16px;
+    background-image: url(pix/ajax-loader.gif);
+    float: left;
+    width: 16px;
+    height: 16px;
 }
 
 .back-to-activity {
-	margin-top: 2ex;
+    margin-top: 2ex;
 }
 
 #main-actions {
@@ -133,32 +133,56 @@ td ul {
 }
 #main-actions li {
     margin: 0 2ex;
-	list-style-type: none;
-	display: inline-block;
-	vertical-align: middle;
-	width: 45ex;
+    list-style-type: none;
+    display: inline-block;
+    vertical-align: middle;
+    width: 45ex;
 }
 #main-actions .amc-process-next:before {
-	content: "→";
+    content: "→";
 }
 #main-actions li.amc-process-next {
-	font-size: 200%;
-	width: auto;
+    font-size: 200%;
+    width: auto;
 }
 
 #form-uploadscans > div {
-	width: 80ex;
-	text-align: right;
+    width: 80ex;
+    text-align: right;
 }
 #form-uploadscans input#scanfile {
-	width: 50ex;
+    width: 50ex;
 }
 
 dt {
-	font-weight: bold;
+    font-weight: bold;
 }
 dt:after {
-	content: " :";
+    content: " :";
+}
+.amc_students_selector .singleselect label {
+        display: inline-block;
+}
+.amc_students_selector{
+    float:right;
+}
+.amc_thumbnails .thumbnails > li,.amc_thumbnails .thumbnails > li:first-child{
+    margin-left:10px!important;
+    margin-bottom:10px;
+}
+.amc_thumbnails .thumbnail > img, .amc_thumbnails .thumbnail > a >img {
+    height:120px;
+}
+
+.amc_thumbnails .thumbnail .caption{
+    overflow:hidden;
+}
+
+.amc_thumbnails_failed .thumbnail > img, .amc_thumbnails .thumbnail > a >img {
+    height:300px;
+}
+.amc_thumbnails_failed .thumbnail{
+    margin:10px!important;
 }
 
 /* action column for questions datatable */

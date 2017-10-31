@@ -35,11 +35,11 @@ if ($action == 'prepare') {
         echo $OUTPUT->error_text("Erreur lors de la création des fichiers PDF :" . $process->getLastError());
         exit();
     }
-
+/*
     if (!$process->amcMeptex()) {
         echo $OUTPUT->error_text("Erreur lors du calcul de mise en page (amc meptex).");
         exit();
-    }
+    }*/
 } else if ($action == 'zip') {
     if ($process->printAndZip()) {
         echo "<h3>Archive Zip créée</h3>";

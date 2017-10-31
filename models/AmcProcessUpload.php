@@ -19,17 +19,20 @@ class AmcProcessUpload extends AmcProcess
         if ($this->quizz->hasScans()) {
             $this->deleteGrades();
         }
-
-        if (!$this->amcMeptex()) {
-            $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
+        $captureFile = $this->workdir . "/data/capture.sqlite";
+        if (!file_exists($captureFile)) {
+            if (file_exists($captureFile.'.orig')) {
+            copy ($captureFile.'.orig',$captureFile);
+        }else{
+            $this->amcMeptex();
         }
-
+    }
         $this->nbPages = $this->amcGetimages($filename);
         if (!$this->nbPages) {
             $this->errors[] = "Erreur découpage scan (amc getimages)";
         }
 
-        $analyse = $this->amcAnalyse(true);
+        $analyse = $this->amcAnalyse();
         if (!$analyse) {
             $this->errors[] = "Erreur lors de l'analyse (amc analyse).";
         }
@@ -67,10 +70,57 @@ class AmcProcessUpload extends AmcProcess
         $captureFile = $this->workdir . "/data/capture.sqlite";
         if (file_exists($captureFile)) {
             unlink($captureFile);
+            if (file_exists($captureFile.'.orig')) {
+                copy ($captureFile.'.orig',$captureFile);
+            }
         }
         return $this->deleteGrades();
     }
 
+    /**
+     * @return boolean
+     */
+    public function deleteFailed($scan) {
+        if (extension_loaded('sqlite3')){   
+            $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
+            if ($scan=='all'){
+                $results = $capture->query('SELECT * FROM capture_failed');
+                while ($row = $results->fetchArray()) {
+                    $scan = substr($row[0],8);
+                    array_map('unlink', glob($this->workdir . '/'.$scan));
+                }
+                return  $capture->exec('DELETE FROM capture_failed ');
+            }else{
+                $result = $capture->querySingle('SELECT * FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
+                if (substr($result,8)==$scan){
+                    unlink( glob($this->workdir . '/'.$scan));
+                    return  $capture->exec('DELETE FROM capture_failed WHERE filename LIKE "%'.$scan.'"');
+                }
+            }
+        return false;
+        }
+    }
+
+
+    /**
+    *      * @return string
+    *           */
+    public function get_failed_scans() {
+    global $OUTPUT;    
+    if (extension_loaded('sqlite3')){   
+        $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READONLY);
+        $results = $capture->query('SELECT * FROM capture_failed');
+        $scan=array();
+        while ($row = $results->fetchArray()) {
+            $scan[] = substr($row[0],8);
+            
+        }
+        return $scan;
+    }else{
+        return NULL;
+    }
+
+    }
     /**
      * Shell-executes 'amc getimages'
      * @param string $scanfile name, uploaded by the user
@@ -84,7 +134,7 @@ class AmcProcessUpload extends AmcProcess
         }
 
         $res = $this->shellExecAmc('getimages', array(
-            '--progression-id', 'analyse',
+            '--progression-id', 'getimage',
             //'--vector-density', '250',
             //'--debug=/tmp/amc-debug.txt',
             '--use-pdfimages',
@@ -104,12 +154,19 @@ class AmcProcessUpload extends AmcProcess
 
     /**
      * Shell-executes 'amc analyse'
+     * @param string $arg (opt, '') file to analyse
      * @param bool $multiple (opt, true) If false, AMC will check that all the blank answer sheets were distinct.
      * @return bool
      */
-    private function amcAnalyse($multiple = true) {
+    private function amcAnalyse($arg='',$multiple = true) {
         $pre = $this->workdir;
-        $scanlist = $pre . '/scanlist';
+        if ($arg==''){
+            $paramlist = '--liste-fichiers' ;
+            $paramscan =  $pre . '/scanlist';
+        }else{
+             $paramlist = '';
+             $paramscan = $arg;
+        }
         $parammultiple = '--' . ($multiple ? '' : 'no-') . 'multiple';
         $parameters = array(
             $parammultiple,
@@ -122,8 +179,9 @@ class AmcProcessUpload extends AmcProcess
             '--data', $pre . '/data',
             '--projet', $pre,
             '--cr', $pre . '/cr',
-            '--liste-fichiers', $scanlist,
             '--no-ignore-red',
+            $paramlist,
+            $paramscan,
             );
         //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
         $res = $this->shellExecAmc('analyse', $parameters);

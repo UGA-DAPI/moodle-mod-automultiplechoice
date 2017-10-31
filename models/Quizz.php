@@ -81,7 +81,7 @@ class Quizz
         if ($absolute) {
             return $CFG->dataroot . '/local/automultiplechoice/' . $dir;
         } else {
-            return '/local/automultiplechoice/' . $dir;
+            return 'local/automultiplechoice/' . $dir;
         }
     }
 
@@ -122,7 +122,6 @@ class Quizz
     public function isLocked() {
         return $this->amcparams->locked;
     }
-
     /**
      * Concat the 3 instructions fields.
      *
@@ -155,7 +154,7 @@ class Quizz
             $this->id = $DB->insert_record(self::TABLENAME, $record);
         }
         $amclog = Log::build($this->id);
-        $amclog->write('scoringsystem');
+        $amclog->write('saving');
 
         /** @TODO
          * vérifier si la modification impacte le barème (scoringsystem)
