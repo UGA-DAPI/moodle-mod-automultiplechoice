@@ -11,12 +11,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/// Replace automultiplechoice with the name of your module and remove this line
-
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+//require_once('../../config.php');
+// Is this one really required ?
 require_once(dirname(__FILE__).'/lib.php');
 
-$id = required_param('id', PARAM_INT);   // course
+// Course ID.
+$id = required_param('id', PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
@@ -30,12 +31,17 @@ $PAGE->set_url('/mod/automultiplechoice/index.php', array('id' => $id));
 $PAGE->set_title(format_string($course->fullname));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($coursecontext);
-
 echo $OUTPUT->header();
 
 $automultiplechoices = get_all_instances_in_course('automultiplechoice', $course);
 if (! $automultiplechoices) {
-    notice(get_string('noautomultiplechoices', 'automultiplechoice'), new moodle_url('/course/view.php', array('id' => $course->id)));
+    notice(
+      get_string('noautomultiplechoices', 'automultiplechoice'),
+      new moodle_url(
+        '/course/view.php',
+        array('id' => $course->id)
+      )
+    );
 }
 
 if ($course->format == 'weeks') {

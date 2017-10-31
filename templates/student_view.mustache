@@ -1,0 +1,16 @@
+{{!herits from page.mustache}}
+{{< mod_automultiplechoice/page}}
+  {{$content}}
+    {{#corrected}}
+      <div>Vous avez une copie corrigée</div>
+      <a href="{{corrected}}">Copie</a>
+    {{/corrected}}
+    {{#correction}}
+      <div>Vous pouvez consulter la correction ici</div>
+      <a href="{{correction}}">Corrigé</a>
+    {{/correction}}
+    {{^corrected}}
+      <div>Vous n'avez pas de copie corrigée pour ce QCM</div>
+    {{/corrected}}
+  {{/content}}
+{{/mod_automultiplechoice/page}}

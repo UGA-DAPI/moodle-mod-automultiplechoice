@@ -7,16 +7,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod\automultiplechoice;
+namespace mod_automultiplechoice\local\helpers;
 
-require_once __DIR__ . '/Quizz.php';
+//require_once __DIR__ . '/Quizz.php';
 
 /**
  * Log the last action for each activity instance.
  *
  * @author François Gannaz <francois.gannaz@silecs.info>
  */
-class Log {
+class log {
     /**
      * @var int Instance ID.
      */
@@ -207,7 +207,7 @@ class Log {
                     }
                     break;
                 case 'unlock':
-                    if (Quizz::findById($this->instanceId)->hasScans()) {
+                    if (\mod_automultiplechoice\local\models\quiz::findById($this->instanceId)->hasScans()) {
                         $messages[] = "Des copies scannées ont déjà été déposées. En cas de modification du QCM, les copies scannées ne seront plus valables.";
                     }
                     break;

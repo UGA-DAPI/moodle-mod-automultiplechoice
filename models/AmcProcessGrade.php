@@ -25,7 +25,7 @@ class AmcProcessGrade extends AmcProcess
      * @global core_renderer $OUTPUT
      * @return string
      */
-    public function getHtmlErrors() {
+    /*public function getHtmlErrors() {
         global $OUTPUT;
         $html = '';
 
@@ -41,13 +41,13 @@ class AmcProcessGrade extends AmcProcess
             }
         }
         return $html;
-    }
+    }*/
 
     /**
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
      * @return bool
      */
-    protected function amcPrepareBareme() {
+    /*protected function amcPrepareBareme() {
         $pre = $this->workdir;
         $path = get_config('mod_automultiplechoice', 'xelatexpath');
         if ($path === '') {
@@ -69,13 +69,13 @@ class AmcProcessGrade extends AmcProcess
             $this->log('prepare:bareme', 'OK.');
         }
         return $res;
-    }
+    }*/
 
     /**
      * Shell-executes 'amc note'
      * @return bool
      */
-    protected function amcNote() {
+    /*protected function amcNote() {
         $pre = $this->workdir;
         $parameters = array(
             '--data', $pre . '/data',
@@ -94,6 +94,6 @@ class AmcProcessGrade extends AmcProcess
             $this->log('note', 'OK.');
         }
         return $res;
-    }
+    }*/
 
 }

@@ -6,15 +6,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod\automultiplechoice;
+namespace mod_automultiplechoice\local\amc;
 
-require_once __DIR__ . '/AmcProcess.php';
+//require_once __DIR__ . '/AmcProcess.php';
 require_once dirname(__DIR__) . '/locallib.php';
-require_once __DIR__ . '/Log.php';
+//require_once __DIR__ . '/Log.php';
 
 
 
-class AmcProcessExport extends AmcProcess
+class export extends mod_automultiplechoice_amc_process
 {
 
  /**
@@ -27,7 +27,7 @@ class AmcProcessExport extends AmcProcess
         $pre = $this->workdir;
         $file = $pre . '/' . $this->normalizeFilename('sujet');
         $this->errors = array();
-        $path = get_config('mod_automultiplechoice','xelatexpath');
+        $path = get_config('mod_automultiplechoice', 'xelatexpath');
         if ($path === '') {
             $path = '/usr/bin/xelatex';
         }
@@ -155,8 +155,8 @@ class AmcProcessExport extends AmcProcess
                 $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
         return false;
             }
-    
-            
+
+
             $params = array(
                 '--data', $pre . '/data',
                 '--sujet', $pre . '/' . $this->normalizeFilename('sujet'),
@@ -180,7 +180,7 @@ class AmcProcessExport extends AmcProcess
         if (!$res and file_exists($file)){
             return true;
         }
-        if (extension_loaded('sqlite3')){   
+        if (extension_loaded('sqlite3')){
             $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READWRITE);
             $results = $capture->query('SELECT * FROM capture_failed');
             $scans = array();
@@ -320,7 +320,7 @@ class AmcProcessExport extends AmcProcess
       *                          * @return bool
       *                               */
     protected function amcRegroupe() {
-        $pre = $this->workdir;    
+        $pre = $this->workdir;
         $parameters = array(
             /*'--id-file',  '', // undocumented option: only work with students whose ID is in this file*/
             '--no-compose',
@@ -359,7 +359,7 @@ class AmcProcessExport extends AmcProcess
      *                     * @return bool
      *                          */
     public function amcAnnotePdf() {
-        $pre = $this->workdir;    
+        $pre = $this->workdir;
         $file = $pre.'/' .$this->normalizeFilename('corrections');
         $amclog = Log::build($this->quizz->id);
         $res = $amclog->check('annotatePdf');

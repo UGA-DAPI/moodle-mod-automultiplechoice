@@ -1,23 +1,13 @@
 <?php
-/**
- * @package    mod
- * @subpackage automultiplechoice
- * @copyright  2013 Silecs {@link http://www.silecs.info/societe}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
-namespace mod\automultiplechoice;
-
-require_once __DIR__ . '/Log.php';
-require_once __DIR__ . '/AmcLogfile.php';
-require_once __DIR__ . '/AmcFormat/Api.php';
-
-class AmcProcess
+namespace mod_automultiplechoice\local\amc;
+defined('MOODLE_INTERNAL') || die();
+class process
 {
     /**
-     * @var Quizz Contains notably an 'amcparams' attribute.
+     * @var \mod_automultiplechoice\local\models\quiz Contains notably an 'amcparams' attribute.
      */
-    protected $quizz;
+    protected $quiz;
 
     protected $codelength = 0;
 
@@ -31,56 +21,54 @@ class AmcProcess
      */
     public $errors = array();
 
-    // write in moodledata log file
-    private $logger;
+    // Write in moodledata log file.
+    private $_logger;
+
     const PATH_STUDENTLIST_CSV = '/exports/student_list.csv';
     const PATH_AMC_CSV = '/exports/grades.csv';
     const PATH_AMC_ODS = '/exports/grades.ods';
     const PATH_APOGEE_CSV = '/exports/grades_apogee.csv';
     const CSV_SEPARATOR = ';';
 
- 
-
-    
     /**
      * Constructor
      *
-     * @param Quizz $quizz
+     * @param \mod_automultiplechoice\local\models\quiz $quiz
      */
-    public function __construct(Quizz $quizz,$formatName = 'latex') {
-        if (empty($quizz->id)) {
+    public function __construct(\mod_automultiplechoice\local\models\quiz $quiz, $formatName = 'latex') {
+
+        if (empty($quiz->id)) {
             throw new Exception("No quizz ID");
         }
-        $this->quizz = $quizz;
 
-        $this->workdir = $quizz->getDirName(true);
-        $this->relworkdir = $quizz->getDirName(false);
+        $this->quiz = $quiz;
+        $this->workdir = $quiz->getDirName(true);
+        $this->relworkdir = $quiz->getDirName(false);
 
         $this->initWorkdir();
 
         $this->codelength = (int) get_config('mod_automultiplechoice', 'amccodelength');
-    $this->format = amcFormat\buildFormat($formatName, $quizz);
-         if (!$this->format) {
-                 throw new \Exception("Erreur, pas de format de QCM pour AMC.");
-                }
-        $this->format->quizz = $this->quizz;
-        $this->format->codelength = $this->codelength;  /**
-         * @todo error if codelength == 0
-         */
+        $this->format = \mod_automultiplechoice\local\format\api::buildFormat($formatName, $quiz);
+        if (!$this->format) {
+            throw new \Exception("Erreur, pas de format de QCM pour AMC.");
+        }
+        $this->format->quiz = $this->quiz;
+        $this->format->codelength = $this->codelength;
     }
- /**
+
+    /**
      * Save the AmcTXT source file.
      *
      * @param string $formatName "txt" | "latex"
-     * @return amcFormat\Api
+     *
+     * @return \mod_automultiplechoice\local\format\api
      */
     public function saveFormat($formatName) {
         try {
-            $format = amcFormat\buildFormat($formatName, $this->quizz);
-            $format->quizz = $this->quizz;
+            $format = amcFormat\buildFormat($formatName, $this->quiz);
+            $format->quiz = $this->quiz;
             $format->codelength = $this->codelength;
         } catch (\Exception $e) {
-            // error
             $this->errors[] = $e->getMessage();
             return null;
         }
@@ -95,17 +83,19 @@ class AmcProcess
     }
     /**
      * Write in a .log file (Moodledata/AMC_commands.log)
+     *
      * @return AmcLogfile
      */
     public function getLogger() {
-        if (!isset($this->logger)) {
-            $this->logger = new AmcLogfile($this->workdir);
+        if (!isset($this->_logger)) {
+            $this->_logger = new \mod_automultiplechoice\local\amc\logger($this->workdir);
         }
-        return $this->logger;
+        return $this->_logger;
     }
 
     /**
      * Return the errors of the last command.
+     *
      * @return array
      */
     public function getLastErrors() {
@@ -123,40 +113,47 @@ class AmcProcess
 
     /**
      * Shell-executes 'amc meptex'
+     *
      * @return bool
      */
-    public function amcMeptex($force=false) {
+    public function amcMeptex() {
         $pre = $this->workdir;
-             $amclog = Log::build($this->quizz->id);
-                $res = $this->shellExecAmc('meptex',
-                        array(
-                            '--data', $pre . '/data',
-                            '--progression-id', 'MEP',
-                            '--progression', '1',
-                            '--src', $pre . '/prepare-calage.xy',
-                        )
-                );
-                if ($res) {
-                    $this->log('meptex', '');
-                    $amclog = Log::build($this->quizz->id);
-                    $amclog->write('meptex');
-                }
-                return $res;
+        $amclog = Log::build($this->quiz->id);
+
+        $res = $this->shellExecAmc(
+            'meptex',
+            array(
+                '--data', $pre . '/data',
+                '--progression-id', 'MEP',
+                '--progression', '1',
+                '--src', $pre . '/prepare-calage.xy',
+            )
+        );
+
+        if ($res) {
+            $this->log('meptex', '');
+            $amclog = Log::build($this->quiz->id);
+            $amclog->write('meptex');
+        }
+        return $res;
     }
 
-    
+
     /**
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
+     *
      * @return bool
      */
     public function amcPrepareBareme() {
-        $path = get_config('mod_automultiplechoice','xelatexpath');
-        if ($path==''){
+
+        $path = get_config('mod_automultiplechoice', 'xelatexpath');
+        if ($path === '') {
             $path = '/usr/bin/xelatex';
         }
+
         $pre = $this->workdir;
         $parameters = array(
-            '--n-copies', (string) $this->quizz->amcparams->copies,
+            '--n-copies', (string) $this->quiz->amcparams->copies,
             '--mode', 'b',
             '--data', $pre . '/data',
             '--filtered-source', $pre . '/prepare-source_filtered.tex', // for AMC-txt, the LaTeX will be written in this file
@@ -165,18 +162,20 @@ class AmcProcess
             '--with', $path,
             '--filter', $this->format->getFilterName(),
             $pre . '/' . $this->format->getFilename()
-            );
+        );
+
         $res = $this->shellExecAmc('prepare', $parameters);
         if ($res) {
             $this->log('prepare:bareme', 'OK.');
-             $amclog = Log::build($this->quizz->id);
-             $amclog->write('scoring');
+            $amclog = Log::build($this->quiz->id);
+            $amclog->write('scoring');
         }
         return $res;
     }
 
     /**
      * Shell-executes 'amc note'
+     *
      * @return bool
      */
     public function amcNote() {
@@ -186,26 +185,27 @@ class AmcProcess
             '--progression-id', 'notation',
             '--progression', '1',
             '--seuil', '0.85', // black ratio threshold
-            '--grain', $this->quizz->amcparams->gradegranularity,
-            '--arrondi', $this->quizz->amcparams->graderounding,
-            '--notemin', $this->quizz->amcparams->minscore,
-            '--notemax', $this->quizz->amcparams->grademax,
-            //'--plafond', // removed as grades ares scaled from min to max
+            '--grain', $this->quiz->amcparams->gradegranularity,
+            '--arrondi', $this->quiz->amcparams->graderounding,
+            '--notemin', $this->quiz->amcparams->minscore,
+            '--notemax', $this->quiz->amcparams->grademax,
             '--postcorrect-student', '', //FIXME inutile ?
             '--postcorrect-copy', '',    //FIXME inutile ?
             );
         $res = $this->shellExecAmc('note', $parameters);
         if ($res) {
             $this->log('note', 'OK.');
-            $amclog = Log::build($this->quizz->id);
+            $amclog = Log::build($this->quiz->id);
             $amclog->write('grading');
         }
         return $res;
     }
 
-   
+
     /**
-     * returns stat() information (number and dates) on scanned (ppm) files already stored
+     * Creates scan stat information (number and dates)
+     * On scanned (ppm) files already stored
+     *
      * @return array with keys: count, time, timefr ; null if nothing was uploaded
      */
     public function statScans() {
@@ -214,10 +214,10 @@ class AmcProcess
         $tsmin = PHP_INT_MAX;
         foreach ($ppmfiles as $file) {
             $filedata = stat($file);
-            if ( $filedata['mtime'] > $tsmax) {
+            if ($filedata['mtime'] > $tsmax) {
                 $tsmax = $filedata['mtime'];
             }
-            if ( $filedata['mtime'] < $tsmin) {
+            if ($filedata['mtime'] < $tsmin) {
                 $tsmin = $filedata['mtime'];
             }
         }
@@ -232,36 +232,41 @@ class AmcProcess
             return null;
         }
     }
+
     /**
-    * returns the name of pdf anotated file matching user (upon $idnumber)
-    * @param string $idnumber
-    * @return string (matching user file) OR FALSE if no matching file
-    */
-   public function getUserAnotatedSheet($idnumber) {
-       $numid = substr($idnumber,-1*$this->codelength);
-       $files = glob($this->workdir . '/cr/corrections/jpg/cr-*.jpg');
-       foreach ($files as $file) {
-           if (preg_match('@/(cr-([0-9]+)-[^/]+\.pdf)$@', $file, $matches)) {
-               if ($numid === (int) $matches[2]) {
-                   return $matches[1];
-               }
-           }
-       }
-       return false;
-   }
+     * Returns the name of pdf anotated file matching user (upon $idnumber)
+     *
+     * @param string $idnumber the student id
+     *
+     * @return string (matching user file) OR FALSE if no matching file
+     */
+    public function getUserAnotatedSheet($idnumber) {
+        $numid = substr($idnumber, -1*$this->codelength);
+        $files = glob($this->workdir . '/cr/corrections/jpg/cr-*.jpg');
+        foreach ($files as $file) {
+            if (preg_match('@/(cr-([0-9]+)-[^/]+\.pdf)$@', $file, $matches)) {
+                if ($numid === (int) $matches[2]) {
+                    return $matches[1];
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * @return boolean
      */
     public function isGraded() {
-        if (Log::build($this->quizz->id)->read('grading')){
+        if (\mod_automultiplechoice\local\helpers\log::build($this->quiz->id)->read('grading')) {
             return true;
-        }else{
-             return false;
+        } else {
+            return false;
         }
     }
 
     /**
-     * computes and display statistics indicators
+     * Computes and display statistics indicators
+     *
      * @return string html table with statistics indicators
      */
     public function getHtmlStats() {
@@ -278,6 +283,36 @@ class AmcProcess
         }
         $out .= "</tbody></table>\n";
         return $out;
+    }
+
+    public function getStats() {
+        $this->readGrades();
+        $mark = array();
+        foreach ($this->grades as $rawmark) {
+            $mark[] = $rawmark->rawgrade;
+        }
+        $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
+        $stats = [];
+        foreach ($indics as $indicen => $indicfr) {
+            $stats[$indicfr] = $this->mmmr($mark, $indicen);
+        }
+
+        return $stats;
+    }
+
+    public function getStats2() {
+        $this->readGrades();
+        $mark = array();
+        foreach ($this->grades as $rawmark) {
+            $mark[] = $rawmark->rawgrade;
+        }
+        $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
+        $stats = [];
+        foreach ($indics as $indicen => $indicfr) {
+            $stats[$indicen] = $this->mmmr($mark, $indicen);
+        }
+
+        return $stats;
     }
 
     /**
@@ -299,23 +334,23 @@ class AmcProcess
             return false;
         }
         $getCol = array_flip($header);
- 
-    $this->grades = array();
-        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== FALSE) {
+
+        $this->grades = array();
+        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== false) {
             $idnumber = $data[$getCol['student.number']];
-        $userid=null;
-        $userid = $data[$getCol['moodleid']];
-        if ($userid) {
-            $this->usersknown++;
-        } else {
-            $this->usersunknown++;
-        }
-        $this->grades[] = (object) array(
-        'userid' => $userid,
+            $userid=null;
+            $userid = $data[$getCol['moodleid']];
+            if ($userid) {
+                $this->usersknown++;
+            } else {
+                $this->usersunknown++;
+            }
+            $this->grades[] = (object) array(
+                'userid' => $userid,
                 'rawgrade' => str_replace(',', '.', $data[6])
-    );
+            );
         }
-    fclose($input);
+        fclose($input);
         return true;
     }
 
@@ -329,7 +364,7 @@ class AmcProcess
         }
         return $handle;
     }
-    
+
     /**
      * Computes several statistics indicators from an array
      *
@@ -337,59 +372,61 @@ class AmcProcess
      * @param string $output
      * @return float
      */
-    protected function mmmr($array, $output = 'mean'){
+    protected function mmmr($array, $output = 'mean') {
         if (empty($array) || !is_array($array)) {
-            return FALSE;
+            return false;
         } else {
             switch($output){
                 case 'size':
                     $res = count($array);
-                break;
+                    break;
                 case 'mean':
                     $count = count($array);
                     $sum = array_sum($array);
                     $res = $sum / $count;
-                break;
+                    break;
                 case 'median':
                     rsort($array);
                     $middle = round(count($array) / 2);
                     $res = $array[$middle-1];
-                break;
+                    break;
                 case 'mode':
                     $v = array_count_values($array);
                     arsort($v);
                     list ($res) = each($v); // read the first key
-                break;
+                    break;
                 case 'range':
                     sort($array, SORT_NUMERIC);
                     $res = $array[0] . " - " . $array[count($array) - 1];
-                break;
+                    break;
             }
             return $res;
         }
     }
     /**
-     * log processed action
+     * Log processed action
+     *
      * @param string $action ('prepare'...)
-     * @param string $msg
+     * @param string $msg the message to put in the log
      */
     public function log($action, $msg) {
-        $url = '/mod/automultiplechoice/view.php?a='. $this->quizz->id;
-        $cm = get_coursemodule_from_instance('automultiplechoice', $this->quizz->id, $this->quizz->course, false, MUST_EXIST);
-        add_to_log($this->quizz->course, 'automultiplechoice', $action, $url, $msg, $cm->id, 0);
+        $url = '/mod/automultiplechoice/view.php?a='. $this->quiz->id;
+        $cm = get_coursemodule_from_instance('automultiplechoice', $this->quiz->id, $this->quiz->course, false, MUST_EXIST);
+        add_to_log($this->quiz->course, 'automultiplechoice', $action, $url, $msg, $cm->id, 0);
         return true;
     }
 
     /**
      * Return the timestamp of the action.
      *
-     * @param string $action
+     * @param string $action the action to search
+     *
      * @return integer
      */
     public function lastlog($action) {
         global $DB;
 
-        $cm = get_coursemodule_from_instance('automultiplechoice', $this->quizz->id, $this->quizz->course, false, MUST_EXIST);
+        $cm = get_coursemodule_from_instance('automultiplechoice', $this->quiz->id, $this->quiz->course, false, MUST_EXIST);
         $sql = 'SELECT time FROM {log} WHERE action=? AND cmid=? ORDER BY time DESC LIMIT 1';
         $res = $DB->get_field_sql($sql, array($action, $cm->id), IGNORE_MISSING);
         return $res;
@@ -413,7 +450,7 @@ class AmcProcess
                 $contextid,
                 'mod_automultiplechoice',
                 'local',
-                $this->quizz->id,
+                $this->quiz->id,
                 '/',
                 ltrim($filename, '/'),
                 $forcedld
@@ -468,19 +505,19 @@ class AmcProcess
     public function normalizeFilename($filetype) {
         switch ($filetype) {
             case 'sujet':
-                return 'sujet-' . $this->normalizeText($this->quizz->name) . '.pdf';
+                return 'sujet-' . $this->normalizeText($this->quiz->name) . '.pdf';
             case 'corrige':
-                return 'corrige-' . $this->normalizeText($this->quizz->name) . '.pdf';
+                return 'corrige-' . $this->normalizeText($this->quiz->name) . '.pdf';
             case 'corriges':
-                return 'corriges-' . $this->normalizeText($this->quizz->name) . '.pdf';
+                return 'corriges-' . $this->normalizeText($this->quiz->name) . '.pdf';
             case 'catalog':
-                return 'catalog-' . $this->normalizeText($this->quizz->name) . '.pdf';
-            case 'sujets': // !!! plural 
-                return 'sujets-' . $this->normalizeText($this->quizz->name) . '.zip';
+                return 'catalog-' . $this->normalizeText($this->quiz->name) . '.pdf';
+            case 'sujets': // !!! plural
+                return 'sujets-' . $this->normalizeText($this->quiz->name) . '.zip';
             case 'corrections':
-                return 'corrections-' . $this->normalizeText($this->quizz->name) . '.pdf';
+                return 'corrections-' . $this->normalizeText($this->quiz->name) . '.pdf';
             case 'failed':
-                return 'failed-' . $this->normalizeText($this->quizz->name) . '.pdf';
+                return 'failed-' . $this->normalizeText($this->quiz->name) . '.pdf';
         }
     }
 
@@ -558,7 +595,7 @@ class AmcProcess
      * @return boolean Success?
      */
     protected function shellExecAmc($cmd, $params, $output=false) {
-        $amclog = Log::build($this->quizz->id);
+        $amclog = Log::build($this->quiz->id);
         $amclog->write('process');
         $res = $this->shellExec('auto-multiple-choice ' . $cmd,
             $params,
@@ -574,7 +611,15 @@ class AmcProcess
      * @return array
      */
     protected function findScannedFiles() {
-        return $this->quizz->findScannedFiles();
+        return $this->quiz->findScannedFiles();
+    }
+
+    public function getPdfLinks() {
+        return [
+          'sujet' => $this->getFileUrl($this->normalizeFilename('sujet')),
+          'catalog' => $this->getFileUrl($this->normalizeFilename('catalog')),
+          'correction' => $this->getFileUrl($this->normalizeFilename('corriges'))
+        ];
     }
 
     /**
@@ -606,7 +651,7 @@ class AmcProcess
         </ul>
 EOL;
     }
-    
+
 
     /**
      * Return the HTML that for the link to the ZIP file.
@@ -625,6 +670,10 @@ EOL;
             </li>
         </ul>
 EOL;
+    }
+
+    public function getZipLink() {
+        return $this->getFileUrl($this->normalizeFilename('sujets'));
     }
 
     /**

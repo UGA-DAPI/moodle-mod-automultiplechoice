@@ -1,0 +1,19 @@
+<page>
+  <h3>
+    {{$sectionheading}}
+      {{#title}}
+        {{title}}
+      {{/title}}
+      {{^title}}
+        you must provide a title in data passed to the template
+      {{/title}}
+    {{/sectionheading}}
+  </h3>
+  <hr/>
+  {{> mod_automultiplechoice/tabs }}
+  <div>
+    {{$content}}
+
+    {{/content}}
+  </div>
+</page>

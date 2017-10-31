@@ -1,32 +1,32 @@
 <?php
+
 /**
  * The main automultiplechoice configuration form
+ * This is the form displayed when adding / editing an automultiplechoice activity / module to a course
+ * This form allow you to edit / add settings to your instance
  *
  * It uses the standard core Moodle formslib. For more info about them, please
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
  * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once $CFG->dirroot.'/course/moodleform_mod.php';
-require_once __DIR__ . '/models/Quizz.php';
-require_once __DIR__ . '/locallib.php';
-//require_once __DIR__ . '/models/ScoringSystem.php';
+require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once(__DIR__ . '/locallib.php');
 
-use \mod\automultiplechoice as amc;
 
-/* @var $PAGE moodle_page */
+/** @var $PAGE moodle_page */
 
 /**
  * Module instance settings form
  */
-class mod_automultiplechoice_mod_form extends moodleform_mod {
+class mod_automultiplechoice_mod_form extends moodleform_mod
+{
     /**
-     * @var amc\Quizz
+     * @var \mod_automultiplechoice\local\models\quiz
      */
     protected $current;
 
@@ -38,11 +38,10 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $PAGE->requires->js(new moodle_url('/mod/automultiplechoice/assets/mod_form.js'));
         $mform = $this->_form;
 
-        //-------------------------------------------------------------------------------
-        // Adding the "general" fieldset, where all the common settings are showed
+        // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        // Adding the standard "name" field
+        // Adding the standard "name" field.
         $mform->addElement('text', 'name', get_string('automultiplechoicename', 'automultiplechoice'), array('size'=>'64'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -57,27 +56,56 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('qnumber', PARAM_INTEGER);
         $mform->addHelpButton('qnumber', 'qnumber', 'automultiplechoice');
 
-        $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'), array('rows'=>'3', 'cols'=>'64'));
+        $mform->addElement(
+          'textarea',
+          'comment',
+          get_string('comment', 'automultiplechoice'),
+          array(
+            'rows' => '3',
+            'cols' => '64'
+          )
+        );
         $mform->setType('comment', PARAM_TEXT);
         $mform->addHelpButton('comment', 'comment', 'automultiplechoice');
 
-        if (empty($this->current->id)) { // only when creating an instance
-            // hack because Moodle gets the priorities wrong with data_preprocessing()
+        // Checks if id exist in order to know if we are editing or creating an instance.
+        if (empty($this->current->id)) {
+            // Hack because Moodle gets wrong priorities with data_preprocessing().
             $mform->setDefault('amc[lstudent]', get_config('mod_automultiplechoice', 'instructionslstudent'));
             $mform->setDefault('amc[lname]', get_config('mod_automultiplechoice', 'instructionslnamestd'));
         }
 
-
-        // Instructions
+        // Instructions.
         $mform->addElement('header', 'general', get_string('instructionsheader', 'automultiplechoice'));
 
-        $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
+        $mform->addElement(
+          'select',
+          'instructions',
+          get_string('instructions', 'automultiplechoice'),
+          parse_default_instructions()
+        );
         $mform->setType('instructions', PARAM_TEXT);
         $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
-        $mform->addElement('editor', 'amc[instructionsprefix]', get_string('instructions', 'automultiplechoice'), array('rows'=>'4', 'cols'=>'64'));
+        $mform->addElement(
+          'editor',
+          'amc[instructionsprefix]',
+          get_string('instructions', 'automultiplechoice'),
+          array(
+            'rows' => '4',
+            'cols' => '64'
+          )
+        );
         $mform->setType('amc[instructionsprefix]', PARAM_RAW);
 
-        $mform->addElement('editor', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'6', 'cols'=>'64'));
+        $mform->addElement(
+          'editor',
+          'description',
+          get_string('description', 'automultiplechoice'),
+          array(
+            'rows' => '6',
+            'cols' => '64'
+          )
+        );
         $mform->setType('description', PARAM_RAW);
         $mform->addHelpButton('description', 'description', 'automultiplechoice');
 
@@ -87,8 +115,8 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('amc[lstudent]', PARAM_TEXT);
 
         $mform->addElement(
-            'text', 'amc[lname]', 
-            get_string('amc_lname', 'automultiplechoice'), 
+            'text', 'amc[lname]',
+            get_string('amc_lname', 'automultiplechoice'),
             array(
                 'data-std' => get_config('mod_automultiplechoice', 'instructionslnamestd'),
                 'data-anon' => get_config('mod_automultiplechoice', 'instructionslnameanon'),
@@ -96,10 +124,8 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         );
         $mform->setType('amc[lname]', PARAM_TEXT);
 
-
-        // AMC settings
-        //-------------------------------------------------------------------------------
-        // Adding the "amcparams" fieldset, parameters specific to printed output
+        // AMC settings.
+        // Adding the "amcparams" fieldset, parameters specific to printed output.
         $mform->addElement('header', 'amcparameters', get_string('amcparams', 'automultiplechoice'));
 
         $mform->addElement('text', 'amc[copies]', get_string('amc_copies', 'automultiplechoice'));
@@ -107,8 +133,8 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addRule('amc[copies]', null, 'required', null, 'client');
 
         $mform->addElement(
-            'select', 
-            'amc[questionsColumns]', 
+            'select',
+            'amc[questionsColumns]',
             get_string('amc_questionsColumns', 'automultiplechoice'),
             array("Auto", 1, 2)
         );
@@ -124,16 +150,16 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('amc[separatesheet]', PARAM_BOOL);
 
         $mform->addElement(
-            'select', 
-            'amc[answerSheetColumns]', 
+            'select',
+            'amc[answerSheetColumns]',
             get_string('amc_answerSheetColumns', 'automultiplechoice'),
             array("Auto", 1, 2, 3, 4)
         );
         $mform->disabledIf('amc[answerSheetColumns]', 'amc[separatesheet]', 'eq', 0);
 
         $mform->addElement(
-            'select', 
-            'amc[displaypoints]', 
+            'select',
+            'amc[displaypoints]',
             get_string('amc_displaypoints', 'automultiplechoice'),
             array("Ne pas afficher", "En début de question", "En fin de question")
         );
@@ -145,14 +171,18 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'amc[score]', get_string('amc_score', 'automultiplechoice'));
         $mform->setType('amc[score]', PARAM_BOOL);
 
-        $mform->addElement('textarea', 'amc[customlayout]', get_string('amc_customlayout', 'automultiplechoice'), array('rows'=>'3', 'cols'=>'64'));
+        $mform->addElement(
+          'textarea',
+          'amc[customlayout]',
+          get_string('amc_customlayout', 'automultiplechoice'),
+          array('rows' => '3', 'cols' => '64')
+        );
         $mform->setType('amc[customlayout]', PARAM_TEXT);
         $mform->addHelpButton('amc[customlayout]', 'amc_customlayout', 'automultiplechoice');
-        //-------------------------------------------------------------------------------
-        // add standard elements, common to all modules
+
+        // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
-        //-------------------------------------------------------------------------------
-        // add standard buttons, common to all modules
+        // Add standard buttons, common to all modules.
         $this->add_action_buttons(true, null, false);
     }
 
@@ -161,20 +191,19 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
      *
      * @param array $default_values passed by reference
      */
-    function data_preprocessing(&$default_values)
-    {
+    function data_preprocessing(&$default_values) {
         if (isset($default_values['description'])) {
             $default_values['description'] = array('text' => $default_values['description']);
         }
         // Convert from JSON to array
         if (!empty($default_values['amcparams'])) {
-            $params = amc\AmcParams::fromJson($default_values['amcparams']);
+            $params = \mod_automultiplechoice\local\amc\params::fromJson($default_values['amcparams']);
             $default_values['amc'] = (array) $params;
             $default_values['amc']['instructionsprefix'] = array(
                 'text' => $params->instructionsprefix,
             );
             $this->_form->setDefault(
-                'amc[instructionsprefix]', 
+                'amc[instructionsprefix]',
                 array(
                     'text' => $params->instructionsprefix,
                 )
@@ -182,12 +211,12 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             if (!empty($this->current->id) && !empty($params->locked)) {
                 $this->_form->freeze(
                     array(
-                        'qnumber', 
-                        'amc[copies]', 
-                        'amc[shuffleq]', 
+                        'qnumber',
+                        'amc[copies]',
+                        'amc[shuffleq]',
                         'amc[shufflea]',
-                        'amc[separatesheet]', 
-                        'amc[displaypoints]', 
+                        'amc[separatesheet]',
+                        'amc[displaypoints]',
                         'amc[markmulti]',
                         'amc[customlayout]',
                         'amc[score]',
@@ -200,14 +229,13 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                     $this->_form->setDefault('instructions', $v);
                 }
             }
-
         }
 
-        // Hideous hack to insert a tab bar at the top of the page
+        // Hideous hack to insert a tab bar at the top of the page.
         if (!empty($this->current->id)) {
             global $PAGE, $OUTPUT;
             $output = $PAGE->get_renderer('mod_automultiplechoice');
-            $output->quizz = amc\Quizz::buildFromRecord($this->current);
+            $output->quiz = \mod_automultiplechoice\local\models\quiz::buildFromRecord($this->current);
             $output->currenttab = 'settings';
             $OUTPUT = $output;
         }

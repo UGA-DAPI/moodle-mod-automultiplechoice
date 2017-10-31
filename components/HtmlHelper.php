@@ -20,11 +20,11 @@ class HtmlHelper {
      * @param string $checks (opt)
      * @return string HTML
      */
-    public static function buttonWithAjaxCheck($buttonText, $quizzid, $targetpage, $action, $checks = "") 
+    public static function buttonWithAjaxCheck($buttonText, $quizzid, $targetpage, $action, $checks = "")
     {
         $checklock = json_encode(
             array(
-                'a' => $quizzid, 
+                'a' => $quizzid,
                 'actions' => $checks
             )
         );
@@ -32,7 +32,7 @@ class HtmlHelper {
         // create action
         $formAction = htmlspecialchars(
             new moodle_url(
-                "/mod/automultiplechoice/$targetpage.php", 
+                "/mod/automultiplechoice/$targetpage.php",
                 array('a' => $quizzid)
             )
         );
@@ -49,18 +49,18 @@ class HtmlHelper {
         $form .= '      <button class="btn btn-default" type="submit">%s</button>';
         $form .= '  </div>';
         $form .= '</form>';
-        
+
         return sprintf($form, htmlspecialchars($action), $buttonText);
     }
 
-    public static function printFormFullQuestions(\mod\automultiplechoice\Quizz $quizz) 
+    public static function printFormFullQuestions(\mod_automultiplechoice\local\models\quiz $quizz)
     {
         // populate and output the scoring form
         // $quizz is used in _scoring_form.php so it's needed
         require __DIR__ . '/_scoring_form.php';
     }
 
-    public static function printTableQuizz(\mod\automultiplechoice\Quizz $quizz, $rows = array('instructions', 'description', 'comment', 'qnumber', 'score', 'scoringset'))
+    public static function printTableQuizz(\mod_automultiplechoice\local\models\quiz $quizz, $rows = array('instructions', 'description', 'comment', 'qnumber', 'score', 'scoringset'))
     {
         $realQNumber = $quizz->questions->count();
         $scoringSet = mod\automultiplechoice\ScoringSystem::read()->getScoringSet($quizz->amcparams->scoringset);
@@ -125,34 +125,4 @@ class HtmlHelper {
         return $html;
     }
 
-    /**
-     * Create a modal
-     * 
-     * @return the generated HTML
-     */
-    public static function generateAmcModal()  
-    {
-        $modalTitle = get_string('amcmodaltitle', 'automultiplechoice');
-        $save = get_string('amcmodalsave', 'automultiplechoice');
-        $cancel = get_string('amcmodalcancel', 'automultiplechoice');
-
-        $modal = '<div class="modal" id="amcModal" tabindex="-1" role="dialog">';
-        $modal .= '  <div class="modal-dialog" role="document">';
-        $modal .= '     <div class="modal-content">';
-        $modal .= '         <div class="modal-header">';
-        $modal .= '             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-        $modal .= '             <h4 class="modal-title">'.$modalTitle.'</h4>';
-        $modal .= '         </div>';
-        $modal .= '         <div class="modal-body">';
-        $modal .= '             <p>One fine body&hellip;</p>';
-        $modal .= '         </div>';
-        $modal .= '         <div class="modal-footer">';
-        $modal .= '             <button type="button" class="btn btn-default" data-dismiss="modal">'.$cancel.'</button>';
-        $modal .= '             <button type="button" class="btn btn-primary">'.$save.'</button>';
-        $modal .= '         </div>';
-        $modal .= '     </div>';
-        $modal .= '   </div>';
-        $modal .= '</div>';
-        echo $modal;
-    }
 }

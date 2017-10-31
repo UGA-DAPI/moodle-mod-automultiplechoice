@@ -104,7 +104,7 @@ if ($scansStats) {
         <input type="file" name="scanfile" id="scanfile" accept="application/pdf,image/tiff">
     </div>
     <div>
-        <input type="submit" name="submit" value="Envoyer">
+        <button class="btn btn-default" type="submit" name="submit">Envoyer</button>
     </div>
 </form>
 <?php
@@ -119,7 +119,7 @@ if ($scansStats) {
         </p>
         <div>
             <input type="hidden" name="action" value="deleteUploads" />
-            <button type="submit" onclick="return confirm('Supprimer définitivement les copies déposées sur le serveur ?');">Effacer les copies déposées</button>
+            <button type="submit" class="btn btn-default" onclick="return confirm('Supprimer définitivement les copies déposées sur le serveur ?');">Effacer les copies déposées</button>
         </div>
     </form>
     <?php

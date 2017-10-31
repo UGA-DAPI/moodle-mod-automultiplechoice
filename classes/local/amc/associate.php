@@ -6,32 +6,32 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod\automultiplechoice;
+namespace mod_automultiplechoice\local\amc;
 
-require_once __DIR__ . '/AmcProcess.php';
+//require_once __DIR__ . '/AmcProcess.php';
 require_once dirname(__DIR__) . '/locallib.php';
 //require_once __DIR__ . '/Log.php';
 //require_once __DIR__ . '/AmcFormat/Api.php';
 
-class AmcProcessAssociate extends AmcProcess
+class associate extends mod_automultiplechoice_amc_process
 {
     public $copyauto = array();
     public $copymanual = array();
     public $copyunknown =array();
-    
+
     public function __construct(Quizz $quizz,$formatName = 'latex') {
         parent::__construct($quizz, $formatName);
-        
+
     }
 
     /**
-     * 
+     *
      *
      * @return boolean Success?
      */
     public function associate() {
     global $DB;
-        
+
         $studentList = fopen($this->workdir . self::PATH_STUDENTLIST_CSV, 'w');
         if (!$studentList) {
             return false;
@@ -46,24 +46,24 @@ class AmcProcessAssociate extends AmcProcess
         $sql .= 'LEFT JOIN  {groups_members} gm ON u.id=gm.userid ';
         $sql .= 'LEFT JOIN {groups} g ON g.id=gm.groupid  AND g.courseid=e.courseid ';
         $sql .= 'WHERE u.idnumber != "" AND e.courseid = ? ';
-        $sql .= 'GROUP BY u.id';    
+        $sql .= 'GROUP BY u.id';
         $users =  $DB->get_records_sql($sql, array($this->quizz->course));
-    
+
         if (!empty($users)) {
             foreach ($users as $user) {
                 $nums = explode(";", $user->idnumber);
                 foreach ($nums as $num) {
                     fputcsv(
-                        $studentList, 
+                        $studentList,
                         array(
-                            $user->lastname, 
+                            $user->lastname,
                             $user->firstname,
-                            $user->alternatename, 
-                            substr($num, -1*$codelength), 
-                            $user->email, 
-                            $user->id, 
+                            $user->alternatename,
+                            substr($num, -1*$codelength),
+                            $user->email,
+                            $user->id,
                             $user->groups_list
-                        ), 
+                        ),
                         self::CSV_SEPARATOR,
                         '"'
                     );
@@ -79,12 +79,12 @@ class AmcProcessAssociate extends AmcProcess
             return $this->amcAssociation();
         }
     }
-    
+
     /**
      * @return boolean
      */
     public function get_association() {
-        if ((extension_loaded('sqlite3'))&&(file_exists($this->workdir . '/data/association.sqlite'))){   
+        if ((extension_loaded('sqlite3'))&&(file_exists($this->workdir . '/data/association.sqlite'))){
             $allcopy = array();
             $assoc = new \SQLite3($this->workdir . '/data/association.sqlite',SQLITE3_OPEN_READONLY);
             //$score = new \SQLite3($this->workdir . '/data/scoring.sqlite',SQLITE3_OPEN_READONLY);
@@ -104,7 +104,7 @@ class AmcProcessAssociate extends AmcProcess
                 $allcopy[$id] = $row['value'];
             }*/
             $this->copyunknown = array_diff_key($allcopy,$this->copymanual,$this->copyauto);
-            
+
         }else{
             $allcopy = array_fill_keys(array_map('get_code',glob($this->workdir . '/cr/name-*.jpg')),'');
             if ($this->amcAssociation_list()==0){
@@ -113,8 +113,8 @@ class AmcProcessAssociate extends AmcProcess
         }
     }
 
-    
-    
+
+
     /**
      * Shell-executes 'amc association-auto'
      * @return bool
@@ -123,7 +123,7 @@ class AmcProcessAssociate extends AmcProcess
         $pre = $this->workdir;
         $parameters = array(
             '--data', $pre . '/data',
-            '--list', 
+            '--list',
         );
         $escapedCmd = escapeshellcmd('auto-multiple-choice '.'association' );
         $escapedParams = array_map('escapeshellarg', $parameters);

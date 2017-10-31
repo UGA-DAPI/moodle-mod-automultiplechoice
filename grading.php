@@ -40,8 +40,6 @@ $stats = $process->getHtmlStats();
 // Output starts here
 echo $output->header();
 
-
-//echo $process->getHtmlErrors();
 $warnings = amc\Log::build($quizz->id)->check('grading');
 if ($warnings) {
     echo '<div class="informationbox notifyproblem alert alert-error">';

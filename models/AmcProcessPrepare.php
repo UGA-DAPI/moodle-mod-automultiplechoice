@@ -22,7 +22,7 @@ class AmcProcessPrepare extends AmcProcess
      * @param string $formatName "txt" | "latex"
      * @return bool
      */
-    public function amcCreatePdf($formatName) {
+    /*public function amcCreatePdf($formatName) {
         $this->errors = array();
 
         $format = $this->saveFormat($formatName);
@@ -32,10 +32,10 @@ class AmcProcessPrepare extends AmcProcess
         }
         $this->getLogger()->clear();
 
-	$path = get_config('mod_automultiplechoice','xelatexpath');
-	if ($path==''){
-		$path = '/usr/bin/xelatex';
-	}
+        $path = get_config('mod_automultiplechoice','xelatexpath');
+        if ($path==''){
+            $path = '/usr/bin/xelatex';
+        }
         $pre = $this->workdir;
         $res = $this->shellExecAmc('prepare',
             array(
@@ -59,7 +59,7 @@ class AmcProcessPrepare extends AmcProcess
             $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
         }
         return $res;
-    }
+    }*/
 
     
 

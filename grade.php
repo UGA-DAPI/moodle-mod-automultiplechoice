@@ -2,6 +2,7 @@
 
 /**
  * Redirect the user to the appropriate submission related page
+ * Override default moddle grade view when the student want to see the score details
  *
  * @package   mod_automultiplechoice
  * @category  grade

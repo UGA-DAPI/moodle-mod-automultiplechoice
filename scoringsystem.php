@@ -41,7 +41,7 @@ if (isset($_POST['score'])) {
     if ($quizz->validate()) {
         if ($quizz->save()) {
             $process = new amc\AmcProcess($quizz);
-            $res =$process->saveFormat('latex') && $process->amcPrepareBareme();
+            $res = $process->saveFormat('latex') && $process->amcPrepareBareme();
             if (!$res){
                  amc\FlashMessageManager::addMessage('error',"Erreur lors de l'extraction du barème");
             }else{
