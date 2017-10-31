@@ -11,9 +11,9 @@ require_once __DIR__ . '/components/FlashMessageManager.php';
 class mod_automultiplechoice_renderer extends plugin_renderer_base
 {
     /**
-     * @var mod\automultiplechoice\Quizz $quizz an automultiplechoice object.
+     * @var mod_automultiplechoice\local\models\quiz $quiz an automultiplechoice object.
      */
-    public $quizz;
+    public $quiz;
 
     /**
      * @var stdClass A record of the module..
@@ -45,15 +45,15 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
     public function header() {
         global $CFG;
 
-        if (empty($this->quizz)) {
-            throw new Exception("Coding error: no quizz set in renderer.");
+        if (empty($this->quiz)) {
+            throw new Exception("Coding error: no quiz set in renderer.");
         }
 
-        $activityname = format_string($this->quizz->name, true, $this->quizz->course);
+        $activityname = format_string($this->quiz->name, true, $this->quiz->course);
         $title = $this->page->course->shortname . " — " . $activityname;
 
         if (!$this->cm) {
-            $this->cm = get_coursemodule_from_instance('automultiplechoice', $this->quizz->id, $this->quizz->course, false, MUST_EXIST);;
+            $this->cm = get_coursemodule_from_instance('automultiplechoice', $this->quiz->id, $this->quiz->course, false, MUST_EXIST);;
         }
         $context = context_module::instance($this->cm->id);
 
@@ -66,7 +66,7 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
         $output .= $this->output->heading($activityname);
         if (has_capability('mod/automultiplechoice:update', $context)) {
             if (!empty($this->currenttab)) {
-                $quizz = $this->quizz;
+                $quiz = $this->quiz;
                 $cm = $this->cm;
                 $currenttab = $this->currenttab;
                 ob_start();
@@ -74,14 +74,14 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
                 mod\automultiplechoice\FlashMessageManager::displayMessages();
                 $output .= ob_get_contents();
                 ob_end_clean();
-                unset($quizz);
+                unset($quiz);
                 unset($cm);
                 unset($currenttab);
             }
         }
 
         /*
-         foreach ($quizz->messages as $message) {
+         foreach ($quiz->messages as $message) {
              $output .= $this->output->notification($message[0], $message[1], $message[2]);
          }
          */
