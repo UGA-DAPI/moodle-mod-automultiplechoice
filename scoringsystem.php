@@ -52,13 +52,11 @@ if (isset($_POST['score'])) {
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
-//add_to_log($course->id, 'automultiplechoice', 'view', "scoringsystem.php?id={$cm->id}", $quizz->name, $cm->id);
+
 
 // Output starts here
 $PAGE->set_url('/mod/automultiplechoice/scoringsystem.php', array('id' => $cm->id));
-$PAGE->requires->jquery();
-$PAGE->requires->js(new moodle_url('assets/scoring.js'));
-$PAGE->requires->css(new moodle_url('assets/amc.css'));
+$PAGE->requires->js(new moodle_url('assets/scoringsystem.js'));
 
 echo $output->header();
 

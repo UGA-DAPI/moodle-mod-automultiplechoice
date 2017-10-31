@@ -16,6 +16,7 @@ $(document).ready(function() {
 
     //reprise du code de mainform.js
     function updateScoringDescription() {
+		
         var id = $("#params-quizz select[name='amc[scoringset]']").val();
         var myurl = "ajax/scoring.php?scoringsetid=";
         $.ajax({

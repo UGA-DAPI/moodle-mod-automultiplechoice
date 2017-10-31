@@ -24,7 +24,8 @@ class Controller
      */
     private $course;
 
-    public function __construct() {
+    public function __construct() 
+    {
         $this->parseRequest();
         \require_login($this->course, true, $this->cm);
     }
@@ -34,7 +35,8 @@ class Controller
      *
      * @global moodle_database $DB
      */
-    public function parseRequest() {
+    public function parseRequest() 
+    {
         global $DB;
 
         $id = \optional_param('id', 0, PARAM_INT); // course_module ID, or
@@ -56,28 +58,32 @@ class Controller
     /**
      * @return Quizz
      */
-    function getQuizz() {
+    function getQuizz() 
+    {
         return $this->quizz;
     }
 
     /**
      * @return StdClass
      */
-    function getCm() {
+    function getCm() 
+    {
         return $this->cm;
     }
 
     /**
      * @return StdClass
      */
-    function getCourse() {
+    function getCourse() 
+    {
         return $this->course;
     }
 
     /**
      * @return \context_module
      */
-    public function getContext() {
+    public function getContext() 
+    {
         return \context_module::instance($this->cm->id);
     }
 
@@ -87,7 +93,8 @@ class Controller
      * @param string $currenttab
      * @return \mod_automultiplechoice_renderer
      */
-    public function getRenderer($currenttab = '') {
+    public function getRenderer($currenttab = '') 
+    {
         global $PAGE;
         $output = $PAGE->get_renderer('mod_automultiplechoice');
         $output->quizz = $this->quizz;

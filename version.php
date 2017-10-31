@@ -17,3 +17,6 @@ $plugin->version   = 2016024100;      // The current module version (Date: YYYYM
 $plugin->requires  = 2012120300;      // Requires this Moodle version
 $plugin->cron      = 0;               // Period for cron to check this module (secs)
 $plugin->component = 'mod_automultiplechoice'; // To check on upgrade, that module sits in correct place
+$plugin->dependencies = array(
+    'local_questionsimplified' => 2013111908
+);

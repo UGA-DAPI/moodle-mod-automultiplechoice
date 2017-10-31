@@ -47,13 +47,14 @@ class AmcProcessGrade extends AmcProcess
      * Shell-executes 'amc prepare' for extracting grading scale (Bareme)
      * @return bool
      */
-    protected function amcPrepareBareme() {
+    protected function amcPrepareBareme() 
+    {
         $pre = $this->workdir;
-        $path = get_config('mod_automultiplechoice','xelatexpath');
-	if ($path==''){
-	    $path = '/usr/bin/xelatex';
-	}
-	$parameters = array(
+        $path = get_config('mod_automultiplechoice', 'xelatexpath');
+        if ($path === '') {
+            $path = '/usr/bin/xelatex';
+        }
+        $parameters = array(
             '--n-copies', (string) $this->quizz->amcparams->copies,
             '--mode', 'b',
             '--data', $pre . '/data',
@@ -63,11 +64,11 @@ class AmcProcessGrade extends AmcProcess
             '--with', $path,
             '--filter', $this->format->getFilterName(),
             $pre . '/' . $this->format->getFilename()
-            );
+        );
         $res = $this->shellExecAmc('prepare', $parameters);
         if ($res) {
             $this->log('prepare:bareme', 'OK.');
-        }
+        }        
         return $res;
     }
 
@@ -75,7 +76,8 @@ class AmcProcessGrade extends AmcProcess
      * Shell-executes 'amc note'
      * @return bool
      */
-    protected function amcNote() {
+    protected function amcNote() 
+    {
         $pre = $this->workdir;
         $parameters = array(
             '--data', $pre . '/data',
@@ -86,7 +88,6 @@ class AmcProcessGrade extends AmcProcess
             '--arrondi', $this->quizz->amcparams->graderounding,
             '--notemin', $this->quizz->amcparams->minscore,
             '--notemax', $this->quizz->amcparams->grademax,
-            //'--plafond', // removed as grades ares scaled from min to max
             '--postcorrect-student', '', //FIXME inutile ?
             '--postcorrect-copy', '',    //FIXME inutile ?
             );
@@ -94,6 +95,7 @@ class AmcProcessGrade extends AmcProcess
         if ($res) {
             $this->log('note', 'OK.');
         }
+
         return $res;
     }
 
@@ -342,32 +344,49 @@ class AmcProcessGrade extends AmcProcess
      * Initialize $this->grades.
      * Sets $this->usersknown and $this->usersunknown.
      *
-     *
      * @return boolean Success?
      */
-    protected function writeFileStudentsList() {
-	global $DB;
+    protected function writeFileStudentsList() 
+    {
+        global $DB;
         
         $studentList = fopen($this->workdir . self::PATH_STUDENTLIST_CSV, 'w');
+        
         if (!$studentList) {
             return false;
         }
-        fputcsv($studentList, array('surname', 'name','patronomic', 'id', 'email','moodleid','groupslist'), self::CSV_SEPARATOR);
-	$codelength = get_config('mod_automultiplechoice', 'amccodelength');
-    $sql = "SELECT u.idnumber ,u.firstname, u.lastname,u.alternatename,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list FROM {user} u "
-                ."JOIN {user_enrolments} ue ON (ue.userid = u.id) "
-		."JOIN {enrol} e ON (e.id = ue.enrolid) "
-		."LEFT JOIN  groups_members gm ON u.id=gm.userid "
-		."LEFT JOIN groups g ON g.id=gm.groupid  AND g.courseid=e.courseid " 
-		."WHERE u.idnumber != '' AND e.courseid = ? "
-		."GROUP BY u.id";
-        $users=  $DB->get_records_sql($sql, array($this->quizz->course));
+        
+        fputcsv($studentList, array('surname', 'name', 'patronomic', 'id', 'email', 'moodleid', 'groupslist'), self::CSV_SEPARATOR);
 
+        $codelength = get_config('mod_automultiplechoice', 'amccodelength');
+        $sql = 'SELECT u.idnumber ,u.firstname, u.lastname,u.alternatename,u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list ';
+        $sql .= 'FROM {user} u ';
+        $sql .= 'JOIN {user_enrolments} ue ON (ue.userid = u.id) ';
+        $sql .= 'JOIN {enrol} e ON (e.id = ue.enrolid) ';
+        $sql .= 'LEFT JOIN  {groups_members} gm ON u.id=gm.userid ';
+        $sql .= 'LEFT JOIN {groups} g ON g.id=gm.groupid  AND g.courseid=e.courseid ';
+        $sql .= 'WHERE u.idnumber != "" AND e.courseid = ? ';
+        $sql .= 'GROUP BY u.id';    
+        $users =  $DB->get_records_sql($sql, array($this->quizz->course));
+    
         if (!empty($users)) {
-		foreach ($users as $user) {
-                $nums=explode(";",$user->idnumber);
-                foreach ($nums as $num){
-                    fputcsv($studentList, array($user->lastname, $user->firstname,$user->alternatename, substr($num,-1*$codelength), $user->email, $user->id, $user->groups_list), self::CSV_SEPARATOR,'"');
+            foreach ($users as $user) {
+                $nums = explode(";", $user->idnumber);
+                foreach ($nums as $num) {
+                    fputcsv(
+                        $studentList, 
+                        array(
+                            $user->lastname, 
+                            $user->firstname,
+                            $user->alternatename, 
+                            substr($num, -1*$codelength), 
+                            $user->email, 
+                            $user->id, 
+                            $user->groups_list
+                        ), 
+                        self::CSV_SEPARATOR,
+                        '"'
+                    );
                 }
             }
         }
@@ -381,7 +400,6 @@ class AmcProcessGrade extends AmcProcess
      *
      * Initialize $this->grades.
      * Sets $this->usersknown and $this->usersunknown.
-     *
      *
      * @return boolean Success?
      */

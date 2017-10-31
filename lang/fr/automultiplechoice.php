@@ -13,6 +13,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['amcscripts'] = 'AMC';
+$string['amcmodaltoggle'] = 'Ouvrir la modale AMC';
+$string['amcmodaltitle'] = 'Scripts AMC';
+$string['amcmodalcancel'] = 'Annuler';
+$string['amcmodalsave'] = 'Sauvegarder';
+
 $string['modulename'] = 'QCM papier';
 $string['modulenameplural'] = 'QCM papier';
 $string['modulename_help'] = 'Le module QCM papier permet de créer des PDF pour imprimer des QCM puis de corriger automatiquement les réponses scannées.';

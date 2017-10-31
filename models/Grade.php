@@ -31,15 +31,17 @@ class Grade extends AmcProcessGrade
     /**
      * @return boolean
      */
-    public function grade() {
+    public function grade() 
+    {       
         $this->actions = array(
             'scoringset' => (boolean) $this->amcPrepareBareme(),
             'scoring' => (boolean) $this->amcNote(),
             'studentlist' =>(boolean) $this->writeFileStudentsList(),
             'export' => (boolean) $this->amcExport(),
-	    'csv' => (boolean) $this->writeFileApogeeCsv(),
-	    'gradebook' =>(boolean) $this->writeGrades()
+            'csv' => (boolean) $this->writeFileApogeeCsv(),
+            'gradebook' =>(boolean) $this->writeGrades()
         );
+        
         $this->exportedFiles = (object) array(
             'grades.ods' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_ODS),
             'grades.csv' => $this->getFileUrl(AmcProcessGrade::PATH_AMC_CSV),

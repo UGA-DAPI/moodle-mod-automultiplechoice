@@ -25,14 +25,10 @@ $output = $controller->getRenderer('uploadscans');
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
-/// Print the page header
-
 $PAGE->set_url('/mod/automultiplechoice/uploadscans.php', array('id' => $cm->id));
-$PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 $process = new \mod\automultiplechoice\AmcProcessUpload($quizz);
 $amclog = new \mod\automultiplechoice\Log($quizz->id);
-//var_dump($process);
 
 $action = optional_param('action', '', PARAM_ALPHA);
 if ($action === 'deleteUploads') {
@@ -40,7 +36,7 @@ if ($action === 'deleteUploads') {
     redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
 }
 
-if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
+if (isset($_FILES['scanfile']) ) { // Fichier reçu ?
     $errors = array();
 
     if ($_FILES['scanfile']["error"] > 0) {

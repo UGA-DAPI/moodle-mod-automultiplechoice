@@ -8,7 +8,7 @@
 
 use \mod\automultiplechoice as amc;
 
-require_once(__DIR__ . '/locallib.php');
+require_once __DIR__ . '/locallib.php';
 require_once __DIR__ . '/models/Grade.php';
 require_once __DIR__ . '/models/AmcProcessPrepare.php';
 
@@ -24,26 +24,23 @@ $course = $controller->getCourse();
 $output = $controller->getRenderer('grading');
 $action = optional_param('action', '', PARAM_ALPHA);
 
+
 require_capability('mod/automultiplechoice:update', $controller->getContext());
-
-/// Print the page header
-
 $PAGE->set_url('/mod/automultiplechoice/grading.php', array('id' => $cm->id));
-$PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 $process = new amc\Grade($quizz);
 if (!$process->isGraded() || $action === 'grade') {
     $prepare = new amc\AmcProcessPrepare($quizz);
     $prepare->saveFormat('latex');
     unset($prepare);
-    if ($process->grade()) {
+    if ($process->grade()) {       
         redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
     }
-} else if ($action === 'anotate') {
+} elseif ($action === 'anotate') {
     if ($process->anotate()) {
         redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
     }
-} else if ($action === 'setstudentaccess') {
+} elseif ($action === 'setstudentaccess') {
     $quizz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
     $quizz->corrigeaccess = optional_param('corrigeaccess', false, PARAM_BOOL);
     $quizz->save();
@@ -57,6 +54,7 @@ if (!$process->isGraded() || $action === 'grade') {
     );
     redirect(new moodle_url('grading.php', array('a' => $quizz->id)));
 }
+
 
 // Has side effects, so must be called early.
 $stats = $process->getHtmlStats();
