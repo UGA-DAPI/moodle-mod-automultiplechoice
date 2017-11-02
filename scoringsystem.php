@@ -55,7 +55,8 @@ require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 // Output starts here
 $PAGE->set_url('/mod/automultiplechoice/scoringsystem.php', array('id' => $cm->id));
-$PAGE->requires->js(new moodle_url('assets/scoringsystem.js'));
+//$PAGE->requires->js(new moodle_url('assets/scoringsystem.js'));
+$PAGE->requires->js_call_amd('mod_automultiplechoice/scoringsystem', 'init');
 
 echo $output->header();
 

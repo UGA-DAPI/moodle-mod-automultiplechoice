@@ -35,7 +35,8 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
      */
     public function definition() {
         global $CFG, $PAGE;
-        $PAGE->requires->js(new moodle_url('/mod/automultiplechoice/assets/mod_form.js'));
+        $PAGE->requires->js_call_amd('mod_automultiplechoice/mod_form', 'init');
+        //$PAGE->requires->js(new moodle_url('/mod/automultiplechoice/assets/mod_form.js'));
         $mform = $this->_form;
 
         //-------------------------------------------------------------------------------
@@ -43,7 +44,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field
-        $mform->addElement('text', 'name', get_string('automultiplechoicename', 'automultiplechoice'), array('size'=>'64'));
+        $mform->addElement('text', 'name', get_string('automultiplechoicename', 'automultiplechoice'), array('size' => '64'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -74,7 +75,15 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
         $mform->setType('instructions', PARAM_TEXT);
         $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
-        $mform->addElement('editor', 'amc[instructionsprefix]', get_string('instructions', 'automultiplechoice'), array('rows'=>'4', 'cols'=>'64'));
+        $mform->addElement(
+            'editor',
+            'amc[instructionsprefix]',
+            get_string('instructions', 'automultiplechoice'),
+            array(
+                'rows' => '4',
+                'cols' => '64'
+            )
+        );
         $mform->setType('amc[instructionsprefix]', PARAM_RAW);
 
         $mform->addElement('editor', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'6', 'cols'=>'64'));

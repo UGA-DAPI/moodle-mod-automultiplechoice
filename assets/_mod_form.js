@@ -2,8 +2,8 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
  */
 
-jQuery(function($) {
-	console.log('mod_form');
+$(document).ready(function($) {
+	//console.log('mod_form', tinyMCE);
 	/*function updateScoringDescription() {
 		var id = $("#id_amc_scoringset").val();
 		console.log('called', id);
@@ -22,6 +22,7 @@ jQuery(function($) {
     function updateInstrPrefix() {
         var v = $("#id_instructions").val();
 		$("#id_amc_instructionsprefix").html(v);
+		console.log('updateInstrPrefix');
 		tinyMCE.get("id_amc_instructionsprefix").setContent(v);
     }
     $("#id_instructions").on("click", updateInstrPrefix);

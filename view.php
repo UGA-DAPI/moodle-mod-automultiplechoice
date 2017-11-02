@@ -28,7 +28,7 @@ $PAGE->requires->js(
 $viewContext = $controller->getContext();
 require_capability('mod/automultiplechoice:view', $viewContext);
 if (!has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple étudiant
-    //$anotatedfile = "cr-".$USER->id.".pdf";
+
     $anotatedfile = $process->getUserAnotatedSheet($USER->idnumber);
     if ($quiz->studentaccess && $anotatedfile) {
         $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
