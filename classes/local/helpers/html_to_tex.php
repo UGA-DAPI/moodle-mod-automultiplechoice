@@ -1,19 +1,21 @@
 <?php
+
 namespace mod_automultiplechoice\local\helpers;
+
 /**
  * Description of HtmlToTex
- *
- * @author François Gannaz <francois.gannaz@silecs.info>
  */
-class html_to_tex
-{
+class html_to_tex {
+    
     public $quiet = false;
+    
     /**
      * @var DOMDocument
      */
     private $dom;
     private $mapping;
     private $tmpDir = '/tmp';
+
     public function __construct($configfile = '') {
         if (!$configfile) {
             $configfile = __DIR__ . '/htmltotex.json';
@@ -36,7 +38,7 @@ class html_to_tex
      * @return \HtmlToTex
      */
     public function loadFragment($html) {
-        $this->dom = new DOMDocument();
+        $this->dom = new \DOMDocument();
         $this->dom->loadHTML(
             '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head><body>'
                 . $html
@@ -50,7 +52,7 @@ class html_to_tex
      * @return \HtmlToTex
      */
     public function loadString($html) {
-        $this->dom = new DOMDocument();
+        $this->dom = new \DOMDocument();
         $this->dom->loadHTML($html, $this->getOptions());
         return $this;
     }
@@ -59,7 +61,7 @@ class html_to_tex
      * @return \HtmlToTex
      */
     public function loadFile($filename) {
-        $this->dom = new DOMDocument();
+        $this->dom = new \DOMDocument();
         $this->dom->loadHTMLFile($filename, $this->getOptions());
         return $this;
     }
@@ -79,7 +81,7 @@ class html_to_tex
      * @param DOMNode $node
      * @return string
      */
-    protected function nodeToTeX(DOMNode $node) {
+    protected function nodeToTeX(\DOMNode $node) {
         switch ($node->nodeType) {
             case XML_ELEMENT_NODE:
                 return $this->elementToTex($node);
@@ -96,7 +98,7 @@ class html_to_tex
      * @param DOMElement $e
      * @return string
      */
-    protected function elementToTex(DOMElement $e) {
+    protected function elementToTex(\DOMElement $e) {
         $wrapper = null;
         if ($e->hasAttribute('class')) {
             $classes = preg_split('/\s+/', $e->getAttribute('class'));
@@ -177,7 +179,7 @@ class html_to_tex
      * @param DOMElement $e
      * @return ConvertedTag
      */
-    protected function tagImgToTex(DOMElement $e) {
+    protected function tagImgToTex(\DOMElement $e) {
         /**
          * @todo read src attr, save img into a local path (object attr), then use includegraphicx (which must be loaded).
          */
@@ -208,7 +210,7 @@ class html_to_tex
      * @param DOMElement $e
      * @return ConvertedTag
      */
-    protected function tagTableToTex(DOMElement $e) {
+    protected function tagTableToTex(\DOMElement $e) {
         /**
          * @todo read alignments
          */
@@ -255,7 +257,7 @@ class html_to_tex
      * @param DOMElement $e
      * @return ConvertedTag
      */
-    protected function embeddedTex(DOMElement $e) {
+    protected function embeddedTex(\DOMElement $e) {
         $res = new ConvertedTag();
         $res->recursive = false;
         $res->content = $e->textContent;

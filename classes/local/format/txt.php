@@ -1,5 +1,7 @@
 <?php
+
 namespace mod_automultiplechoice\local\format;
+
 class txt extends \mod_automultiplechoice\local\format\api
 {
     const FILENAME = 'prepare-source.txt';
@@ -31,12 +33,12 @@ class txt extends \mod_automultiplechoice\local\format\api
         foreach ($answers as $answer) {
             $answerstext .= ($answer->fraction > 0 ? '+' : '-') . " " . strip_tags($answer->answer) . "\n";
         }
-        $dp = $this->quizz->amcparams->displaypoints;
+        $dp = $this->quiz->amcparams->displaypoints;
         $points = ($question->score == round($question->score) ? $question->score :
                     (abs(round(10*$question->score) - 10*$question->score) < 1 ? sprintf('%.1f', $question->score)
                         : sprintf('%.2f', $question->score)));
         $pointsTxt = $points ? '(' . $points . ' pt' . ($question->score > 1 ? 's' : '') . ')' : '';
-        $options = ($this->quizz->amcparams->shufflea ? '' : '[ordered]');
+        $options = ($this->quiz->amcparams->shufflea ? '' : '[ordered]');
         $questiontext = ($question->single ? '*' : '**')
                     . $options
                     . ($question->scoring ? '{' . $question->scoring . '}' : '') . ' '
@@ -52,10 +54,10 @@ class txt extends \mod_automultiplechoice\local\format\api
      * @return string header block of the AMC-TXT file
      */
     protected function getHeader() {
-        $descr = strip_tags($this->quizz->getInstructions());
-        $params = $this->quizz->amcparams;
+        $descr = strip_tags($this->quiz->getInstructions());
+        $params = $this->quiz->amcparams;
         $markMulti = $params->markmulti ? '' : "LaTeX-BeginDocument: \def\multiSymbole{}\n";
-        $columns = (int) ceil($this->quizz->questions->count() / 28); // empirical guess, should be in config?
+        $columns = (int) ceil($this->quiz->questions->count() / 28); // empirical guess, should be in config?
         return "# AMC-TXT source
             PaperSize: A4
             Lang: FR
@@ -65,7 +67,7 @@ class txt extends \mod_automultiplechoice\local\format\api
             ShuffleQuestions: {$params->shuffleq}
             SeparateAnswerSheet: {$params->separatesheet}
             AnswerSheetColumns: {$columns}
-            Title: {$this->quizz->name}
+            Title: {$this->quiz->name}
             Presentation: {$descr}
             L-Name: {$params->lname}
             L-Student: {$params->lstudent}

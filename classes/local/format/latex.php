@@ -1,5 +1,7 @@
 <?php
+
 namespace mod_automultiplechoice\local\format;
+
 class latex extends \mod_automultiplechoice\local\format\api
 {
     const FILENAME = 'prepare-source.tex';
@@ -23,10 +25,10 @@ class latex extends \mod_automultiplechoice\local\format\api
     public function getFilterName() {
         return "latex";
     }
-    public function __construct($quizz = null, $codelength = 8) {
-        parent::__construct($quizz, $codelength);
-        if (!empty($quizz->id)) {
-            $this->tmpDir = $this->quizz->getDirName() . '/htmlimages';
+    public function __construct($quiz = null, $codelength = 8) {
+        parent::__construct($quiz, $codelength);
+        if (!empty($quiz->id)) {
+            $this->tmpDir = $this->quiz->getDirName() . '/htmlimages';
             if (!is_dir($this->tmpDir)) {
                 mkdir($this->tmpDir);
             }
@@ -37,9 +39,9 @@ class latex extends \mod_automultiplechoice\local\format\api
          * @return string header block of the AMC-TXT file
          */
     protected function getHeader() {
-        $this->scoringset = \mod_automultiplechoice\local\models\scoring_system::read()->getScoringSet($this->quizz->amcparams->scoringset);
-        $params = $this->quizz->amcparams;
-        $quizzName = $this->htmlToLatex($this->quizz->name);
+        $this->scoringset = \mod_automultiplechoice\local\models\scoring_system::read()->getScoringSet($this->quiz->amcparams->scoringset);
+        $params = $this->quiz->amcparams;
+        $quizName = $this->htmlToLatex($this->quiz->name);
         $multi = $params->markmulti ? '' : '\def\multiSymbole{}';
         $rand = $params->randomseed;
         $options = "lang=FR%\n"
@@ -53,7 +55,7 @@ class latex extends \mod_automultiplechoice\local\format\api
         . ",automarks";
         $customlayout=$params->customlayout;
         $shortTitles = '';
-        if ($this->quizz->amcparams->answerSheetColumns > 2) {
+        if ($this->quiz->amcparams->answerSheetColumns > 2) {
             $shortTitles = '\def\AMCformQuestion#1{\vspace{\AMCformVSpace}\par{\bf Q.#1 :}}
             \def\AMCformAnswer#1{\hspace{\AMCformHSpace}#1}';
         }
@@ -78,7 +80,7 @@ class latex extends \mod_automultiplechoice\local\format\api
     ]{automultiplechoice}
     \\date{}
     \\author{}
-    \\title{{'.$quizzName.'}}
+    \\title{{'.$quizName.'}}
     \\makeatletter
     \\let\\mytitle\\@title
     \\let\\myauthor\\@author
@@ -128,7 +130,7 @@ class latex extends \mod_automultiplechoice\local\format\api
             $group = $this->lastGroup;
         }
         /* Question */
-        $dp = $this->quizz->amcparams->displaypoints;
+        $dp = $this->quiz->amcparams->displaypoints;
         $points = ($question->score == round($question->score) ? $question->score :
             (abs(round(10*$question->score) - 10*$question->score) < 1 ? sprintf('%.1f', $question->score)
                 : sprintf('%.2f', $question->score)));
@@ -166,7 +168,7 @@ class latex extends \mod_automultiplechoice\local\format\api
             ($question->single ? '' : 'mult'),
             self::normalizeIntoUnique($question->name, false),
             $questionText,
-            ($this->quizz->amcparams->shufflea ? '' : '[o]'),
+            ($this->quiz->amcparams->shufflea ? '' : '[o]'),
             $answersText,
             ($question->single ? '' : 'mult')
         );
@@ -180,15 +182,15 @@ class latex extends \mod_automultiplechoice\local\format\api
     protected function getFooter()
     {
      // colums: empirical guess, should be in config?
-        $columns = $this->quizz->amcparams->questionsColumns;
+        $columns = $this->quiz->amcparams->questionsColumns;
         if ($columns == 0) {
-            $columns = $this->quizz->questions->count() > 5 ? 2 : 0;
+            $columns = $this->quiz->questions->count() > 5 ? 2 : 0;
         }
         $output = "\n\n"
-        . "\\begin{examcopy}[{$this->quizz->amcparams->copies}]\n"
+        . "\\begin{examcopy}[{$this->quiz->amcparams->copies}]\n"
         . "\n% Title without \\maketitle\n\\begin{center}\\Large\\bf\\mytitle\\end{center}\n"
-        . ($this->quizz->amcparams->separatesheet ? "" : $this->getStudentBlock())
-        . "\n\\begin{instructions}\n" . $this->htmlToLatex($this->quizz->getInstructions(false)) . "\n\\end{instructions}\n"
+        . ($this->quiz->amcparams->separatesheet ? "" : $this->getStudentBlock())
+        . "\n\\begin{instructions}\n" . $this->htmlToLatex($this->quiz->getInstructions(false)) . "\n\\end{instructions}\n"
         . "%%% End of header\n\n";
         foreach ($this->groups as $name => $section) {
             /* @var $section \mod\automultiplechoice\QuestionSection */
@@ -199,16 +201,16 @@ class latex extends \mod_automultiplechoice\local\format\api
                 }
             }
             $output .= ($columns > 1 ? "\\begin{multicols}{"."$columns}\n" : "")
-                . ($this->quizz->amcparams->shuffleq ? sprintf("\\shufflegroup{%s}\n", $name) : '')
+                . ($this->quiz->amcparams->shuffleq ? sprintf("\\shufflegroup{%s}\n", $name) : '')
                 . sprintf("\\insertgroup{%s}\n", $name)
                 . ($columns > 1 ? "\\end{multicols}\n" : "");
         }
-        if ($this->quizz->amcparams->separatesheet) {
+        if ($this->quiz->amcparams->separatesheet) {
             // colums: empirical guess, should be in config?
-            if (empty($this->quizz->amcparams->answerSheetColumns)) {
-                $columns = $this->quizz->questions->count() > 22 ? 2 : 0;
+            if (empty($this->quiz->amcparams->answerSheetColumns)) {
+                $columns = $this->quiz->questions->count() > 22 ? 2 : 0;
             } else {
-                $count = $this->quizz->amcparams->answerSheetColumns;
+                $count = $this->quiz->amcparams->answerSheetColumns;
                 if ($count == 1) {
                     $columns = 0;
                 } else {
@@ -233,7 +235,7 @@ class latex extends \mod_automultiplechoice\local\format\api
     \namefield{
         \fbox{
             \begin{minipage}{.9\linewidth}
-                '. ($this->quizz->amcparams->lname ? $this->htmlToLatex($this->quizz->amcparams->lname) . '\\\\[3ex]' : '') . '
+                '. ($this->quiz->amcparams->lname ? $this->htmlToLatex($this->quiz->amcparams->lname) . '\\\\[3ex]' : '') . '
                 \null\dotfill\\\\[2.5ex]
                 \null\dotfill\vspace*{3mm}
             \end{minipage}
@@ -248,7 +250,7 @@ class latex extends \mod_automultiplechoice\local\format\api
             \raggedcolumns
             \AMCcode{student.number}{' . $this->codelength . '}
             \columnbreak
-            $\longleftarrow{}$\hspace{0pt plus 1cm}' . $this->htmlToLatex($this->quizz->amcparams->lstudent) . '\\\\[3ex]
+            $\longleftarrow{}$\hspace{0pt plus 1cm}' . $this->htmlToLatex($this->quiz->amcparams->lstudent) . '\\\\[3ex]
             \hfill{}' . $namefield . '\hfill\\\\
         \end{multicols}
     }
@@ -267,9 +269,8 @@ class latex extends \mod_automultiplechoice\local\format\api
          * @param string $html UTF-8 HTML string
          * @return string
          */
-    protected function htmlToLatex($html)
-    {
-        $converter = new \HtmlToTex();
+    protected function htmlToLatex($html) {
+        $converter = new \mod_automultiplechoice\local\helpers\html_to_tex();
         $converter->setTmpDir($this->tmpDir);
         if (strpos($html, '<tex') !== false) {
             $filtered = preg_replace('#<tex\b(.*)>(.+?)</tex>#', '<code class="tex"\1>\(\2\)</code>', $html);

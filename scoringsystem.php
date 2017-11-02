@@ -1,64 +1,56 @@
 <?php
 
-/**
- * Shows details of a particular instance of automultiplechoice
- *
- * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+global $OUTPUT, $PAGE, $CFG;
+
+require_once(__DIR__ . '/locallib.php');
 
 /* @var $DB moodle_database */
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-use \mod\automultiplechoice as amc;
-
-require_once __DIR__ . '/locallib.php';
-require_once __DIR__ . '/models/AmcProcess.php';
-global $OUTPUT, $PAGE, $CFG;
-
-$controller = new amc\Controller();
-$quizz = $controller->getQuizz();
+$controller = new \mod_automultiplechoice\local\controllers\view_controller();
+$quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
+
 $output = $controller->getRenderer('scoringsystem');
 
-if (!count($quizz->questions)) {
-    redirect(new moodle_url('questions.php', array('a' => $quizz->id)));
+
+if (!count($quiz->questions)) {
+    redirect(new moodle_url('questions.php', array('a' => $quiz->id)));
 }
 if (isset($_POST['score'])) {
-    $quizz->score = (int) $_POST['score'];
-    $quizz->amcparams->readFromForm($_POST['amc']);
+    $quiz->score = (int) $_POST['score'];
+    $quiz->amcparams->readFromForm($_POST['amc']);
     $pos = 0;
-    foreach ($quizz->questions as $q) {
+    foreach ($quiz->questions as $q) {
         if ($q->getType() === 'question') {
             /* @var $q amc\Question */
             $q->score = (float) $_POST['q']['score'][$pos];
         }
         $pos++;
     }
-    if ($quizz->validate()) {
-        if ($quizz->save()) {
-            $process = new amc\AmcProcess($quizz);
-            $res =$process->saveFormat('latex') && $process->amcPrepareBareme();
-            if (!$res){
-                 amc\FlashMessageManager::addMessage('error',"Erreur lors de l'extraction du barème");
-            }else{
-                amc\Log::build($quizz->id)->write('scoring');
-                amc\FlashMessageManager::addMessage('success', "Les modification du barème ont été enregistrées.");
+    if ($quiz->validate()) {
+        if ($quiz->save()) {
+            $process = new \mod_automultiplechoice\local\amc\process($quiz);
+            $export = new \mod_automultiplechoice\local\amc\export($quiz);
+            $res = $export->saveFormat('latex') && $process->amcPrepareBareme();
+            if (!$res) {
+                 \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('error', "Erreur lors de l'extraction du barème");
+            } else {
+                \mod_automultiplechoice\local\helpers\log::build($quiz->id)->write('scoring');
+                \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('success', "Les modification du barème ont été enregistrées.");
             }
-            //redirect(new moodle_url('view.php', array('a' => $quizz->id)));
+
         } else {
             die("Could not save into automultiplechoice");
         }
     } else {
-        $output->displayErrors($quizz->errors);
+        $output->displayErrors($quiz->errors);
     }
 }
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
-
 
 
 // Output starts here
@@ -67,11 +59,11 @@ $PAGE->requires->js(new moodle_url('assets/scoringsystem.js'));
 
 echo $output->header();
 
-if (!$quizz->validate()) {
+if (!$quiz->validate()) {
     echo $OUTPUT->box_start('errorbox');
     echo '<p>' . get_string('someerrorswerefound') . '</p>';
     echo '<dl>';
-    foreach ($quizz->errors as $field => $error) {
+    foreach ($quiz->errors as $field => $error) {
         $field = preg_replace('/^(.+)\[(.+)\]$/', '${1}_${2}', $field);
         echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>\n"
                 . "<dd>" . get_string($error, 'automultiplechoice') . "</dd>\n";
@@ -80,6 +72,5 @@ if (!$quizz->validate()) {
     echo $OUTPUT->box_end();
 }
 
-HtmlHelper::printFormFullQuestions($quizz);
-
+\mod_automultiplechoice\local\helpers\html::printFormFullQuestions($quiz);
 echo $output->footer();

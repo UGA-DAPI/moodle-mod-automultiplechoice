@@ -13,11 +13,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->dirroot.'/course/moodleform_mod.php';
-require_once __DIR__ . '/models/Quizz.php';
+//require_once __DIR__ . '/models/Quizz.php';
 require_once __DIR__ . '/locallib.php';
 //require_once __DIR__ . '/models/ScoringSystem.php';
 
-use \mod\automultiplechoice as amc;
+//use \mod\automultiplechoice as amc;
 
 /* @var $PAGE moodle_page */
 
@@ -26,7 +26,7 @@ use \mod\automultiplechoice as amc;
  */
 class mod_automultiplechoice_mod_form extends moodleform_mod {
     /**
-     * @var amc\Quizz
+     * @var mod_automultiplechoice\local\models\quiz
      */
     protected $current;
 
@@ -87,8 +87,8 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('amc[lstudent]', PARAM_TEXT);
 
         $mform->addElement(
-            'text', 'amc[lname]', 
-            get_string('amc_lname', 'automultiplechoice'), 
+            'text', 'amc[lname]',
+            get_string('amc_lname', 'automultiplechoice'),
             array(
                 'data-std' => get_config('mod_automultiplechoice', 'instructionslnamestd'),
                 'data-anon' => get_config('mod_automultiplechoice', 'instructionslnameanon'),
@@ -107,8 +107,8 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addRule('amc[copies]', null, 'required', null, 'client');
 
         $mform->addElement(
-            'select', 
-            'amc[questionsColumns]', 
+            'select',
+            'amc[questionsColumns]',
             get_string('amc_questionsColumns', 'automultiplechoice'),
             array("Auto", 1, 2)
         );
@@ -124,16 +124,16 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->setType('amc[separatesheet]', PARAM_BOOL);
 
         $mform->addElement(
-            'select', 
-            'amc[answerSheetColumns]', 
+            'select',
+            'amc[answerSheetColumns]',
             get_string('amc_answerSheetColumns', 'automultiplechoice'),
             array("Auto", 1, 2, 3, 4)
         );
         $mform->disabledIf('amc[answerSheetColumns]', 'amc[separatesheet]', 'eq', 0);
 
         $mform->addElement(
-            'select', 
-            'amc[displaypoints]', 
+            'select',
+            'amc[displaypoints]',
             get_string('amc_displaypoints', 'automultiplechoice'),
             array("Ne pas afficher", "En début de question", "En fin de question")
         );
@@ -168,13 +168,13 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         }
         // Convert from JSON to array
         if (!empty($default_values['amcparams'])) {
-            $params = amc\AmcParams::fromJson($default_values['amcparams']);
+            $params = \mod_automultiplechoice\local\amc\params::fromJson($default_values['amcparams']);
             $default_values['amc'] = (array) $params;
             $default_values['amc']['instructionsprefix'] = array(
                 'text' => $params->instructionsprefix,
             );
             $this->_form->setDefault(
-                'amc[instructionsprefix]', 
+                'amc[instructionsprefix]',
                 array(
                     'text' => $params->instructionsprefix,
                 )
@@ -182,12 +182,12 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             if (!empty($this->current->id) && !empty($params->locked)) {
                 $this->_form->freeze(
                     array(
-                        'qnumber', 
-                        'amc[copies]', 
-                        'amc[shuffleq]', 
+                        'qnumber',
+                        'amc[copies]',
+                        'amc[shuffleq]',
                         'amc[shufflea]',
-                        'amc[separatesheet]', 
-                        'amc[displaypoints]', 
+                        'amc[separatesheet]',
+                        'amc[displaypoints]',
                         'amc[markmulti]',
                         'amc[customlayout]',
                         'amc[score]',
@@ -207,7 +207,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         if (!empty($this->current->id)) {
             global $PAGE, $OUTPUT;
             $output = $PAGE->get_renderer('mod_automultiplechoice');
-            $output->quizz = amc\Quizz::buildFromRecord($this->current);
+            $output->quiz = \mod_automultiplechoice\local\models\quiz::buildFromRecord($this->current);
             $output->currenttab = 'settings';
             $OUTPUT = $output;
         }

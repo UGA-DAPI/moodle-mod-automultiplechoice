@@ -25,7 +25,8 @@ $(document).ready(function() {
 	$('.async-target > span').addClass('loading');
 	asyncLoadComponents();
 
-	$(".checklock").on("click", ':submit', function(){
+	/*$(".checklock").on("click", ':submit', function(){
+		console.log('checklock called');
 		var checkdata = $(this).closest('.checklock').data('checklock');
 		var propagate = false;
         $.ajax({
@@ -48,6 +49,6 @@ $(document).ready(function() {
         });
 		return propagate;
 
-	});
+	});*/
 });
 

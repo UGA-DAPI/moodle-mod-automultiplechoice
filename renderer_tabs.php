@@ -1,14 +1,8 @@
 <?php
-/**
- * @package    mod_automultiplechoice
- * @copyright  2014 Silecs <http://wwww.silecs.info>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 /* @var $OUTPUT core_renderer */
 global $OUTPUT;
 
-/* @var $quiz mod\automultiplechoice\Quizz */
+/* @var $quiz mod_automultiplechoice\local\models\quiz */
 /* @var $cm \stdClass */
 
 $tabs = array(
@@ -44,40 +38,40 @@ $tabs = array(
     ),
     new tabobject(
         'associating',
-        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/associating.php?a={$quizz->id}"),
+        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/associating.php?a={$quiz->id}"),
         "6. " . get_string('associating', 'automultiplechoice')
     ),
     new tabobject(
         'grading',
-        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/grading.php?a={$quizz->id}"),
+        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/grading.php?a={$quiz->id}"),
         "7. " . get_string('grading', 'automultiplechoice')
     ),
     new tabobject(
         'annotating',
-        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/annotating.php?a={$quizz->id}"),
+        new moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/annotating.php?a={$quiz->id}"),
         "8. " . get_string('annotating', 'automultiplechoice')
     ),
 );
 
 $inactive = array();
 $activated = array();
-if (empty($quizz->name)) {
+if (empty($quiz->name)) {
     $currenttab = 'dashboard';
-    $inactive = array('dashboard', 'questions', 'scoringsystem', 'documents', 'uploadscans', 'associating','grading','annotating');
-} else if (empty($quizz->questions)) {
+    $inactive = array('dashboard', 'questions', 'scoringsystem', 'documents', 'uploadscans', 'associating', 'grading', 'annotating');
+} else if (empty($quiz->questions)) {
     $currenttab = 'questions';
-    $inactive = array('dashboard', 'scoringsystem', 'documents', 'uploadscans','associating','grading','annotating');
-} else if (!$quizz->validate()) {
-    $inactive = array('documents', 'uploadscans','associating','grading','annotating');
-} else if (!empty($quizz->errors) || !$quizz->isLocked()) {
-    $inactive = array('uploadscans', 'associating','grading','annotating');
-} else if (!$quizz->hasScans()) {
-    $inactive = array('associating','grading','annotating');
+    $inactive = array('dashboard', 'scoringsystem', 'documents', 'uploadscans', 'associating', 'grading', 'annotating');
+} else if (!$quiz->validate()) {
+    $inactive = array('documents', 'uploadscans', 'associating', 'grading', 'annotating');
+} else if (!empty($quiz->errors) || !$quiz->isLocked()) {
+    $inactive = array('uploadscans', 'associating', 'grading', 'annotating');
+} else if (!$quiz->hasScans()) {
+    $inactive = array('associating', 'grading', 'annotating');
 }
-if ($quizz->isLocked()) {
+if ($quiz->isLocked()) {
     $inactive[] = 'questions';
 }
-if (has_students($context)==0){
+if (has_students($context) === 0) {
     $inactive = array('associating');
 }
 if (!isset($currenttab)) {

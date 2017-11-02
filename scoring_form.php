@@ -44,7 +44,7 @@
             <tr>
                 <th><?= get_string('scoringset', 'automultiplechoice') ?></th>
                 <td>
-                    <?= mod\automultiplechoice\ScoringSystem::read()->toHtmlSelect('amc[scoringset]', $quiz->amcparams->scoringset) ?>
+                    <?= \mod_automultiplechoice\local\models\scoring_system::read()->toHtmlSelect('amc[scoringset]', $quiz->amcparams->scoringset) ?>
                     <div id="scoringset_desc"></div>
                 </td>
             </tr>
@@ -81,7 +81,7 @@
                             <input name="q[score][]" class="form-control" type="number" class="qscore" value="' . $q->score . '" />
                         </td>
                         <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
-                            . HtmlHelper::listAnswers($q);
+                            . \mod_automultiplechoice\local\helpers\html::listAnswers($q);
                     $k++;
                 }
                 echo "</td>\n</tr>\n";

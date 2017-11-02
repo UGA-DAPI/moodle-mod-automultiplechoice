@@ -10,16 +10,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use \mod\automultiplechoice as amc;
+
+//use \mod\automultiplechoice as amc;
 
 global $DB,$CFG;
 require_once dirname(dirname(__DIR__)) . '/config.php';
 require_once($CFG->libdir . '/formslib.php');
 require_once __DIR__ . '/lib.php';
-require_once __DIR__ . '/models/Quizz.php';
-require_once __DIR__ . '/models/AmcProcess.php';
-require_once __DIR__ . '/components/HtmlHelper.php';
-require_once __DIR__ . '/components/Controller.php';
+//require_once __DIR__ . '/models/Quizz.php';
+//require_once __DIR__ . '/models/AmcProcess.php';
+//require_once __DIR__ . '/components/HtmlHelper.php';
+//require_once __DIR__ . '/components/Controller.php';
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -68,7 +69,7 @@ function automultiplechoice_list_questions($user, $course) {
 
 /**
  * Parses the config setting 'instructions' to convert it into an associative array (instruction => title).
- * 
+ *
  * @return array
  */
 function parse_default_instructions() {
@@ -177,7 +178,7 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
         }
     }
 
-    
+
      if ($roleid) {
         list($rids, $params) = $DB->get_in_or_equal($roleid, SQL_PARAMS_NAMED, 'r');
         $roleselect = "AND ra.roleid $rids";
@@ -193,7 +194,7 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
         $excludeparams = array();
         $idnumberselect = '';
     }
-    
+
     if ($coursecontext = $context->get_course_context(false)) {
         $params['coursecontext'] = $coursecontext->id;
     } else {
@@ -239,7 +240,7 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
 */
     $sql = "SELECT DISTINCT $fields, ra.roleid
               FROM {role_assignments} ra
-              JOIN {user} u ON u.id = ra.userid 
+              JOIN {user} u ON u.id = ra.userid
                $idnumberselect
               JOIN {role} r ON ra.roleid = r.id
             $ejoin
@@ -256,8 +257,8 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
     $availableusers = $info->filter_user_list($availableusers);
     return $availableusers;
 }
-     
-function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude=NULL,$includeall=false) {
+
+function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude = NULL, $includeall =  false) {
     global $USER, $CFG;
 
     $codelength = get_config('mod_automultiplechoice', 'amccodelength');
@@ -305,17 +306,17 @@ function button_back_to_activity($id) {
             . '</div>';
 }
 
-function displayLockButton(amc\Quizz $quizz) {
+function displayLockButton(\mod_automultiplechoice\local\models\quiz $quiz) {
     global $OUTPUT;
-    if (empty($quizz->errors)) {
-        if ($quizz->isLocked()) {
+    if (empty($quiz->errors)) {
+        if ($quiz->isLocked()) {
             echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'unlock' => 1)),
+                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quiz->id, 'unlock' => 1)),
                     'Déverrouiller (permettre les modifications du questionnaire)', 'post'
             );
         } else {
             echo $OUTPUT->single_button(
-                        new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quizz->id, 'lock' => 1)),
+                        new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quiz->id, 'lock' => 1)),
                         'Préparer les documents à imprimer et verrouiller le questionnaire', 'post'
                 );
         }
@@ -324,10 +325,10 @@ function displayLockButton(amc\Quizz $quizz) {
     }
 }
 
-function displayGradeInfo(amc\AmcProcess $process) {
+function displayGradeInfo(\mod_automultiplechoice\local\amc\process $process) {
     $gradetime = $process->lastlog('note');
     if ($gradetime) {
-        echo "<div>Correction des copies déjà effectuée le " . amc\AmcProcess::isoDate($gradetime) . "</div>\n";
+        echo "<div>Correction des copies déjà effectuée le " . $process::isoDate($gradetime) . "</div>\n";
     }
 }
 function backup_source($file){
@@ -337,7 +338,7 @@ function restore_source($file){
     copy ($file,substr($file,-5));
 }
 function get_code($name) {
-    preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name,$res);
+    preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name, $res);
     return $res['student'].'_'.$res['copy'];
 
 }

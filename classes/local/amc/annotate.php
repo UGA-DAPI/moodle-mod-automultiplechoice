@@ -1,28 +1,14 @@
 <?php
-/**
- * @package    mod
- * @subpackage automultiplechoice
- * @copyright  2013 Silecs {@link http://www.silecs.info/societe}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 
 namespace mod_automultiplechoice\local\amc;
 
-//require_once __DIR__ . '/AmcProcess.php';
-require_once dirname(__DIR__) . '/locallib.php';
-//require_once __DIR__ . '/Log.php';
-//require_once __DIR__ . '/AmcFormat/Api.php';
 
-class annotate extends mod_automultiplechoice_amc_process
-{
+require_once(__DIR__ . './../../../locallib.php');
 
 
-    public function __construct(Quizz $quizz,$formatName = 'latex') {
-        parent::__construct($quizz, $formatName);
-
-    }
-
-/**
+class annotate extends \mod_automultiplechoice\local\amc\process {
+    /**
      * low-level Shell-executes 'amc annote'
      * fills the cr/corrections/jpg directory with individual annotated copies
      * @return bool
@@ -35,14 +21,14 @@ class annotate extends mod_automultiplechoice_amc_process
         if (!is_dir($pre. '/cr/corrections/pdf')) {
             mkdir($pre. '/cr/corrections/pdf', 0777, true);
         }
-    if ($this->quizz->amcparams->answerSheetColumns > 2) {
-        $ecart='8';
-        $pointsize='110';
-    }else{
-        $ecart='10';
-        $pointsize='80';
-    }
-    $parameters = array(
+        if ($this->quiz->amcparams->answerSheetColumns > 2) {
+            $ecart = '8';
+            $pointsize = '110';
+        } else {
+            $ecart = '10';
+            $pointsize = '80';
+        }
+        $parameters = array(
             '--projet', $pre,
             '--ch-sign', '3',
             '--cr', $pre . '/cr',
@@ -67,7 +53,7 @@ class annotate extends mod_automultiplechoice_amc_process
         $res = $this->shellExecAmc('annote', $parameters);
         if ($res) {
             $this->log('annote', '');
-            $amclog = Log::build($this->quizz->id);
+            $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
             $amclog->write('annotating');
         }
         return $res;
@@ -91,7 +77,7 @@ class annotate extends mod_automultiplechoice_amc_process
         $files = glob($this->workdir . '/cr/corrections/pdf/cr-*.pdf');
         $userids = array();
         foreach ($files as $file) {
-        $userids[] = (int) substr($file,3,-4);
+            $userids[] = (int) substr($file, 3, -4);
         }
 
         return $userids;
@@ -99,13 +85,13 @@ class annotate extends mod_automultiplechoice_amc_process
 
 
     /**
-    * Sends a Moodle message to all students having an anotated sheet
-    * @param $usersIds array(user.id => user.username)
-    * @return integer # messages sent
-    */
+     * Sends a Moodle message to all students having an anotated sheet
+     * @param $usersIds array(user.id => user.username)
+     * @return integer # messages sent
+     */
     public function sendAnotationNotification($usersIds) {
         global $USER;
-        $url = new \moodle_url('/mod/automultiplechoice.php', array('a' => $this->quizz->id));
+        $url = new \moodle_url('/mod/automultiplechoice.php', array('a' => $this->quiz->id));
 
         $eventdata = new \object();
         $eventdata->component         = 'mod_automultiplechoice';
@@ -113,10 +99,10 @@ class annotate extends mod_automultiplechoice_amc_process
         $eventdata->userfrom          = $USER;
         $eventdata->subject           = "Correction disponible";
         $eventdata->fullmessageformat = FORMAT_PLAIN;   // text format
-        $eventdata->fullmessage       = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name;
-        $eventdata->fullmessagehtml   = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name
-                                      . " à l'adresse " . \html_writer::link($url, $url) ;
-        $eventdata->smallmessage      = "Votre copie corrigée est disponible pour le QCM ". $this->quizz->name;
+        $eventdata->fullmessage       = "Votre copie corrigée est disponible pour le QCM ". $this->quiz->name;
+        $eventdata->fullmessagehtml   = "Votre copie corrigée est disponible pour le QCM ". $this->quiz->name
+                                      . " à l'adresse " . \html_writer::link($url, $url);
+        $eventdata->smallmessage      = "Votre copie corrigée est disponible pour le QCM ". $this->quiz->name;
 
         // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
         $count = 0;

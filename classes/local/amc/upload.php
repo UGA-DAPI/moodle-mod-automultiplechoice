@@ -1,28 +1,23 @@
 <?php
-/**
- * @package    mod
- * @subpackage automultiplechoice
- * @copyright  2014 Silecs {@link http://www.silecs.info/societe}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 namespace mod_automultiplechoice\local\amc;
-//require_once __DIR__ . '/AmcProcess.php';
-//require_once __DIR__ . '/Log.php';
-class upload extends mod_automultiplechoice_amc_process
-{
+
+class upload extends \mod_automultiplechoice\local\amc\process {
+
     public $nbPages = 0;
+
     public function upload($filename) {
-        if ($this->quizz->hasScans()) {
+        if ($this->quiz->hasScans()) {
             $this->deleteGrades();
         }
         $captureFile = $this->workdir . "/data/capture.sqlite";
         if (!file_exists($captureFile)) {
             if (file_exists($captureFile.'.orig')) {
-            copy ($captureFile.'.orig',$captureFile);
-        }else{
-            $this->amcMeptex();
+                copy($captureFile.'.orig', $captureFile);
+            } else {
+                $this->amcMeptex();
+            }
         }
-    }
         $this->nbPages = $this->amcGetimages($filename);
         if (!$this->nbPages) {
             $this->errors[] = "Erreur découpage scan (amc getimages)";

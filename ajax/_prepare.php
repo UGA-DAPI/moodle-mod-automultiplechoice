@@ -1,22 +1,13 @@
 <?php
 
-/**
- * @package    mod_automultiplechoice
- * @copyright  2014 Silecs
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use \mod\automultiplechoice as amc;
-
-require_once dirname(__DIR__) . '/locallib.php';
-require_once dirname(__DIR__) . '/models/AmcProcessPrepare.php';
+require_once(dirname(__DIR__) . '/locallib.php');
 
 global $DB, $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-$controller = new amc\Controller();
-$quizz = $controller->getQuizz();
+$controller = new \mod_automultiplechoice\local\controllers\view_controller();
+$quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 
@@ -25,22 +16,19 @@ require_capability('mod/automultiplechoice:update', $controller->getContext());
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $redirect = optional_param('redirect', false, PARAM_BOOL);
 
-$process = new amc\AmcProcessPrepare($quizz);
+$process = new \mod_automultiplechoice\local\amc\process($quiz);
+$export = new \mod_automultiplechoice\local\amc\export($quiz);
 
 if ($action == 'prepare') {
-    if ($process->amcCreatePdf("latex")) {
+    if ($export->amcCreatePdf("latex")) {
         echo "<h3>Fichiers PDF nouvellement créés</h3>";
         echo $process->getHtmlPdfLinks();
     } else {
         echo $OUTPUT->error_text("Erreur lors de la création des fichiers PDF :" . $process->getLastError());
         exit();
     }
-/*
-    if (!$process->amcMeptex()) {
-        echo $OUTPUT->error_text("Erreur lors du calcul de mise en page (amc meptex).");
-        exit();
-    }*/
 } else if ($action == 'zip') {
+    // n'existe plus...
     if ($process->printAndZip()) {
         echo "<h3>Archive Zip créée</h3>";
         echo $process->getHtmlZipLink();
@@ -51,5 +39,5 @@ if ($action == 'prepare') {
 }
 
 if ($redirect) {
-    redirect('/mod/automultiplechoice/documents.php?a=' . $quizz->id);
+    redirect('/mod/automultiplechoice/documents.php?a=' . $quiz->id);
 }

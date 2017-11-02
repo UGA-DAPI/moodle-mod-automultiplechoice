@@ -1,6 +1,16 @@
 <?php
 
-require_once(__DIR__ . '/locallib.php');
+/**
+ * Selects questions.
+ *
+ * @package    mod_automultiplechoice
+ * @copyright  2013-2014 Silecs
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+//use \mod\automultiplechoice as amc;
+
+require_once __DIR__ . '/locallib.php';
 
 global $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
@@ -27,7 +37,12 @@ if ($questions) {
     $quiz->questions = $questions;
 
     if ($quiz->save()) {
-        \mod_automultiplechoice\local\helpers\log::build($quiz->id)->write('saving');
+        \mod_automultiplechoice\local\amc\logger::build($quiz->id)->write('saving');
+        /*if ($quiz->score > 0) {
+            redirect(new moodle_url('view.php', array('a' => $quiz->id)));
+        } else {
+            redirect(new moodle_url('scoringsystem.php', array('a' => $quiz->id)));
+        }*/
     } else {
         die("Could not save into automultiplechoice");
     }

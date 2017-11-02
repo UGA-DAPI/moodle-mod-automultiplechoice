@@ -1,17 +1,19 @@
 <?php
+
 namespace mod_automultiplechoice\local\format;
+
 abstract class api
 {
     /**
      * @var \mod\automultiplechoice\Quizz
      */
-    public $quizz;
+    public $quiz;
     /**
      * @var integer
      */
     public $codelength;
-    public function __construct($quizz = null, $codelength = 8) {
-        $this->quizz = $quizz;
+    public function __construct($quiz = null, $codelength = 8) {
+        $this->quiz = $quiz;
         $this->codelength = $codelength;
     }
     /**
@@ -21,11 +23,11 @@ abstract class api
      * @return string file content
      */
     public function getContent() {
-        if (!$this->quizz) {
-            throw new \Exception("No quizz set, cannot convert.");
+        if (!$this->quiz) {
+            throw new \Exception("No quiz set, cannot convert.");
         }
         $res = $this->getHeader();
-        foreach ($this->quizz->questions as $question) {
+        foreach ($this->quiz->questions as $question) {
             $res .= $this->convertQuestion($question);
         }
         $res .= $this->getFooter();

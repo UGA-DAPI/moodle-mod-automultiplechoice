@@ -1,20 +1,8 @@
 <?php
+
 namespace mod_automultiplechoice\local\models;
-//require_once __DIR__ . '/QuestionListItem.php';
-/**
- * @property integer $id
- * @property string $name
- * @property string $questiontext
- * @property integer $questiontextformat
- * @property float $defaultmark
- * @property float $penalty
- * @property boolean $hidden
- * @property integer $timecreated
- * @property integer $timemodified
- * @property integer $single
- */
-class question extends \mod_automultiplechoice\local\models\question_list_item
-{
+
+class question extends \mod_automultiplechoice\local\models\question_list_item {
     /**
      * @var int
      */

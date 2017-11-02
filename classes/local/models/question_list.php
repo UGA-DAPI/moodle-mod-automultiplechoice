@@ -1,22 +1,11 @@
 <?php
-/**
- * @package    mod
- * @subpackage automultiplechoice
- * @copyright  2013 Silecs {@link http://www.silecs.info/societe}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 namespace mod_automultiplechoice\local\models;
+
 global $DB;
-/* @var $DB \moodle_database */
+
 /**
  * QuestionList behaves as an array.
- *
- * <code>
- * $ql = \mod\automultiplechoice\QuestionList::fromJson($json);
- * if ($ql) {
- *     echo $ql[0]['score'];
- * }
- * </code>
  */
 class question_list implements \Countable, \ArrayAccess, \Iterator
 {
@@ -42,7 +31,7 @@ class question_list implements \Countable, \ArrayAccess, \Iterator
      * @param boolean $includeSections (opt)
      * @return array of "question+multichoice" records (objects from the DB) with an additional "score", "scoring" fields.
      */
-    public function updateList($scoringSetId=null) {
+    public function updateList($scoringSetId = null) {
         if (!$this->questions) {
             return array();
         }
@@ -102,8 +91,7 @@ class question_list implements \Countable, \ArrayAccess, \Iterator
      *
      * @return string
      */
-    public function toJson()
-    {
+    public function toJson() {
         if (empty($this->questions)) {
             return '';
         }
@@ -164,9 +152,9 @@ class question_list implements \Countable, \ArrayAccess, \Iterator
         $new = new self();
         for ($i = 0; $i < count($_POST[$fieldname]['id']); $i++) {
             if ($post['type'][$i] === 'section') {
-                $item = new mod_automultiplechoice_question_section($post['id'][$i], $post['description'][$i]);
+                $item = new \mod_automultiplechoice\local\models\question_section($post['id'][$i], $post['description'][$i]);
             } else {
-                $item = mod_automultiplechoice_question::fromArray(
+                $item = \mod_automultiplechoice\local\models\question::fromArray(
                     array(
                         'id' => (int) $post['id'][$i],
                         'score' => isset($post['score']) ? (double) str_replace(',', '.', $post['score'][$i]) : '',
@@ -222,10 +210,10 @@ class question_list implements \Countable, \ArrayAccess, \Iterator
     private function getRawRecords() {
         global $DB, $CFG;
         $ids = $this->getIds();
-	if (empty($ids)){
-		return NULL;
-	}
-	list ($cond, $params) = $DB->get_in_or_equal($ids);
+        if (empty($ids)) {
+            return null;
+        }
+        list ($cond, $params) = $DB->get_in_or_equal($ids);
         if ($CFG->version >= 2013111800) {
             $qtable = 'qtype_multichoice_options';
             $qfield = 'questionid';
@@ -238,7 +226,7 @@ class question_list implements \Countable, \ArrayAccess, \Iterator
                 . 'FROM {question} q INNER JOIN {' . $qtable . "} qc ON qc.{$qfield}=q.id "
                 . 'WHERE q.id ' . $cond,
                 $params
-	);
+        );
     }
     /**
      * Return the list of question.id
@@ -268,6 +256,7 @@ class question_list implements \Countable, \ArrayAccess, \Iterator
         }
         return $scores;
     }
+
     // Implement Countable
     /**
      * Number of questions (not counting the sections).

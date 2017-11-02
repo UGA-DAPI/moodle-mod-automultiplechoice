@@ -1,16 +1,11 @@
 <?php
-/**
- * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
- */
+
 namespace mod_automultiplechoice\local\models;
-//require_once __DIR__ . '/ScoringSet.php';
+
 /**
  * Scoring system
- *
- * @author François Gannaz <francois.gannaz@silecs.info>
  */
-class scoring_system
-{
+class scoring_system {
     /**
      * @var array of ScoringSet.
      */
@@ -34,7 +29,7 @@ class scoring_system
      *
      * @return \mod\automultiplechoice\scoring_system
      */
-    public static function read($forceRead=false) {
+    public static function read($forceRead = false) {
         $system = new self;
         if (!self::$parsedConfig || $forceRead) {
             $text = get_config('mod_automultiplechoice', 'scoringrules');
@@ -93,8 +88,7 @@ class scoring_system
      *
      * @return array of ScoringSet instances.
      */
-    protected function parseConfig($rawText)
-    {
+    protected function parseConfig($rawText) {
         $blocks = preg_split('/\n-{3,}\s*\n/', $rawText);
         $scoringSets = array();
         foreach ($blocks as $block) {

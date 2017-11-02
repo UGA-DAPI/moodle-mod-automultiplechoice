@@ -1,15 +1,11 @@
 <?php
-/*
- * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
- */
+
 namespace mod_automultiplechoice\local\models;
+
 /**
  * Scoring rule
- *
- * @author François Gannaz <francois.gannaz@silecs.info>
  */
-class scoring_rule
-{
+class scoring_rule {
     /** @var boolean */
     public $multiple = false;
     /**

@@ -1,12 +1,14 @@
 <?php
+
 namespace mod_automultiplechoice\local\amc;
-class  params
-{
+
+class  params {
     const DISPLAY_POINTS_NO = 0;
     const DISPLAY_POINTS_BEGIN = 1;
     const DISPLAY_POINTS_END = 2;
     const RAND_MINI = 1000;
     const RAND_MAXI = 100000;
+    
     public static $scoreRcoundingValues = [
         'n' => "Au plus proche",
         'i' => "Inférieur",

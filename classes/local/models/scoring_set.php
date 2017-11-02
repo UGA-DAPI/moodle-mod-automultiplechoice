@@ -1,12 +1,9 @@
 <?php
-/*
- * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
- */
+
 namespace mod_automultiplechoice\local\models;
+
 /**
  * Group of scoring rules
- *
- * @author François Gannaz <francois.gannaz@silecs.info>
  */
 class scoring_set
 {

@@ -1,24 +1,14 @@
 <?php
 
-/**
- * Upload then analyzes the scanned pages
- *
- * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-use \mod\automultiplechoice as amc;
-
 require_once(__DIR__ . '/locallib.php');
-require_once(__DIR__ . '/models/AmcProcessUpload.php');
+//require_once(__DIR__ . '/models/AmcProcessUpload.php');
 
 global $DB, $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-$controller = new amc\Controller();
-$quizz = $controller->getQuizz();
+$controller = new \mod_automultiplechoice\local\controllers\view_controller();
+$quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer('uploadscans');
@@ -27,19 +17,21 @@ require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 $PAGE->set_url('/mod/automultiplechoice/uploadscans.php', array('id' => $cm->id));
 
-$process = new \mod\automultiplechoice\AmcProcessUpload($quizz);
-$amclog = new \mod\automultiplechoice\Log($quizz->id);
+
+$process = new \mod_automultiplechoice\local\amc\upload($quiz);
+$amclog = new \mod_automultiplechoice\local\amc\logger($quiz->id);
+
 
 $action = optional_param('action', '', PARAM_ALPHA);
 if ($action === 'deleteUploads') {
     $process->deleteUploads();
-    redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
+    redirect(new moodle_url('uploadscans.php', array('a' => $quiz->id)));
 }
 
 if ($action === 'delete') {
     $scan =  optional_param('scan', 'all', PARAM_PATH);
     $process->deleteFailed($scan);
-    redirect(new moodle_url('uploadscans.php', array('a' => $quizz->id)));
+    redirect(new moodle_url('uploadscans.php', array('a' => $quiz->id)));
 }
 if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
     $errors = array();
@@ -87,7 +79,7 @@ if (isset ($_FILES['scanfile']) ) { // Fichier reçu ?
 
 // Upload du fichier
 if ($scansStats) {
-    foreach (amc\Log::build($quizz->id)->check('upload') as $warning) {
+    foreach (\mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('upload') as $warning) {
         echo $OUTPUT->notification($warning, 'notifyproblem');
     }
 
@@ -98,7 +90,7 @@ if ($scansStats) {
     echo "<p>Aucune copie n'a encore été déposée.</p>";
 }
 ?>
-<form id="form-uploadscans" action="uploadscans.php?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
+<form id="form-uploadscans" action="uploadscans.php?a=<?php echo $quiz->id; ?>" method="post" enctype="multipart/form-data">
     <div>
         <label for="scanfile">Fichier scan (PDF ou TIFF)</label>
         <input type="file" name="scanfile" id="scanfile" accept="application/pdf,image/tiff">
@@ -111,7 +103,7 @@ if ($scansStats) {
 if ($scansStats) {
     echo $OUTPUT->heading("Effacer les copies", 3);
     ?>
-    <form action="?a=<?php echo $quizz->id; ?>" method="post" enctype="multipart/form-data">
+    <form action="?a=<?php echo $quiz->id; ?>" method="post" enctype="multipart/form-data">
         <p>
             Vous pouvez effacer les copies déjà déposées.
             Ceci effacera aussi les notes.
@@ -129,7 +121,7 @@ if (($scansStats) && (($scansStats['count']-$scansStats['nbidentified'])>0)){
     if ($array_failed){
         $failedoutput = $OUTPUT->heading('Scans non reconnus',3,'helptitle');
         $failedoutput .= \html_writer::start_div('box generalbox boxaligncenter');
-        $deleteallurl = new \moodle_url('uploadscans.php', array('a' => $quizz->id, 'action' => 'delete','scan'=>'all'));
+        $deleteallurl = new \moodle_url('uploadscans.php', array('a' => $quiz->id, 'action' => 'delete','scan'=>'all'));
         $deleteallbutton= new \single_button($deleteallurl, 'Effacer tous les scans non reconnus');
         $deleteallbutton->add_confirm_action(get_string('confirm'));
         $downloadfailedurl = $process->getFileUrl($process->normalizeFilename('failed'));
@@ -138,14 +130,14 @@ if (($scansStats) && (($scansStats['count']-$scansStats['nbidentified'])>0)){
         $failedoutput .= \html_writer::start_div('amc_thumbnails_failed row');
         $failedoutput .= \html_writer::start_div('thumbnails ');
         foreach ($array_failed as $scan) {
-            $url = new \moodle_url('uploadscans.php', array('a'=>$quizz->id,'action'=>'delete', 'scan'=>$scan));
+            $url = new \moodle_url('uploadscans.php', array('a'=>$quiz->id,'action'=>'delete', 'scan'=>$scan));
             $deleteicon = $OUTPUT->action_icon($url,new \pix_icon('t/delete',get_string('delete')),new \confirm_action(get_string('confirm')));
             $scanoutput = \html_writer::link($process->getFileUrl($scan),\html_writer::img($process->getFileUrl($scan),$scan));
             $scanoutput .= \html_writer::div($deleteicon,'caption');
-    
+
             $failedoutput .= \html_writer::div($scanoutput,'thumbnail col-xs-12 col-sm-6 col-md-4 col-lg-3');
-    
-            
+
+
         }
         $failedoutput .= \html_writer::end_div();
         $failedoutput .= \html_writer::end_div();
@@ -155,6 +147,6 @@ if (($scansStats) && (($scansStats['count']-$scansStats['nbidentified'])>0)){
     }
 
         echo $failedoutput;
-    
+
 }
 echo $output->footer();

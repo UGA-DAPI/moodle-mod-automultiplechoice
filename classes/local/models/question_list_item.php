@@ -1,7 +1,8 @@
 <?php
+
 namespace mod_automultiplechoice\local\models;
-abstract class question_list_item implements \JsonSerializable
-{
+
+abstract class question_list_item implements \JsonSerializable {
     /**
      * Build an instance from a serialized array.
      *

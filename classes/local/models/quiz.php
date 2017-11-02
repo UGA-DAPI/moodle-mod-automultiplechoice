@@ -1,14 +1,7 @@
 <?php
-/**
- * @package    mod
- * @subpackage automultiplechoice
- * @copyright  2013 Silecs {@link http://www.silecs.info/societe}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 namespace mod_automultiplechoice\local\models;
-//require __DIR__ . '/AmcParams.php';
-//require __DIR__ . '/QuestionList.php';
-//require_once __DIR__ . '/Log.php';
+
 global $DB;
 /* @var $DB \moodle_database */
 class quiz
@@ -104,9 +97,9 @@ class quiz
      * @return string
      */
     public function getInstructions($filter = true) {
-        $scoringset = ScoringSystem::read()->getScoringSet($this->amcparams->scoringset);
+        $scoringset = \mod_automultiplechoice\local\models\scoring_system::read()->getScoringSet($this->amcparams->scoringset);
         if (($this->amcparams->score)&&($scoringset)) {
-            $suffix =  "\n\n" . $scoringset->description;
+            $suffix = "\n\n" . $scoringset->description;
         } else {
             $suffix = '';
         }
@@ -165,8 +158,7 @@ class quiz
      * @param array $input
      * @return Quizz
      */
-    public static function fromForm($input)
-    {
+    public static function fromForm($input) {
         $new = new self;
         return $new->readFromForm($input);
     }
@@ -208,8 +200,7 @@ class quiz
      * @param object $record
      * @return Quizz
      */
-    public static function buildFromRecord(\stdClass $record)
-    {
+    public static function buildFromRecord(\stdClass $record) {
         $quiz = new self();
         return $quiz->readFromRecord($record);
     }
@@ -219,8 +210,7 @@ class quiz
      * @param object $record
      * @return Quizz
      */
-    public function readFromRecord(\stdClass $record)
-    {
+    public function readFromRecord(\stdClass $record) {
         foreach (array('id', 'course', 'descriptionformat', 'qnumber', 'score', 'author', 'timecreated', 'timemodified') as $key) {
             if (isset($record->$key)) {
                 $this->$key = (int) $record->$key;
@@ -258,8 +248,7 @@ class quiz
      *
      * @return stdClass
      */
-    protected function convertToDbRecord()
-    {
+    protected function convertToDbRecord() {
         $record = (object) array(
             'id' => empty($this->id) ? null : $this->id,
             'timecreated' => $_SERVER['REQUEST_TIME'],

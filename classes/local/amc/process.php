@@ -1,6 +1,9 @@
 <?php
+
 namespace mod_automultiplechoice\local\amc;
-defined('MOODLE_INTERNAL') || die();
+
+defined('MOODLE_INTERNAL') || die('NOT_MOODLE_INTERNAL');
+
 class process
 {
     /**
@@ -29,7 +32,7 @@ class process
      */
     public function __construct(\mod_automultiplechoice\local\models\quiz $quiz, $formatName = 'latex') {
         if (empty($quiz->id)) {
-            throw new Exception("No quizz ID");
+            throw new Exception("No quiz ID");
         }
         $this->quiz = $quiz;
         $this->workdir = $quiz->getDirName(true);
@@ -52,7 +55,7 @@ class process
      */
     public function saveFormat($formatName) {
         try {
-            $format = amcFormat\buildFormat($formatName, $this->quiz);
+            $format = \mod_automultiplechoice\local\format\api::buildFormat($formatName, $this->quiz);
             $format->quiz = $this->quiz;
             $format->codelength = $this->codelength;
         } catch (\Exception $e) {
@@ -101,7 +104,7 @@ class process
      */
     public function amcMeptex() {
         $pre = $this->workdir;
-        $amclog = Log::build($this->quiz->id);
+        $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
         $res = $this->shellExecAmc(
             'meptex',
             array(
@@ -113,7 +116,7 @@ class process
         );
         if ($res) {
             $this->log('meptex', '');
-            $amclog = Log::build($this->quiz->id);
+            $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
             $amclog->write('meptex');
         }
         return $res;
@@ -143,7 +146,7 @@ class process
         $res = $this->shellExecAmc('prepare', $parameters);
         if ($res) {
             $this->log('prepare:bareme', 'OK.');
-            $amclog = Log::build($this->quiz->id);
+            $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
             $amclog->write('scoring');
         }
         return $res;
@@ -170,7 +173,7 @@ class process
         $res = $this->shellExecAmc('note', $parameters);
         if ($res) {
             $this->log('note', 'OK.');
-            $amclog = Log::build($this->quiz->id);
+            $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
             $amclog->write('grading');
         }
         return $res;
@@ -545,7 +548,7 @@ class process
      * @return boolean Success?
      */
     protected function shellExecAmc($cmd, $params, $output=false) {
-        $amclog = Log::build($this->quiz->id);
+        $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
         $amclog->write('process');
         $res = $this->shellExec('auto-multiple-choice ' . $cmd,
             $params,

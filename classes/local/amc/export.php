@@ -1,17 +1,12 @@
 <?php
-/**
- * @package    mod
- * @subpackage automultiplechoice
- * @copyright  2013 Silecs {@link http://www.silecs.info/societe}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 namespace mod_automultiplechoice\local\amc;
-//require_once __DIR__ . '/AmcProcess.php';
-require_once dirname(__DIR__) . '/locallib.php';
-//require_once __DIR__ . '/Log.php';
-class export extends mod_automultiplechoice_amc_process
+
+require_once(__DIR__ . './../../../locallib.php');
+
+class export extends \mod_automultiplechoice\local\amc\process
 {
- /**
+    /**
      * Shell-executes 'amc prepare' for creating pdf files
      *
      * @param string $formatName "txt" | "latex"
@@ -25,7 +20,7 @@ class export extends mod_automultiplechoice_amc_process
         if ($path === '') {
             $path = '/usr/bin/xelatex';
         }
-        $amclog = Log::build($this->quizz->id);
+        $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
         // check if any change(s) occured (scoring changed / questions changed)
         $res = $amclog->check('pdf');
         if (!$res && file_exists($file)) {
@@ -38,7 +33,7 @@ class export extends mod_automultiplechoice_amc_process
         $this->getLogger()->clear();
         $res = $this->shellExecAmc('prepare',
             array(
-                '--n-copies', (string) $this->quizz->amcparams->copies,
+                '--n-copies', (string) $this->quiz->amcparams->copies,
                 '--with', $path,
                 '--filter', $format->getFiltername(),
                 '--mode', 's[c]',
@@ -51,7 +46,7 @@ class export extends mod_automultiplechoice_amc_process
             )
         );
         if ($res) {
-            $amclog = Log::build($this->quizz->id);
+            $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
             $this->log('prepare:pdf', 'catalog corrige sujet');
             $amclog->write('pdf');
         } else {
@@ -73,14 +68,14 @@ class export extends mod_automultiplechoice_amc_process
         if ($path === '') {
             $path = '/usr/bin/xelatex';
         }
-        $amclog = Log::build($this->quizz->id);
+        $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
         $res = $amclog->check('corrected');
         if (!$res && file_exists($file)) {
             return true;
         }
         $res = $this->shellExecAmc('prepare',
             array(
-                '--n-copies', (string) $this->quizz->amcparams->copies,
+                '--n-copies', (string) $this->quiz->amcparams->copies,
                 '--with', $path,
                 '--filter', $this->format->getFiltername(),
                 '--mode', 'k',
@@ -106,26 +101,24 @@ class export extends mod_automultiplechoice_amc_process
     public function zip() {
         $pre = $this->workdir;
         $zipfile = $pre . '/' . $this->normalizeFilename('sujets');
-        if (file_exists($zipfile)){
+        if (file_exists($zipfile)) {
             return true;
         }
                 // clean up, or some obsolete files will stay in the zip
         $mask = $pre . "/imprime/*.pdf";
-            $zip = new \ZipArchive();
-            $ret = $zip->open($zipfile, \ZipArchive::CREATE);
-            if ( ! $ret ) {
-                $this->errors[] ="Echec lors de l'ouverture de l'archive $ret\n";
-            } else {
-                $options = array('add_path' => 'sujets_amc/', 'remove_all_path' => true);
-                $zip->addGlob($mask, GLOB_BRACE, $options);
-                // echo "Zip status: [" . $zip->status . "]<br />\n";
-                // echo "Zip statusSys: [" . $zip->statusSys . "]<br />\n";
-                $this->errors[] = "<p>Zip de [" . $zip->numFiles . "] fichiers dans [" . basename($zip->filename) . "]</p>\n";
-                $zip->close();
-            }
-            if (!file_exists($zipfile)) {
-                $this->errors[] = "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
-            }
+        $zip = new \ZipArchive();
+        $ret = $zip->open($zipfile, \ZipArchive::CREATE);
+        if (!$ret) {
+            $this->errors[] ="Echec lors de l'ouverture de l'archive $ret\n";
+        } else {
+            $options = array('add_path' => 'sujets_amc/', 'remove_all_path' => true);
+            $zip->addGlob($mask, GLOB_BRACE, $options);
+            $this->errors[] = "<p>Zip de [" . $zip->numFiles . "] fichiers dans [" . basename($zip->filename) . "]</p>\n";
+            $zip->close();
+        }
+        if (!file_exists($zipfile)) {
+            $this->errors[] = "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
+        }
         return $ret;
     }
     /**
@@ -163,7 +156,7 @@ class export extends mod_automultiplechoice_amc_process
      *           */
     public function makeFailedPdf() {
         $file = $this->workdir.'/' .$this->normalizeFilename('failed');
-        $amclog = Log::build($this->quizz->id);
+        $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
         $res = $amclog->check('failed');
         if (!$res and file_exists($file)){
             return true;
@@ -188,7 +181,7 @@ class export extends mod_automultiplechoice_amc_process
     public function amcExport($type='csv') {
         $pre = $this->workdir;
     $file =($type=='csv')? $pre . self::PATH_AMC_CSV : $pre . self::PATH_AMC_ODS;
-    $warnings = Log::build($this->quizz->id)->check('exporting');
+    $warnings = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id)->check('exporting');
     if (!$warnings and file_exists($file)) {
         return true;
     }
@@ -247,7 +240,7 @@ class export extends mod_automultiplechoice_amc_process
         chdir($oldcwd);
         if ($res) {
             $this->log('export', 'scoring.csv');
-        Log::build($this->quizz->id)->write('exporting');
+        \mod_automultiplechoice\local\helpers\log::build($this->quiz->id)->write('exporting');
         return true;
         }
         if (!file_exists($csvfile) || !file_exists($odsfile)) {
@@ -317,13 +310,13 @@ class export extends mod_automultiplechoice_amc_process
                     '--filter', $this->format->getFilterName(),
                     '--with', 'xelatex',
                     '--filtered-source', $pre.'/prepare-source_filtered.tex',
-                    '--n-copies', (string) $this->quizz->amcparams->copies,
+                    '--n-copies', (string) $this->quiz->amcparams->copies,
                 */
         );
         $res = $this->shellExecAmc('regroupe', $parameters);
         if ($res) {
             $this->log('regroup', '');
-            $amclog = Log::build($this->quizz->id);
+            $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
             $amclog->write('correction');
         }
         return $res;
@@ -337,7 +330,7 @@ class export extends mod_automultiplechoice_amc_process
     public function amcAnnotePdf() {
         $pre = $this->workdir;
         $file = $pre.'/' .$this->normalizeFilename('corrections');
-        $amclog = Log::build($this->quizz->id);
+        $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
         $res = $amclog->check('annotatePdf');
         if (!$res and file_exists($file)){
             return true;
@@ -355,7 +348,7 @@ class export extends mod_automultiplechoice_amc_process
         $this->getLogger()->write($this->formatShellOutput($cmd, $lines, $returnVal));
         if ($returnVal === 0) {
             return true;
-            $amclog = Log::build($this->quizz->id);
+            $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
             $amclog->write('annotePdf');
         } else {
             /**

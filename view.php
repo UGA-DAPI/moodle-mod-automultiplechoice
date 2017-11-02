@@ -1,21 +1,11 @@
 <?php
 
-/**
- * Shows details of a particular instance of automultiplechoice
- *
- * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 /* @var $DB moodle_database */
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-use \mod\automultiplechoice as amc;
 
-require_once __DIR__ . '/locallib.php';
-require_once __DIR__ . '/models/AmcProcess.php';
+require_once(__DIR__ . '/locallib.php');
 
 global $OUTPUT, $PAGE, $CFG;
 
@@ -33,9 +23,6 @@ if (!count($quiz->questions)) {
 $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
 $PAGE->requires->js(
     new moodle_url('/mod/automultiplechoice/assets/scoringsystem.js')
-);
-$PAGE->requires->js(
-    new moodle_url('assets/amc-modal-scripts.js')
 );
 
 $viewContext = $controller->getContext();
@@ -87,9 +74,9 @@ if (!$quiz->validate()) {
 
 if ($quiz->isLocked()) {
     // cannot put a button if we use $OUTPUT->notification
-    $unlockurl = new \moodle_url('documents.php', array('a' => $quizz->id, 'action' => 'unlock'));
+    $unlockurl = new \moodle_url('documents.php', array('a' => $quiz->id, 'action' => 'unlock'));
     $unlockbutton= new \single_button($unlockurl, 'Déverrouiller (permettre les modifications du questionnaire)');
-    $message =amc\Log::build($quizz->id)->check('unlock');
+    $message = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('unlock');
     if ($message){
         $unlockbutton->add_confirm_action(implode('\n',$message));
     }
@@ -101,13 +88,13 @@ if ($quiz->isLocked()) {
 }
 
 echo $OUTPUT->heading("1. " . get_string('settings'), 3);
-HtmlHelper::printTableQuizz($quizz, array('instructions', 'description'));
+\mod_automultiplechoice\local\helpers\html::printTableQuiz($quiz, array('instructions', 'description'));
 
 echo $OUTPUT->heading("2. " . get_string('questions', 'question'), 3);
-HtmlHelper::printTableQuizz($quizz, array('qnumber'));
+\mod_automultiplechoice\local\helpers\html::printTableQuiz($quiz, array('qnumber'));
 
 echo $OUTPUT->heading("3. " . get_string('scoringsystem', 'automultiplechoice'), 3);
-HtmlHelper::printTableQuizz($quizz, array('score', 'grademax', 'scoringset'));
+\mod_automultiplechoice\local\helpers\html::printTableQuiz($quiz, array('score', 'grademax', 'scoringset'));
 
 echo $OUTPUT->heading("4. " . get_string('documents', 'automultiplechoice'), 3);
 if ($quiz->isLocked()) {

@@ -1,11 +1,7 @@
 <?php
-/**
- * @package    mod
- * @subpackage automultiplechoice
- * @copyright  2013 Silecs {@link http://www.silecs.info/societe}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+
 namespace mod_automultiplechoice\local\models;
+
 class question_section extends \mod_automultiplechoice\local\models\question_list_item {
     /**
      * @var string

@@ -13,13 +13,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// #A
-$string['amcscripts'] = 'AMC';
-$string['amcmodaltoggle'] = 'Open AMC modal';
-$string['amcmodaltitle'] = 'AMC Scripts';
-$string['amcmodalcancel'] = 'Cancel';
-$string['amcmodalsave'] = 'Save';
-
 $string['modulename'] = 'automultiplechoice';
 $string['modulenameplural'] = 'automultiplechoices';
 $string['modulename_help'] = 'The automultiplechoice module allows to quickly create a quizz to be printed then graded by AMC.';

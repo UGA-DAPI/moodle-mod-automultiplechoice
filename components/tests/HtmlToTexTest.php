@@ -1,8 +1,5 @@
 <?php
-/**
- * @license http://www.gnu.org/licenses/gpl-3.0.html  GNU GPL v3
- * @author François Gannaz <francois.gannaz@silecs.info>
- */
+
 
 require dirname(__DIR__) . '/HtmlToTex.php';
 

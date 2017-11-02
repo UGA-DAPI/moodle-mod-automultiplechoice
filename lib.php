@@ -16,9 +16,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once __DIR__ . '/models/Quizz.php';
-require_once __DIR__ . '/models/ScoringSystem.php';
-require_once __DIR__ . '/models/AmcProcess.php';
+//require_once __DIR__ . '/models/Quizz.php';
+//require_once __DIR__ . '/models/ScoringSystem.php';
+//require_once __DIR__ . '/models/AmcProcess.php';
 
 /* @var $DB moodle_database */
 
@@ -36,21 +36,21 @@ require_once __DIR__ . '/models/AmcProcess.php';
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed true if the feature is supported, null if unknown
  */
-function automultiplechoice_supports($feature) 
+function automultiplechoice_supports($feature)
 {
     switch($feature) {
-    
+
     case FEATURE_GRADE_OUTCOMES:
     case FEATURE_MOD_INTRO:
         return false;
-    
+
     case FEATURE_BACKUP_MOODLE2:
     case FEATURE_GRADE_HAS_GRADE:
         return true;
 
     default:
         return null;
-            
+
     }
 }
 
@@ -74,13 +74,13 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
     $automultiplechoice->author = $USER->id;
     $automultiplechoice->questions = "";
 
-    $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
+    $params = \mod_automultiplechoice\local\amc\params::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
     $automultiplechoice->amcparams = $params->toJson();
-    $quizz = new mod\automultiplechoice\Quizz();
-    $quizz->readFromRecord($automultiplechoice);
-    if ($quizz->save()) {
-        return $quizz->id;
+    $quiz = new \mod_automultiplechoice\local\models\quiz();
+    $quiz->readFromRecord($automultiplechoice);
+    if ($quiz->save()) {
+        return $quiz->id;
     } else {
         throw new Exception("ERROR");
     }
@@ -100,17 +100,17 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
 function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null) {
     global $DB;
 
-    $quizz = mod\automultiplechoice\Quizz::findById($automultiplechoice->instance);
-    $quizz->readFromForm($automultiplechoice);
-    $quizz->timemodified = $_SERVER['REQUEST_TIME'];
-    return $quizz->save();
+    $quiz = \mod_automultiplechoice\local\models\quiz::findById($automultiplechoice->instance);
+    $quiz->readFromForm($automultiplechoice);
+    $quiz->timemodified = $_SERVER['REQUEST_TIME'];
+    return $quiz->save();
 
     $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
     $automultiplechoice->id = $automultiplechoice->instance;
 
-    $params = \mod\automultiplechoice\AmcParams::fromForm($automultiplechoice->amc);
+    $params = \mod_automultiplechoice\local\amc\params::fromForm($automultiplechoice->amc);
     unset($automultiplechoice->amc);
-    $params->scoringset = $quizz->amcparams->scoringset;
+    $params->scoringset = $quiz->amcparams->scoringset;
     $automultiplechoice->amcparams = $params->toJson();
     if (isset($automultiplechoice->questions)) {
         unset($automultiplechoice->questions);
@@ -306,8 +306,8 @@ function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid 
     require_once($CFG->libdir.'/gradelib.php');
     require_once __DIR__ . '/models/AmcProcessGrade.php';
 
-    $quizz = \mod\automultiplechoice\Quizz::buildFromRecord($automultiplechoice);
-    $process = new \mod\automultiplechoice\AmcProcessGrade($quizz);
+    $quiz = \mod_automultiplechoice\local\models\quizz::buildFromRecord($automultiplechoice);
+    $process = new \mod_automultiplechoice\local\amc\process($quiz);
     $grades = $process->getMarks();
     if ($userid) {
         $grades = isset($grades[$userid]) ? $grades[$userid] : null;
@@ -380,8 +380,8 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     require_login($course, true, $cm);
 
     $filename = rawurldecode(array_pop($args));
-    $quizz = \mod\automultiplechoice\Quizz::findById($cm->instance);
-    $process = new \mod\automultiplechoice\AmcProcessExport($quizz);
+    $quiz = \mod_automultiplechoice\local\models\quiz::findById($cm->instance);
+    $process = new \mod_automultiplechoice\local\amc\export($quiz);
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
     // and corrigé
     if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
@@ -390,7 +390,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
             send_file_not_found();
         }
         if (has_capability('mod/automultiplechoice:update', $context)
-            || (  $quizz->studentaccess && $USER->id.".pdf" === basename($filename))
+            || (  $quiz->studentaccess && $USER->id.".pdf" === basename($filename))
             ) {
             send_file($target, $filename, 10, 0, false, false, 'application/pdf') ;
             return true;
@@ -402,14 +402,14 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
             send_file_not_found();
         }
         if (has_capability('mod/automultiplechoice:update', $context)
-            || (  $quizz->studentaccess && $USER->id.".jpg" === basename($filename))
+            || (  $quiz->studentaccess && $USER->id.".jpg" === basename($filename))
             ) {
             send_file($target, $filename, 10, 0, false, false, 'application/jpg') ;
             return true;
         }
     }
     if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
-        if (   $quizz->corrigeaccess && file_exists("cr-".$USER->id.".pdf") )
+        if (   $quiz->corrigeaccess && file_exists("cr-".$USER->id.".pdf") )
             {
             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
             return true;
@@ -420,21 +420,21 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     require_capability('mod/automultiplechoice:update', $context);
 
     // whitelist security
-    if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) { 
-        $ret = $process->amcCreatePdf('latex');     
+    if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) {
+        $ret = $process->amcCreatePdf('latex');
         if ($ret){
              send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
         return $res;
      }else if (preg_match('/^corriges-.*\.pdf$/', $filename)) {
-        $ret = $process->amcCreateCorrection();     
+        $ret = $process->amcCreateCorrection();
         if ($ret){
              send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
         return $res;
-     } 
+     }
      else if (preg_match('/^failed-.*\.pdf$/', $filename)) {
-        $ret = $process->makeFailedPdf();     
+        $ret = $process->makeFailedPdf();
         if ($ret){
             send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
@@ -446,7 +446,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         }
         return $ret;
      } else if (preg_match('/^corrections-.*\.pdf$/', $filename)) {
-        $ret = $process->amcAnnotePdf();     
+        $ret = $process->amcAnnotePdf();
         if ($ret){
         send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
     }
@@ -461,13 +461,13 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         }
         return $ret;
      } else if (preg_match('/apogee\.csv$/', $filename)) {
-        $ret = $process->writeFileApogeeCsv();     
+        $ret = $process->writeFileApogeeCsv();
         if ($ret){
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
         }
         return $ret;
     } else if (preg_match('/\.ods$/', $filename)) {
-        $ret = $process->amcExport('ods');     
+        $ret = $process->amcExport('ods');
         if ($ret){
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'application/vnd.oasis.opendocument.spreadsheet') ;
         }
@@ -531,8 +531,8 @@ function automultiplechoice_questions_in_use($questionids) {
     global $DB;
     $records = $DB->get_recordset('automultiplechoice');
     foreach ($records as $record) {
-        $quizz = \mod\automultiplechoice\Quizz::buildFromRecord($record);
-        if ($quizz->questions->contains($questionids)) {
+        $quiz = \mod_automultiplechoice\local\models\quiz::buildFromRecord($record);
+        if ($quiz->questions->contains($questionids)) {
             return true;
         }
     }

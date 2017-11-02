@@ -4,8 +4,9 @@
 
 jQuery(function($) {
 	console.log('mod_form');
-	function updateScoringDescription() {
-        var id = $("#id_amc_scoringset").val();
+	/*function updateScoringDescription() {
+		var id = $("#id_amc_scoringset").val();
+		console.log('called', id);
         $.ajax({
 			url: "../mod/automultiplechoice/ajax/scoring.php?scoringsetid=" + id,
 			method: 'get',
@@ -14,9 +15,9 @@ jQuery(function($) {
 				$("#instructions_scoringset").html(data);
 			}
         });
-    }
-    $("#id_amc_scoringset").on("click", updateScoringDescription);
-    updateScoringDescription();
+	}*/
+    //$("#id_amc_scoringset").on("click", updateScoringDescription);
+    //updateScoringDescription();
 
     function updateInstrPrefix() {
         var v = $("#id_instructions").val();

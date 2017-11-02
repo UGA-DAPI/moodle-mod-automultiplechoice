@@ -1,19 +1,10 @@
 <?php
-/**
- * @package    mod
- * @subpackage automultiplechoice
- * @copyright  2014 Silecs {@link http://www.silecs.info/societe}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
-require_once __DIR__ . '/components/FlashMessageManager.php';
-
-class mod_automultiplechoice_renderer extends plugin_renderer_base
-{
+class mod_automultiplechoice_renderer extends plugin_renderer_base {
     /**
-     * @var mod\automultiplechoice\Quizz $quizz an automultiplechoice object.
+     * @var mod_automultiplechoice\local\models\quizz $quiz an automultiplechoice object.
      */
-    public $quizz;
+    public $quiz;
 
     /**
      * @var stdClass A record of the module..
@@ -32,22 +23,19 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
      * @param string $target one of rendering target constants
      */
     public function __construct(moodle_page $page, $target) {
+
         $page->requires->jquery();
         $page->requires->js(
             new moodle_url('/mod/automultiplechoice/assets/async.js')
-        );
-        // main js file for the plugin. Can handle shared vars values for example
-        $page->requires->js(
-            new moodle_url('/mod/automultiplechoice/assets/main.js')
         );
         parent::__construct($page, $target);
     }
 
     /**
-      * Returns the header for the automultiplechoice module
-      *
-      * @return string
-      */
+     * Returns the header for the automultiplechoice module
+     *
+     * @return string
+     */
     public function header() {
         global $CFG;
 
@@ -77,7 +65,7 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
                 $currenttab = $this->currenttab;
                 ob_start();
                 include($CFG->dirroot . '/mod/automultiplechoice/renderer_tabs.php');
-                mod\automultiplechoice\FlashMessageManager::displayMessages();
+                \mod_automultiplechoice\local\helpers\flash_message_manager::displayMessages();
                 $output .= ob_get_contents();
                 ob_end_clean();
                 unset($quiz);
@@ -85,12 +73,6 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base
                 unset($currenttab);
             }
         }
-
-        /*
-         foreach ($quiz->messages as $message) {
-             $output .= $this->output->notification($message[0], $message[1], $message[2]);
-         }
-         */
         $output .= <<<EOL
         <noscript>
             <div class="box errorbox">
@@ -104,18 +86,18 @@ EOL;
     }
 
 
-    public function students_selector($url, $cm, $idnumber, $groupid, $exclude=NULL) {
+    public function students_selector($url, $cm, $idnumber, $groupid, $exclude = null) {
 
-        $select = amc_get_students_select( $url,$cm, $idnumber, $groupid, $exclude);
+        $select = amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude);
         $output = html_writer::div( $this->output->render($select), 'amc_students_selector');
-        $output .= html_writer::tag('p', '', array('style'=>'page-break-after: always;'));
+        $output .= html_writer::tag('p', '', array('style' => 'page-break-after: always;'));
 
         return $output;
     }
     /**
-      * Returns the footer
-      * @return string
-      */
+     * Returns the footer
+     * @return string
+     */
     public function footer() {
         return $this->output->footer();
     }

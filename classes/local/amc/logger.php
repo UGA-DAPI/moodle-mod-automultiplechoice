@@ -1,5 +1,7 @@
 <?php
+
 namespace mod_automultiplechoice\local\amc;
+
 /**
  * This class provide the ability to write into a log file
  */
