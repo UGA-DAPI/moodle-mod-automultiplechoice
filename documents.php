@@ -8,8 +8,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-//use \mod\automultiplechoice as amc;
-
 require_once(__DIR__ . '/locallib.php');
 
 
@@ -68,10 +66,10 @@ echo $output->header();
 
 if ($quiz->isLocked()) {
     $unlockurl = new \moodle_url('documents.php', array('a' => $quiz->id, 'action' => 'unlock'));
-    $unlockbutton= new \single_button($unlockurl, 'Déverrouiller (permettre les modifications du questionnaire)');
+    $unlockbutton = new \single_button($unlockurl, 'Déverrouiller (permettre les modifications du questionnaire)');
     $message = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('unlock');
-    if ($message){
-        $unlockbutton->add_confirm_action(implode('\n',$message));
+    if ($message) {
+        $unlockbutton->add_confirm_action(implode('\n', $message));
     }
     echo '<div class="informationbox notifyproblem alert alert-info">'
         . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
@@ -83,7 +81,7 @@ if ($quiz->isLocked()) {
 
     echo $OUTPUT->heading("Archive zip", 3);
     echo $process->getHtmlZipLink();
-    if (has_capability('mod/automultiplechoice:restoreoriginalfile', $controller->getContext())){
+    if (has_capability('mod/automultiplechoice:restoreoriginalfile', $controller->getContext())) {
         echo $OUTPUT->single_button(
                 new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quiz->id, 'action' => 'restore')),
                 'Restaurer la version originale', 'post'

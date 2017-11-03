@@ -17,13 +17,6 @@ require_capability('mod/automultiplechoice:addinstance', $controller->getContext
 // form submitted?
 $questions = \mod_automultiplechoice\local\models\question_list::fromForm('question');
 if ($questions) {
-
-    if ($quiz->isLocked()) { // no modification allowed
-        /**
-         * @todo warn that modification is not allowed on a locked quiz.
-         */
-        //redirect(new moodle_url('view.php', array('a' => $quiz->id)));
-    }
     $quiz->questions = $questions;
 
     if ($quiz->save()) {
@@ -35,14 +28,8 @@ if ($questions) {
 
 $PAGE->set_url('/mod/automultiplechoice/questions.php', array('a' => $quiz->id));
 $PAGE->set_cacheable(false);
-//$PAGE->requires->jquery_plugin('ui');
-//$PAGE->requires->jquery_plugin('ui-css');
-//$PAGE->requires->jquery_plugin('dataTables', 'mod_automultiplechoice');
-//$PAGE->requires->js(new moodle_url('assets/questions.js'));
 $PAGE->requires->js_call_amd('mod_automultiplechoice/questions', 'init');
-$PAGE->requires->jquery_plugin('ui-css');
-$PAGE->requires->css(new moodle_url('assets/jquery.dataTables.css'));
-$PAGE->requires->css(new moodle_url('assets/datatable-override.css'));
+
 
 // remove deleted questions
 $quiz->validate();

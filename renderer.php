@@ -23,10 +23,12 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base {
      * @param string $target one of rendering target constants
      */
     public function __construct(moodle_page $page, $target) {
-
-        //$page->requires->jquery();
+        $page->requires->jquery_plugin('ui-css');
         $page->requires->css(
-            new moodle_url('/mod/automultiplechoice/assets/amc.css')
+            new moodle_url('/mod/automultiplechoice/style/jquery.dataTables.css')
+        );
+        $page->requires->css(
+            new moodle_url('/mod/automultiplechoice/style/styles.css')
         );
         $page->requires->js_call_amd('mod_automultiplechoice/async', 'init');
         parent::__construct($page, $target);

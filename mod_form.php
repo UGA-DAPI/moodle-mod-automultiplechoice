@@ -175,8 +175,10 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         if (isset($default_values['description'])) {
             $default_values['description'] = array('text' => $default_values['description']);
         }
+        
         // Convert from JSON to array
         if (!empty($default_values['amcparams'])) {
+
             $params = \mod_automultiplechoice\local\amc\params::fromJson($default_values['amcparams']);
             $default_values['amc'] = (array) $params;
             $default_values['amc']['instructionsprefix'] = array(
@@ -188,6 +190,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                     'text' => $params->instructionsprefix,
                 )
             );
+            //print_r($params);die;
             if (!empty($this->current->id) && !empty($params->locked)) {
                 $this->_form->freeze(
                     array(
