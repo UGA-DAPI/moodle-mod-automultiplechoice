@@ -67,7 +67,7 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base {
                 $cm = $this->cm;
                 $currenttab = $this->currenttab;
                 ob_start();
-                include($CFG->dirroot . '/mod/automultiplechoice/renderer_tabs.php');
+                include($CFG->dirroot . '/mod/automultiplechoice/tabs.php');
                 \mod_automultiplechoice\local\helpers\flash_message_manager::displayMessages();
                 $output .= ob_get_contents();
                 ob_end_clean();
