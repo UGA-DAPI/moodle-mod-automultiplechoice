@@ -36,7 +36,6 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
     public function definition() {
         global $CFG, $PAGE;
         $PAGE->requires->js_call_amd('mod_automultiplechoice/mod_form', 'init');
-        //$PAGE->requires->js(new moodle_url('/mod/automultiplechoice/assets/mod_form.js'));
         $mform = $this->_form;
 
         //-------------------------------------------------------------------------------

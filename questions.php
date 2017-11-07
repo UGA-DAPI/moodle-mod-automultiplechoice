@@ -14,7 +14,7 @@ $output = $controller->getRenderer('questions');
 
 require_capability('mod/automultiplechoice:addinstance', $controller->getContext());
 
-// form submitted?
+// Form submitted?.
 $questions = \mod_automultiplechoice\local\models\question_list::fromForm('question');
 if ($questions) {
     $quiz->questions = $questions;
@@ -22,7 +22,7 @@ if ($questions) {
     if ($quiz->save()) {
         \mod_automultiplechoice\local\helpers\log::build($quiz->id)->write('saving');
     } else {
-        die("Could not save into automultiplechoice");
+        die(get_string('quiz_save_error', 'mod_automultiplechoice'));
     }
 }
 
@@ -31,7 +31,7 @@ $PAGE->set_cacheable(false);
 $PAGE->requires->js_call_amd('mod_automultiplechoice/questions', 'init');
 
 
-// remove deleted questions
+// Remove deleted questions.
 $quiz->validate();
 
 $available_questions = automultiplechoice_list_questions($USER, $course);
@@ -40,7 +40,7 @@ echo $output->header();
 
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('questionoperations', 'automultiplechoice'));
-$opt = array('class' => 'btn', 'target' =>'_blank');
+$opt = array('class' => 'btn', 'target' => '_blank');
 echo  \html_writer::start_div('btn-group');
 echo  $OUTPUT->action_link(
         new moodle_url('/question/import.php', array('courseid' => $course->id)),

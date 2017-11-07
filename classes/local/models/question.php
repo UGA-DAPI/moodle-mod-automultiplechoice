@@ -57,7 +57,7 @@ class question extends \mod_automultiplechoice\local\models\question_list_item {
             if ($rule) {
                 $record->scoring = $rule->getExpression($this);
             } else {
-                $record->scoring = ''; // default AMC scoring (incomplete set of rules)
+                $record->scoring = '';
             }
         }
         return $this;

@@ -14,18 +14,7 @@ class html {
      * @param string $checks (opt)
      * @return string HTML
      */
-    /*public static function buttonWithAjaxCheck($buttonText, $quizid, $targetpage, $action, $checks = "") {
-        $checklock = json_encode(array('a' => $quizid, 'actions' => $checks));
-        $button = '<form action="' . htmlspecialchars(new moodle_url("/mod/automultiplechoice/$targetpage.php", array('a' => $quizzid)))
-            . '" method="post" '
-            . ($checks ? 'class="checklock" data-checklock="' . htmlspecialchars($checklock) . '">' : '>') . '
-        <p>
-            <input type="hidden" name="action" value="%s" />
-            <button type="submit">%s</button>
-        </p>
-        </form>';
-        return sprintf($button, htmlspecialchars($action), $buttonText);
-    }*/
+    
 
     public static function printFormFullQuestions(\mod_automultiplechoice\local\models\quiz $quiz) {
         require(__DIR__ . './../../../scoring_form.php');

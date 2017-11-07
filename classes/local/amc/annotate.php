@@ -97,12 +97,11 @@ class annotate extends \mod_automultiplechoice\local\amc\process {
         $eventdata->component         = 'mod_automultiplechoice';
         $eventdata->name              = 'anotatedsheet';
         $eventdata->userfrom          = $USER;
-        $eventdata->subject           = "Correction disponible";
-        $eventdata->fullmessageformat = FORMAT_PLAIN;   // text format
-        $eventdata->fullmessage       = "Votre copie corrigée est disponible pour le QCM ". $this->quiz->name;
-        $eventdata->fullmessagehtml   = "Votre copie corrigée est disponible pour le QCM ". $this->quiz->name
-                                      . " à l'adresse " . \html_writer::link($url, $url);
-        $eventdata->smallmessage      = "Votre copie corrigée est disponible pour le QCM ". $this->quiz->name;
+        $eventdata->subject           = get_string('annotate_correction_available', $eventdata->component);
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessage       = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $this->quiz->name]);
+        $eventdata->fullmessagehtml   = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $this->quiz->name]). get_string('annotate_correction_link', $eventdata->component) . \html_writer::link($url, $url);
+        $eventdata->smallmessage      = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $this->quiz->name]);
 
         // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
         $count = 0;

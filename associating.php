@@ -1,12 +1,6 @@
 <?php
 
-
-//use \mod\automultiplechoice as amc;
-
 require_once(__DIR__ . '/locallib.php');
-
-//require_once __DIR__ . '/models/AmcProcessUsers.php';
-//require_once __DIR__ . '/models/AmcProcessAssociate.php';
 
 
 global $DB, $OUTPUT, $PAGE;
@@ -31,7 +25,7 @@ $perpage        = optional_param('perpage', 20, PARAM_INT);
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 $PAGE->set_url('/mod/automultiplechoice/associating.php', array('id' => $cm->id));
-$PAGE->requires->css(new moodle_url('assets/amc.css'));
+
 $url = new moodle_url('associating.php', array('a' => $quiz->id, 'mode' => $mode, 'usermode' => $usermode));
 
 
@@ -48,8 +42,8 @@ $process->get_association();
 
 echo $output->header();
 echo $OUTPUT->box_start('informationbox well');
-echo $OUTPUT->heading("Association", 2)
-    . "<p>" . count($process->copyauto)." copies automatiquement identifiés, ".count($process->copymanual) . " copies manuellement identifiées et " . count($process->copyunknown) . " non identifiées. </p>";
+echo $OUTPUT->heading(get_string('associating_heading', 'mod_automultiplechoice'), 2)
+    . "<p>" . get_string('associating_heading', 'mod_automultiplechoice', ['automatic' => count($process->copyauto), 'manualy' => count($process->copymanual), 'unknown' => count($process->copyunknown)])."</p>";
 
 $warnings = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('associating');
 
@@ -62,16 +56,16 @@ if ($warnings) {
     echo "<br /><br />";
     echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php',
                                 array( 'a' => $quiz->id, 'action' => 'associate'))
-                                , 'Relancer l\'association');
+                                , get_string('associating_relaunch_association', 'mod_automultiplechoice'));
     echo "</div>";
 } else if (count($process->copyauto)) {
     echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php',
                                 array( 'a' => $quiz->id, 'action' => 'associate'))
-                                , 'Lancer l\'association');
+                                , get_string('associating_launch_association', 'mod_automultiplechoice'));
 } else {
     echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php',
                                 array( 'a' => $quiz->id, 'action' => 'associate'))
-                                , 'Relancer l\'association');
+                                , get_string('associating_relaunch_association', 'mod_automultiplechoice'));
 }
 $optionsmode = array ('unknown'  => get_string('unknown', 'automultiplechoice'),
                   'manual' => get_string('manual', 'automultiplechoice'),

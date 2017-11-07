@@ -50,7 +50,7 @@ class export extends \mod_automultiplechoice\local\amc\process
             $this->log('prepare:pdf', 'catalog corrige sujet');
             $amclog->write('pdf');
         } else {
-            $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
+            $this->errors[] = get_string('export_amc_cmd_failed', 'mod_automultiplechoice', ['cmd' => 'auto-multiple-choice prepare']);
         }
         return $res;
     }
@@ -64,7 +64,7 @@ class export extends \mod_automultiplechoice\local\amc\process
         $pre = $this->workdir;
         $file = $pre . '/' . $this->normalizeFilename('corriges');
         $this->errors = array();
-        $path = get_config('mod_automultiplechoice','xelatexpath');
+        $path = get_config('mod_automultiplechoice', 'xelatexpath');
         if ($path === '') {
             $path = '/usr/bin/xelatex';
         }
@@ -90,7 +90,7 @@ class export extends \mod_automultiplechoice\local\amc\process
             $this->log('corrected:pdf', 'corrige sujet');
             $amclog->write('corrected');
         } else {
-            $this->errors[] = "Exec of `auto-multiple-choice prepare` failed. Is AMC installed?";
+            $this->errors[] = get_string('export_amc_cmd_failed', 'mod_automultiplechoice', ['cmd' => 'auto-multiple-choice prepare']);
         }
         return $res;
     }
@@ -104,12 +104,12 @@ class export extends \mod_automultiplechoice\local\amc\process
         if (file_exists($zipfile)) {
             return true;
         }
-                // clean up, or some obsolete files will stay in the zip
+        // Clean up, or some obsolete files will stay in the zip
         $mask = $pre . "/imprime/*.pdf";
         $zip = new \ZipArchive();
         $ret = $zip->open($zipfile, \ZipArchive::CREATE);
         if (!$ret) {
-            $this->errors[] ="Echec lors de l'ouverture de l'archive $ret\n";
+            $this->errors[] = get_string('export_archive_open_failed', 'mod_automultiplechoice', ['error' => $ret]);
         } else {
             $options = array('add_path' => 'sujets_amc/', 'remove_all_path' => true);
             $zip->addGlob($mask, GLOB_BRACE, $options);
@@ -117,7 +117,7 @@ class export extends \mod_automultiplechoice\local\amc\process
             $zip->close();
         }
         if (!file_exists($zipfile)) {
-            $this->errors[] = "<strong>Erreur lors de la création de l'archive Zip : le fichier n'a pas été créé.</strong> $mask\n";
+            $this->errors[] = '<strong>'. get_string('export_archive_create_failed', 'mod_automultiplechoice', ['mask' => $mask]) .'</strong>';
         }
         return $ret;
     }
@@ -128,24 +128,23 @@ class export extends \mod_automultiplechoice\local\amc\process
     public function amcImprime() {
         $pre = $this->workdir;
         $file = $pre . '/' . $this->normalizeFilename('sujets');
-        if ( file_exists($file)){
+        if ( file_exists($file)) {
             return true;
         }
-            if (!is_dir($pre . '/imprime')) {
-                mkdir($pre . '/imprime');
-            }
-            if (!$this->amcMeptex()) {
-                $this->errors[] = "Erreur lors du calcul de mise en page (amc meptex).";
-        return false;
-            }
-            $params = array(
-                '--data', $pre . '/data',
-                '--sujet', $pre . '/' . $this->normalizeFilename('sujet'),
-                '--methode', 'file',
-                '--output', $pre . '/imprime/sujet-%e.pdf'
-            );
-            // $params[] = '--split'; // M#2076 a priori jamais nécessaire
-            $res = $this->shellExecAmc('imprime', $params);
+        if (!is_dir($pre . '/imprime')) {
+            mkdir($pre . '/imprime');
+        }
+        if (!$this->amcMeptex()) {
+            $this->errors[] = get_string('documents_meptex_error', 'mod_automultiplechoice');
+            return false;
+        }
+        $params = array(
+            '--data', $pre . '/data',
+            '--sujet', $pre . '/' . $this->normalizeFilename('sujet'),
+            '--methode', 'file',
+            '--output', $pre . '/imprime/sujet-%e.pdf'
+        );
+        $res = $this->shellExecAmc('imprime', $params);
         if ($res) {
             $this->log('imprime', '');
         }
@@ -180,24 +179,24 @@ class export extends \mod_automultiplechoice\local\amc\process
      */
     public function amcExport($type='csv') {
         $pre = $this->workdir;
-    $file =($type=='csv')? $pre . self::PATH_AMC_CSV : $pre . self::PATH_AMC_ODS;
-    $warnings = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id)->check('exporting');
-    if (!$warnings and file_exists($file)) {
-        return true;
-    }
+        $file = ($type === 'csv') ? $pre . self::PATH_AMC_CSV : $pre . self::PATH_AMC_ODS;
+        $warnings = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id)->check('exporting');
+        if (!$warnings and file_exists($file)) {
+            return true;
+        }
         if (file_exists($file)) {
             if (!unlink($file)) {
-                $this->errors[] = "Le fichier ".strtoupper($type)." n'a pas pu être recréé. Contactez l'administrateur pour un problème de permissions de fichiers.";
+                $this->errors[] = get_string('export_file_write_access_error', 'mod_automultiplechoice', ['file' => strtoupper($type)]);
                 return false;
             }
         }
         if (!is_writable($pre . '/exports')) {
-            $this->errors[] = "Le répertoire /exports n'est pas accessible en écriture. Contactez l'administrateur.";
+            $this->errors[] = get_string('export_dir_access_error', 'mod_automultiplechoice');
         }
         $oldcwd = getcwd();
         chdir($pre . '/exports');
         $csv = $this->get_students_list();
-    $parameters = array(
+        $parameters = array(
             '--data', $pre . '/data',
             '--useall', '0',
             '--sort', 'n',
@@ -206,10 +205,10 @@ class export extends \mod_automultiplechoice\local\amc\process
             '--option-out', 'encodage=UTF-8',
             '--noms-encodage', 'UTF-8',
         );
-        if ($csv !=' '){
-        $parameters[] = '--fich-noms';
-        $parameters[] = $csv;
-    }
+        if ($csv != ' ') {
+            $parameters[] = '--fich-noms';
+            $parameters[] = $csv;
+        }
         $parametersCsv = array_merge($parameters, array(
             '--module', 'CSV',
             '--csv-build-name', '(nom|surname) (prenom|name)',
@@ -221,27 +220,27 @@ class export extends \mod_automultiplechoice\local\amc\process
             '--module', 'ods',
             '--option-out', 'stats=1',
         ));
-        if ($csv !=' '){
-        $parametersCsv[] = '--option-out';
-        $parametersCsv[] = 'columns=student.copy,student.key,name,surname,moodleid,groupslist';
-        $parametersOds[] = '--option-out';
-        $parametersOds[] = 'columns=student.copy,student.key,name,surname,groupslist';
-    }else{
-        $parametersCsv[] = '--option-out';
-        $parametersCsv[] = 'columns=student.copy,student.key';
-        $parametersOds[] = '--option-out';
-        $parametersOds[] = 'columns=student.copy,student.key';
-    }
-        if ($type =='csv'){
+        if ($csv !== ' ') {
+            $parametersCsv[] = '--option-out';
+            $parametersCsv[] = 'columns=student.copy,student.key,name,surname,moodleid,groupslist';
+            $parametersOds[] = '--option-out';
+            $parametersOds[] = 'columns=student.copy,student.key,name,surname,groupslist';
+        } else {
+            $parametersCsv[] = '--option-out';
+            $parametersCsv[] = 'columns=student.copy,student.key';
+            $parametersOds[] = '--option-out';
+            $parametersOds[] = 'columns=student.copy,student.key';
+        }
+        if ($type === 'csv') {
             $res = $this->shellExecAmc('export', $parametersCsv);
-        }else{
+        } else {
             $res = $this->shellExecAmc('export', $parametersOds);
         }
         chdir($oldcwd);
         if ($res) {
             $this->log('export', 'scoring.csv');
-        \mod_automultiplechoice\local\helpers\log::build($this->quiz->id)->write('exporting');
-        return true;
+            \mod_automultiplechoice\local\helpers\log::build($this->quiz->id)->write('exporting');
+            return true;
         }
         if (!file_exists($csvfile) || !file_exists($odsfile)) {
             $this->errors[] = "Le fichier n'a pu être généré. Consultez l'administrateur.";

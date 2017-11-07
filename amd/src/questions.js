@@ -1,8 +1,7 @@
-define(['jquery', 'jqueryui', 'mod_automultiplechoice/hello', 'mod_automultiplechoice/jquery.dataTables'], function ($, jqui, bot, dataTables) {
+define(['jquery', 'jqueryui', 'mod_automultiplechoice/jquery.dataTables'], function ($, jqui, dataTables) {
 
     return {
         init: function () {
-            bot.say('toto');
             var lang = $('html').first().attr('lang');
             var oLanguage = {};
             if (lang && lang !== 'en') {

@@ -13,6 +13,128 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Annotating.
+$string['annotating_notify'] = '{$a->nbSuccess} sent messages for {$a->nbStudents} students with an annotated sheet.';
+$string['annotating_rebuilt_sheets'] = 'Rebuilt sheets';
+$string['annotating_corrected_sheets'] = 'Corrected sheets';
+$string['annotating_individual_sheets_available'] = ' individual annotated sheets available.';
+$string['annotating_update_corrected_sheets'] = 'Update corrected sheets (annotated)';
+$string['annotating_generate_corrected_sheets'] = 'Generate corrected sheets';
+
+// Annotate process. 
+$string['annotate_correction_available'] = 'Correction available';
+$string['annotate_correction_available_body'] = 'Votre copie corrigée est disponible pour le QCM {$a->name}';
+$string['annotate_correction_link'] = ' at ';
+
+// Associating.
+$string['associating_heading'] = 'Association';
+$string['associating_sheets_identified'] = '{$a->automatic} sheets automaticaly identified, {$a->manualy} sheets manualy identified and {$a->unknown} unknown.';
+$string['associating_relaunch_association'] = 'Relaunch association';
+$string['associating_launch_association'] = 'Launch l\'association';
+
+
+// Common.
+$string['unlock_quiz'] = 'Unlock (allow quiz to be updated)';
+$string['lock_quiz'] = 'Lock quiz';
+$string['quiz_is_locked'] = 'Quiz is locked to avoid changes between printing and correction.';
+$string['quiz_save_error'] = 'Error while saving the quiz.';
+$string['file_type'] = 'File type';
+$string['access_documents'] = 'You can access documents via this tab';
+$string['error_could_not_create_directory'] = 'Could not create directory. Please contact the administrator.';
+$string['error_could_not_write_directory'] = 'Could not write in directory. Please contact the administrator.';
+$string['error_amc_getimages'] = 'Erreur while executing amc getimages.';
+$string['error_amc_analyse'] = 'Erreur while executing amc analyse.';
+
+
+// Dashboard.
+$string['subjects_ready_for_distribution'] = 'Subjects ready for distribution.';
+$string['preparatory_documents_ready'] = 'The subjects have not yet been fixed but the preparatory documents are available';
+$string['no_document_available'] = 'No document available';
+$string['pdf_last_prepare_date'] = 'Last preparation of PDF subjects at ';
+$string['pdf_none_prepared'] = 'No PDF have yet been prepared.';
+$string['dashboard_nb_page_scanned'] = '{$a->nbpages} scanned pages where uploaded at {$a->date}';
+$string['dashboard_no_sheets_corrected'] = 'No sheet corrected nore noted.';
+
+// Documents.
+$string['documents_meptex_error'] = 'Error while computing layout (amc meptex).';
+$string['documents_pdf_created'] = 'Created PDF files.';
+$string['documents_zip_archive'] = 'ZIP archive.';
+$string['documents_restore_original_version'] = 'Restore original version';
+$string['documents_mix_answers_and_questions'] = 'Mix questions and answers';
+
+// Export process.
+$string['export_amc_cmd_failed'] = 'Exec of `{$a->cmd}` failed. Is AMC installed ?';
+$string['export_archive_open_failed'] = 'Can not open archive {$a->error}';
+$string['export_archive_create_failed'] = 'Error while creating the ZIP : file could not be created. {$a->mask}';
+$string['export_file_write_access_error'] = 'The file {$a->file} could not be created. Contact your sysadmin for a permission problem.';
+$string['export_file_create_error'] = 'The file could not be created. Contact your sysadmin.';
+$string['export_dir_access_error'] = 'The /export folder is not writable. Contact your sysadmin.';
+
+// Grading.
+$string['grading_relaunch_correction'] = 'Relaunch correction';
+$string['grading_notes'] = 'Notes';
+$string['grading_file_notes_table'] = 'Files notes tables';
+$string['grading_sheets_identified'] = '{$a->known} sheets identified and {$a->unknown} unknown.';
+$string['grading_statistics'] = 'Statistics';
+$string['grading_not_satisfying_notation'] = 'If the result of the notation does not satisfy you, you can change the scale and relaunch the correction.';
+
+// Logs messages.
+$string['log_process_running'] = 'AMC is already running since {$a->time} minutes.';
+$string['log_scoring_edited'] = 'Scoring system has been updated since last subject preparation.';
+$string['log_questions_changed'] = 'Question selection has changed since last subject preparation.';
+$string['log_pdf_changed_since_last_analyse'] = 'MCQ PDF has been modified since the last subjects analyse.';
+$string['log_pdf_changed_since_last_upload'] = 'MCQ PDF has been modified since the last sheets upload.';
+$string['log_last_lock_after_last_upload'] = 'The last lock of the MCQ has been done after the last sheets upload.';
+$string['log_last_analyse_after_last_upload'] = 'The last subjects analyse has been done after the last sheets upload.';
+$string['log_relaunch_correction_uploads'] = 'Some sheets have been uploaded after the last notation. Relaunch correction ?';
+$string['log_relaunch_correction_scale'] = 'The scoring system has been updated since the last notation. Relaunch correction ?';
+$string['log_relaunch_association_uploads'] = 'Some sheets have been uploaded since the last association. Relaunch association ?';
+$string['log_relaunch_association_grading'] = 'Some sheets have been annotated since the last association. Relaunch association ?';
+$string['log_sheets_no_grading'] = 'Sheets have not yet been annotated.';
+$string['log_relaunch_export_grading'] = 'The last notation is more recent than the exports. Re-generate exports ?';
+$string['log_relaunch_annotation_grading'] = 'The last notation is more recent than the annotated sheets. Re-generate annotation ?';
+$string['log_relaunch_annotate_annotating'] = 'he last annotation is more recent than the corrected sheets (PDF). Re-generate corrected sheets (PDF)?';
+$string['log_unlock_uploads_exists'] = 'Some scaned sheets have already been uploaded. In case of MCQ update those sheets wont be valid any more.';
+
+// Process.
+$string['process_no_quiz_id'] = 'No quiz ID';
+$string['process_no_amc_format'] = 'Error, no MCQ format for AMC.';
+$string['process_unable_to_write_file'] = 'Could not write the file for AMC. Check the space available on disk.';
+$string['process_statements_file'] = 'This file contains all statements regrouped. <span class="warning">Do not use this file for students.</span>';
+$string['process_catalog_file'] = 'Question catalog.';
+$string['process_corrections_file'] = 'Corrections of each version.';
+$string['process_archive'] = 'This archive contains one variant by statement.';
+$string['catalog'] = 'Catalog';
+$string['corrections'] = 'Corrections';
+
+// Scoring.
+$string['scoring_scale_extract_error'] = 'Error while extracting scale';
+$string['scoring_scale_save_success'] = 'Scale changes saved.';
+
+// Scan upload.
+$string['uploadscans_file_not_accessible'] = 'File not accessible.';
+$string['uploadscans_no_image_known'] = 'Error, {$a->nbpages} scanned pages bot no image was recognized (no PPM).';
+$string['uploadscans_process_end_message'] = 'The process ended: {$a->nbpages} pages newly scanned, {$a->nbextracted} extracted, {$a->nbidentified} pages with marks.';
+$string['uploadscans_saved_sheets'] = 'Saved sheets : <b>{$a->nbsaved}</b> scanned pages where uploaded at {$a->date}';
+$string['uploadscans_add_sheets'] = 'Add sheets';
+$string['uploadscans_add_sheets_message'] = 'If you upload new sheets they will be added to the existing ones.';
+$string['uploadscans_no_sheets_uploaded'] = 'No sheet uploaded yet.';
+$string['uploadscans_delete_sheets'] = 'Delete sheets';
+$string['uploadscans_delete_sheets_warn'] = 'You can delete existing uploaded sheets. This action will erase notes. After that you\'ll be able to uplad new scans.';
+$string['uploadscans_delete_sheets_confirm'] = 'Definitly delete uploaded sheets on the server ?';
+$string['uploadscans_unknown_scans'] = 'Unknown scans';
+$string['uploadscans_delete_unknown_scans'] = 'Delete all unknown scans';
+$string['uploadscans_download_unknown_scans'] = 'Download all unknown scans';
+$string['uploadscans_install_sqlite3'] = 'Ask your system admin to install php-sqlite3 in order to see unknown files.';
+
+// Student view.
+$string['studentview_one_corrected_sheet'] = 'You have one corrected sheet:';
+$string['studentview_no_corrected_sheet'] = 'No corrected sheet for this MCQ';
+$string['studentview_view_corrected_sheet'] = 'You can view the correction here:';
+
+
+// OTHERS.
+
 $string['modulename'] = 'automultiplechoice';
 $string['modulenameplural'] = 'automultiplechoices';
 $string['modulename_help'] = 'The automultiplechoice module allows to quickly create a quizz to be printed then graded by AMC.';

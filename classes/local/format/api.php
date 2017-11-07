@@ -43,20 +43,10 @@ abstract class api
      * @throws \Exception
      */
     public function buildFormat($format, $quiz) {
-        /*$formatName = ucfirst(strtolower($formatName));
-        $filename = __DIR__ . '/' . $formatName . '.php';
-        if (file_exists($filename)) {
-            include_once $filename;
-        } else {
-            throw new \Exception("Unknown format");
-        }
-        $formatName = 'mod\\automultiplechoice\\amcFormat\\' . $formatName;
-        return (new $formatName($quizz));*/
         $instance = null;
         if ($format === 'txt') {
             return new \mod_automultiplechoice\local\format\text($quiz);
         }
-
         return new \mod_automultiplechoice\local\format\latex($quiz);
     }
     /**

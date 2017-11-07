@@ -35,18 +35,23 @@ if (!has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple
         echo $output->header();
 
         $url = $process->getFileUrl($anotatedfile);
-        echo "<p>Vous avez une copie corrigée : " ;
-        echo \html_writer::link($url, $anotatedfile, array('target' => '_blank')) . "</p>\n";
+        echo '<p>';
+        echo get_string('studentview_one_corrected_sheet', 'mod_automultiplechoice');
+        echo '</p>';
+        echo \html_writer::link($url, $anotatedfile, array('target' => '_blank')) . "</p>";
 
         if ($quiz->corrigeaccess) {
             $corrige = $process->normalizeFilename('corrige');
             $link = \html_writer::link($process->getFileUrl($corrige), $corrige, array('target' => '_blank'));
-            echo "<p>Vous pouvez consulter le corrigé : " . $link . "</p>\n";
+            echo '<p>';
+            echo get_string('studentview_view_corrected_sheet', 'mod_automultiplechoice');
+            echo $link;
+            echo '</p>';
         }
         echo $output->footer();
     } else {
         echo $output->header();
-        echo $output->heading("Vous n'avez pas de copie corrigée pour ce QCM");
+        echo $output->heading(get_string('studentview_no_corrected_sheet', 'mod_automultiplechoice'));
         echo $output->footer();
     }
     return;
@@ -75,16 +80,17 @@ if (!$quiz->validate()) {
 if ($quiz->isLocked()) {
     // cannot put a button if we use $OUTPUT->notification
     $unlockurl = new \moodle_url('documents.php', array('a' => $quiz->id, 'action' => 'unlock'));
-    $unlockbutton= new \single_button($unlockurl, 'Déverrouiller (permettre les modifications du questionnaire)');
+    $unlockbutton = new \single_button($unlockurl, 'Déverrouiller (permettre les modifications du questionnaire)');
     $message = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('unlock');
-    if ($message){
-        $unlockbutton->add_confirm_action(implode('\n',$message));
+    if ($message) {
+        $unlockbutton->add_confirm_action(implode('\n', $message));
     }
     echo '<div class="informationbox notifyproblem alert alert-info">'
-        . "Le questionnaire est actuellement verrouillé pour éviter les modifications entre l'impression et la correction."
-        . " Vous pouvez accéder aux documents via l'onglet <em>Sujets</em>."
+        . get_string('quiz_is_locked', 'mod_automultiplechoice')
+        . get_string('access_documents', 'mod_automultiplechoice')
+        . '<em>'.get_string('documents', 'mod_automultiplechoice').'</em>'
         . $OUTPUT->render($unlockbutton)
-        . "</div>\n";
+        . "</div>";
 }
 
 echo $OUTPUT->heading("1. " . get_string('settings'), 3);
@@ -98,7 +104,9 @@ echo $OUTPUT->heading("3. " . get_string('scoringsystem', 'automultiplechoice'),
 
 echo $OUTPUT->heading("4. " . get_string('documents', 'automultiplechoice'), 3);
 if ($quiz->isLocked()) {
-    echo "<div>Les sujets sont prêts à être distribués.</div>\n";
+    echo '<div>';
+    echo get_string('subjects_ready_for_distribution', 'mod_automultiplechoice');
+    echo '</div>';
     echo $process->getHtmlZipLink();
     echo $process->getHtmlPdfLinks();
     echo '<div>'
@@ -106,25 +114,37 @@ if ($quiz->isLocked()) {
         . '</div>';
 } else {
     if ( $quiz->hasDocuments() ) {
-        echo "<div>Les sujets n'ont pas encore été figés mais les documents préparatoires sont disponibles.</div>\n";
+        echo '<div>';
+        echo get_string('preparatory_documents_ready', 'mod_automultiplechoice');
+        echo '</div>';
         echo $process->getHtmlPdfLinks();
     } else {
-        echo "<div>Aucun document n'est encore disponible.</div>\n";
+        echo '<div>';
+        echo get_string('no_document_available', 'mod_automultiplechoice');
+        echo '</div>';
     }
     $preparetime = $process->lastlog('prepare:pdf');
     if ($preparetime) {
-        echo "<div>Dernière préparation des sujets PDF le " . $process::isoDate($preparetime) . "</div>\n";
+        echo '<div>';
+        echo get_string('pdf_last_prepare_date', 'mod_automultiplechoice', ['date' => $process::isoDate($preparetime)]);
+        echo '</div>';
     } else {
-        echo "<div>Aucun sujet PDF n'a encore été préparé.</div>\n";
+        echo '<div>';
+        echo get_string('pdf_none_prepared', 'mod_automultiplechoice', ['date' => $process::isoDate($preparetime)]);
+        echo '</div>';
     }
 }
 
 echo $OUTPUT->heading("5. " . get_string('uploadscans', 'automultiplechoice'), 3);
 $scans = $process->statScans();
 if ($scans) {
-    echo "<div>{$scans['count']} pages scannées ont été déposées le {$scans['timefr']}.</div>\n";
+    echo '<div>';
+    echo get_string('dashboard_nb_page_scanned', 'mod_automultiplechoice', ['nbpage' => $scans['count'], 'date' => $scans['timefr']]);
+    echo '</div>';
 } else {
-    echo "<div>Aucune copie n'a encore été déposée.</div>";
+    echo '<div>';
+    echo get_string('uploadscans_no_sheets_uploaded', 'mod_automultiplechoice');
+    echo '</div>';
 }
 echo $OUTPUT->heading( "6. " . get_string('associating', 'automultiplechoice'), 3);
 
@@ -133,7 +153,9 @@ echo $OUTPUT->heading("7. " . get_string('grading', 'automultiplechoice'), 3);
 if ($scans && $process->isGraded()) {
     echo $process->getHtmlStats();
 } else {
-    echo "<div>Aucune copie n'a encore été notée ou corrigée.</div>";
+    echo '<div>';
+    echo get_string('dashboard_no_sheets_corrected', 'mod_automultiplechoice');
+    echo '</div>';
 }
 echo $OUTPUT->heading( "8. " . get_string('annotating', 'automultiplechoice'), 3);
 

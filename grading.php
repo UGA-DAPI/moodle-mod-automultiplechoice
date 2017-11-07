@@ -19,7 +19,6 @@ require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 
 $PAGE->set_url('/mod/automultiplechoice/grading.php', array('id' => $cm->id));
-$PAGE->requires->css(new moodle_url('assets/amc.css'));
 
 $process = new  \mod_automultiplechoice\local\amc\process($quiz);
 if (!$process->isGraded() || $action === 'grade') {
@@ -32,7 +31,7 @@ if (!$process->isGraded() || $action === 'grade') {
 // Has side effects, so must be called early.
 $stats = $process->getHtmlStats();
 
-// Output starts here
+// Output starts here.
 echo $output->header();
 
 
@@ -45,32 +44,39 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/grading.php',
-                                array( 'a'=>$quiz->id, 'action'=> 'grade'))
-                                , 'Relancer la correction');
+    echo $OUTPUT->single_button(
+        new moodle_url(
+            '/mod/automultiplechoice/grading.php',
+            array('a' => $quiz->id, 'action' => 'grade')
+        ),
+        get_string('grading_relaunch_correction', 'mod_automultiplechoice')
+    );
     echo "</div>";
 }
 echo $OUTPUT->box_start('informationbox well');
-echo $OUTPUT->heading("Notes", 2);
-echo $OUTPUT->heading("Fichiers tableaux des notes", 3);
-echo "<p>" . $process->usersknown . " copies identifiées et " . $process->usersunknown . " non identifiées. </p>";
-$opt = array('class'=>'btn','target'=>'_blank');
+echo $OUTPUT->heading(get_string('grading_notes', 'mod_automultiplechoice'), 2);
+echo $OUTPUT->heading(get_string('grading_file_notes_table', 'mod_automultiplechoice'), 3);
+echo "<p>" . get_string('grading_sheets_identified', 'mod_automultiplechoice', ['known' => $process->usersknown, 'unknown' => $process->usersunknown]) . "</p>";
+$opt = array('class' => 'btn', 'target' => '_blank');
 echo  \html_writer::start_div('btn-group');
-echo  \html_writer::link($process->getFileUrl($process::PATH_AMC_CSV), 'csv',$opt);
-echo  \html_writer::link($process->getFileUrl($process::PATH_AMC_ODS), 'ods',$opt);
-echo  \html_writer::link($process->getFileUrl($process::PATH_APOGEE_CSV), 'apogee',$opt);
+echo  \html_writer::link($process->getFileUrl($process::PATH_AMC_CSV), 'csv', $opt);
+echo  \html_writer::link($process->getFileUrl($process::PATH_AMC_ODS), 'ods', $opt);
+echo  \html_writer::link($process->getFileUrl($process::PATH_APOGEE_CSV), 'apogee', $opt);
 echo  \html_writer::end_div();
 
 
-echo $OUTPUT->heading("Statistiques", 3);
+echo $OUTPUT->heading(get_string('grading_statistics', 'mod_automultiplechoice'), 3);
 echo $stats;
-echo "<p>
-        Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.
-    </p>";
-;
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/grading.php',
-                                array( 'a'=>$quiz->id, 'action'=> 'grade'))
-                                , 'Relancer la correction');
+$message = get_string('grading_not_satisfying_notation', 'mod_automultiplechoice');
+echo "<p>" . $message . "<p>";
+
+echo $OUTPUT->single_button(
+    new moodle_url(
+        '/mod/automultiplechoice/grading.php',
+        array( 'a' => $quiz->id, 'action' => 'grade')
+    ),
+    get_string('grading_relaunch_correction', 'mod_automultiplechoice')
+);
 echo $OUTPUT->box_end();
 
 

@@ -1,9 +1,4 @@
 <?php
-/**
- * @package    mod_automultiplechoice
- * @copyright  2013 Silecs {@link http://www.silecs.info/societe}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 /* @var $ADMIN admin_root */
 
@@ -22,7 +17,7 @@ if ($ADMIN->fulltree) {
     );
     $s->plugin = 'mod_automultiplechoice';
     $settings->add($s);
-    
+
     $defaulttpl = __DIR__ . '/amctemplate';
     $s = new admin_setting_configtext(
         'amctemplate',

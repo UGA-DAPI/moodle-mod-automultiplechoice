@@ -32,7 +32,7 @@ class process
      */
     public function __construct(\mod_automultiplechoice\local\models\quiz $quiz, $formatName = 'latex') {
         if (empty($quiz->id)) {
-            throw new Exception("No quiz ID");
+            throw new Exception(get_string('process_no_quiz_id', 'mod_automultiplechoice'));
         }
         $this->quiz = $quiz;
         $this->workdir = $quiz->getDirName(true);
@@ -41,7 +41,7 @@ class process
         $this->codelength = (int) get_config('mod_automultiplechoice', 'amccodelength');
         $this->format = \mod_automultiplechoice\local\format\api::buildFormat($formatName, $quiz);
         if (!$this->format) {
-            throw new \Exception("Erreur, pas de format de QCM pour AMC.");
+            throw new \Exception(get_string('process_no_amc_format', 'mod_automultiplechoice'));
         }
         $this->format->quiz = $this->quiz;
         $this->format->codelength = $this->codelength;
@@ -66,7 +66,7 @@ class process
         if (file_put_contents($filename, $format->getContent())) {
             return $format;
         } else {
-            $this->errors[] = "Could not write the file for AMC. Disk full?";
+            $this->errors[] = get_string('process_unable_to_write_file', 'mod_automultiplechoice');
             return null;
         }
     }
@@ -417,11 +417,11 @@ class process
         );
     }
     protected function get_students_list(){
-        if (file_exists($this->workdir . self::PATH_STUDENTLIST_CSV)){
-        return $this->workdir . self::PATH_STUDENTLIST_CSV;
-    }else{
-        return ' ';
-    }
+        if (file_exists($this->workdir . self::PATH_STUDENTLIST_CSV)) {
+            return $this->workdir . self::PATH_STUDENTLIST_CSV;
+        } else {
+            return ' ';
+        }
     }
     /**
      * Format a timestamp into a fr datetime.
@@ -578,25 +578,25 @@ class process
      * @return string
      */
     public function getHtmlPdfLinks() {
-        $opts = array('class' => 'btn','target' =>'_blank');
+        $opts = array('class' => 'btn', 'target' => '_blank');
         $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), 'Sujet', $opts),
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), 'Catalogue', $opts),
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('corriges')), 'Corrig&eacute;s', $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), get_string('documents', 'mod_automultiplechoice'), $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), get_string('catalog', 'mod_automultiplechoice'), $opts),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('corriges')), get_string('corrections', 'mod_automultiplechoice'), $opts),
         );
         return <<<EOL
         <ul class="amc-files">
             <li>
                 $links[0]
-                <div>Ce fichier contient tous les énoncés regroupés. <span class="warning">Ne pas utiliser ce fichier pour distribuer aux étudiants.</span></div>
+                <div>get_string('process_statements_file', 'mod_automultiplechoice')</div>
             </li>
             <li>
                 $links[1]
-                <div>Le catalogue de questions.</div>
+                <div>get_string('process_catalog_file', 'mod_automultiplechoice')</div>
             </li>
             <li>
                 $links[2]
-                <div>Les  corrigés des différentes versions.</div>
+                <div>get_string('process_corrections_file', 'mod_automultiplechoice')</div>
             </li>
         </ul>
 EOL;
@@ -608,13 +608,13 @@ EOL;
      */
     public function getHtmlZipLink() {
         $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), 'sujets',array('class'=>'btn')),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), get_string('documents', 'mod_automultiplechoice'), array('class' => 'btn')),
         );
         return <<<EOL
         <ul class="amc-files">
             <li>
                 $links[0]
-                <div>Cette archive contient un PDF par variante de l'énoncé.</div>
+                <div>get_string('process_archive', 'mod_automultiplechoice')</div>
             </li>
         </ul>
 EOL;
@@ -630,11 +630,11 @@ EOL;
             $parent = dirname($this->workdir);
             if (!is_dir($parent)) {
                 if (!mkdir($parent, 0777, true)) {
-                    error("Could not create directory. Please contact the administrator.");
+                    error(get_string('error_could_not_create_directory', 'mod_automultiplechoice'));
                 }
             }
             if (!is_writeable($parent)) {
-                error("Could not write in directory. Please contact the administrator.");
+                error(get_string('error_could_not_write_directory', 'mod_automultiplechoice'));
             } else {
                 $templatedir = get_config('mod_automultiplechoice', 'amctemplate');
                 $this->shellExec('cp', array('-r', $templatedir, $this->workdir));

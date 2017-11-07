@@ -20,11 +20,11 @@ class upload extends \mod_automultiplechoice\local\amc\process {
         }
         $this->nbPages = $this->amcGetimages($filename);
         if (!$this->nbPages) {
-            $this->errors[] = "Erreur découpage scan (amc getimages)";
+            $this->errors[] = get_string('error_amc_getimages', 'mod_automultiplechoice');
         }
         $analyse = $this->amcAnalyse();
         if (!$analyse) {
-            $this->errors[] = "Erreur lors de l'analyse (amc analyse).";
+            $this->errors[] = get_string('error_amc_analyse', 'mod_automultiplechoice');
         }
     }
     /**

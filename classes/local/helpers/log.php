@@ -93,8 +93,8 @@ class log {
                 case 'process':
                     $process = $this->read('process');
                     if ($process) {
-                        $minutes = (int) \round(($_SERVER['REQUEST_TIME'] - $process)/60);
-                        $messages[] = "AMC est déjà en cours d'exécution depuis $minutes minutes.";
+                        $minutes = (int) \round(($_SERVER['REQUEST_TIME'] - $process) / 60);
+                        $messages[] = get_string('log_process_running', 'mod_automultiplechoice', ['time' => $minutes]);
                     }
                     break;
                 case 'pdf':
@@ -103,10 +103,10 @@ class log {
                         return [];
                     }
                     if ($this->read('scoring') > $pdf) {
-                        $messages[] = "Le choix du barème a été modifié depuis la dernière préparation des sujets PDF.";
+                        $messages[] = get_string('log_scoring_edited', 'mod_automultiplechoice');
                     }
                     if ($this->read('saving') > $pdf) {
-                        $messages[] = "La selection de question été modifié depuis la dernière préparation des sujets PDF.";
+                        $messages[] = get_string('log_questions_changed', 'mod_automultiplechoice');
                     }
                     break;
                 case 'corrected':
@@ -115,7 +115,7 @@ class log {
                         return [];
                     }
                     if ($this->read('saving') > $corrected) {
-                        $messages[] = "La selection de question été modifié depuis la dernière préparation des sujets PDF.";
+                        $messages[] = get_string('log_questions_changed', 'mod_automultiplechoice');
                     }
                     break;
                 case 'meptex':
@@ -124,7 +124,7 @@ class log {
                         return [];
                     }
                     if ($this->read('pdf') > $meptex) {
-                        $messages[] = "Le PDF du QCM a été modifié depuis la dernière analyse des sujets.";
+                        $messages[] = get_string('log_pdf_changed_since_last_analyse', 'mod_automultiplechoice');
                     }
                     break;
                 case 'upload':
@@ -133,13 +133,13 @@ class log {
                         return [];
                     }
                     if ($this->read('pdf') > $upload) {
-                        $messages[] = "Le PDF du QCM a été modifié depuis le dernier dépôt des copies.";
+                        $messages[] = get_string('log_pdf_changed_since_last_upload', 'mod_automultiplechoice');
                     }
                     if ($this->read('lock') > $upload) {
-                        $messages[] = "Le dernier verrouillage du QCM a eu lieu après le dernier dépôt des copies.";
+                        $messages[] = get_string('log_last_lock_after_last_upload', 'mod_automultiplechoice');
                     }
                     if ($this->read('meptex') > $upload) {
-                        $messages[] = "La derni&egrave;re analyse du sujet a eu lieu après le dernier dépôt des copies.";
+                        $messages[] = get_string('log_last_analyse_after_last_upload', 'mod_automultiplechoice');
                     }
                     break;
                 case 'grading':
@@ -148,10 +148,10 @@ class log {
                         return [];
                     }
                     if ($this->read('upload') > $grading) {
-                        $messages[] = "Des copies d'étudiant ont été déposées depuis la dernière notation. Relancer la correction ?";
+                        $messages[] = get_string('log_relaunch_correction_uploads', 'mod_automultiplechoice');
                     }
                     if ($this->read('scoring') > $grading) {
-                        $messages[] = "Le barème a été modifié depuis la dernière notation. Relancer la correction ?";
+                        $messages[] = get_string('log_relaunch_correction_scale', 'mod_automultiplechoice');
                     }
                     break;
                 case 'associating':
@@ -160,13 +160,13 @@ class log {
                         return [];
                     }
                     if ($this->read('upload') > $associating) {
-                        $messages[] = "Des copies d'étudiant ont été déposées depuis la dernière association. Relancer l'association ?";
+                        $messages[] = get_string('log_relaunch_association_uploads', 'mod_automultiplechoice');
                     }
                     if ($this->read('grading') > $associating) {
-                        $messages[] = "Des copies d'étudiant ont été not&eacute;es depuis la dernière association. Relancer l'association ?";
+                        $messages[] = get_string('log_relaunch_association_grading', 'mod_automultiplechoice');
                     }
                     if (!$this->read('grading') ) {
-                        $messages[] = "Les copies d'étudiant n'ont pas encore été not&eacute;es.";
+                        $messages[] = get_string('log_sheets_no_grading', 'mod_automultiplechoice');
                     }
                     break;
                 case 'exporting':
@@ -175,7 +175,7 @@ class log {
                         return [];
                     }
                     if ($this->read('grading') > $exporting) {
-                        $messages[] = "La dernière notation est plus récente que les exports. Re-générer les exports ?";
+                        $messages[] = get_string('log_relaunch_export_grading', 'mod_automultiplechoice');
                     }
                     break;
                 case 'annotating':
@@ -184,7 +184,7 @@ class log {
                         return [];
                     }
                     if ($this->read('grading') > $annotating) {
-                        $messages[] = "La dernière notation est plus récente que les copies annotées. Re-générer les copies corrigées ?";
+                        $messages[] = get_string('log_relaunch_annotation_grading', 'mod_automultiplechoice');
                     }
                     break;
                 case 'annotatePdf':
@@ -193,12 +193,12 @@ class log {
                         return [];
                     }
                     if ($this->read('annotating') > $annotatePdf) {
-                        $messages[] = "La dernière annotation est plus récente que les copies annotées PDF. Re-générer les copies corrigées PDF?";
+                        $messages[] = get_string('log_relaunch_annotate_annotating', 'mod_automultiplechoice');
                     }
                     break;
                 case 'unlock':
                     if (\mod_automultiplechoice\local\models\quiz::findById($this->instanceId)->hasScans()) {
-                        $messages[] = "Des copies scannées ont déjà été déposées. En cas de modification du QCM, les copies scannées ne seront plus valables.";
+                        $messages[] = get_string('log_unlock_uploads_exists', 'mod_automultiplechoice');
                     }
                     break;
                 default:
@@ -213,9 +213,24 @@ class log {
      * @throws \Exception
      */
     private function isValidAction($action) {
-        $valid = array('process', 'pdf','meptex','saving','scoring', 'upload', 'grading','associating','exporting','annotating','annotatePdf', 'correction', 'lock', 'unlock');
+        $valid = array(
+            'process',
+            'pdf',
+            'meptex',
+            'saving',
+            'scoring',
+            'upload',
+            'grading',
+            'associating',
+            'exporting',
+            'annotating',
+            'annotatePdf',
+            'correction',
+            'lock',
+            'unlock'
+        );
         if (!in_array($action, $valid)) {
-            throw new \Exception("L'action $action n'est pas valide.");
+            throw new \Exception("The action $action is not valid.");
         }
         return true;
     }

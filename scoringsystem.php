@@ -36,10 +36,10 @@ if (isset($_POST['score'])) {
             $export = new \mod_automultiplechoice\local\amc\export($quiz);
             $res = $export->saveFormat('latex') && $process->amcPrepareBareme();
             if (!$res) {
-                 \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('error', "Erreur lors de l'extraction du barème");
+                 \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('error', get_string('scoring_scale_extract_error','mod_automultiplechoice'));
             } else {
                 \mod_automultiplechoice\local\helpers\log::build($quiz->id)->write('scoring');
-                \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('success', "Les modification du barème ont été enregistrées.");
+                \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('success', get_string('scoring_scale_save_success','mod_automultiplechoice'));
             }
 
         } else {
@@ -53,9 +53,9 @@ if (isset($_POST['score'])) {
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
 
-// Output starts here
+// Output starts here.
 $PAGE->set_url('/mod/automultiplechoice/scoringsystem.php', array('id' => $cm->id));
-//$PAGE->requires->js(new moodle_url('assets/scoringsystem.js'));
+
 $PAGE->requires->js_call_amd('mod_automultiplechoice/scoringsystem', 'init');
 
 echo $output->header();

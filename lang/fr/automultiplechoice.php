@@ -13,12 +13,124 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['amcscripts'] = 'AMC';
-$string['amcmodaltoggle'] = 'Ouvrir la modale AMC';
-$string['amcmodaltitle'] = 'Scripts AMC';
-$string['amcmodalcancel'] = 'Annuler';
-$string['amcmodalsave'] = 'Sauvegarder';
+// Annotating.
+$string['annotating_notify'] = '{$a->nbSuccess} messages envoyés pour {$a->nbStudents} étudiants ayant une copie annotée.';
+$string['annotating_rebuilt_sheets'] = 'Régénérer les copies';
+$string['annotating_corrected_sheets'] = 'Copies corrigées';
+$string['annotating_individual_sheets_available'] = ' copies individuelles annotées disponibles.';
+$string['annotating_update_corrected_sheets'] = 'Mettre à jour les copies corrigées (annotées)';
+$string['annotating_generate_corrected_sheets'] = 'Générer les copies corrigées';
 
+// Annotate process. 
+$string['annotate_correction_available'] = 'Correction disponible';
+$string['annotate_correction_available_body'] = 'Votre copie corrigée est disponible pour le QCM {$a->name}';
+$string['annotate_correction_link'] = ' à l\'adresse ';
+
+// Associating.
+$string['associating_heading'] = 'Association';
+$string['associating_sheets_identified'] = '{$a->automatic} copies automatiquement identifiés, {$a->manualy} copies manuellement identifiées et {$a->unknown} non identifiées.';
+$string['associating_relaunch_association'] = 'Relancer l\'association';
+$string['associating_launch_association'] = 'Lancer l\'association';
+
+// Common.
+$string['unlock_quiz'] = 'Déverrouiller (permettre les modifications du questionnaire)';
+$string['lock_quiz'] = 'Verrouiller le questionnaire';
+$string['quiz_is_locked'] = 'Le questionnaire est actuellement verrouillé pour éviter les modifications entre l\'impression et la correction.';
+$string['quiz_save_error'] = 'Erreur lors de la sauvegarde.';
+$string['file_type'] = 'Type du fichier';
+$string['access_documents'] = 'Vous pouvez accéder aux documents via l\'onglet';
+$string['error_could_not_create_directory'] = 'Impossible de créer le répertoire. Merci de contacter votre administrateur système.';
+$string['error_could_not_write_directory'] = 'Impossible d\'écrire dans le répertoire. Merci de contacter votre administrateur système.';
+$string['error_amc_getimages'] = 'Erreur découpage scan (amc getimages).';
+$string['error_amc_analyse'] = 'Erreur lors de l\'analyse (amc analyse).';
+
+// Dashboard.
+$string['subjects_ready_for_distribution'] = 'Les sujets sont prêts à être distribués.';
+$string['preparatory_documents_ready'] = 'Les sujets n\'ont pas encore été figés mais les documents préparatoires sont disponibles';
+$string['no_document_available'] = 'Aucun document disponible';
+$string['pdf_last_prepare_date'] = 'Dernière préparation des sujets PDF le ';
+$string['pdf_none_prepared'] = 'Aucun sujet PDF n\'a encore été préparé.';
+$string['dashboard_nb_page_scanned'] = '{$a->nbpages} pages scannées ont été déposées le {$a->date}';
+$string['dashboard_no_sheets_corrected'] = 'Aucune copie corrigée ou notée.';
+
+// Documents.
+$string['documents_meptex_error'] = 'Erreur lors du calcul de mise en page (amc meptex).';
+$string['documents_pdf_created'] = 'Fichiers PDF créés.';
+$string['documents_zip_archive'] = 'Archive ZIP.';
+$string['documents_restore_original_version'] = 'Restaurer la version originale';
+$string['documents_mix_answers_and_questions'] = 'Mélanger les questions et les réponses';
+
+// Export process.
+$string['export_amc_cmd_failed'] = 'Exec of `{$a->cmd}` failed. Is AMC installed?';
+$string['export_archive_open_failed'] = 'Echec lors de l\'ouverture de l\'archive {$a->error}';
+$string['export_archive_create_failed'] = 'Erreur lors de la création de l\'archive Zip : le fichier n\'a pas été créé. {$a->mask}';
+$string['export_file_write_access_error'] = 'Le fichier {$a->file} n\'a pas pu être recréé. Contactez l\'administrateur pour un problème de permissions de fichiers.';
+$string['export_file_create_error'] = 'Le fichier n\'a pas pu être recréé. Consultez l\'administrateur.';
+$string['export_dir_access_error'] = 'Le répertoire /exports n\'est pas accessible en écriture. Contactez l\'administrateur.';
+
+// Grading.
+$string['grading_relaunch_correction'] = 'Relancer la correction';
+$string['grading_notes'] = 'Notes';
+$string['grading_file_notes_table'] = 'Fichiers tableaux des notes';
+$string['grading_sheets_identified'] = '{$a->known} copies identifiées et {$a->unknown} non identifiées.';
+$string['grading_statistics'] = 'Statistiques';
+$string['grading_not_satisfying_notation'] = 'Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.';
+
+// Logs messages.
+$string['log_process_running'] = 'AMC est déjà en cours d\'exécution depuis {$a->time} minutes.';
+$string['log_scoring_edited'] = 'Le choix du barème a été modifié depuis la dernière préparation des sujets PDF.';
+$string['log_questions_changed'] = 'La selection de question été modifié depuis la dernière préparation des sujets PDF.';
+$string['log_pdf_changed_since_last_analyse'] = 'Le PDF du QCM a été modifié depuis la dernière analyse des sujets.';
+$string['log_pdf_changed_since_last_upload'] = 'Le PDF du QCM a été modifié depuis le dernier dépôt des copies.';
+$string['log_last_lock_after_last_upload'] = 'Le dernier verrouillage du QCM a eu lieu après le dernier dépôt des copies.';
+$string['log_last_analyse_after_last_upload'] = 'La dernière analyse du sujet a eu lieu après le dernier dépôt des copies.';
+$string['log_relaunch_correction_uploads'] = 'Des copies d\'étudiant ont été déposées depuis la dernière notation. Relancer la correction ?';
+$string['log_relaunch_correction_scale'] = 'Le barème a été modifié depuis la dernière notation. Relancer la correction ?';
+$string['log_relaunch_association_uploads'] = 'Des copies d\'étudiant ont été déposées depuis la dernière association. Relancer l\'association ?';
+$string['log_relaunch_association_grading'] = 'Des copies d\'étudiant ont été notées depuis la dernière association. Relancer l\'association ?';
+$string['log_sheets_no_grading'] = 'Les copies d\'étudiant n\'ont pas encore été notées.';
+$string['log_relaunch_export_grading'] = 'La dernière notation est plus récente que les exports. Re-générer les exports ?';
+$string['log_relaunch_annotation_grading'] = 'La dernière notation est plus récente que les copies annotées. Re-générer les copies corrigées ?';
+$string['log_relaunch_annotate_annotating'] = 'La dernière annotation est plus récente que les copies annotées PDF. Re-générer les copies corrigées PDF?';
+$string['log_unlock_uploads_exists'] = 'Des copies scannées ont déjà été déposées. En cas de modification du QCM, les copies scannées ne seront plus valables.';
+
+// Process.
+$string['process_no_quiz_id'] = 'No quiz ID';
+$string['process_no_amc_format'] = 'Erreur, pas de format de QCM pour AMC.';
+$string['process_unable_to_write_file'] = 'Could not write the file for AMC. Check the space available on disk.';
+$string['process_statements_file'] = 'Ce fichier contient tous les énoncés regroupés. <span class="warning">Ne pas utiliser ce fichier pour distribuer aux étudiants.</span>';
+$string['process_catalog_file'] = 'Le catalogue de questions.';
+$string['process_corrections_file'] = 'Les  corrigés des différentes versions.';
+$string['process_archive'] = 'Cette archive contient un PDF par variante de l\'énoncé.';
+$string['catalog'] = 'Catalogue';
+$string['corrections'] = 'Corrigés';
+
+// Scoring.
+$string['scoring_scale_extract_error'] = 'Erreur lors de l\'extraction du barème';
+$string['scoring_scale_save_success'] = 'Les modifications du barème ont été enregistrées.';
+
+// Scan upload.
+$string['uploadscans_file_not_accessible'] = 'Impossible d\'accéder au fichier déposé.';
+$string['uploadscans_no_image_known'] = 'Erreur, {$a->nbpages} pages scannées mais aucune image n\'a été reconnue (pas de PPM).';
+$string['uploadscans_process_end_message'] = 'Le processus s\'est achevé : {$a->nbpages} pages nouvellement scannées, {$a->nbextracted} extraites, {$a->nbidentified} pages avec marqueurs.';
+$string['uploadscans_saved_sheets'] = 'Copies enregistrées : <b>{$a->nbsaved}</b> pages scannées ont été déposées le {$a->date}';
+$string['uploadscans_add_sheets'] = 'Ajouter des copies';
+$string['uploadscans_add_sheets_message'] = 'Si vous déposez de nouvelles pages scannées, elles seront ajoutées aux précédentes.';
+$string['uploadscans_no_sheets_uploaded'] = 'Aucune copie n\'a encore été déposée.';
+$string['uploadscans_delete_sheets'] = 'Supprimer les copies';
+$string['uploadscans_delete_sheets_warn'] = 'Vous pouvez effacer les copies déjà déposées. Ceci effacera aussi les notes. Vous pourrez ensuite déposer de nouveaux scans.';
+$string['uploadscans_delete_sheets_confirm'] = 'Supprimer définitivement les copies déposées sur le serveur ?';
+$string['uploadscans_unknown_scans'] = 'Scans non reconnus';
+$string['uploadscans_delete_unknown_scans'] = 'Effacer tous les scans non reconnus';
+$string['uploadscans_download_unknown_scans'] = 'Télécharger tous les scans non reconnus';
+$string['uploadscans_install_sqlite3'] = 'Demandez à votre administrateur système d\'installer php-sqlite3 pour voir les fichiers non reconnus';
+
+// Student view.
+$string['studentview_one_corrected_sheet'] = 'Vous avez une copie corrigée :';
+$string['studentview_no_corrected_sheet'] = 'Vous n\'avez pas de copie corrigée pour ce QCM';
+$string['studentview_view_corrected_sheet'] = 'Vous pouvez consulter le corrigé ici :';
+
+// OTHERS.
 $string['modulename'] = 'QCM papier';
 $string['modulenameplural'] = 'QCM papier';
 $string['modulename_help'] = 'Le module QCM papier permet de créer des PDF pour imprimer des QCM puis de corriger automatiquement les réponses scannées.';
@@ -125,7 +237,5 @@ $string['selectuser'] = 'Choisir l\'étudiant';
 $string['questionoperations'] = 'Avant de sélectionner des questions, vous pouvez enrichir la banque de questions par…';
 $string['importfilequestions'] = 'Importer un fichier de questions';
 $string['importquestions'] = 'Import/ Création de questions';
-$string['importfilequestions'] = 'Import d\'un fichier de question'; 
+$string['importfilequestions'] = 'Import d\'un fichier de question';
 $string['createquestions'] = "Création d'une question par formulaire";
-
-$string['errormeptex'] = "Erreur lors du calcul de mise en page (amc meptex).";
