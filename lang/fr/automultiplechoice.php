@@ -125,6 +125,27 @@ $string['uploadscans_delete_unknown_scans'] = 'Effacer tous les scans non reconn
 $string['uploadscans_download_unknown_scans'] = 'Télécharger tous les scans non reconnus';
 $string['uploadscans_install_sqlite3'] = 'Demandez à votre administrateur système d\'installer php-sqlite3 pour voir les fichiers non reconnus';
 
+// Settings.
+$string['settings_latex_path_short'] = 'Chemin vers XelateX';
+$string['settings_latex_path_full'] = 'Chemin vers le moteur LateX XelateX';
+$string['settings_amctemplate_short'] = 'Modèle AMC';
+$string['settings_amctemplate_full'] = 'Chemin vers le modèle d\'arborescence AMC pour les nouveaux projets';
+$string['settings_code_length_short'] = 'Longueur code';
+$string['settings_code_length_full'] = 'Longueur du code étudiant pour l\'affichage AMC';
+$string['settings_instructionslstudent_short'] = 'Consigne / n° étudiant';
+$string['settings_instructionslstudent_full'] = 'Valeur par défaut du champ homonyme, à la création de questionnaires papier.';
+$string['settings_instructionslstudent_default'] = 'Veuillez coder votre numéro d\'étudiant ci-contre, et écrire votre nom dans la case ci-dessous.';
+$string['settings_instructionslnamestd_short'] = 'Zone d\'identification / Standard';
+$string['settings_instructionslnamestd_full'] = 'Consigne par défaut du champ, à la création d\'un questionnaires papier standard.';
+$string['settings_instructionslnamestd_default'] = 'Nom et prénom';
+$string['settings_instructionslnameanon_short'] = 'Zone d\'identification / Anonyme';
+$string['settings_instructionslnameanon_full'] = 'Consigne par défaut du champ, à la création d\'un questionnaires papier anonyme.';
+$string['settings_instructions_short'] = 'Default instructions';
+$string['settings_instructions_full'] = 'Elements are separed by a line of at least 3 dashes. The first line of each block will be the title displayed in the dropdown list. Example:<pre>Concours\\nVous avez 4 heures.\\nL\'anonymat est garanti.\\n---\\nFirst Test\\nPlease use a pencil and gray each selected case completely.</pre>';
+$string['settings_idnumberprefixes_short'] = 'Préfixes du n° d\'étudiant';
+$string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attention aux espaces.</p><p>Chacun des préfixes sera inséré au début du numéro d\'étudiant de chaque copie, jusqu\'à ce que l\'étudiant soit identifié parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber). Si aucun préfixe ne permet de trouver l\'étudiant, une identification sans préfixe sera ensuite testée.</p>';
+
+
 // Student view.
 $string['studentview_one_corrected_sheet'] = 'Vous avez une copie corrigée :';
 $string['studentview_no_corrected_sheet'] = 'Vous n\'avez pas de copie corrigée pour ce QCM';

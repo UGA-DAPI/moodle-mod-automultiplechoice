@@ -21,7 +21,7 @@ $string['annotating_individual_sheets_available'] = ' individual annotated sheet
 $string['annotating_update_corrected_sheets'] = 'Update corrected sheets (annotated)';
 $string['annotating_generate_corrected_sheets'] = 'Generate corrected sheets';
 
-// Annotate process. 
+// Annotate process.
 $string['annotate_correction_available'] = 'Correction available';
 $string['annotate_correction_available_body'] = 'Votre copie corrigée est disponible pour le QCM {$a->name}';
 $string['annotate_correction_link'] = ' at ';
@@ -126,6 +126,27 @@ $string['uploadscans_unknown_scans'] = 'Unknown scans';
 $string['uploadscans_delete_unknown_scans'] = 'Delete all unknown scans';
 $string['uploadscans_download_unknown_scans'] = 'Download all unknown scans';
 $string['uploadscans_install_sqlite3'] = 'Ask your system admin to install php-sqlite3 in order to see unknown files.';
+
+// Settings.
+$string['settings_latex_path_short'] = 'Path to XelateX';
+$string['settings_latex_path_full'] = 'Path to LateX XelateX engine';
+$string['settings_amctemplate_short'] = 'AMC template';
+$string['settings_amctemplate_full'] = 'Path to the AMC tree template for new projects';
+$string['settings_code_length_short'] = 'Code length';
+$string['settings_code_length_full'] = 'Student code length for AMC display';
+$string['settings_instructionslstudent_short'] = 'Instructions / student number';
+$string['settings_instructionslstudent_full'] = 'Default value of the homonymous field, when creating paper questionnaires.';
+$string['settings_instructionslstudent_default'] = 'Please code the student number here, and write your name below.';
+$string['settings_instructionslnamestd_short'] = 'Identification area / Standard';
+$string['settings_instructionslnamestd_full'] = 'Default instruction for the field when creating a new standard paper questionnaire.';
+$string['settings_instructionslnamestd_default'] = 'Name et first name';
+$string['settings_instructionslnameanon_short'] = 'Identification area / Anonymous';
+$string['settings_instructionslnameanon_full'] = 'Default instruction for the field when creating an anonymous paper questionnaire.';
+$string['settings_instructions_short'] = 'Default instructions';
+$string['settings_instructions_full'] = 'Elements are separed by a line of at least 3 dashes. The first line of each block will be the title displayed in the dropdown list. Example:<pre>Concours\\nVous avez 4 heures.\\nL\'anonymat est garanti.\\n---\\nFirst Test\\nPlease use a pencil and gray each selected case completely.</pre>';
+$string['settings_idnumberprefixes_short'] = 'Prefix for student number';
+$string['settings_idnumberprefixes_full'] = '<p>Prefixes, one per row. Beware of spaces.</p><p>Each prefix will be inserted at the beginning of the student number of each sheet, until the identification of the student among the moodle users (cf LDAP import and idnumber). If the student can not be found, a no prefix identification will be attempted.</p>';
+
 
 // Student view.
 $string['studentview_one_corrected_sheet'] = 'You have one corrected sheet:';

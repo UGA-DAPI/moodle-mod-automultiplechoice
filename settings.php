@@ -10,8 +10,8 @@ if ($ADMIN->fulltree) {
 
     $s = new admin_setting_configtext(
         'xelatexpath',
-        'Chemin vers XelateX',
-        'Chemin vers le moteur LateX XelateX',
+        get_string('settings_latex_path_short', 'mod_automultiplechoice'),
+        get_string('settings_latex_path_full', 'mod_automultiplechoice'),
         '',
         PARAM_TEXT
     );
@@ -21,8 +21,8 @@ if ($ADMIN->fulltree) {
     $defaulttpl = __DIR__ . '/amctemplate';
     $s = new admin_setting_configtext(
         'amctemplate',
-        'Modèle AMC',
-        'Chemin vers le modèle d\'arborescence AMC pour les nouveaux projets',
+        get_string('settings_amctemplate_short', 'mod_automultiplechoice'),
+        get_string('settings_amctemplate_full', 'mod_automultiplechoice'),
         $defaulttpl,
         PARAM_TEXT
     );
@@ -31,8 +31,8 @@ if ($ADMIN->fulltree) {
 
     $s = new admin_setting_configtext(
         'amccodelength',
-        'Longueur code',
-        'Longueur du code étudiant pour l\'affichage AMC',
+        get_string('settings_code_length_short', 'mod_automultiplechoice'),
+        get_string('settings_code_length_full', 'mod_automultiplechoice'),
         '8',
         PARAM_INT
     );
@@ -41,9 +41,9 @@ if ($ADMIN->fulltree) {
 
     $s = new admin_setting_configtext(
         'instructionslstudent',
-        'Consigne / n° étudiant',
-        'Valeur par défaut du champ homonyme, à la création de questionnaires papier.',
-        "Veuillez coder votre numéro d'étudiant ci-contre, et écrire votre nom dans la case ci-dessous.",
+        get_string('settings_instructionslstudent_short', 'mod_automultiplechoice'),
+        get_string('settings_instructionslstudent_full', 'mod_automultiplechoice'),
+        get_string('settings_instructionslstudent_default', 'mod_automultiplechoice'),
         PARAM_TEXT
     );
     $s->plugin = 'mod_automultiplechoice';
@@ -51,9 +51,9 @@ if ($ADMIN->fulltree) {
 
     $s = new admin_setting_configtext(
         'instructionslnamestd',
-        "Zone d'identification / Standard",
-        "Consigne par défaut du champ, à la création d'un questionnaires papier standard.",
-        "Nom et prénom",
+        get_string('settings_instructionslnamestd_short', 'mod_automultiplechoice'),
+        get_string('settings_instructionslnamestd_full', 'mod_automultiplechoice'),
+        get_string('settings_instructionslnamestd_default', 'mod_automultiplechoice'),
         PARAM_TEXT
     );
     $s->plugin = 'mod_automultiplechoice';
@@ -61,8 +61,8 @@ if ($ADMIN->fulltree) {
 
     $s = new admin_setting_configtext(
         'instructionslnameanon',
-        "Zone d'identification / Anonyme",
-        "Consigne par défaut du champ, à la création d'un questionnaires papier anonyme.",
+        get_string('settings_instructionslnameanon_short', 'mod_automultiplechoice'),
+        get_string('settings_instructionslnameanon_full', 'mod_automultiplechoice'),
         "",
         PARAM_TEXT
     );
@@ -71,10 +71,8 @@ if ($ADMIN->fulltree) {
 
     $s = new admin_setting_configtextarea(
         'instructions',
-        'Default instructions',
-        "Elements are separed by a line of at least 3 dashes. "
-            . "The first line of each block will be the title displayed in the dropdown list. Example:<pre>"
-            . "Concours\nVous avez 4 heures.\nL'anonymat est garanti.\n---\nFirst Test\nPlease use a pencil and gray each selected case completely.</pre>",
+        get_string('settings_instructions_short', 'mod_automultiplechoice'),
+        get_string('settings_instructions_full', 'mod_automultiplechoice'),
         "",
         PARAM_RAW
     );
@@ -112,7 +110,7 @@ M ; default ; e=0,mz=SCORE
 
 <p>For each question, the first rule matching on the 2 first columns will be used.</p>
 ",
-        "",
+        "S ;       1 ; e=0,v=0,m=0,b=1",
         PARAM_TEXT
     );
     $s->plugin = 'mod_automultiplechoice';
@@ -120,11 +118,8 @@ M ; default ; e=0,mz=SCORE
 
     $s = new admin_setting_configtextarea(
         'idnumberprefixes',
-        "Préfixes du n° d'étudiant",
-        "Préfixes, un par ligne. Attention aux espaces.\n"
-            . "Chacun des préfixes sera inséré au début du numéro d'étudiant de chaque copie, jusqu'à ce que l'étudiant soit identifié"
-            . " parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber)."
-            . " Si aucun préfixe ne permet de trouver l'étudiant, une identification sans préfixe sera ensuite testée.",
+        get_string('settings_idnumberprefixes_short', 'mod_automultiplechoice'),
+        get_string('settings_idnumberprefixes_full', 'mod_automultiplechoice'),
         '',
         PARAM_TEXT
     );
