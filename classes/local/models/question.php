@@ -144,4 +144,17 @@ class question extends \mod_automultiplechoice\local\models\question_list_item {
         $type = ($hidden ? '" type="hidden"' : '" type="text"');
         return '<input name="question[score][]" value="' . $this->getScoreDisplayed() . $type . $suffix . ' />';
     }
+
+    /**
+     * List answers for a given question and format the result
+     */
+    public static function list_answers($question) {
+        global $DB;
+        $answers = $DB->get_recordset('question_answers', array('question' => $question->id));
+        $result = [];
+        foreach ($answers as $answer) {
+            $result[] = ['class' => $answer->fraction > 0 ? 'answer-right' : 'answer-wrong', 'label' => format_string($answer->answer)];
+        }
+        return $result;
+    }
 }

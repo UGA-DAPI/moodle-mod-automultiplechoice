@@ -1,77 +1,81 @@
 define(['jquery'], function ($) {
     return {
         init: function () {
-            $("#questions-selected").on("change", "select", function () {
-                var scoring = $(this).val();
-                var score = $(this).find('option:selected').first().data('score');
-                if (scoring === '') {
-                    $(this).closest('td').find('input.qscore').removeAttr('readonly');
-                } else {
-                    $(this).closest('td').find('input.qscore').val(score).attr('readonly', 'readonly');
-                }
-            });
-
-            $("#params-quizz select").on("click", this.updateScoringDescription());
+            // marche pas
+            $('#params-quizz select').on('click', this.updateScoringDescription());
             this.updateScoringDescription();
 
-            var expectedTotalScore = parseInt($('#expected-total-score').val());
-            $("#questions-selected").on("keyup", "input.qscore", function (e) {
-                var total = 0;
-                inputs = $("#questions-selected input.qscore").each(function (index) {
-                    if ($(this).val()) {
-                        total += parseFloat($(this).val());
-                    }
-                });
-                $('#computed-total-score').html(Math.round(100 * total) / 100)
-                    .parent().toggleClass("score-mismatch", Math.abs(total - expectedTotalScore) > 0.01);
-            });
-            $("#questions-selected input.qscore").first().keyup();
+            // var expectedTotalScore = parseInt($('#expected-total-score').val());
 
-            $("#params-quizz").on("keyup", "input.qscore", function (e) {
+            // Listen to scores input changes in order to warn the user if inconsistent results.
+            $('#questions-selected').on('change', 'input.qscore', function () {                
+                this.checkScoreConsistency();
+            }.bind(this));
+            //$('#questions-selected input.qscore').first().keyup();
+
+            /*$('#params-quizz').on('keyup', 'input.qscore', function (e) {
                 var res = parseInt($(this).val());
                 var total = parseInt($('#computed-total-score').text());
                 $('#total-score').html(res)
-                    .parent().toggleClass("score-mismatch", res !== total);
-            });
+                    .parent().toggleClass('score-mismatch', res !== total);
+            });*/
 
-            $('#toggle-answers').on('click', this.toggleAnswers());
+            // Show / Hide questions answers.
+            $('#btn-toggle-answers').on('click', function() {
+                this.toggleAnswers();
+            }.bind(this));
             this.toggleAnswers();
 
+            // Automatically allocate score to each question.
             $('#scoring-distribution').on('click', function () {
                 var totalScore = parseInt($('#expected-total-score').val());
-                var qnumber = parseInt($('#quizz-qnumber').val());
-                var valeur = Math.floor(100 * (totalScore / qnumber)) / 100;
-                var total = qnumber * valeur;
-                inputs = $("form table#questions-selected input.qscore").each(function (index) {
-                    $(this).val(valeur);
+                var nbQuestions = parseInt($('#quizz-qnumber').val());
+                var questionScore = Math.floor(100 * (totalScore / nbQuestions)) / 100;
+                var total = nbQuestions * questionScore;
+                $('form table#questions-selected input.qscore').each(function () {
+                    $(this).val(questionScore);
                 });
-                $('#computed-total-score').html(total)
-                    .parent().toggleClass("score-mismatch", total !== totalScore);
-            });
+                this.checkScoreConsistency();
+            }.bind(this));
 
-            // if grademax is empty at page load, copy from totalpoints.
-            if ($('#amc-grademax').attr('value') === '') {
-                $("#expected-total-score").on("keyup", function () {
-                    totalpoints = $("#expected-total-score").val().toString();
-                    if (totalpoints.startsWith($('#amc-grademax').val())) {
-                        $('#amc-grademax').val(totalpoints);
-                    }
-                });
+            // If grademax is empty at page load, copy from totalpoints.
+            if ($('#amc-grademax').val().toString() === '') {
+                var totalpoints = $('#expected-total-score').val().toString();
+                $('#amc-grademax').val(totalpoints);
             }
+
+            // Listen to score total changes
+            $('#expected-total-score').on('change', function (e) {
+                // change values and check score consistency
+                $('#total-score').html(e.target.value.toString());
+                this.checkScoreConsistency();
+            }.bind(this));
         },
         updateScoringDescription: function () {
-            var id = $("#params-quizz select[name='amc[scoringset]']").val();
-            var myurl = "ajax/scoring.php?scoringsetid=";
+            var id = $('#params-quizz select[name="amc[scoringset]"]').val();
+            var myurl = 'ajax/scoring.php?scoringsetid=';
             $.ajax({
                 url: myurl + id,
                 method: 'get',
                 success: function (data) {
-                    $("#scoringset_desc").html(data);
+                    $('#scoringset_desc').html(data);
                 }
             });
         },
         toggleAnswers: function () {
-            $(".question-answers").toggleClass('hide');
+            $('.question-answers').toggleClass('hide');
+        },
+        checkScoreConsistency: function () {
+            var expectedTotalScore = parseInt($('#expected-total-score').val());
+            var total = 0;
+            $('#questions-selected input.qscore').each(function () {
+                if ($(this).val()) {
+                    total += parseFloat($(this).val());
+                }
+            });
+            $('#computed-total-score').text(total.toString());
+            var invalid = Math.abs(total - expectedTotalScore) > 0.01;
+            $('#computed-total-score').closest('td').toggleClass('score-mismatch',invalid);
         }
     }
 })

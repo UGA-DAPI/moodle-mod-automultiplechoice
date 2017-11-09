@@ -1,0 +1,178 @@
+{{! settings}}
+<div class="row margin-bottom-md">
+  <div class="col-md-12">
+     <h4>{{settings.title}}</h4>
+     {{#settings.rows}}
+      <div class="row">
+        <div class="col-md-4">
+          <h6>{{label}}</h6>
+        </div>
+        <div class="col-md-8">
+          <div>{{{data}}}</div>
+        </div>
+      </div>
+    {{/settings.rows}}
+  </div>
+</div>
+<hr/>
+
+{{! questions}}
+<div class="row margin-bottom-md">
+  <div class="col-md-12">
+    <h4>{{questions.title}}</h4>
+    {{#questions.rows}}
+      <div class="row">
+        <div class="col-md-4">
+          <h6>{{label}}</h6>
+        </div>
+        <div class="col-md-8">
+          <div>{{{data}}}</div>
+        </div>
+      </div>
+    {{/questions.rows}}
+  </div>
+</div>
+<hr/>
+
+{{!scoringsystem}}
+<div class="row margin-bottom-md">
+  <div class="col-md-12">
+    <h4>{{scoringsystem.title}}</h4>
+    {{#scoringsystem.rows}}
+      <div class="row">
+        <div class="col-md-4">
+          <h6>{{label}}</h6>
+        </div>
+        <div class="col-md-8">
+          <div>{{{data}}}</div>
+        </div>
+      </div>
+    {{/scoringsystem.rows}}
+  </div>
+</div>
+<hr/>
+
+{{!documents}}
+<div class="row margin-bottom-md">
+  <div class="col-md-12">
+    <h4>{{documents.title}}</h4>
+    <div class="row">
+        <div class="col-md-12">
+        {{#locked}}
+          <h6>{{#str}}subjects_ready_for_distribution, mod_automultiplechoice{{/str}}</h6>
+          <a href={{documents.data.ziplink}}>{{#str}}documents, mod_automultiplechoice{{/str}} (ZIP)</a>
+          <div>{{#str}}process_archive, mod_automultiplechoice{{/str}}</div>     
+          {{#documents.data.pdflinks}}
+            <a href={{sujet}}>{{#str}}documents, mod_automultiplechoice{{/str}} (PDF)</a>
+            <div>{{#str}}process_statements_file, mod_automultiplechoice{{/str}}</div>
+            <a href={{catalog}}>{{#str}}catalog, mod_automultiplechoice{{/str}}</a>
+            <div>{{#str}}process_catalog_file, mod_automultiplechoice{{/str}}</div>
+            <a href={{correction}}>{{#str}}corrections, mod_automultiplechoice{{/str}}</a>
+            <div>{{#str}}process_corrections_file, mod_automultiplechoice{{/str}}</div>
+          {{/documents.data.pdflinks}}
+          <form method="post" action="documents.php" onsubmit="return confirm('{{#str}}log_unlock_uploads_exists, mod_automultiplechoice{{/str}}');">
+            <input type="hidden" value="unlock" name="action" />
+            <input type="hidden" value={{quizId}} name="a" />
+            <button class="btn btn-danger" type="submit"><i class="fa fa-unlock"></i> {{#str}}unlock_quiz, mod_automultiplechoice{{/str}}</button>
+          </form>          
+        {{/locked}}
+        {{^locked}}
+          {{#documents.data.hasDocuments}}
+            <div>{{#str}}preparatory_documents_ready, mod_automultiplechoice{{/str}}</div>
+            {{#documents.data.pdflinks}}
+              <a href={{sujet}}>{{#str}}documents, mod_automultiplechoice{{/str}}</a>
+              <div>{{#str}}process_statements_file, mod_automultiplechoice{{/str}}</div>
+              <a href={{catalog}}>{{#str}}catalog, mod_automultiplechoice{{/str}}</a>
+              <div>{{#str}}process_catalog_file, mod_automultiplechoice{{/str}}</div>
+              <a href={{correction}}>{{#str}}corrections, mod_automultiplechoice{{/str}}</a>
+              <div>{{#str}}process_corrections_file, mod_automultiplechoice{{/str}}</div>
+            {{/documents.data.pdflinks}}
+          {{/documents.data.hasDocuments}}
+          {{^documents.data.hasDocuments}}
+            <div>{{#str}}no_document_available, mod_automultiplechoice{{/str}}</div>
+          {{/documents.data.hasDocuments}}
+          {{#documents.data.preparetime}}
+            <div>{{#str}}pdf_last_prepare_date, mod_automultiplechoice{{/str}}{{#userdate}}{{documents.data.preparetime}}, {{#str}} strftimedate {{/str}}{{/userdate}}</div>
+          {{/documents.data.preparetime}}
+          {{^documents.data.preparetime}}
+            <div>{{#str}}pdf_none_prepared, mod_automultiplechoice{{/str}}</div>
+          {{/documents.data.preparetime}}
+        {{/locked}}
+      </div>
+    </div>  
+  </div>
+</div>
+<hr/>
+
+{{!scansupload}}
+<div class="row margin-bottom-md">
+  <div class="col-md-12">
+    <h4>{{uploadscans.title}}</h4>
+    {{#uploadscans.data}}
+      <div>
+        {{#str}}dashboard_nb_page_scanned, mod_automultiplechoice, {"nbpages": {{#quote}} {{uploadscans.data.count}} {{/quote}}, "date": {{#quote}} {{#userdate}}{{uploadscans.data.time}}, {{#str}} strftimedate {{/str}}{{/userdate}} {{/quote}} } {{/str}}
+      </div>
+    {{/uploadscans.data}}
+  </div>
+</div>
+<hr/>
+
+{{!associating}}
+<div class="row margin-bottom-md">
+  <div class="col-md-12">
+    <h4>{{associating.title}}</h4>
+    <div class="row">
+      <div class="col-md-12">quel contenu pour la page association ?</div>
+    </div>
+  </div>
+</div>
+<hr/>
+
+{{!grading}}
+<div class="row margin-bottom-md">
+  <div class="col-md-12">
+    <h4>{{grading.title}}</h4>
+    {{#grading.data}}
+      <div class="row">
+        <div class="col-md-4">
+          <h6>{{#str}} grading_size, mod_automultiplechoice {{/str}}</h6>
+        </div>
+        <div class="col-md-8">
+          <h6>{{grading.data.size}}</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h6>{{#str}} grading_mean, mod_automultiplechoice {{/str}}</h6>
+        </div>
+        <div class="col-md-8">
+          <h6>{{grading.data.mean}}</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h6>{{#str}} grading_median, mod_automultiplechoice {{/str}}</h6>
+        </div>
+        <div class="col-md-8">
+          <h6>{{grading.data.median}}</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h6>{{#str}} grading_mode, mod_automultiplechoice {{/str}}</h6>
+        </div>
+        <div class="col-md-8">
+          <h6>{{grading.data.mode}}</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <h6>{{#str}} grading_range, mod_automultiplechoice {{/str}}</h6>
+        </div>
+        <div class="col-md-8">
+          <h6>{{grading.data.range}}</h6>
+        </div>
+      </div>
+    {{/grading.data}}
+  </div>
+</div>

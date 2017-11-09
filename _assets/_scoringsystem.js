@@ -49,11 +49,11 @@ $(document).ready(function () {
 			.parent().toggleClass("score-mismatch", res !== total);
 	});
 
-	function toggleAnswers() {
+	/*function toggleAnswers() {
 		$(".question-answers").toggleClass('hide');
 	}
 	$('#toggle-answers').on('click', toggleAnswers);
-	toggleAnswers();
+	toggleAnswers();*/
 
 	$('#scoring-distribution').on('click', function () {
 		var totalScore = parseInt($('#expected-total-score').val());

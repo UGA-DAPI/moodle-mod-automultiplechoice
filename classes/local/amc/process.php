@@ -584,22 +584,21 @@ class process
             \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), get_string('catalog', 'mod_automultiplechoice'), $opts),
             \html_writer::link($this->getFileUrl($this->normalizeFilename('corriges')), get_string('corrections', 'mod_automultiplechoice'), $opts),
         );
-        return <<<EOL
-        <ul class="amc-files">
-            <li>
-                $links[0]
-                <div>get_string('process_statements_file', 'mod_automultiplechoice')</div>
-            </li>
-            <li>
-                $links[1]
-                <div>get_string('process_catalog_file', 'mod_automultiplechoice')</div>
-            </li>
-            <li>
-                $links[2]
-                <div>get_string('process_corrections_file', 'mod_automultiplechoice')</div>
-            </li>
-        </ul>
-EOL;
+
+        $html = '<ul class="amc-files">';
+        $html .= '<li>';
+        $html .= $links[0];
+        $html .= '<div>' . get_string('process_statements_file', 'mod_automultiplechoice') . '</div>';
+        $html .= '</li>';
+        $html .= '<li>';
+        $html .= $links[1];
+        $html .= '<div>' . get_string('process_catalog_file', 'mod_automultiplechoice') . '</div>';
+        $html .= '</li>';
+        $html .= '<li>';
+        $html .= $links[2];
+        $html .= '<div>' . get_string('process_corrections_file', 'mod_automultiplechoice') . '</div>';
+        $html .= '</li>';
+        return $html;
     }
     /**
      * Return the HTML that for the link to the ZIP file.
@@ -608,16 +607,15 @@ EOL;
      */
     public function getHtmlZipLink() {
         $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), get_string('documents', 'mod_automultiplechoice'), array('class' => 'btn')),
+            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), get_string('documents', 'mod_automultiplechoice'), array('class' => 'btn'))
         );
-        return <<<EOL
-        <ul class="amc-files">
-            <li>
-                $links[0]
-                <div>get_string('process_archive', 'mod_automultiplechoice')</div>
-            </li>
-        </ul>
-EOL;
+        $html = '<ul class="amc-files">';
+        $html .= '<li>';
+        $html .= $links[0];
+        $html .= '<div>' . get_string('process_archive', 'mod_automultiplechoice') . '</div>';
+        $html .= '</li>';
+        $html .= '</ul>';
+        return $html;
     }
     public function getZipLink() {
         return $this->getFileUrl($this->normalizeFilename('sujets'));

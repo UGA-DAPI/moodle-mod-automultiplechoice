@@ -1,0 +1,108 @@
+<form action="" method="post" name="qselect">
+    <input name="a" value={{quiz.id}} type="hidden" />
+    <input name="qnumber" value={{quiz.qnumber}} type="hidden" id="quizz-qnumber"/>
+
+    <table class="table table-striped" id="params-quizz">
+        <tbody>
+            <tr>
+                <th>{{#str}} score, mod_automultiplechoice {{/str}}</th>
+                <td><input id="expected-total-score" type="number" class="form-control qscore" name="score" value="{{quiz.score}}" /></td>
+            </tr>
+            <tr>
+                <th>{{#str}} amc_grademax, mod_automultiplechoice {{/str}}</th>
+                <td><input type="number" class="form-control" id="amc-grademax" name="amc[grademax]" value="{{quiz.amcparams.grademax}}" /></td>
+            </tr>
+            <tr>
+                <th>{{#str}} amc_gradegranularity, mod_automultiplechoice {{/str}}</th>
+                <td>
+                    <select class="custom-select" name="amc[gradegranularity]">
+                        {{#granularities}}                           
+                            <option value={{value}} {{#selected}}selected{{/selected}}>{{label}}</option>
+                        {{/granularities}}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>{{#str}} amc_graderounding, mod_automultiplechoice {{/str}}</th>
+                <td>
+                    <select class="custom-select" name="amc[graderounding]">
+                        {{#graderoundings}}                           
+                            <option value={{value}} {{#selected}}selected{{/selected}}>{{label}}</option>
+                        {{/graderoundings}}                        
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>{{#str}} scoringset, mod_automultiplechoice {{/str}}</th>
+                <td>
+                    <select class="custom-select" name="amc[scoringset]">
+                        {{#scoringsets}}                           
+                            <option value={{value}} {{#selected}}selected{{/selected}}>{{label}}</option>
+                        {{/scoringsets}}                        
+                    </select>
+                    <div id="scoringset_desc"></div>
+                    
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-striped" id="questions-selected">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>{{#str}} qscore, mod_automultiplechoice {{/str}}</th>
+                <th>
+                    {{#str}} qtitle, mod_automultiplechoice {{/str}}
+                     <button type="button" data-toggle="tooltip" title="{{#str}} scoring_show_hide_answers, mod_automultiplechoice {{/str}}" role="button" class="btn btn-link" id="btn-toggle-answers">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#questions}}
+                <tr>
+                {{#section}}
+                    <td colspan="3">
+                        <h5>{{name}}</h5>
+                        <div class="section-description">{{description}}</div>
+                        <input name="q[score][]" value="" type="hidden" />
+                    </td>
+                {{/section}}
+                {{^section}}
+                    <td>{{index}}</td>
+                    <td class="q-score">
+                        <input name="q[score][]" class="qscore form-control" type="number" value={{score}} />
+                    </td>
+                    <td>
+                        <div><b>{{name}}</b></div>
+                        <div>{{text}}</div>
+                        <div class="question-answers">
+                            <ul>
+                            {{#answers}}
+                                <li class={{class}}>{{label}}</li>
+                            {{/answers}}
+                            </ul>
+                        </div>
+                    </td>
+                {{/section}}
+                </tr>
+            {{/questions}}
+            
+            <tr>
+                <td colspan="2">
+                    <div style="text-align:center;font-weight:bold;" class="text-center">
+                        <span id="computed-total-score">{{quiz.score}}</span> /
+                        <span id="total-score">{{quiz.score}}</span>
+                    </div>
+                </td>
+                <td>
+                    <button type="button" role="button" class="btn btn-default" id="scoring-distribution">{{#str}} scoring_allocate_points, mod_automultiplechoice {{/str}}</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">
+       <i class="fa fa-save"></i> {{#str}} save, mod_automultiplechoice {{/str}}
+    </button>
+</form>

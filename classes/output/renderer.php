@@ -1,6 +1,6 @@
 <?php
 
-class mod_automultiplechoice_renderer extends plugin_renderer_base {
+class mod_automultiplechoice_renderer extends \plugin_renderer_base {
     /**
      * @var mod_automultiplechoice\local\models\quizz $quiz an automultiplechoice object.
      */
@@ -50,7 +50,7 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base {
         $title = $this->page->course->shortname . " — " . $activityname;
 
         if (!$this->cm) {
-            $this->cm = get_coursemodule_from_instance('automultiplechoice', $this->quiz->id, $this->quiz->course, false, MUST_EXIST);;
+            $this->cm = get_coursemodule_from_instance('automultiplechoice', $this->quiz->id, $this->quiz->course, false, MUST_EXIST);
         }
         $context = context_module::instance($this->cm->id);
 
@@ -76,15 +76,13 @@ class mod_automultiplechoice_renderer extends plugin_renderer_base {
                 unset($currenttab);
             }
         }
-        $output .= <<<EOL
-        <noscript>
-            <div class="box errorbox">
-            <h2>Erreur : Javascript n'est pas activé</h2>
-            Javascript n'est pas activé dans votre navigateur.
-            Cette activité ne pourra pas fonctionner correctement sans Javascript.
-            </div>
-        </noscript>
-EOL;
+
+        $noscript = '<noscript>';
+        $noscript .= '<div class="box errorbox">';
+        $noscript .= '<h2>Erreur : Javascript n\'est pas activé. Cette activité ne pourra pas fonctionner correctement sans Javascript.</h2>';
+        $noscript .= '</div>';
+        $noscript = '</noscript>';
+        $output .= $noscript;
         return $output;
     }
 
@@ -97,24 +95,32 @@ EOL;
 
         return $output;
     }
-    /**
-     * Returns the footer
-     * @return string
-     */
-    public function footer() {
-        return $this->output->footer();
-    }
 
-    public function displayErrors($errors) {
+    public function display_errors($errors) {
         echo $this->box_start('errorbox');
         echo '<p>' . get_string('someerrorswerefound') . '</p>';
         echo '<dl>';
         foreach ($errors as $field => $error) {
             $field = preg_replace('/^(.+)\[(.+)\]$/', '${1}_${2}', $field);
-            echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>\n"
-                    . "<dd>" . get_string($error, 'automultiplechoice') . "</dd>\n";
+            echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>";
+            echo "<dd>" . get_string($error, 'automultiplechoice') . "</dd>";
         }
-        echo "</dl>\n";
+        echo "</dl>";
         echo $this->box_end();
+    }
+
+    public function render_dashboard(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_automultiplechoice/dashboard', $data);
+    }
+
+    public function render_student_view(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_automultiplechoice/student_view', $data);
+    }
+
+    public function render_scoring_form(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_automultiplechoice/scoring_form', $data);
     }
 }

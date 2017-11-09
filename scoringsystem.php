@@ -15,10 +15,11 @@ $course = $controller->getCourse();
 
 $output = $controller->getRenderer('scoringsystem');
 
-
 if (!count($quiz->questions)) {
     redirect(new moodle_url('questions.php', array('a' => $quiz->id)));
 }
+
+// Handle form submission.
 if (isset($_POST['score'])) {
     $quiz->score = (int) $_POST['score'];
     $quiz->amcparams->readFromForm($_POST['amc']);
@@ -36,22 +37,21 @@ if (isset($_POST['score'])) {
             $export = new \mod_automultiplechoice\local\amc\export($quiz);
             $res = $export->saveFormat('latex') && $process->amcPrepareBareme();
             if (!$res) {
-                 \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('error', get_string('scoring_scale_extract_error','mod_automultiplechoice'));
+                 \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('error', get_string('scoring_scale_extract_error', 'mod_automultiplechoice'));
             } else {
                 \mod_automultiplechoice\local\helpers\log::build($quiz->id)->write('scoring');
-                \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('success', get_string('scoring_scale_save_success','mod_automultiplechoice'));
+                \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('success', get_string('scoring_scale_save_success', 'mod_automultiplechoice'));
             }
 
         } else {
-            die("Could not save into automultiplechoice");
+            die(get_string('quiz_save_error', 'mod_automultiplechoice'));
         }
     } else {
-        $output->displayErrors($quiz->errors);
+        $output->display_errors($quiz->errors);
     }
 }
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
-
 
 // Output starts here.
 $PAGE->set_url('/mod/automultiplechoice/scoringsystem.php', array('id' => $cm->id));
@@ -61,17 +61,11 @@ $PAGE->requires->js_call_amd('mod_automultiplechoice/scoringsystem', 'init');
 echo $output->header();
 
 if (!$quiz->validate()) {
-    echo $OUTPUT->box_start('errorbox');
-    echo '<p>' . get_string('someerrorswerefound') . '</p>';
-    echo '<dl>';
-    foreach ($quiz->errors as $field => $error) {
-        $field = preg_replace('/^(.+)\[(.+)\]$/', '${1}_${2}', $field);
-        echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>\n"
-                . "<dd>" . get_string($error, 'automultiplechoice') . "</dd>\n";
-    }
-    echo "</dl>\n";
-    echo $OUTPUT->box_end();
+    $output->display_errors($quiz->errors);
 }
 
-\mod_automultiplechoice\local\helpers\html::printFormFullQuestions($quiz);
-echo $output->footer();
+// Scoring system form.
+$form = new \mod_automultiplechoice\output\scoring_form($quiz);
+echo $output->render_scoring_form($form);
+
+echo $OUTPUT->footer();

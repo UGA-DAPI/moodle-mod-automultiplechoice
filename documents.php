@@ -54,7 +54,7 @@ if ($action === 'lock') {
     redirect(new moodle_url('documents.php', array('a' => $quiz->id)));
 } else if ($action === 'restore') {
     array_map('restore_source', glob($quiz->getDirName() . '/*.orig'));
-    copy($quiz->getDirName().'/data/capture.sqlite.orig',$quiz->getDirName().'data/capture.sqlite');
+    copy($quiz->getDirName().'/data/capture.sqlite.orig', $quiz->getDirName().'data/capture.sqlite');
 }
 
 $PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));
@@ -73,9 +73,9 @@ if ($quiz->isLocked()) {
         $unlockbutton->add_confirm_action(implode('\n', $message));
     }
     echo '<div class="informationbox notifyproblem alert alert-info">'
-        . get_string('quiz_is_locked', 'mod_automultiplechoice')
+        . '<div>' .get_string('quiz_is_locked', 'mod_automultiplechoice') .'</div>'
         . $OUTPUT->render($unlockbutton)
-        . "</div>\n";
+        . "</div>";
 
     echo $OUTPUT->heading(get_string('documents_pdf_created', 'mod_automultiplechoice'), 3);
     echo $process->getHtmlPdfLinks();

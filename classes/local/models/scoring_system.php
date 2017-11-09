@@ -38,7 +38,7 @@ class scoring_system {
         return $system;
     }
     /**
-     * Returns the list of defined rule sets.
+     * Returns the list of defined rule sets names.
      *
      * @return array
      */
@@ -49,6 +49,11 @@ class scoring_system {
         }
         return $select;
     }
+
+    public function get_sets() {
+        return self::$sets;
+    }
+
     /**
      * Return the HTML for a select element.
      *
@@ -96,4 +101,6 @@ class scoring_system {
         }
         return $scoringSets;
     }
+
+    
 }

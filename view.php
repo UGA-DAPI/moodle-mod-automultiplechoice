@@ -21,66 +21,37 @@ if (!count($quiz->questions)) {
 }
 
 $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
-$PAGE->requires->js(
-    new moodle_url('/mod/automultiplechoice/assets/scoringsystem.js')
-);
 
-$viewContext = $controller->getContext();
-require_capability('mod/automultiplechoice:view', $viewContext);
-if (!has_capability('mod/automultiplechoice:update', $viewContext) ) { // simple étudiant
+// Is it used ?
+//$PAGE->requires->js_call_amd('mod_automultiplechoice/scoringsystem', 'init');
 
-    $anotatedfile = $process->getUserAnotatedSheet($USER->idnumber);
-    if ($quiz->studentaccess && $anotatedfile) {
-        $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
-        echo $output->header();
+$viewcontext = $controller->getContext();
 
-        $url = $process->getFileUrl($anotatedfile);
-        echo '<p>';
-        echo get_string('studentview_one_corrected_sheet', 'mod_automultiplechoice');
-        echo '</p>';
-        echo \html_writer::link($url, $anotatedfile, array('target' => '_blank')) . "</p>";
+// Render header.
+echo $output->header();
 
-        if ($quiz->corrigeaccess) {
-            $corrige = $process->normalizeFilename('corrige');
-            $link = \html_writer::link($process->getFileUrl($corrige), $corrige, array('target' => '_blank'));
-            echo '<p>';
-            echo get_string('studentview_view_corrected_sheet', 'mod_automultiplechoice');
-            echo $link;
-            echo '</p>';
-        }
-        echo $output->footer();
-    } else {
-        echo $output->header();
-        echo $output->heading(get_string('studentview_no_corrected_sheet', 'mod_automultiplechoice'));
-        echo $output->footer();
-    }
+require_capability('mod/automultiplechoice:view', $viewcontext);
+
+if (!has_capability('mod/automultiplechoice:update', $viewcontext)) {
+    $studentview = new \mod_automultiplechoice\output\student_view($quiz, $process, $USER);
+    echo $output->render_student_view($studentview);
+    echo $output->footer();
     return;
 }
 
-// Teacher or admin with editing capability
+// Anyone with editing capability.
 
+// Maybe this log should be recorded for the student to ?
 add_to_log($course->id, 'automultiplechoice', 'view', "view.php?id={$cm->id}", $quiz->name, $cm->id);
 
-// Output starts here
-echo $output->header();
-
 if (!$quiz->validate()) {
-    echo $OUTPUT->box_start('errorbox');
-    echo '<p>' . get_string('someerrorswerefound') . '</p>';
-    echo '<dl>';
-    foreach ($quiz->errors as $field => $error) {
-        $field = preg_replace('/^(.+)\[(.+)\]$/', '${1}_${2}', $field);
-        echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>\n"
-                . "<dd>" . get_string($error, 'automultiplechoice') . "</dd>\n";
-    }
-    echo "</dl>\n";
-    echo $OUTPUT->box_end();
+    $output->display_errors($quiz->errors);
 }
 
 if ($quiz->isLocked()) {
-    // cannot put a button if we use $OUTPUT->notification
+    // Cannot put a button if we use $OUTPUT->notification.
     $unlockurl = new \moodle_url('documents.php', array('a' => $quiz->id, 'action' => 'unlock'));
-    $unlockbutton = new \single_button($unlockurl, 'Déverrouiller (permettre les modifications du questionnaire)');
+    $unlockbutton = new \single_button($unlockurl, get_string('unlock_quiz', 'mod_automultiplechoice'));
     $message = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('unlock');
     if ($message) {
         $unlockbutton->add_confirm_action(implode('\n', $message));
@@ -88,75 +59,12 @@ if ($quiz->isLocked()) {
     echo '<div class="informationbox notifyproblem alert alert-info">'
         . get_string('quiz_is_locked', 'mod_automultiplechoice')
         . get_string('access_documents', 'mod_automultiplechoice')
-        . '<em>'.get_string('documents', 'mod_automultiplechoice').'</em>'
+        . '<em> '.get_string('documents', 'mod_automultiplechoice').'</em>'
         . $OUTPUT->render($unlockbutton)
         . "</div>";
 }
 
-echo $OUTPUT->heading("1. " . get_string('settings'), 3);
-\mod_automultiplechoice\local\helpers\html::printTableQuiz($quiz, array('instructions', 'description'));
-
-echo $OUTPUT->heading("2. " . get_string('questions', 'question'), 3);
-\mod_automultiplechoice\local\helpers\html::printTableQuiz($quiz, array('qnumber'));
-
-echo $OUTPUT->heading("3. " . get_string('scoringsystem', 'automultiplechoice'), 3);
-\mod_automultiplechoice\local\helpers\html::printTableQuiz($quiz, array('score', 'grademax', 'scoringset'));
-
-echo $OUTPUT->heading("4. " . get_string('documents', 'automultiplechoice'), 3);
-if ($quiz->isLocked()) {
-    echo '<div>';
-    echo get_string('subjects_ready_for_distribution', 'mod_automultiplechoice');
-    echo '</div>';
-    echo $process->getHtmlZipLink();
-    echo $process->getHtmlPdfLinks();
-    echo '<div>'
-        . $OUTPUT->render($unlockbutton)
-        . '</div>';
-} else {
-    if ( $quiz->hasDocuments() ) {
-        echo '<div>';
-        echo get_string('preparatory_documents_ready', 'mod_automultiplechoice');
-        echo '</div>';
-        echo $process->getHtmlPdfLinks();
-    } else {
-        echo '<div>';
-        echo get_string('no_document_available', 'mod_automultiplechoice');
-        echo '</div>';
-    }
-    $preparetime = $process->lastlog('prepare:pdf');
-    if ($preparetime) {
-        echo '<div>';
-        echo get_string('pdf_last_prepare_date', 'mod_automultiplechoice', ['date' => $process::isoDate($preparetime)]);
-        echo '</div>';
-    } else {
-        echo '<div>';
-        echo get_string('pdf_none_prepared', 'mod_automultiplechoice', ['date' => $process::isoDate($preparetime)]);
-        echo '</div>';
-    }
-}
-
-echo $OUTPUT->heading("5. " . get_string('uploadscans', 'automultiplechoice'), 3);
-$scans = $process->statScans();
-if ($scans) {
-    echo '<div>';
-    echo get_string('dashboard_nb_page_scanned', 'mod_automultiplechoice', ['nbpage' => $scans['count'], 'date' => $scans['timefr']]);
-    echo '</div>';
-} else {
-    echo '<div>';
-    echo get_string('uploadscans_no_sheets_uploaded', 'mod_automultiplechoice');
-    echo '</div>';
-}
-echo $OUTPUT->heading( "6. " . get_string('associating', 'automultiplechoice'), 3);
-
-
-echo $OUTPUT->heading("7. " . get_string('grading', 'automultiplechoice'), 3);
-if ($scans && $process->isGraded()) {
-    echo $process->getHtmlStats();
-} else {
-    echo '<div>';
-    echo get_string('dashboard_no_sheets_corrected', 'mod_automultiplechoice');
-    echo '</div>';
-}
-echo $OUTPUT->heading( "8. " . get_string('annotating', 'automultiplechoice'), 3);
-
-echo $output->footer();
+// Dashboard content.
+$dashboard = new \mod_automultiplechoice\output\dashboard($quiz);
+echo $output->render_dashboard($dashboard);
+echo $OUTPUT->footer();

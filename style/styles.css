@@ -199,3 +199,21 @@ dt:after {
 table.dataTable td {
     box-sizing: border-box !important;
 }
+
+/* Only works with the !important flag but moodle says its a bad practice to do so... https://docs.moodle.org/dev/Element_HTML_and_CSS_guidelines */
+td, th {
+    vertical-align: middle !important;
+}
+
+
+.margin-bottom-sm {
+    margin-bottom: 5px;
+}
+
+.margin-bottom-md {
+    margin-bottom: 10px;
+}
+
+.margin-bottom-xl {
+    margin-bottom: 15px;
+}

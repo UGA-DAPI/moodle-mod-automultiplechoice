@@ -43,6 +43,7 @@ $string['error_could_not_create_directory'] = 'Impossible de créer le répertoi
 $string['error_could_not_write_directory'] = 'Impossible d\'écrire dans le répertoire. Merci de contacter votre administrateur système.';
 $string['error_amc_getimages'] = 'Erreur découpage scan (amc getimages).';
 $string['error_amc_analyse'] = 'Erreur lors de l\'analyse (amc analyse).';
+$string['save'] = 'Sauvegarder';
 
 // Dashboard.
 $string['subjects_ready_for_distribution'] = 'Les sujets sont prêts à être distribués.';
@@ -75,6 +76,11 @@ $string['grading_file_notes_table'] = 'Fichiers tableaux des notes';
 $string['grading_sheets_identified'] = '{$a->known} copies identifiées et {$a->unknown} non identifiées.';
 $string['grading_statistics'] = 'Statistiques';
 $string['grading_not_satisfying_notation'] = 'Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.';
+$string['grading_size'] = 'Effectifs';
+$string['grading_mean'] = 'Moyenne';
+$string['grading_median'] = 'Médiane';
+$string['grading_mode'] = 'Mode';
+$string['grading_range'] = 'Intervalle';
 
 // Logs messages.
 $string['log_process_running'] = 'AMC est déjà en cours d\'exécution depuis {$a->time} minutes.';
@@ -108,6 +114,8 @@ $string['corrections'] = 'Corrigés';
 // Scoring.
 $string['scoring_scale_extract_error'] = 'Erreur lors de l\'extraction du barème';
 $string['scoring_scale_save_success'] = 'Les modifications du barème ont été enregistrées.';
+$string['scoring_allocate_points'] = 'Répartir les points.';
+$string['scoring_show_hide_answers'] = 'Afficher/masquer les réponses.';
 
 // Scan upload.
 $string['uploadscans_file_not_accessible'] = 'Impossible d\'accéder au fichier déposé.';
@@ -150,6 +158,8 @@ $string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attenti
 $string['studentview_one_corrected_sheet'] = 'Vous avez une copie corrigée :';
 $string['studentview_no_corrected_sheet'] = 'Vous n\'avez pas de copie corrigée pour ce QCM';
 $string['studentview_view_corrected_sheet'] = 'Vous pouvez consulter le corrigé ici :';
+$string['studentview_sheet'] = 'Copie';
+$string['studentview_corrected'] = 'Corrigé';
 
 // OTHERS.
 $string['modulename'] = 'QCM papier';

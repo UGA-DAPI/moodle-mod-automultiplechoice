@@ -1,0 +1,26 @@
+{{!herits from page.mustache}}
+{{< mod_automultiplechoice/page}}
+  {{$content}}
+  <ul class="slots section img-text yui3-dd-drop">
+    {{#questions}}
+      {{#section}}
+        <h4>{{name}}</h4>
+      {{/section}}
+      {{^section}}
+        <li id="slot-{{index}}" class="activity multichoice qtype_multichoice slot yui3-dd-drop">
+          <div>
+            <span class="editing_move moodle-core-dragdrop-draghandle" title="Move" tabindex="{{index}}" data-draggroups="resource" role="button">
+              <i class="icon fa fa-arrows fa-fw  iconsmall" aria-hidden="true" title="" aria-label="" style="cursor: move;"></i>
+            </span>
+            <span class="slotnumber">{{index}}</span>
+            <div class="modindent"></div>
+            <div class="activityinstance">
+              <span class="instancename">Question : {{name}}</span>
+            </div>
+          </div>
+        </li>
+      {{/section}}
+    {{/questions}}
+  </ul>
+  {{/content}}
+{{/mod_automultiplechoice/page}}
