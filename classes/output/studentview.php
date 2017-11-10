@@ -1,8 +1,10 @@
 <?php
+
 namespace mod_automultiplechoice\output;
+
 defined('MOODLE_INTERNAL') || die();
-class student_view implements \renderable, \templatable
-{
+
+class studentview implements \renderable, \templatable {
     /**
      * The auto multiple choice quiz.
      *

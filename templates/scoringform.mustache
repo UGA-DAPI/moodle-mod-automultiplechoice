@@ -36,12 +36,15 @@
                 <th>{{#str}} scoringset, mod_automultiplechoice {{/str}}</th>
                 <td>
                     <select class="custom-select" name="amc[scoringset]">
+                        {{!is it really necessary ?}}
+                        <option value=""></option>
                         {{#scoringsets}}                           
                             <option value={{value}} {{#selected}}selected{{/selected}}>{{label}}</option>
                         {{/scoringsets}}                        
                     </select>
-                    <div id="scoringset_desc"></div>
-                    
+                    <div class="scoringset-description" id="scoringset_desc">
+                        {{!dynamically loaded via ajax}}
+                    </div>                    
                 </td>
             </tr>
         </tbody>

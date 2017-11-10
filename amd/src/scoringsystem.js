@@ -1,24 +1,19 @@
 define(['jquery'], function ($) {
     return {
         init: function () {
-            // marche pas
-            $('#params-quizz select').on('click', this.updateScoringDescription());
-            this.updateScoringDescription();
 
-            // var expectedTotalScore = parseInt($('#expected-total-score').val());
+            $('#params-quizz select[name="amc[scoringset]"]').on('change', function() {
+                console.log('should update');
+                // update socring strategy description field
+                this.updateScoringDescription();
+            }.bind(this));
+
+            this.updateScoringDescription();
 
             // Listen to scores input changes in order to warn the user if inconsistent results.
             $('#questions-selected').on('change', 'input.qscore', function () {                
                 this.checkScoreConsistency();
             }.bind(this));
-            //$('#questions-selected input.qscore').first().keyup();
-
-            /*$('#params-quizz').on('keyup', 'input.qscore', function (e) {
-                var res = parseInt($(this).val());
-                var total = parseInt($('#computed-total-score').text());
-                $('#total-score').html(res)
-                    .parent().toggleClass('score-mismatch', res !== total);
-            });*/
 
             // Show / Hide questions answers.
             $('#btn-toggle-answers').on('click', function() {

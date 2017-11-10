@@ -4,7 +4,7 @@ namespace mod_automultiplechoice\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-class scoring_form implements \renderable, \templatable {
+class scoringform implements \renderable, \templatable {
     /**
      * An array containing page data
      *
@@ -28,13 +28,14 @@ class scoring_form implements \renderable, \templatable {
      */
     public function export_for_template(\renderer_base $output) {
         $granularities = [];
-        foreach (['0.25', '0.5', '1.0'] as $value) {
+        foreach ([0.25, 0.5, 1.0] as $value) {
             if ($this->quiz->amcparams->gradegranularity === $value) {
                 $granularities[] = ['value' => $value, 'label' => $value, 'selected' => true];
             } else {
                 $granularities[] = ['value' => $value, 'label' => $value, 'selected' => false];
             }
         }
+
         $graderoundings = [];
         foreach (\mod_automultiplechoice\local\amc\params::$scoreRcoundingValues as $key => $label) {
             if ($this->quiz->amcparams->graderounding === $key) {
@@ -45,8 +46,9 @@ class scoring_form implements \renderable, \templatable {
         }
         $scoringsetsbase = \mod_automultiplechoice\local\models\scoring_system::read()->get_sets();
         $scoringsets = [];
+
         foreach ($scoringsetsbase as $rank => $scoringset) {
-            if ($this->quiz->amcparams->scoringset !== '' &&  $this->quiz->amcparams->scoringset === $rank) {
+            if (is_numeric($this->quiz->amcparams->scoringset) &&  intval($this->quiz->amcparams->scoringset) === $rank) {
                 $scoringsets[] = ['value' => $rank, 'label' => htmlspecialchars($scoringset->name), 'selected' => true];
             } else {
                 $scoringsets[] = ['value' => $rank, 'label' => htmlspecialchars($scoringset->name), 'selected' => false];
@@ -69,22 +71,7 @@ class scoring_form implements \renderable, \templatable {
             if ($question->getType() !== 'section') {
                 $index++;
             }
-            /*if ($q->getType() === 'section') {
-                echo '<td colspan="3">' . htmlspecialchars($q->name)
-                    . '<div class="question-answers">' . format_text($q->description, FORMAT_HTML) . '</div>'
-                    . '<input name="q[score][]" value="" type="hidden" />';
-            } else {
-                echo '<td>' . $k . '</td>
-                    <td class="q-score">
-                        <input name="q[score][]" class="form-control" type="number" class="qscore" value="' . $q->score . '" />
-                    </td>
-                    <td><div><b>' . format_string($q->name) . '</b></div><div>'. format_string($q->questiontext) . '</div>'
-                        . \mod_automultiplechoice\local\helpers\html::listAnswers($q);
-                $k++;
-            }*/
-
         }
-
 
         $content = [
             'quiz' => $this->quiz,
@@ -93,6 +80,7 @@ class scoring_form implements \renderable, \templatable {
             'scoringsets' => $scoringsets,
             'questions' => $questions
         ];
+
         return $content;
     }
 }

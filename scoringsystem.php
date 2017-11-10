@@ -65,7 +65,7 @@ if (!$quiz->validate()) {
 }
 
 // Scoring system form.
-$form = new \mod_automultiplechoice\output\scoring_form($quiz);
-echo $output->render_scoring_form($form);
+$view = new \mod_automultiplechoice\output\scoringform($quiz);
+echo $output->render_scoring_form($view);
 
 echo $OUTPUT->footer();

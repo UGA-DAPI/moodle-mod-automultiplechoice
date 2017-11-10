@@ -116,11 +116,16 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
 
     public function render_student_view(\templatable $page) {
         $data = $page->export_for_template($this);
-        return $this->render_from_template('mod_automultiplechoice/student_view', $data);
+        return $this->render_from_template('mod_automultiplechoice/studentview', $data);
     }
 
     public function render_scoring_form(\templatable $page) {
         $data = $page->export_for_template($this);
-        return $this->render_from_template('mod_automultiplechoice/scoring_form', $data);
+        return $this->render_from_template('mod_automultiplechoice/scoringform', $data);
+    }
+
+    public function render_documents_view(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_automultiplechoice/documents', $data);
     }
 }

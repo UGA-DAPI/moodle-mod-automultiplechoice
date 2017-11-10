@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Prepare the 2 pdf files (sujet + corrigé) and let the user download them
- *
- * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 require_once(__DIR__ . '/locallib.php');
 
 
@@ -23,6 +15,8 @@ $output = $controller->getRenderer('documents');
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
+
+// Handle Form submission.
 $action = optional_param('action', '', PARAM_ALPHA);
 $process = new \mod_automultiplechoice\local\amc\process($quiz);
 if ($action === 'lock') {
@@ -31,7 +25,7 @@ if ($action === 'lock') {
     $quiz->save();
     array_map('backup_source', glob($quiz->getDirName() . '/prepare-source.*'));
     if (!$process->amcMeptex()) {
-        $process->errors[] = gt_string('documents_meptex_error', 'mod_automultiplechoice');
+        $process->errors[] = get_string('documents_meptex_error', 'mod_automultiplechoice');
     }
     copy($quiz->getDirName().'/data/capture.sqlite', $quiz->getDirName().'/data/capture.sqlite.orig');
 } else if ($action === 'unlock') {
@@ -77,31 +71,13 @@ if ($quiz->isLocked()) {
         . $OUTPUT->render($unlockbutton)
         . "</div>";
 
-    echo $OUTPUT->heading(get_string('documents_pdf_created', 'mod_automultiplechoice'), 3);
-    echo $process->getHtmlPdfLinks();
-
-    echo $OUTPUT->heading(get_string('documents_zip_archive', 'mod_automultiplechoice'), 3);
-    echo $process->getHtmlZipLink();
-    if (has_capability('mod/automultiplechoice:restoreoriginalfile', $controller->getContext())) {
-        echo $OUTPUT->single_button(
-                new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quiz->id, 'action' => 'restore')),
-                get_string('documents_restore_original_version', 'mod_automultiplechoice'), 'post'
-            );
-    }
-
 } else {
     foreach (\mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('pdf') as $warning) {
         echo $OUTPUT->notification($warning, 'notifyproblem');
     }
-    echo $OUTPUT->heading(get_string('documents_pdf_created', 'mod_automultiplechoice'), 3);
-    echo $process->getHtmlPdfLinks();
-    echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quiz->id, 'action' => 'randomize')),
-                    get_string('documents_mix_answers_and_questions', 'mod_automultiplechoice'));
-
-            echo $OUTPUT->single_button(
-                    new moodle_url('/mod/automultiplechoice/documents.php', array('a' => $quiz->id, 'action' => 'lock')),
-                    get_string('lock_quiz', 'mod_automultiplechoice'));
 }
 
-echo $output->footer();
+// Dashboard content.
+$view = new \mod_automultiplechoice\output\documents($quiz);
+echo $output->render_documents_view($view);
+echo $OUTPUT->footer();

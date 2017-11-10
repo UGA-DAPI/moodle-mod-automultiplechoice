@@ -33,7 +33,7 @@ echo $output->header();
 require_capability('mod/automultiplechoice:view', $viewcontext);
 
 if (!has_capability('mod/automultiplechoice:update', $viewcontext)) {
-    $studentview = new \mod_automultiplechoice\output\student_view($quiz, $process, $USER);
+    $studentview = new \mod_automultiplechoice\output\studentview($quiz, $process, $USER);
     echo $output->render_student_view($studentview);
     echo $output->footer();
     return;
@@ -65,6 +65,6 @@ if ($quiz->isLocked()) {
 }
 
 // Dashboard content.
-$dashboard = new \mod_automultiplechoice\output\dashboard($quiz);
-echo $output->render_dashboard($dashboard);
+$view = new \mod_automultiplechoice\output\dashboard($quiz);
+echo $output->render_dashboard($view);
 echo $OUTPUT->footer();
