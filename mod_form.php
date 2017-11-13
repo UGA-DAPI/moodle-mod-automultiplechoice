@@ -1,23 +1,10 @@
 <?php
-/**
- * The main automultiplechoice configuration form
- *
- * It uses the standard core Moodle formslib. For more info about them, please
- * visit: http://docs.moodle.org/en/Development:lib/formslib.php
- *
- * @package    mod_automultiplechoice
- * @copyright  2013 Silecs
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->dirroot.'/course/moodleform_mod.php';
-//require_once __DIR__ . '/models/Quizz.php';
-require_once __DIR__ . '/locallib.php';
-//require_once __DIR__ . '/models/ScoringSystem.php';
 
-//use \mod\automultiplechoice as amc;
+require_once __DIR__ . '/locallib.php';
 
 /* @var $PAGE moodle_page */
 

@@ -61,7 +61,7 @@ if ($warnings) {
     }
 
     echo "<br /><br />";
-    echo $OUTPUT->single_button( 
+    echo $OUTPUT->single_button(
         new moodle_url(
             '/mod/automultiplechoice/annotating.php',
             array( 'a' => $quiz->id, 'action' => 'annotate')

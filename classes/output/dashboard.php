@@ -6,9 +6,9 @@ defined('MOODLE_INTERNAL') || die();
 
 class dashboard implements \renderable, \templatable {
     /**
-     * An array containing page data
+     * The auto multiple choice quiz.
      *
-     * @var array
+     * @var \mod_automultiplechoice\local\models\quiz
      */
     protected $quiz;
 
@@ -22,12 +22,13 @@ class dashboard implements \renderable, \templatable {
     /**
      * Contruct
      *
-     * @param array $content An array of renderable headings
+     * @param mod_automultiplechoice/local/models/quiz $quiz A quiz
      */
     public function __construct($quiz) {
         $this->quiz = $quiz;
         $this->process = new \mod_automultiplechoice\local\amc\process($quiz);
     }
+    
     /**
      * Prepare data for use in a template
      *
@@ -36,11 +37,10 @@ class dashboard implements \renderable, \templatable {
      */
     public function export_for_template(\renderer_base $output) {
         $questionscount = $this->quiz->questions->count();
+        $scoringset = \mod_automultiplechoice\local\models\scoring_system::read()->get_sets()[$this->quiz->amcparams->scoringset];
+
         $content = [
-          'quizId' => $this->quiz->id,
-          'title' => $this->quiz->name,
-          'locked' => $this->quiz->isLocked(),
-          'errors' => $this->quiz->errors,
+          'quiz' => $this->quiz,
           'settings' => [
             'title' => get_string('settings'),
             'rows' => [
@@ -72,11 +72,11 @@ class dashboard implements \renderable, \templatable {
               ],
               1 => [
                 'label' => get_string('amc_grademax', 'automultiplechoice'),
-                'data' => $this->quiz->grademax
+                'data' => $this->quiz->amcparams->grademax
               ],
               2 => [
                 'label' => get_string('scoringset', 'automultiplechoice'),
-                'data' => $this->quiz->scoringset
+                'data' =>  $scoringset->name
               ]
             ]
           ],

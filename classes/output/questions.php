@@ -4,11 +4,12 @@ defined('MOODLE_INTERNAL') || die();
 class questions implements \renderable, \templatable
 {
     /**
-     * An array containing page data
+     * The auto multiple choice quiz.
      *
-     * @var array
+     * @var \mod_automultiplechoice\local\models\quiz
      */
     protected $quiz;
+
     /**
      * An array containing page data
      *

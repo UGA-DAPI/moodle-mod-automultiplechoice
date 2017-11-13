@@ -145,7 +145,7 @@ td ul {
     font-size: 200%;
     width: auto;
 }
-
+/*
 #form-uploadscans > div {
     width: 80ex;
     text-align: right;
@@ -153,7 +153,7 @@ td ul {
 #form-uploadscans input#scanfile {
     width: 50ex;
 }
-
+*/
 dt {
     font-weight: bold;
 }

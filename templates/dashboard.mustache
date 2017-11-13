@@ -58,7 +58,7 @@
     <h4>{{documents.title}}</h4>
     <div class="row">
         <div class="col-md-12">
-        {{#locked}}
+        {{#quiz.isLocked}}
           <h6>{{#str}}subjects_ready_for_distribution, mod_automultiplechoice{{/str}}</h6>
           <a href={{documents.data.ziplink}}>{{#str}}documents, mod_automultiplechoice{{/str}} (ZIP)</a>
           <div>{{#str}}process_archive, mod_automultiplechoice{{/str}}</div>     
@@ -72,11 +72,11 @@
           {{/documents.data.pdflinks}}
           <form method="post" action="documents.php" onsubmit="return confirm('{{#str}}log_unlock_uploads_exists, mod_automultiplechoice{{/str}}');">
             <input type="hidden" value="unlock" name="action" />
-            <input type="hidden" value={{quizId}} name="a" />
+            <input type="hidden" value={{quiz.id}} name="a" />
             <button class="btn btn-danger" type="submit"><i class="fa fa-unlock"></i> {{#str}}unlock_quiz, mod_automultiplechoice{{/str}}</button>
           </form>          
-        {{/locked}}
-        {{^locked}}
+        {{/quiz.isLocked}}
+        {{^quiz.isLocked}}
           {{#documents.data.hasDocuments}}
             <div>{{#str}}preparatory_documents_ready, mod_automultiplechoice{{/str}}</div>
             {{#documents.data.pdflinks}}
@@ -97,7 +97,7 @@
           {{^documents.data.preparetime}}
             <div>{{#str}}pdf_none_prepared, mod_automultiplechoice{{/str}}</div>
           {{/documents.data.preparetime}}
-        {{/locked}}
+        {{/quiz.isLocked}}
       </div>
     </div>  
   </div>

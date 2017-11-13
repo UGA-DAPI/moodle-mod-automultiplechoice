@@ -1,0 +1,111 @@
+{{#errors}}
+<div class="errorbox alert alert-danger alert-dismissable">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    {{.}}
+</div>
+{{/errors}}
+
+{{#showstats}}
+    {{#logs}}
+        <div class="errorbox">
+            <div class="notifyproblem alert alert-warning alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{.}}
+            </div>
+        </div>
+    {{/logs}}
+    <div class="notifymessage alert alert-info alert-dismissable">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        {{#formsubmited}}
+            {{#str}}uploadscans_process_end_message, mod_automultiplechoice, {"nbpages": {{#quote}} {{nbpages}} {{/quote}},"nbextracted": {{#quote}}{{scanstats.count}}{{/quote}}, "nbidentified": {{#quote}}{{scanstats.nbidentified}}{{/quote}}}{{/str}}
+        {{/formsubmited}}
+        {{^formsubmited}}
+           {{#str}}uploadscans_saved_sheets, mod_automultiplechoice, {"nbsaved": {{#quote}} {{scanstats.count}} {{/quote}},"date": {{#quote}} {{#userdate}}{{scanstats.time}}, {{#str}} strftimedate {{/str}}{{/userdate}} {{/quote}}}{{/str}} 
+        {{/formsubmited}}
+    </div>
+{{/showstats}}
+
+{{#formsubmited}}
+    <dl>
+        <dt>{{#str}}file, core{{/str}}</dt>
+        <dd>{{fileinfos.name}}</dd>
+        <dt>{{#str}}file_type, mod_automultiplechoice{{/str}}</dt>
+        <dd>{{fileinfos.type}}</dd>
+        <dt>{{#str}}size, core{{/str}}</dt>
+        <dd>{{fileinfos.size}}</dd>
+        <dt>{{#str}}location, core{{/str}}</dt>
+        <dd>{{fileinfos.location}}</dd>
+    </dl>
+{{/formsubmited}}
+
+
+{{#showstats}}
+    <h4>{{#str}}uploadscans_add_sheets, mod_automultiplechoice{{/str}}</h4>
+    <p>{{#str}}uploadscans_add_sheets_message, mod_automultiplechoice{{/str}}</p>
+{{/showstats}}
+{{^showstats}}
+    <p> {{#str}}uploadscans_no_sheets_uploaded, mod_automultiplechoice{{/str}}</p>
+{{/showstats}}
+
+<form id="form-uploadscans" action="uploadscans.php?a={{quiz.id}}" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="scanfile">{{#str}}uploadscans_file, mod_automultiplechoice{{/str}}</label>
+        <input class="form-control" type="file" name="scanfile" id="scanfile" accept="application/pdf,image/tiff">
+    </div>
+    <div>
+        <input class="btn btn-primary" type="submit" name="submit" value="Envoyer">
+    </div>
+</form>
+
+{{#showstats}}
+    <hr/>
+    <h4>{{#str}}uploadscans_delete_sheets, mod_automultiplechoice {{/str}}</h4>
+    <form action="uploadscans.php?a={{quiz.id}}" method="post" enctype="multipart/form-data">
+        <p>
+            {{#str}}uploadscans_delete_sheets_warn, mod_automultiplechoice{{/str}}
+        </p>
+        <div>
+            <input type="hidden" name="action" value="deleteUploads" />
+            <button class="btn btn-danger" type="submit" onclick="return confirm('{{#str}}uploadscans_delete_sheets_confirm, mod_automultiplechoice{{/str}}')">
+               <i class="fa fa-trash"></i> {{#str}}uploadscans_delete_sheets, mod_automultiplechoice{{/str}}
+            </button>
+        </div>
+    </form>
+    {{#showfailed}}
+        <h4 class="helptitle">{{#str}}uploadscans_unknown_scans, mod_automultiplechoice{{/str}}</h4>
+        <div class="box generalbox boxaligncenter">
+            <form type="POST" action="uploadscans.php" onsubmit="return confirm('{{#str}}confirm, core{{/str}}')">
+                <input type="hidden" name="action" value="delete" />
+                <input type="hidden" name="a" value="{{quiz.id}}" />
+                <input type="hidden" name="scan" value="all" />
+                <button type="submit" class="btn btn-danger">{{#str}}uploadscans_delete_unknown_scans, mod_automultiplechoice{{/str}}</button>
+            </form>
+            <a href="{{downloadfailedurl}}" class="btn btn-default" target="_blank"> {{#str}}uploadscans_download_unknown_scans, mod_automultiplechoice{{/str}}</a>
+            <div class="amc_thumbnails_failed row">
+                <div class="thumbnails">
+                    {{#failed}}
+                        <form action="'uploadscans.php" onsubmit="return confirm('{{#str}}confirm, core{{/str}}')" method="POST">
+                            <input type="hidden" name="action" value="delete" />
+                            <input type="hidden" name="a" value="{{quiz.id}}" />
+                            <input type="hidden" name="scan" value="{{id}}" />
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <a href="{{link}}">
+                                        <img src="{{link}}" title="{{id}}"/>
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <button title="{{#str}}delete, core{{/str}}" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    {{/failed}}
+                </div>
+            </div>
+        </div>
+    {{/showfailed}}
+    {{^showfailed}}
+        <hr/>
+        <h4>{{#str}} uploadscans_install_sqlite3, mod_automultiplechoice {{/str}}</h4>
+    {{/showfailed}}
+{{/showstats}}

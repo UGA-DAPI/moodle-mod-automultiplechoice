@@ -133,6 +133,7 @@ $string['uploadscans_unknown_scans'] = 'Unknown scans';
 $string['uploadscans_delete_unknown_scans'] = 'Delete all unknown scans';
 $string['uploadscans_download_unknown_scans'] = 'Download all unknown scans';
 $string['uploadscans_install_sqlite3'] = 'Ask your system admin to install php-sqlite3 in order to see unknown files.';
+$string['uploadscans_file'] = 'Scanned file (PDF or TIFF)';
 
 // Settings.
 $string['settings_latex_path_short'] = 'Path to XelateX';

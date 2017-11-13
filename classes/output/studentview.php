@@ -8,9 +8,10 @@ class studentview implements \renderable, \templatable {
     /**
      * The auto multiple choice quiz.
      *
-     * @var mod_automultiplechoice/local/models/quiz
+     * @var \mod_automultiplechoice\local\models\quiz
      */
     protected $quiz;
+
     /**
      * Different process form AMC lib.
      *
@@ -23,6 +24,7 @@ class studentview implements \renderable, \templatable {
      * @var moodle_user
      */
     protected $user;
+    
     /**
      * Contruct
      *

@@ -185,7 +185,7 @@ class process
      * @return array with keys: count, time, timefr ; null if nothing was uploaded
      */
     public function statScans() {
-        $ppmfiles = $this->findScannedFiles();
+        $ppmfiles = $this->quiz->findScannedFiles();
         $tsmax = 0;
         $tsmin = PHP_INT_MAX;
         foreach ($ppmfiles as $file) {
@@ -269,6 +269,7 @@ class process
         }
         return $stats;
     }
+
     public function getStats2() {
         $this->readGrades();
         $mark = array();
@@ -282,6 +283,8 @@ class process
         }
         return $stats;
     }
+
+    
     /**
      * Fills the "grades" property from the CSV.
      *
@@ -401,7 +404,7 @@ class process
      * @param integer $contextid (opt)
      * @return \moodle_url
      */
-    public function getFileUrl($filename, $forcedld=false, $contextid=null) {
+    public function getFileUrl($filename, $forcedld = false, $contextid = null) {
         global $PAGE;
         if (!$contextid) {
             $contextid = $PAGE->context->id;
@@ -562,9 +565,9 @@ class process
      *
      * @return array
      */
-    protected function findScannedFiles() {
+    /*protected function findScannedFiles() {
         return $this->quiz->findScannedFiles();
-    }
+    }*/
     public function getPdfLinks() {
         return [
           'sujet' => $this->getFileUrl($this->normalizeFilename('sujet')),

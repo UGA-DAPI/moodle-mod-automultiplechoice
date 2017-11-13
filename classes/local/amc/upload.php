@@ -46,7 +46,7 @@ class upload extends \mod_automultiplechoice\local\amc\process {
      * @return boolean
      */
     public function deleteUploads() {
-        array_map('unlink', $this->findScannedFiles());
+        array_map('unlink', $this->quiz->findScannedFiles());
         array_map('unlink', glob($this->workdir . '/cr/*.jpg'));
         if (is_dir($this->workdir . '/cr/corrections')) {
             array_map('unlink', glob($this->workdir . '/cr/corrections/jpg/*'));
@@ -91,18 +91,15 @@ class upload extends \mod_automultiplechoice\local\amc\process {
     *      * @return string
     *           */
     public function get_failed_scans() {
-    global $OUTPUT;
-    if (extension_loaded('sqlite3')){
-        $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READONLY);
-        $results = $capture->query('SELECT * FROM capture_failed');
-        $scan=array();
-        while ($row = $results->fetchArray()) {
-            $scan[] = substr($row[0],8);
+        $scans = []; 
+        if (extension_loaded('sqlite3')){
+            $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READONLY);
+            $results = $capture->query('SELECT * FROM capture_failed');
+            while ($row = $results->fetchArray()) {
+                $scans[] = substr($row[0],8);
+            }
         }
-        return $scan;
-    }else{
-        return NULL;
-    }
+        return $scans;
     }
     /**
      * Shell-executes 'amc getimages'

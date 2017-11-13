@@ -6,20 +6,21 @@ defined('MOODLE_INTERNAL') || die();
 
 class documents implements \renderable, \templatable {
     /**
-     * An array containing page data
+     * The auto multiple choice quiz.
      *
-     * @var array
+     * @var \mod_automultiplechoice\local\models\quiz
      */
     protected $quiz;
 
     /**
      * Contruct
      *
-     * @param array $content An array of renderable headings
+     * @param mod_automultiplechoice/local/models/quiz $quiz A quiz
      */
     public function __construct($quiz) {
         $this->quiz = $quiz;
     }
+    
     /**
      * Prepare data for use in a template
      *

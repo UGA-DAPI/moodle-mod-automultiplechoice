@@ -35,7 +35,7 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
     }
 
     /**
-     * Returns the header for the automultiplechoice module
+     * Returns the header for all contents of the automultiplechoice module
      *
      * @return string
      */
@@ -127,5 +127,10 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
     public function render_documents_view(\templatable $page) {
         $data = $page->export_for_template($this);
         return $this->render_from_template('mod_automultiplechoice/documents', $data);
+    }
+
+    public function render_scansupload_view(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_automultiplechoice/scansupload', $data);
     }
 }
