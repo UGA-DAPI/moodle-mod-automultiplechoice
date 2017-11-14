@@ -47,9 +47,6 @@ if ($action === 'annotate') {
 }
 
 
-
-
-
 // Output starts here
 echo $output->header();
 

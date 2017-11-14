@@ -1,0 +1,56 @@
+<h1>Association</h1>
+
+{{#showerrors}}
+<div class="informationbox notifyproblem alert alert-error">
+    <ul>
+    {{#errors}}
+        <li>{{.}}</li>
+    {{/errors}}
+    </ul>
+    <form action="associating.php" method="POST">
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <input type="hidden" name="action" value="associate" />
+        <button type="submit" class="btn btn-default">
+            {{#str}}associating_relaunch_association, mod_automultiplechoice{{/str}}
+        </button>
+    </form>
+</div>
+{{/showerrors}}
+<div class="box informationbox well">
+    <h3>{{#str}}associating_heading, mod_automultiplechoice{{/str}}</h3>
+    <p> {{#str}}associating_heading, mod_automultiplechoice, {'automatic' : {{#quote}}{{nbcopyauto}}{{/quote}}, 'manualy' : {{#quote}}{{nbcopymanual}}{{/quote}}, 'unknown' : {{#quote}}{{nbcopyunknown}}{{/quote}}} {{/str}}</p>
+    
+    <form action="associating.php" method="POST">
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <input type="hidden" name="action" value="associate" />
+        <input type="hidden" name="usermode" value="{{usermode}}" />
+        <button type="submit" class="btn btn-default">
+            {{#isrelaunch}}
+            {{#str}}associating_relaunch_association, mod_automultiplechoice{{/str}}
+            {{/isrelaunch}}
+            {{^isrelaunch}}
+            {{#str}}associating_launch_association, mod_automultiplechoice{{/str}}
+            {{/isrelaunch}}
+        </button>
+        <div class="form-group">
+            <label>{{#str}}associationmode, automultiplechoice{{/str}}</label>
+            <select class="custom-select" name="mode">
+                {{#associationmodes}}                           
+                    <option value={{value}} {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/associationmodes}}                        
+            </select>
+        </div>
+        <div class="form-group">
+            <label>{{#str}}associationusermode, automultiplechoice{{/str}}</label>
+            <select class="custom-select" name="mode">
+                {{#usermodes}}                           
+                    <option value={{value}} {{#selected}}selected{{/selected}}>{{label}}</option>
+                {{/usermodes}}                        
+            </select>
+        </div>
+        
+    </form>
+
+   
+    
+</div>

@@ -133,4 +133,14 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
         $data = $page->export_for_template($this);
         return $this->render_from_template('mod_automultiplechoice/scansupload', $data);
     }
+
+    public function render_association_view(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_automultiplechoice/association', $data);
+    }
+
+    public function render_annotation_view(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_automultiplechoice/annotation', $data);
+    }
 }

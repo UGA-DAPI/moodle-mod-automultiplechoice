@@ -99,7 +99,8 @@ class scansupload implements \renderable, \templatable {
           'logs' => $logs,
           'showfailed' => count($failed) > 0,
           'failed' => $failed,
-          'downloadfailedurl' => $this->failedurl
+          'downloadfailedurl' => $this->failedurl,
+          'showsqlitemessage' => !empty($this->scanstats) && (($this->scanstats['count'] - $this->scanstats['nbidentified']) > 0)
         ];
         return $content;
     }

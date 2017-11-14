@@ -259,7 +259,7 @@ $string['export'] = 'Rapports';
 $string['associationusermode'] = 'Affichage des &eacute;tudiants';
 $string['associationmode'] = 'Mode d\'identification';
 
-$string['unknown'] = 'Non identifi&eacute;s';
+$string['unknown'] = 'Non identifiés';
 $string['manual'] = 'Identification manuelle';
 $string['auto'] = 'Identification automatique';
 
