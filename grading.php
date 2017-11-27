@@ -12,7 +12,7 @@ $controller = new \mod_automultiplechoice\local\controllers\view_controller();
 $quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
-$output = $controller->getRenderer('grading');
+$output = $controller->getRenderer();
 $action = optional_param('action', '', PARAM_ALPHA);
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
@@ -29,56 +29,30 @@ if (!$process->isGraded() || $action === 'grade') {
 }
 
 // Has side effects, so must be called early.
-$stats = $process->getHtmlStats();
+$stats = $process->getStats2();
 
-// Output starts here.
-echo $output->header();
-
+// Print Header to page
+echo $output->header('grading');
 
 //echo $process->getHtmlErrors();
-$warnings = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('grading');
-if ($warnings) {
-    echo '<div class="informationbox notifyproblem alert alert-error">';
-    foreach ($warnings as $warning) {
-        echo $warning;
-    }
+$errors = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('grading');
 
-    echo "<br /><br />";
-    echo $OUTPUT->single_button(
-        new moodle_url(
-            '/mod/automultiplechoice/grading.php',
-            array('a' => $quiz->id, 'action' => 'grade')
-        ),
-        get_string('grading_relaunch_correction', 'mod_automultiplechoice')
-    );
-    echo "</div>";
-}
-echo $OUTPUT->box_start('informationbox well');
-echo $OUTPUT->heading(get_string('grading_notes', 'mod_automultiplechoice'), 2);
-echo $OUTPUT->heading(get_string('grading_file_notes_table', 'mod_automultiplechoice'), 3);
-echo "<p>" . get_string('grading_sheets_identified', 'mod_automultiplechoice', ['known' => $process->usersknown, 'unknown' => $process->usersunknown]) . "</p>";
-$opt = array('class' => 'btn', 'target' => '_blank');
-echo  \html_writer::start_div('btn-group');
-echo  \html_writer::link($process->getFileUrl($process::PATH_AMC_CSV), 'csv', $opt);
-echo  \html_writer::link($process->getFileUrl($process::PATH_AMC_ODS), 'ods', $opt);
-echo  \html_writer::link($process->getFileUrl($process::PATH_APOGEE_CSV), 'apogee', $opt);
-echo  \html_writer::end_div();
+$data = [
+    'errors' => $errors,
+    'showerrors' => !empty($errors),
+    'nbusersknown' => $process->get_known_users(),
+    'nbusersunknown' => $process->get_unknown_users(),
+    'filesurls' => [
+      'csv' => $process->getFileUrl($process::PATH_AMC_CSV),
+      'ods' => $process->getFileUrl($process::PATH_AMC_ODS),
+      'apogee' => $process->getFileUrl($process::PATH_APOGEE_CSV)
+    ],
+    'stats' => $stats
+];
 
-
-echo $OUTPUT->heading(get_string('grading_statistics', 'mod_automultiplechoice'), 3);
-echo $stats;
-$message = get_string('grading_not_satisfying_notation', 'mod_automultiplechoice');
-echo "<p>" . $message . "<p>";
-
-echo $OUTPUT->single_button(
-    new moodle_url(
-        '/mod/automultiplechoice/grading.php',
-        array( 'a' => $quiz->id, 'action' => 'grade')
-    ),
-    get_string('grading_relaunch_correction', 'mod_automultiplechoice')
-);
-echo $OUTPUT->box_end();
-
+// Page content.
+$view = new \mod_automultiplechoice\output\view_grading($quiz, $data);
+echo $output->render_grading_view($view);
 
 
 echo $output->footer();

@@ -4,7 +4,7 @@ namespace mod_automultiplechoice\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-class scoringform implements \renderable, \templatable {
+class view_scoringform implements \renderable, \templatable {
     /**
      * The auto multiple choice quiz.
      *
@@ -20,7 +20,7 @@ class scoringform implements \renderable, \templatable {
     public function __construct($quiz) {
         $this->quiz = $quiz;
     }
-    
+
     /**
      * Prepare data for use in a template
      *

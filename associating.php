@@ -12,7 +12,7 @@ $controller = new \mod_automultiplechoice\local\controllers\view_controller();
 $quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
-$output = $controller->getRenderer('associating');
+$output = $controller->getRenderer();
 
 $action         = optional_param('action', '', PARAM_ALPHA);
 $mode           = optional_param('mode', 'unknown', PARAM_ALPHA);
@@ -28,8 +28,6 @@ $PAGE->set_url('/mod/automultiplechoice/associating.php', array('id' => $cm->id)
 
 $url = new moodle_url('associating.php', array('a' => $quiz->id, 'mode' => $mode, 'usermode' => $usermode));
 
-
-
 $process = new \mod_automultiplechoice\local\amc\associate($quiz);
 
 if ($action === 'associate') {
@@ -40,8 +38,7 @@ if ($action === 'associate') {
 
 $process->get_association();
 
-echo $output->header();
-
+echo $output->header('associating');
 
 $errors = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('associating');
 
@@ -71,52 +68,9 @@ $data = [
 ];
 
 // Page content.
-$view = new \mod_automultiplechoice\output\association($quiz, $data);
+$view = new \mod_automultiplechoice\output\view_association($quiz, $data);
 echo $output->render_association_view($view);
 
-
-// should not exist anymore...
-//echo $OUTPUT->box_start('informationbox well');
-//echo $OUTPUT->heading(get_string('associating_heading', 'mod_automultiplechoice'), 2)
-  //  . "<p>" . get_string('associating_heading', 'mod_automultiplechoice', ['automatic' => count($process->copyauto), 'manualy' => count($process->copymanual), 'unknown' => count($process->copyunknown)])."</p>";
-
-  // Errors ? or warnings (class=error)
-//$warnings = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('associating');
-
-/*if ($warnings) {
-    echo '<div class="informationbox notifyproblem alert alert-error">';
-    foreach ($warnings as $warning) {
-        echo $warning;
-    }
-
-    echo "<br /><br />";
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php',
-                                array( 'a' => $quiz->id, 'action' => 'associate'))
-                                , get_string('associating_relaunch_association', 'mod_automultiplechoice'));
-    echo "</div>";
-} else if (count($process->copyauto)) { // count($process->copyauto) I think this is a wrong checking method... always true... isn't it ? -> !empty($process->copyauto)
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php',
-                                array( 'a' => $quiz->id, 'action' => 'associate'))
-                                , get_string('associating_launch_association', 'mod_automultiplechoice'));
-} else {
-    echo $OUTPUT->single_button( new moodle_url('/mod/automultiplechoice/associating.php',
-                                array( 'a' => $quiz->id, 'action' => 'associate'))
-                                , get_string('associating_relaunch_association', 'mod_automultiplechoice'));
-}*/
-/*
-
-$optionsmode = array ('unknown'  => get_string('unknown', 'automultiplechoice'),
-                  'manual' => get_string('manual', 'automultiplechoice'),
-                  'auto' => get_string('auto', 'automultiplechoice'),
-                  'all'   => get_string('all'));
-$selectmode = new single_select($url, 'mode', $optionsmode, $mode, null, "mode");
-$selectmode->set_label(get_string('associationmode', 'automultiplechoice'));
-
-$optionsusermode = array ('without'  => get_string('without', 'automultiplechoice'),
-                  'all'   => get_string('all'));
-
-$selectusermode = new single_select($url, 'usermode', $optionsusermode, $usermode, null, "usermode");
-$selectusermode->set_label(get_string('associationusermode', 'automultiplechoice'));*/
 
 if ($mode === 'unknown') {
     $namedisplay = $process->copyunknown;
@@ -127,7 +81,12 @@ if ($mode === 'unknown') {
 } else if ($mode === 'all') {
     $namedisplay = array_merge($process->copyunknown, $process->copymanual, $process->copyauto);
 }
-$paging = new paging_bar(count($namedisplay), $page, 20, $url, 'page');
+
+print_r($namedisplay);die;
+
+// $paging = new paging_bar(count($namedisplay), $page, 20, $url, 'page');
+// Last param is default to 'page' so no need to give it to the method;
+$paging = new paging_bar(count($namedisplay), $page, 20, $url);
 
 // https://github.com/moodle/moodle/blob/master/theme/bootstrapbase/templates/block_myoverview/paging-bar.mustache
 

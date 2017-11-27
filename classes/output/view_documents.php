@@ -4,7 +4,7 @@ namespace mod_automultiplechoice\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-class documents implements \renderable, \templatable {
+class view_documents implements \renderable, \templatable {
     /**
      * The auto multiple choice quiz.
      *
@@ -20,7 +20,7 @@ class documents implements \renderable, \templatable {
     public function __construct($quiz) {
         $this->quiz = $quiz;
     }
-    
+
     /**
      * Prepare data for use in a template
      *

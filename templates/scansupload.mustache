@@ -20,7 +20,7 @@
             {{#str}}uploadscans_process_end_message, mod_automultiplechoice, {"nbpages": {{#quote}} {{nbpages}} {{/quote}},"nbextracted": {{#quote}}{{scanstats.count}}{{/quote}}, "nbidentified": {{#quote}}{{scanstats.nbidentified}}{{/quote}}}{{/str}}
         {{/formsubmited}}
         {{^formsubmited}}
-           {{#str}}uploadscans_saved_sheets, mod_automultiplechoice, {"nbsaved": {{#quote}} {{scanstats.count}} {{/quote}},"date": {{#quote}} {{#userdate}}{{scanstats.time}}, {{#str}} strftimedate {{/str}}{{/userdate}} {{/quote}}}{{/str}} 
+           {{#str}}uploadscans_saved_sheets, mod_automultiplechoice, {"nbsaved": {{#quote}} {{scanstats.count}} {{/quote}},"date": {{#quote}} {{#userdate}}{{scanstats.time}}, {{#str}} strftimedate {{/str}}{{/userdate}} {{/quote}}}{{/str}}
         {{/formsubmited}}
     </div>
 {{/showstats}}
@@ -72,18 +72,27 @@
         </div>
     </form>
     {{#showfailed}}
+        <hr/>
         <h4 class="helptitle">{{#str}}uploadscans_unknown_scans, mod_automultiplechoice{{/str}}</h4>
         <div class="box generalbox boxaligncenter">
-            <form type="POST" action="uploadscans.php" onsubmit="return confirm('{{#str}}confirm, core{{/str}}')">
-                <input type="hidden" name="action" value="delete" />
-                <input type="hidden" name="a" value="{{quiz.id}}" />
-                <input type="hidden" name="scan" value="all" />
-                <button type="submit" class="btn btn-danger">{{#str}}uploadscans_delete_unknown_scans, mod_automultiplechoice{{/str}}</button>
-            </form>
-            <a href="{{downloadfailedurl}}" class="btn btn-default" target="_blank"> {{#str}}uploadscans_download_unknown_scans, mod_automultiplechoice{{/str}}</a>
+            <div class="row">
+              <div class="col-md-6">
+                <form type="POST" action="uploadscans.php" onsubmit="return confirm('{{#str}}confirm, core{{/str}}')">
+                    <input type="hidden" name="action" value="delete" />
+                    <input type="hidden" name="a" value="{{quiz.id}}" />
+                    <input type="hidden" name="scan" value="all" />
+                    <button type="submit" class="btn btn-danger">{{#str}}uploadscans_delete_unknown_scans, mod_automultiplechoice{{/str}}</button>
+                </form>
+              </div>
+              <div class="col-md-6">
+                <a href="{{downloadfailedurl}}" class="btn btn-default" target="_blank"> {{#str}}uploadscans_download_unknown_scans, mod_automultiplechoice{{/str}}</a>
+              </div>
+            </div>
+
             <div class="amc_thumbnails_failed row">
                 <div class="thumbnails">
                     {{#failed}}
+                      <div class="thumbnail col-xs-12 col-sm-6 col-md-4 col-lg-3">
                         <form action="'uploadscans.php" onsubmit="return confirm('{{#str}}confirm, core{{/str}}')" method="POST">
                             <input type="hidden" name="action" value="delete" />
                             <input type="hidden" name="a" value="{{quiz.id}}" />
@@ -91,7 +100,7 @@
                             <div class="row">
                                 <div class="col-md-8">
                                     <a href="{{link}}">
-                                        <img src="{{link}}" title="{{id}}"/>
+                                        <img src="{{link}}" alt="{{id}}"/>
                                     </a>
                                 </div>
                                 <div class="col-md-4">
@@ -99,6 +108,7 @@
                                 </div>
                             </div>
                         </form>
+                      </div>
                     {{/failed}}
                 </div>
             </div>

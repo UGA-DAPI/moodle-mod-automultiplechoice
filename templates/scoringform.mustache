@@ -36,8 +36,6 @@
                 <th>{{#str}} scoringset, mod_automultiplechoice {{/str}}</th>
                 <td>
                     <select class="custom-select" name="amc[scoringset]">
-                        {{!is it really necessary ?}}
-                        <option value=""></option>
                         {{#scoringsets}}                           
                             <option value={{value}} {{#selected}}selected{{/selected}}>{{label}}</option>
                         {{/scoringsets}}                        

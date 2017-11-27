@@ -21,7 +21,7 @@ $string['annotating_individual_sheets_available'] = ' copies individuelles annot
 $string['annotating_update_corrected_sheets'] = 'Mettre à jour les copies corrigées (annotées)';
 $string['annotating_generate_corrected_sheets'] = 'Générer les copies corrigées';
 
-// Annotate process. 
+// Annotate process.
 $string['annotate_correction_available'] = 'Correction disponible';
 $string['annotate_correction_available_body'] = 'Votre copie corrigée est disponible pour le QCM {$a->name}';
 $string['annotate_correction_link'] = ' à l\'adresse ';
@@ -110,6 +110,10 @@ $string['process_corrections_file'] = 'Les  corrigés des différentes versions.
 $string['process_archive'] = 'Cette archive contient un PDF par variante de l\'énoncé.';
 $string['catalog'] = 'Catalogue';
 $string['corrections'] = 'Corrigés';
+
+// Questions.
+$string['questions_recent_question_not_visible'] = "Si vos questions récentes n'apparaissent pas, pensez à rafraichir la page de votre navigateur (F5) et à trier par date descendante.";
+$string['question_remove_confirm'] = 'Êtes vous sur de vouloir supprimer <strong>{$a}</strong> de la sélection?';
 
 // Scoring.
 $string['scoring_scale_extract_error'] = 'Erreur lors de l\'extraction du barème';

@@ -24,7 +24,6 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         global $CFG, $PAGE;
         $PAGE->requires->js_call_amd('mod_automultiplechoice/mod_form', 'init');
         $mform = $this->_form;
-
         //-------------------------------------------------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -53,7 +52,6 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             $mform->setDefault('amc[lstudent]', get_config('mod_automultiplechoice', 'instructionslstudent'));
             $mform->setDefault('amc[lname]', get_config('mod_automultiplechoice', 'instructionslnamestd'));
         }
-
 
         // Instructions
         $mform->addElement('header', 'general', get_string('instructionsheader', 'automultiplechoice'));
@@ -99,7 +97,6 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         $mform->addElement('text', 'amc[copies]', get_string('amc_copies', 'automultiplechoice'));
         $mform->setType('amc[copies]', PARAM_INTEGER);
-        $mform->addRule('amc[copies]', null, 'required', null, 'client');
 
         $mform->addElement(
             'select',
@@ -161,7 +158,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         if (isset($default_values['description'])) {
             $default_values['description'] = array('text' => $default_values['description']);
         }
-        
+
         // Convert from JSON to array
         if (!empty($default_values['amcparams'])) {
 
@@ -176,7 +173,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                     'text' => $params->instructionsprefix,
                 )
             );
-            //print_r($params);die;
+
             if (!empty($this->current->id) && !empty($params->locked)) {
                 $this->_form->freeze(
                     array(
@@ -191,6 +188,9 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                         'amc[score]',
                     )
                 );
+            } else {
+                // Only add the required rule if the field is not disabled
+                $this->_form->addRule('amc[copies]', null, 'required', null, 'client');
             }
             $this->_form->setDefault('instructions', '');
             foreach (parse_default_instructions() as $v) {
@@ -205,8 +205,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         if (!empty($this->current->id)) {
             global $PAGE, $OUTPUT;
             $output = $PAGE->get_renderer('mod_automultiplechoice');
-            $output->quiz = \mod_automultiplechoice\local\models\quiz::buildFromRecord($this->current);
-            $output->currenttab = 'settings';
+            $output->quiz =  \mod_automultiplechoice\local\models\quiz::buildFromRecord($this->current);
             $OUTPUT = $output;
         }
     }

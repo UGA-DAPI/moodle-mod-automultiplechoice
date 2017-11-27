@@ -112,6 +112,9 @@ $string['process_archive'] = 'This archive contains one variant by statement.';
 $string['catalog'] = 'Catalog';
 $string['corrections'] = 'Corrections';
 
+// Questions.
+$string['questions_recent_question_not_visible'] = 'If your recent questions are not visible, try to refresh the page (F5) and sort by descendant date.';
+$string['question_remove_confirm'] = 'Are you sure you want to remove the question <strong>{$a}</strong> from selection?';
 // Scoring.
 $string['scoring_scale_extract_error'] = 'Error while extracting scale';
 $string['scoring_scale_save_success'] = 'Scale changes saved.';
@@ -258,15 +261,15 @@ $string['analyse'] = 'Submit student copies';
 $string['note'] = 'Grades and annotated copies';
 $string['export'] = 'Reports';
 
-$string['associationusermode'] = 'Afficchage des &eacute;tudiants';
-$string['associationmode'] = 'Mode d\'association';
+$string['associationusermode'] = 'Show students';
+$string['associationmode'] = 'Association mode';
 
-$string['unknown'] = 'Non identifi&eacute;s';
-$string['manual'] = 'Identification manuelle';
-$string['auto'] = 'Ientification automatique';
+$string['unknown'] = 'Unknown';
+$string['manual'] = 'Manual identification';
+$string['auto'] = 'Automatic Identification';
 
-$string['without'] = 'Sans copie';
-$string['selectuser'] = 'Asoocier l\'étudiant';
+$string['without'] = 'Without sheet';
+$string['selectuser'] = 'Select student';
 
 $string['questionoperations'] = 'Before selecting questions, you may...';
 $string['importfilequestions'] = 'Import file';

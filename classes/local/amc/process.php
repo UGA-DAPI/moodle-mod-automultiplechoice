@@ -13,6 +13,10 @@ class process
     protected $codelength = 0;
     public $workdir;
     protected $relworkdir;
+
+    protected $usersknown = 0;
+    protected $usersunknown = 0;
+
     protected $grades = array();
     /**
      * @var array
@@ -284,7 +288,7 @@ class process
         return $stats;
     }
 
-    
+
     /**
      * Fills the "grades" property from the CSV.
      *
@@ -304,6 +308,7 @@ class process
         }
         $getCol = array_flip($header);
         $this->grades = array();
+
         while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== false) {
             $idnumber = $data[$getCol['student.number']];
             $userid=null;
@@ -321,6 +326,15 @@ class process
         fclose($input);
         return true;
     }
+
+    public function get_unknown_users() {
+        return $this->usersunknown;
+    }
+
+    public function get_known_users() {
+        return $this->usersunknown;
+    }
+
     protected static function fopenRead($filename) {
         if (!is_readable($filename)) {
             return false;
@@ -522,7 +536,7 @@ class process
      * @param array $params List of strings.
      * @return boolean Success?
      */
-    protected function shellExec($cmd, $params, $output=false) {
+    protected function shellExec($cmd, $params, $output = false) {
         $escapedCmd = escapeshellcmd($cmd);
         $escapedParams = array_map('escapeshellarg', $params);
         $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
@@ -550,14 +564,15 @@ class process
      * @param boolean (opt, false) Write a log as a side-effect (ugly, will probably be written before the HTML starts).
      * @return boolean Success?
      */
-    protected function shellExecAmc($cmd, $params, $output=false) {
-        $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
-        $amclog->write('process');
+    protected function shellExecAmc($cmd, $params, $output = false) {
+        // DB Log
+        $log = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
+        $log->write('process');
         $res = $this->shellExec('auto-multiple-choice ' . $cmd,
             $params,
             $output
         );
-        $amclog->write('process', 0);
+        $log->write('process', 0);
         return $res;
     }
     /**

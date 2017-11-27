@@ -1,0 +1,69 @@
+
+{{#showerrors}}
+<div class="informationbox notifyproblem alert alert-danger">
+    <ul>
+    {{#errors}}
+        <li>{{.}}</li>
+    {{/errors}}
+    </ul>
+    <form action="grading.php" method="POST">
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <input type="hidden" name="action" value="grade" />
+        <button type="submit" class="btn btn-default">
+            {{#str}}grading_relaunch_correction, mod_automultiplechoice{{/str}}
+        </button>
+    </form>
+</div>
+{{/showerrors}}
+
+<div class="box informationbox well">
+    <h3>{{#str}}grading_notes, mod_automultiplechoice{{/str}}</h3>
+    <h4>{{#str}}grading_file_notes_table, mod_automultiplechoice{{/str}}</h4>
+    <p>{{#str}}grading_sheets_identified, mod_automultiplechoice, {"known" : {{#quote}}{{nbusersknown}}{{/quote}}, "unknown" : {{#quote}}{{nbusersunknown}}{{/quote}}} {{/str}}</p>
+    {{#filesurls}}
+      <div class="btn-group">
+        <a class="btn btn-default" href="{{filesurls.csv}}">csv</a>
+        <a class="btn btn-default" href="{{filesurls.ods}}">ods</a>
+        <a class="btn btn-default" href="{{filesurls.apogee}}">apogee</a>
+      </div>
+    {{/filesurls}}
+    <hr/>
+    <h3>{{#str}}grading_statistics, mod_automultiplechoice{{/str}}</h3>
+    <div class="row margin-bottom-md">
+      <div class="col-md-12">
+        <table class="table table-striped">
+          <tbody>
+            <tr>
+              <td><h6>{{#str}} grading_size, mod_automultiplechoice {{/str}}</h6></td>
+              <td>{{stats.size}}</td>
+            </tr>
+            <tr>
+              <td><h6>{{#str}} grading_mean, mod_automultiplechoice {{/str}}</h6></td>
+              <td>{{stats.mean}}</td>
+            </tr>
+            <tr>
+              <td><h6>{{#str}} grading_median, mod_automultiplechoice {{/str}}</h6></td>
+              <td>{{stats.median}}</td>
+            </tr>
+            <tr>
+              <td><h6>{{#str}} grading_mode, mod_automultiplechoice {{/str}}</h6></td>
+              <td>{{stats.mode}}</td>
+            </tr>
+            <tr>
+              <td><h6>{{#str}} grading_range, mod_automultiplechoice {{/str}}</h6></td>
+              <td>{{stats.range}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p> {{#str}}grading_not_satisfying_notation, mod_automultiplechoice{{/str}}</p>
+    <hr/>
+    <form action="grading.php" method="POST">
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <input type="hidden" name="action" value="grade" />
+        <button type="submit" class="btn btn-default">
+            {{#str}}grading_relaunch_correction, mod_automultiplechoice{{/str}}
+        </button>
+    </form>
+</div>

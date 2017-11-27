@@ -9,6 +9,8 @@
     float: left;
     width: 49%;
 }
+
+/*
 #questions-part-selecting button {
     width: 38px;
 }
@@ -26,16 +28,23 @@
 .datatable-end {
     clear: both;
     margin-bottom: 1.5ex;
-}
-ol#questions-selected {
-    counter-reset: li;
+}*/
+#questions-selected {
+    /*counter-reset: li;*/
     list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
+
+
+/*
 #questions-selected > li {
     clear: both;
     max-width: 120ex;
     line-height: 2.3em;
 }
+
 #questions-selected > li:not(.question-section):before {
     content: counter(li);
     counter-increment: li;
@@ -70,7 +79,7 @@ ol#questions-selected {
 }
 .question-section button {
     height: 14ex;
-}
+}*/
 /* page questions : end */
 
 
@@ -193,7 +202,7 @@ dt:after {
 /* used in documents.php to set space between all buttons */
 .form-field {
 	margin-top: 5px;
-	margin-bottom: 5px; 
+	margin-bottom: 5px;
 }
 
 table.dataTable td {

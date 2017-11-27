@@ -1,7 +1,5 @@
-<h1>Association</h1>
-
 {{#showerrors}}
-<div class="informationbox notifyproblem alert alert-error">
+<div class="informationbox notifyproblem alert alert-danger">
     <ul>
     {{#errors}}
         <li>{{.}}</li>
@@ -18,8 +16,8 @@
 {{/showerrors}}
 <div class="box informationbox well">
     <h3>{{#str}}associating_heading, mod_automultiplechoice{{/str}}</h3>
-    <p> {{#str}}associating_heading, mod_automultiplechoice, {'automatic' : {{#quote}}{{nbcopyauto}}{{/quote}}, 'manualy' : {{#quote}}{{nbcopymanual}}{{/quote}}, 'unknown' : {{#quote}}{{nbcopyunknown}}{{/quote}}} {{/str}}</p>
-    
+    <p> {{#str}}associating_sheets_identified, mod_automultiplechoice, {"automatic" : {{#quote}}{{nbcopyauto}}{{/quote}}, "manualy" : {{#quote}}{{nbcopymanual}}{{/quote}}, "unknown" : {{#quote}}{{nbcopyunknown}}{{/quote}}} {{/str}}</p>
+
     <form action="associating.php" method="POST">
         <input type="hidden" name="a" value="{{quiz.id}}" />
         <input type="hidden" name="action" value="associate" />
@@ -33,24 +31,20 @@
             {{/isrelaunch}}
         </button>
         <div class="form-group">
-            <label>{{#str}}associationmode, automultiplechoice{{/str}}</label>
-            <select class="custom-select" name="mode">
-                {{#associationmodes}}                           
+            <label for="association-mode-select">{{#str}}associationmode, automultiplechoice{{/str}}</label>
+            <select id="association-mode-select" class="custom-select" name="mode">
+                {{#associationmodes}}
                     <option value={{value}} {{#selected}}selected{{/selected}}>{{label}}</option>
-                {{/associationmodes}}                        
+                {{/associationmodes}}
             </select>
         </div>
         <div class="form-group">
-            <label>{{#str}}associationusermode, automultiplechoice{{/str}}</label>
-            <select class="custom-select" name="mode">
-                {{#usermodes}}                           
+            <label for="association-user-modes">{{#str}}associationusermode, automultiplechoice{{/str}}</label>
+            <select id="association-user-modes" class="custom-select" name="usermode">
+                {{#usermodes}}
                     <option value={{value}} {{#selected}}selected{{/selected}}>{{label}}</option>
-                {{/usermodes}}                        
+                {{/usermodes}}
             </select>
         </div>
-        
     </form>
-
-   
-    
 </div>

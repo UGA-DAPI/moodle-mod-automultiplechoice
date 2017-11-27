@@ -202,6 +202,7 @@ class quiz
      */
     public static function buildFromRecord(\stdClass $record) {
         $quiz = new self();
+
         return $quiz->readFromRecord($record);
     }
     /**
@@ -216,6 +217,8 @@ class quiz
                 $this->$key = (int) $record->$key;
             }
         }
+
+
         if (isset($record->studentaccess)) {
             $this->studentaccess = (boolean) $record->studentaccess;
         }

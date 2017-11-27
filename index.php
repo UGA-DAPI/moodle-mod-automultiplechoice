@@ -27,6 +27,8 @@ if (! $automultiplechoices) {
     notice(get_string('noautomultiplechoices', 'automultiplechoice'), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
+$table = new \html_table();
+
 if ($course->format == 'weeks') {
     $table->head  = array(get_string('week'), get_string('name'));
     $table->align = array('center', 'left');
@@ -41,12 +43,12 @@ if ($course->format == 'weeks') {
 foreach ($automultiplechoices as $automultiplechoice) {
     if (!$automultiplechoice->visible) {
         $link = html_writer::link(
-            new moodle_url('/mod/automultiplechoice.php', array('id' => $automultiplechoice->coursemodule)),
+            new moodle_url('/mod/automultiplechoice/view.php', array('id' => $automultiplechoice->coursemodule)),
             format_string($automultiplechoice->name, true),
             array('class' => 'dimmed'));
     } else {
         $link = html_writer::link(
-            new moodle_url('/mod/automultiplechoice.php', array('id' => $automultiplechoice->coursemodule)),
+            new moodle_url('/mod/automultiplechoice/view.php', array('id' => $automultiplechoice->coursemodule)),
             format_string($automultiplechoice->name, true));
     }
 
@@ -58,5 +60,5 @@ foreach ($automultiplechoices as $automultiplechoice) {
 }
 
 echo $OUTPUT->heading(get_string('modulenameplural', 'automultiplechoice'), 2);
-echo html_writer::table($table);
+echo \html_writer::table($table);
 echo $OUTPUT->footer();

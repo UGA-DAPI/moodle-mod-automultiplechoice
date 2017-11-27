@@ -13,7 +13,7 @@ $controller = new \mod_automultiplechoice\local\controllers\view_controller();
 $quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
-$output = $controller->getRenderer('dashboard');
+$output = $controller->getRenderer();
 $process = new \mod_automultiplechoice\local\amc\process($quiz);
 
 if (!count($quiz->questions)) {
@@ -22,13 +22,10 @@ if (!count($quiz->questions)) {
 
 $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
 
-// Is it used ?
-//$PAGE->requires->js_call_amd('mod_automultiplechoice/scoringsystem', 'init');
-
 $viewcontext = $controller->getContext();
 
 // Render header.
-echo $output->header();
+echo $output->header('dashboard');
 
 require_capability('mod/automultiplechoice:view', $viewcontext);
 
@@ -48,23 +45,7 @@ if (!$quiz->validate()) {
     $output->display_errors($quiz->errors);
 }
 
-if ($quiz->isLocked()) {
-    // Cannot put a button if we use $OUTPUT->notification.
-    $unlockurl = new \moodle_url('documents.php', array('a' => $quiz->id, 'action' => 'unlock'));
-    $unlockbutton = new \single_button($unlockurl, get_string('unlock_quiz', 'mod_automultiplechoice'));
-    $message = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('unlock');
-    if ($message) {
-        $unlockbutton->add_confirm_action(implode('\n', $message));
-    }
-    echo '<div class="informationbox notifyproblem alert alert-info">'
-        . get_string('quiz_is_locked', 'mod_automultiplechoice')
-        . get_string('access_documents', 'mod_automultiplechoice')
-        . '<em> '.get_string('documents', 'mod_automultiplechoice').'</em>'
-        . $OUTPUT->render($unlockbutton)
-        . "</div>";
-}
-
 // Dashboard content.
-$view = new \mod_automultiplechoice\output\dashboard($quiz);
+$view = new \mod_automultiplechoice\output\view_dashboard($quiz);
 echo $output->render_dashboard($view);
 echo $OUTPUT->footer();

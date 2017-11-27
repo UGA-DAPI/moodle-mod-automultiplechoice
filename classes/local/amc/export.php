@@ -45,6 +45,7 @@ class export extends \mod_automultiplechoice\local\amc\process
                 $pre . '/' . $format->getFilename()
             )
         );
+
         if ($res) {
             $amclog = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id);
             $this->log('prepare:pdf', 'catalog corrige sujet');

@@ -1,26 +1,63 @@
-{{!herits from page.mustache}}
-{{< mod_automultiplechoice/page}}
-  {{$content}}
-  <ul class="slots section img-text yui3-dd-drop">
-    {{#questions}}
-      {{#section}}
-        <h4>{{name}}</h4>
-      {{/section}}
-      {{^section}}
-        <li id="slot-{{index}}" class="activity multichoice qtype_multichoice slot yui3-dd-drop">
-          <div>
-            <span class="editing_move moodle-core-dragdrop-draghandle" title="Move" tabindex="{{index}}" data-draggroups="resource" role="button">
-              <i class="icon fa fa-arrows fa-fw  iconsmall" aria-hidden="true" title="" aria-label="" style="cursor: move;"></i>
-            </span>
-            <span class="slotnumber">{{index}}</span>
-            <div class="modindent"></div>
-            <div class="activityinstance">
-              <span class="instancename">Question : {{name}}</span>
-            </div>
-          </div>
-        </li>
-      {{/section}}
-    {{/questions}}
-  </ul>
-  {{/content}}
-{{/mod_automultiplechoice/page}}
+
+
+<div class="box informationbox well">
+
+
+    <div class="informationbox notifyproblem alert alert-info">
+      {{#str}}questions_recent_question_not_visible, mod_automultiplechoice{{/str}}
+    </div>
+    {{#showerrors}}
+      <div class="informationbox notifyproblem alert alert-danger">
+          <ul class="errors">
+            {{#errors}}
+              <li>{{.}}</li>
+            {{/errors}}
+          </ul>
+      </div>
+    {{/showerrors}}
+
+    <div id="questions-part-selected" class="box generalbox">
+      <h4>{{#str}}questionselected, mod_automultiplechoice{{/str}}</h4>
+      <p>
+          {{#str}}sortmsg, mod_automultiplechoice{{/str}}
+          <strong>{{#str}}sortmsg, mod_automultiplechoice, {{#quote}} {{quiz.qnumber}} {{/quote}}{{/str}}</strong>
+      </p>
+
+      <form name="questions-form" action="questions.php" method="post">
+        <input name="a" value="{{quiz.id}}" type="hidden" />
+        <div class="btn-group">
+          <a href="{{importfilequestionsnurl}}" class="btn btn-default" target="_blank">{{#str}}importfilequestions, mod_automultiplechoice{{/str}}</a>
+          <a href="{{importquestionsurl}}" class="btn btn-default" target="_blank">{{#str}}importquestions, mod_automultiplechoice{{/str}}</a>
+          <a href="{{createquestionsurl}}" class="btn btn-default" target="_blank">{{#str}}createquestions, mod_automultiplechoice{{/str}}</a>
+          <a href="{{questionbankurl}}" class="btn btn-default" target="_blank">{{#str}}questionbank, question{{/str}}</a>
+          <button class="btn btn-primary" type="submit">
+            <i class="fa fa-save"></i>&nbsp;{{#str}}savesel, mod_automultiplechoice{{/str}}
+          </button>
+        </div>
+            <hr/>
+        <ul id="questions-selected">
+          {{#questions}}
+            <li class="ui-state-default" data-qid="{{id}}" id="qsel-{{id}}">
+                <div class="row">
+                  <div class="col-md-1">
+                    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                  </div>
+                  <div class="col-md-10">
+                    <label class="question-title">{{name}}</label>
+                  </div>
+                  <div class="col-md-1">
+                    <button type="button" role="button" class="btn btn-danger" title="{{#str}}remove, core{{/str}}">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                    <input name="question[score][]" type="hidden" {{#section}}disabled{{/section}} value="{{score}}" />
+                    <input name="question[type][]" value="question" type="hidden" {{#section}}disabled{{/section}}/>
+                    <input name="question[id][]" value="{{^section}}id{{/section}}" type="hidden" class="qid" {{#section}}disabled{{/section}} />
+                    <input name="question[description][]" type="hidden" {{#section}}disabled{{/section}} />
+                  </div>
+                </div>
+            </li>
+          {{/questions}}
+        </ul>
+      </form>
+    </div>
+</div>

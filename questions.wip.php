@@ -11,6 +11,7 @@ $quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 $output = $controller->getRenderer();
+$thiscontext = $controller->getContext();
 
 require_capability('mod/automultiplechoice:addinstance', $controller->getContext());
 
@@ -38,6 +39,27 @@ $available_questions = automultiplechoice_list_questions($USER, $course);
 
 echo $output->header('questions');
 
+
+$contexts = new question_edit_contexts($thiscontext);
+$questionbank = new \mod_automultiplechoice\question\bank\custom_view($contexts, $PAGE->url, $course, $cm, $quiz);
+$questionbank->set_quiz_has_attempts(false);
+$questionbank->process_actions($PAGE->url, $cm);
+
+echo $output->question_bank_contents($questionbank, []);
+$data = [
+    'errors' => $quiz->questions->errors,
+    'showerrors' => !empty($quiz->questions->errors),
+    'courseid' => $course->id
+    /*,
+    'availablequestions' => automultiplechoice_list_questions($USER, $course),*/
+];
+
+
+// Page content.
+$view = new \mod_automultiplechoice\output\view_questions($quiz, $data);
+echo $output->render_questions_view($view);
+echo $output->footer();
+/*
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('questionoperations', 'automultiplechoice'));
 $opt = array('class' => 'btn', 'target' => '_blank');
@@ -173,5 +195,4 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
 
 <?php
 echo $OUTPUT->box_end();
-
-echo $output->footer();
+*/

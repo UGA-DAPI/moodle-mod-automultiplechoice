@@ -4,7 +4,7 @@ namespace mod_automultiplechoice\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-class dashboard implements \renderable, \templatable {
+class view_dashboard implements \renderable, \templatable {
     /**
      * The auto multiple choice quiz.
      *
@@ -28,7 +28,7 @@ class dashboard implements \renderable, \templatable {
         $this->quiz = $quiz;
         $this->process = new \mod_automultiplechoice\local\amc\process($quiz);
     }
-    
+
     /**
      * Prepare data for use in a template
      *
@@ -38,7 +38,8 @@ class dashboard implements \renderable, \templatable {
     public function export_for_template(\renderer_base $output) {
         $questionscount = $this->quiz->questions->count();
         $scoringset = \mod_automultiplechoice\local\models\scoring_system::read()->get_sets()[$this->quiz->amcparams->scoringset];
-
+        $associate_process = new \mod_automultiplechoice\local\amc\associate($this->quiz);
+        $associate_process->get_association();
         $content = [
           'quiz' => $this->quiz,
           'settings' => [
@@ -95,8 +96,9 @@ class dashboard implements \renderable, \templatable {
             'data' => $this->process->statScans()
           ],
           'associating' => [
-            'title' => get_string('associating', 'automultiplechoice'),
-            'data' => []
+            'nbcopyauto' => count($associate_process->copyauto),
+            'nbcopymanual' => count($associate_process->copymanual),
+            'nbcopyunknown' => count($associate_process->copyunknown),
           ],
           'grading' => [
             'title' => get_string('grading', 'automultiplechoice'),

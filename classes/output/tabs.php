@@ -52,7 +52,7 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'dashboard',
             'inactive' => in_array('dashboard', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/view.php?a={$this->quiz->id}&page=dashboard"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/view.php?a={$this->quiz->id}")
             ],
             'title' => get_string('dashboard', 'automultiplechoice'),
             'text' => get_string('dashboard', 'automultiplechoice'),
@@ -61,7 +61,7 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'settings',
             'inactive' => in_array('settings', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/course/modedit.php?update={$this->cm->id}"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/course/modedit.php?update={$this->cm->id}")
             ],
             'title' => get_string('settings'),
             'text' => '1. ' . get_string('settings'),
@@ -70,7 +70,7 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'questions',
             'inactive' => in_array('questions', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/questions.php?a={$this->quiz->id}&page=questions"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/questions.php?a={$this->quiz->id}")
             ],
             'title' => get_string('questions', 'question'),
             'text' => '2. ' . get_string('questions', 'question'),
@@ -79,7 +79,7 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'scoringsystem',
             'inactive' => in_array('scoringsystem', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/view.php?a={$this->quiz->id}&page=scoring"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/scoringsystem.php?a={$this->quiz->id}"),
             ],
             'title' => get_string('scoringsystem', 'automultiplechoice'),
             'text' => '3. ' . get_string('scoringsystem', 'automultiplechoice'),
@@ -88,7 +88,7 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'documents',
             'inactive' => in_array('documents', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/view.php?a={$this->quiz->id}&page=documents"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/documents.php?a={$this->quiz->id}"),
             ],
             'title' => get_string('documents', 'automultiplechoice'),
             'text' => '4. ' . get_string('documents', 'automultiplechoice'),
@@ -97,7 +97,7 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'uploadscans',
             'inactive' => in_array('uploadscans', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/view.php?a={$this->quiz->id}&page=scans"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/uploadscans.php?a={$this->quiz->id}"),
             ],
             'title' => get_string('uploadscans', 'automultiplechoice'),
             'text' => '5. ' . get_string('uploadscans', 'automultiplechoice'),
@@ -106,7 +106,7 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'associating',
             'inactive' => in_array('associating', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/view.php?a={$this->quiz->id}&page=associate"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/associating.php?a={$this->quiz->id}"),
             ],
             'title' => get_string('associating', 'automultiplechoice'),
             'text' => '6. ' . get_string('associating', 'automultiplechoice'),
@@ -115,7 +115,7 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'grading',
             'inactive' => in_array('grading', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/view.php?a={$this->quiz->id}&page=grade"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/grading.php?a={$this->quiz->id}"),
             ],
             'title' => get_string('grading', 'automultiplechoice'),
             'text' => '7. ' . get_string('grading', 'automultiplechoice'),
@@ -124,23 +124,24 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'annotating',
             'inactive' => in_array('annotating', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/view.php?a={$this->quiz->id}&page=annotate"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/annotating.php?a={$this->quiz->id}&page=annotate"),
             ],
             'title' => get_string('annotating', 'automultiplechoice'),
             'text' => '8. ' . get_string('annotating', 'automultiplechoice'),
         ];
         array_push(
-          $tabs,
-          $dashboard,
-          $settings,
-          $questions,
-          $scoringsystem,
-          $documents,
-          $uploadscans,
-          $associating,
-          $grading,
-          $annotating
+            $tabs,
+            $dashboard,
+            $settings,
+            $questions,
+            $scoringsystem,
+            $documents,
+            $uploadscans,
+            $associating,
+            $grading,
+            $annotating
         );
+
         return $tabs;
     }
     public function get_tabs_data($quiz, $context, $selected) {

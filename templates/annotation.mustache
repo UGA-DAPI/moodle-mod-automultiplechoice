@@ -1,1 +1,44 @@
 <h1>Annotation</h1>
+
+{{#showerrors}}
+<div class="informationbox notifyproblem alert alert-danger">
+    <ul>
+    {{#errors}}
+        <li>{{.}}</li>
+    {{/errors}}
+    </ul>
+    <form action="annotating.php" method="POST">
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <input type="hidden" name="action" value="annotate" />
+        <button type="submit" class="btn btn-default">
+            {{#str}}annotating_rebuilt_sheets, mod_automultiplechoice{{/str}}
+        </button>
+    </form>
+</div>
+{{/showerrors}}
+
+<div class="box informationbox well">
+  {{#alreadyannoted}}
+    <h3>{{#str}}annotating_corrected_sheets, mod_automultiplechoice{{/str}}</h3>
+    <h4>{{#str}}files, core{{/str}}</h4>
+    <a href="{{correctionfileurl}}" target="_blank">{{correctionfilename}}</a>
+    <p><b>{{nbannotatedfiles}}</b>{{#str}}annotating_individual_sheets_available, mod_automultiplechoice{{/str}}</p>
+    <form action="annotating.php" method="POST">
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <input type="hidden" name="action" value="annotate" />
+        <button type="submit" class="btn btn-default">
+            {{#str}}annotating_update_corrected_sheets, mod_automultiplechoice{{/str}}
+        </button>
+    </form>
+  {{/alreadyannoted}}
+
+  {{^alreadyannoted}}
+    <form action="annotating.php" method="POST">
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <input type="hidden" name="action" value="annotate" />
+        <button type="submit" class="btn btn-default">
+            {{#str}}annotating_generate_corrected_sheets, mod_automultiplechoice{{/str}}
+        </button>
+    </form>
+  {{/alreadyannoted}}
+</div>

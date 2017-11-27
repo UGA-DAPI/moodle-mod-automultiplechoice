@@ -11,7 +11,7 @@ $controller = new \mod_automultiplechoice\local\controllers\view_controller();
 $quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
-$output = $controller->getRenderer('annotating');
+$output = $controller->getRenderer();
 
 $action = optional_param('action', '', PARAM_ALPHA);
 $idnumber = optional_param('idnumber', '', PARAM_INT);
@@ -48,10 +48,10 @@ if ($action === 'annotate') {
 
 
 // Output starts here
-echo $output->header();
+echo $output->header('annotating');
 
-$warnings = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('annotating');
-if ($warnings) {
+
+/*if ($warnings) {
     echo '<div class="informationbox notifyproblem alert alert-error">';
     foreach ($warnings as $warning) {
         echo $warning;
@@ -66,9 +66,49 @@ if ($warnings) {
         get_string('annotating_rebuilt_sheets', 'mod_automultiplechoice')
     );
     echo "</div>";
-}
+}*/
+
+// Build proper data to pass to the view...
 if ($process->countAnnotatedFiles() > 0) {
-    $url = $process->getFileUrl($process->normalizeFilename('corrections'));
+    // Groups are being used.
+    $groupmode    = groups_get_activity_groupmode($cm);
+    $currentgroup = groups_get_activity_group($cm, true);
+    // To make some other functions work better later.
+    if (!$currentgroup) {
+        $currentgroup = null;
+    }
+    $context = context_module::instance($cm->id);
+    $isseparategroups = ($cm->groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context));
+
+    $users = amc_get_student_users($cm, true, $group);
+    $noenrol = false;
+    if (count($users) === 0) {
+        $noenrol = true;
+    } else {
+        $process->get_association();
+        $userscopy = array_flip(array_merge($process->copymanual, $process->copyauto));
+    }
+    $url = new moodle_url('annotating.php', array('a' => $quiz->id));
+}
+
+// $errors = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('annotating');
+$data = [
+    'errors' =>  \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('annotating'),
+    'showerrors' => !empty($errors),
+    'nbannotated' => $process->countAnnotatedFiles(),
+    'alreadyannoted' => $process->countAnnotatedFiles() > 0,
+    'correctionfileurl' =>$process->getFileUrl($process->normalizeFilename('corrections')),
+    'correctionfilename' => $process->normalizeFilename('corrections')
+];
+
+// Page content.
+$view = new \mod_automultiplechoice\output\view_annotation($quiz, $data);
+echo $output->render_annotation_view($view);
+
+
+
+if ($process->countAnnotatedFiles() > 0) {
+    /*$url = $process->getFileUrl($process->normalizeFilename('corrections'));
     echo $OUTPUT->box_start('informationbox well');
     echo $OUTPUT->heading(get_string('annotating_corrected_sheets', 'mod_automultiplechoice'), 2)
         . $OUTPUT->heading(get_string('files', 'core'), 3)
@@ -80,7 +120,7 @@ if ($process->countAnnotatedFiles() > 0) {
             array('a' => $quiz->id, 'action' => 'annotate')
         ),
         get_string('annotating_update_corrected_sheets', 'mod_automultiplechoice')
-    );
+    );*/
 
     // Groups are being used.
     $groupmode    = groups_get_activity_groupmode($cm);
@@ -91,7 +131,7 @@ if ($process->countAnnotatedFiles() > 0) {
         $currentgroup = null;
     }
     $context = context_module::instance($cm->id);
-    $isseparategroups = ($cm->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context));
+    $isseparategroups = ($cm->groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context));
 
     $users = amc_get_student_users($cm, true, $group);
     $noenrol = false;
@@ -152,16 +192,7 @@ if ($process->countAnnotatedFiles() > 0) {
         foreach ($pages as $page) {
             echo \html_writer::img($process->getFileUrl(basename($page)), $page);
         }
-
     }
-} else {
-    echo $OUTPUT->single_button(
-        new moodle_url(
-            '/mod/automultiplechoice/annotating.php',
-            array('a' => $quiz->id, 'action' => 'annotate')
-        ),
-        get_string('annotating_generate_corrected_sheets', 'mod_automultiplechoice')
-    );
 }
 
 echo $output->footer();

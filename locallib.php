@@ -32,7 +32,7 @@ if (version_compare(phpversion(), '5.4.0') < 0) {
 }
 
 /**
- * Return the list of questions available to a given user.
+ * Return the list of questions available for a given user and a context.
  *
  * This function ignore the permissions set in Moodle, except for 'moodle/question:useall'.
  * Then it lists all the questions defined in the current course.
@@ -63,6 +63,42 @@ function automultiplechoice_list_questions($user, $course) {
             . "FROM {question} q JOIN {question_categories} qc ON q.category = qc.id "
             . " JOIN {" . $qtable . "} qm ON qm.{$qfield}=q.id "
             . "WHERE q.hidden = 0 AND qc.contextid = " . $course_context->id
+            . " ORDER BY qc.sortorder, q.name";
+    return $DB->get_records_sql($sql);
+}
+
+/**
+ * Return the list of questions available for a given user and a context.
+ *
+ * This function ignore the permissions set in Moodle, except for 'moodle/question:useall'.
+ * Then it lists all the questions defined in the current course.
+ *
+ * @todo Check if the current user has access to "system", then add its questions.
+ *
+ * @param object $user User record
+ * @param object $course Course record
+ * @return array List of objects with fields: id, categoryname, title, timemodified
+ */
+function automultiplechoice_list_user_questions($user) {
+    global $DB, $CFG;
+
+    $course_context = context_course::instance($course->id);
+
+    if (!has_capability('moodle/question:useall', $course_context, $user)) {
+        return array();
+    }
+
+    if ($CFG->version >= 2013111800) {
+        $qtable = 'qtype_multichoice_options';
+        $qfield = 'questionid';
+    } else {
+        $qtable = 'question_multichoice';
+        $qfield = 'question';
+    }
+    $sql = "SELECT q.id, qc.name AS categoryname, q.name AS title, q.timemodified "
+            . "FROM {question} q JOIN {question_categories} qc ON q.category = qc.id "
+            . " JOIN {" . $qtable . "} qm ON qm.{$qfield}=q.id "
+            . "WHERE q.hidden = 0"
             . " ORDER BY qc.sortorder, q.name";
     return $DB->get_records_sql($sql);
 }

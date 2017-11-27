@@ -11,10 +11,9 @@ $controller = new \mod_automultiplechoice\local\controllers\view_controller();
 $quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
-$output = $controller->getRenderer('documents');
+$output = $controller->getRenderer();
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
-
 
 // Handle Form submission.
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -53,31 +52,16 @@ if ($action === 'lock') {
 
 $PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));
 
-echo $output->header();
+echo $output->header('documents');
 
 
-if ($quiz->isLocked()) {
-    $unlockurl = new \moodle_url('documents.php', array('a' => $quiz->id, 'action' => 'unlock'));
-    $unlockbutton = new \single_button(
-        $unlockurl,
-        get_string('unlock_quiz', 'mod_automultiplechoice')
-    );
-    $message = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('unlock');
-    if ($message) {
-        $unlockbutton->add_confirm_action(implode('\n', $message));
-    }
-    echo '<div class="informationbox notifyproblem alert alert-info">'
-        . '<div>' .get_string('quiz_is_locked', 'mod_automultiplechoice') .'</div>'
-        . $OUTPUT->render($unlockbutton)
-        . "</div>";
-
-} else {
-    foreach (\mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('pdf') as $warning) {
-        echo $OUTPUT->notification($warning, 'notifyproblem');
-    }
+if (!$quiz->isLocked()) {
+  foreach (\mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('pdf') as $warning) {
+      echo $OUTPUT->notification($warning, 'notifyproblem');
+  }
 }
 
 // Dashboard content.
-$view = new \mod_automultiplechoice\output\documents($quiz);
+$view = new \mod_automultiplechoice\output\view_documents($quiz);
 echo $output->render_documents_view($view);
 echo $OUTPUT->footer();

@@ -17,10 +17,10 @@ define(['jquery', 'jqueryui', 'mod_automultiplechoice/jquery.dataTables'], funct
                 ],
                 "oLanguage": oLanguage
             };
-        
+
             $("#questions-list").dataTable(dataTableConfig);
             $("#questions-selected").sortable();
-        
+
             var Question = {
                 template: null,
                 initTemplate: function () {
@@ -41,7 +41,7 @@ define(['jquery', 'jqueryui', 'mod_automultiplechoice/jquery.dataTables'], funct
                 }
             };
             Question.initTemplate();
-        
+
             // handle add / remove actions click event on each question dataTable row
             $("#questions-list").on("click", "button", function (e) {
                 var btn = $(e.target);
@@ -64,7 +64,7 @@ define(['jquery', 'jqueryui', 'mod_automultiplechoice/jquery.dataTables'], funct
                     Question.add(qid, qtitle);
                 }
             });
-        
+
             $("#questions-selected").on("click", "button", function (e) {
                 var qid = $(this).closest('li').find('input.qid').first().val();
                 if (qid) {
@@ -73,7 +73,7 @@ define(['jquery', 'jqueryui', 'mod_automultiplechoice/jquery.dataTables'], funct
                     $(this).closest('li').remove();
                 }
             });
-        
+
             var Section = {
                 template: null,
                 initTemplate: function () {
@@ -88,12 +88,12 @@ define(['jquery', 'jqueryui', 'mod_automultiplechoice/jquery.dataTables'], funct
                 }
             };
             Section.initTemplate();
-        
+
             $("#insert-section").on("click", function (e) {
                 Section.add();
             });
         }
-        
+
     }
-    
+
 });

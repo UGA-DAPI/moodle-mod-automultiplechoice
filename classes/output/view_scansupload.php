@@ -4,7 +4,7 @@ namespace mod_automultiplechoice\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-class scansupload implements \renderable, \templatable {
+class view_scansupload implements \renderable, \templatable {
     /**
      * The auto multiple choice quiz.
      *
@@ -49,16 +49,16 @@ class scansupload implements \renderable, \templatable {
 
     /**
      * String url
-     * 
+     *
      * @var String
      */
     protected $failedurl;
 
     /**
      * Contruct
-     * 
+     *
      * @param mod_automultiplechoice/local/models/quiz $quiz A quiz
-     * @param array $data 
+     * @param array $data
      */
     public function __construct($quiz, $data) {
         $this->quiz = $quiz;
@@ -66,10 +66,10 @@ class scansupload implements \renderable, \templatable {
         $this->scanstats = $data['stats'];
         $this->fileinfos = $data['uploaded'];
         $this->nbpages = $data['nbpages'];
-        $this->failed = $data['failed'];
+        $this->failed = $data['scanfailed'];
         $this->failedurl = $data['failedurl'];
     }
-    
+
     /**
      * Prepare data for use in a template
      *
@@ -79,14 +79,14 @@ class scansupload implements \renderable, \templatable {
     public function export_for_template(\renderer_base $output) {
         $logs = \mod_automultiplechoice\local\helpers\log::build($this->quiz->id)->check('upload');
         $failed = [];
-        foreach ($this->failed as $scan) {
+        $process = new \mod_automultiplechoice\local\amc\upload($this->quiz);
+
+        foreach ($this->failed as $id => $scan) {
             $failed[] = [
                 'id' => $scan,
                 'link' => $process->getFileUrl($scan)
             ];
         }
-
-        // show sqlite3 message = !showfailed && (($scansStats) && (($scansStats['count'] - $scansStats['nbidentified']) > 0)
 
         $content = [
           'quiz' => $this->quiz,
@@ -100,7 +100,7 @@ class scansupload implements \renderable, \templatable {
           'showfailed' => count($failed) > 0,
           'failed' => $failed,
           'downloadfailedurl' => $this->failedurl,
-          'showsqlitemessage' => !empty($this->scanstats) && (($this->scanstats['count'] - $this->scanstats['nbidentified']) > 0)
+          'showsqlitemessage' => !$failed || count($failed) === 0
         ];
         return $content;
     }

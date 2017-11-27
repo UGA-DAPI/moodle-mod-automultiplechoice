@@ -82,6 +82,14 @@ if ($mode === 'unknown') {
 } else if ($mode === 'all') {
     $namedisplay = array_merge($process->copyunknown, $process->copymanual, $process->copyauto);
 }
+
+print_r($process->copyunknown);
+
+print_r($process->copymanual);
+
+print_r($process->copyauto);
+
+print_r($namedisplay);die;
 $optionsusermode = array ('without'  => get_string('without', 'automultiplechoice'),
                   'all'   => get_string('all'));
 

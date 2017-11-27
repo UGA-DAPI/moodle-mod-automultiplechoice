@@ -3,7 +3,6 @@ define(['jquery'], function ($) {
         init: function () {
 
             $('#params-quizz select[name="amc[scoringset]"]').on('change', function() {
-                console.log('should update');
                 // update socring strategy description field
                 this.updateScoringDescription();
             }.bind(this));
@@ -11,7 +10,7 @@ define(['jquery'], function ($) {
             this.updateScoringDescription();
 
             // Listen to scores input changes in order to warn the user if inconsistent results.
-            $('#questions-selected').on('change', 'input.qscore', function () {                
+            $('#questions-selected').on('change', 'input.qscore', function () {
                 this.checkScoreConsistency();
             }.bind(this));
 

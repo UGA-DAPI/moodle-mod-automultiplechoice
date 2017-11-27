@@ -1,50 +1,76 @@
 <div class="row">
     <div class="col-md-12">
     {{#quiz.isLocked}}
+        <div class="informationbox notifyproblem alert alert-info">
+          {{#str}} quiz_is_locked, mod_automultiplechoice {{/str}}
+        </div>
         <h6>{{#str}}subjects_ready_for_distribution, mod_automultiplechoice{{/str}}</h6>
-        <a href={{ziplink}}>{{#str}}documents, mod_automultiplechoice{{/str}} (ZIP)</a>
-        <div>{{#str}}process_archive, mod_automultiplechoice{{/str}}</div>     
+        <a href="{{ziplink}}">{{#str}}documents, mod_automultiplechoice{{/str}} (ZIP)</a>
+        <div>{{#str}}process_archive, mod_automultiplechoice{{/str}}</div>
         {{#pdflinks}}
-            <a href={{sujet}}>{{#str}}documents, mod_automultiplechoice{{/str}} (PDF)</a>
+            <a href="{{sujet}}">{{#str}}documents, mod_automultiplechoice{{/str}} (PDF)</a>
             <div>{{#str}}process_statements_file, mod_automultiplechoice{{/str}}</div>
-            <a href={{catalog}}>{{#str}}catalog, mod_automultiplechoice{{/str}}</a>
+            <a href="{{catalog}}">{{#str}}catalog, mod_automultiplechoice{{/str}}</a>
             <div>{{#str}}process_catalog_file, mod_automultiplechoice{{/str}}</div>
-            <a href={{correction}}>{{#str}}corrections, mod_automultiplechoice{{/str}}</a>
+            <a href="{{correction}}">{{#str}}corrections, mod_automultiplechoice{{/str}}</a>
             <div>{{#str}}process_corrections_file, mod_automultiplechoice{{/str}}</div>
         {{/pdflinks}}
+        <div class="row">
         {{#canrestore}}
-            <form method="post" action="documents.php">
-                <input type="hidden" value="restore" name="action" />
-                <input type="hidden" value={{quiz.id}} name="a" />
-                <button class="btn btn-danger" type="submit">{{#str}}documents_restore_original_version, mod_automultiplechoice{{/str}}</button>
-            </form>
+            <div class="col-md-6 text-center">
+              <form method="post" action="documents.php">
+                  <input type="hidden" value="restore" name="action" />
+                  <input type="hidden" value="{{quiz.id}}" name="a" />
+                  <button class="btn btn-danger" type="submit">{{#str}}documents_restore_original_version, mod_automultiplechoice{{/str}}</button>
+              </form>
+            </div>
         {{/canrestore}}
+        {{#canrestore}}
+          <div class="col-md-6 text-center">
+        {{/canrestore}}
+        {{^canrestore}}
+          <div class="col-md-12 text-center">
+        {{/canrestore}}
+            <form method="post" action="documents.php" onsubmit="return confirm('{{#str}}log_unlock_uploads_exists, mod_automultiplechoice{{/str}}');">
+              <input type="hidden" value="unlock" name="action" />
+              <input type="hidden" value="{{quiz.id}}" name="a" />
+              <button class="btn btn-danger" type="submit"><i class="fa fa-unlock"></i> {{#str}}unlock_quiz, mod_automultiplechoice{{/str}}</button>
+            </form>
+          </div>
+
+        </div>
     {{/quiz.isLocked}}
-    
+
     {{^quiz.isLocked}}
         <div>{{#str}}preparatory_documents_ready, mod_automultiplechoice{{/str}}</div>
         {{#pdflinks}}
-        <a href={{sujet}}>{{#str}}documents, mod_automultiplechoice{{/str}}</a>
+        <a href="{{sujet}}">{{#str}}documents, mod_automultiplechoice{{/str}}</a>
         <div>{{#str}}process_statements_file, mod_automultiplechoice{{/str}}</div>
-        <a href={{catalog}}>{{#str}}catalog, mod_automultiplechoice{{/str}}</a>
+        <a href="{{catalog}}">{{#str}}catalog, mod_automultiplechoice{{/str}}</a>
         <div>{{#str}}process_catalog_file, mod_automultiplechoice{{/str}}</div>
-        <a href={{correction}}>{{#str}}corrections, mod_automultiplechoice{{/str}}</a>
+        <a href="{{correction}}">{{#str}}corrections, mod_automultiplechoice{{/str}}</a>
         <div>{{#str}}process_corrections_file, mod_automultiplechoice{{/str}}</div>
         {{/pdflinks}}
-        <form method="post" action="documents.php">
-            <div class="form-group">
-                <input type="hidden" value="randomize" name="action" />
-                <input type="hidden" value={{quiz.id}} name="a" />
-                <button class="btn btn-danger" type="submit">{{#str}}documents_mix_answers_and_questions, mod_automultiplechoice{{/str}}</button>
-            </div>
-        </form>
-        <form class="form" method="post" action="documents.php">
-            <div class="form-group">
-                <input type="hidden" value="lock" name="action" />
-                <input type="hidden" value={{quiz.id}} name="a" />
-                <button class="btn btn-danger" type="submit"><i class="fa fa-lock"></i> {{#str}}lock_quiz, mod_automultiplechoice{{/str}}</button>
-            </div>
-        </form>     
+        <div class="row">
+          <div class="col-md-6">
+            <form method="post" action="documents.php">
+                <div class="form-group">
+                    <input type="hidden" value="randomize" name="action" />
+                    <input type="hidden" value="{{quiz.id}}" name="a" />
+                    <button class="btn btn-danger" type="submit">{{#str}}documents_mix_answers_and_questions, mod_automultiplechoice{{/str}}</button>
+                </div>
+            </form>
+          </div>
+          <div class="col-md-6">
+            <form class="form" method="post" action="documents.php">
+                <div class="form-group">
+                    <input type="hidden" value="lock" name="action" />
+                    <input type="hidden" value="{{quiz.id}}" name="a" />
+                    <button class="btn btn-danger" type="submit"><i class="fa fa-lock"></i> {{#str}}lock_quiz, mod_automultiplechoice{{/str}}</button>
+                </div>
+            </form>
+          </div>
+        </div>
     {{/quiz.isLocked}}
     </div>
-</div>  
+</div>

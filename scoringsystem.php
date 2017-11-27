@@ -13,11 +13,12 @@ $quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 
-$output = $controller->getRenderer('scoringsystem');
+$output = $controller->getRenderer();
 
 if (!count($quiz->questions)) {
     redirect(new moodle_url('questions.php', array('a' => $quiz->id)));
 }
+
 
 // Handle form submission.
 if (isset($_POST['score'])) {
@@ -31,11 +32,12 @@ if (isset($_POST['score'])) {
         }
         $pos++;
     }
+
     if ($quiz->validate()) {
         if ($quiz->save()) {
             $process = new \mod_automultiplechoice\local\amc\process($quiz);
             $export = new \mod_automultiplechoice\local\amc\export($quiz);
-            $res = $export->saveFormat('latex') && $process->amcPrepareBareme();
+            $res = $process->saveFormat('latex') && $process->amcPrepareBareme();
             if (!$res) {
                  \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('error', get_string('scoring_scale_extract_error', 'mod_automultiplechoice'));
             } else {
@@ -46,8 +48,6 @@ if (isset($_POST['score'])) {
         } else {
             die(get_string('quiz_save_error', 'mod_automultiplechoice'));
         }
-    } else {
-        $output->display_errors($quiz->errors);
     }
 }
 
@@ -58,14 +58,14 @@ $PAGE->set_url('/mod/automultiplechoice/scoringsystem.php', array('id' => $cm->i
 
 $PAGE->requires->js_call_amd('mod_automultiplechoice/scoringsystem', 'init');
 
-echo $output->header();
+echo $output->header('scoringsystem');
 
 if (!$quiz->validate()) {
     $output->display_errors($quiz->errors);
 }
 
 // Scoring system form.
-$view = new \mod_automultiplechoice\output\scoringform($quiz);
+$view = new \mod_automultiplechoice\output\view_scoringform($quiz);
 echo $output->render_scoring_form($view);
 
 echo $OUTPUT->footer();

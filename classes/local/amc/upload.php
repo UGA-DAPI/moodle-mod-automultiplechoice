@@ -7,9 +7,11 @@ class upload extends \mod_automultiplechoice\local\amc\process {
     public $nbPages = 0;
 
     public function upload($filename) {
+
         if ($this->quiz->hasScans()) {
             $this->deleteGrades();
         }
+
         $captureFile = $this->workdir . "/data/capture.sqlite";
         if (!file_exists($captureFile)) {
             if (file_exists($captureFile.'.orig')) {
@@ -18,6 +20,7 @@ class upload extends \mod_automultiplechoice\local\amc\process {
                 $this->amcMeptex();
             }
         }
+
         $this->nbPages = $this->amcGetimages($filename);
         if (!$this->nbPages) {
             $this->errors[] = get_string('error_amc_getimages', 'mod_automultiplechoice');
@@ -91,7 +94,7 @@ class upload extends \mod_automultiplechoice\local\amc\process {
     *      * @return string
     *           */
     public function get_failed_scans() {
-        $scans = []; 
+        $scans = [];
         if (extension_loaded('sqlite3')){
             $capture = new \SQLite3($this->workdir . '/data/capture.sqlite',SQLITE3_OPEN_READONLY);
             $results = $capture->query('SELECT * FROM capture_failed');
@@ -136,12 +139,12 @@ class upload extends \mod_automultiplechoice\local\amc\process {
      * @param bool $multiple (opt, true) If false, AMC will check that all the blank answer sheets were distinct.
      * @return bool
      */
-    private function amcAnalyse($arg='',$multiple = true) {
+    private function amcAnalyse($arg = '', $multiple = true) {
         $pre = $this->workdir;
-        if ($arg==''){
+        if ($arg == '') {
             $paramlist = '--liste-fichiers' ;
             $paramscan =  $pre . '/scanlist';
-        }else{
+        } else {
              $paramlist = '';
              $paramscan = $arg;
         }
@@ -160,7 +163,7 @@ class upload extends \mod_automultiplechoice\local\amc\process {
             '--no-ignore-red',
             $paramlist,
             $paramscan,
-            );
+        );
         //echo "\n<br> auto-multiple-choice analyse " . join (' ', $parameters) . "\n<br>";
         $res = $this->shellExecAmc('analyse', $parameters);
         if ($res) {

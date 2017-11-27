@@ -4,7 +4,7 @@ namespace mod_automultiplechoice\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-class studentview implements \renderable, \templatable {
+class view_student implements \renderable, \templatable {
     /**
      * The auto multiple choice quiz.
      *
@@ -24,7 +24,7 @@ class studentview implements \renderable, \templatable {
      * @var moodle_user
      */
     protected $user;
-    
+
     /**
      * Contruct
      *

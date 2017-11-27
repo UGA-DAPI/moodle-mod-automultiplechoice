@@ -4,7 +4,7 @@ namespace mod_automultiplechoice\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-class association implements \renderable, \templatable {
+class view_association implements \renderable, \templatable {
     /**
      * The auto multiple choice quiz.
      *
@@ -13,7 +13,7 @@ class association implements \renderable, \templatable {
     protected $quiz;
 
     /**
-     * 
+     *
      * @var array a set of usefull data
      */
     protected $data;
@@ -28,7 +28,7 @@ class association implements \renderable, \templatable {
         $this->quiz = $quiz;
         $this->data = $data;
     }
-    
+
     /**
      * Prepare data for use in a template
      *
@@ -36,8 +36,6 @@ class association implements \renderable, \templatable {
      * @return array
      */
     public function export_for_template(\renderer_base $output) {
-       //echo '<pre>';
-       //print_r($this->data);die;
 
         $associationmodes = [];
         foreach ($this->data['associationmodes'] as $value => $label) {
@@ -56,7 +54,6 @@ class association implements \renderable, \templatable {
                 $usermodes[] = ['value' => $value, 'label' => $label, 'selected' => false];
             }
         }
-
 
         $content = [
             'quiz' => $this->quiz,

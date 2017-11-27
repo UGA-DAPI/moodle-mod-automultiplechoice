@@ -1,3 +1,10 @@
+{{#quiz.isLocked}}
+  <div class="informationbox notifyproblem alert alert-info">
+    {{#str}} quiz_is_locked, mod_automultiplechoice {{/str}}
+    {{#str}} access_documents, mod_automultiplechoice {{/str}}
+    <em>{{#str}} documents, mod_automultiplechoice {{/str}}</em>
+  </div>
+{{/quiz.isLocked}}
 {{! settings}}
 <div class="row margin-bottom-md">
   <div class="col-md-12">
@@ -61,7 +68,7 @@
         {{#quiz.isLocked}}
           <h6>{{#str}}subjects_ready_for_distribution, mod_automultiplechoice{{/str}}</h6>
           <a href={{documents.data.ziplink}}>{{#str}}documents, mod_automultiplechoice{{/str}} (ZIP)</a>
-          <div>{{#str}}process_archive, mod_automultiplechoice{{/str}}</div>     
+          <div>{{#str}}process_archive, mod_automultiplechoice{{/str}}</div>
           {{#documents.data.pdflinks}}
             <a href={{sujet}}>{{#str}}documents, mod_automultiplechoice{{/str}} (PDF)</a>
             <div>{{#str}}process_statements_file, mod_automultiplechoice{{/str}}</div>
@@ -74,7 +81,7 @@
             <input type="hidden" value="unlock" name="action" />
             <input type="hidden" value={{quiz.id}} name="a" />
             <button class="btn btn-danger" type="submit"><i class="fa fa-unlock"></i> {{#str}}unlock_quiz, mod_automultiplechoice{{/str}}</button>
-          </form>          
+          </form>
         {{/quiz.isLocked}}
         {{^quiz.isLocked}}
           {{#documents.data.hasDocuments}}
@@ -99,7 +106,7 @@
           {{/documents.data.preparetime}}
         {{/quiz.isLocked}}
       </div>
-    </div>  
+    </div>
   </div>
 </div>
 <hr/>
@@ -120,9 +127,11 @@
 {{!associating}}
 <div class="row margin-bottom-md">
   <div class="col-md-12">
-    <h4>{{associating.title}}</h4>
+    <h4>{{#str}}associating_heading, mod_automultiplechoice{{/str}}</h4>
     <div class="row">
-      <div class="col-md-12">quel contenu pour la page association ?</div>
+      <div class="col-md-12">
+        <p> {{#str}}associating_sheets_identified, mod_automultiplechoice, {"automatic" : {{#quote}}{{associating.nbcopyauto}}{{/quote}}, "manualy" : {{#quote}}{{associating.nbcopymanual}}{{/quote}}, "unknown" : {{#quote}}{{associating.nbcopyunknown}}{{/quote}}} {{/str}}</p>
+      </div>
     </div>
   </div>
 </div>

@@ -12,11 +12,6 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
     public $cm;
 
     /**
-     * @var string Name of the current tab.
-     */
-    public $currenttab = '';
-
-    /**
      * Constructor method, calls the parent constructor
      *
      * @param moodle_page $page
@@ -37,9 +32,12 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
     /**
      * Returns the header for all contents of the automultiplechoice module
      *
+     * Default tab set to settings since mod_form.php is using a hack to display tabs ...
+     *
+     * @param string $currenttab the tab to set as selected
      * @return string
      */
-    public function header() {
+    public function header($currenttab = 'settings') {
         global $CFG;
 
         if (empty($this->quiz)) {
@@ -62,27 +60,14 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
 
         $output .= $this->output->heading($activityname);
         if (has_capability('mod/automultiplechoice:update', $context)) {
-            if (!empty($this->currenttab)) {
-                $quiz = $this->quiz;
-                $cm = $this->cm;
-                $currenttab = $this->currenttab;
-                ob_start();
-                include($CFG->dirroot . '/mod/automultiplechoice/tabs.php');
-                \mod_automultiplechoice\local\helpers\flash_message_manager::displayMessages();
-                $output .= ob_get_contents();
-                ob_end_clean();
-                unset($quiz);
-                unset($cm);
-                unset($currenttab);
-            }
+            $tabs = new \mod_automultiplechoice\output\tabs($this->quiz, $context, $this->cm, $currenttab);
+            $data['tabs'] = $tabs->export_for_template($this);
+            $output .= $this->render_from_template('mod_automultiplechoice/tabs', $data);
         }
 
-        $noscript = '<noscript>';
-        $noscript .= '<div class="box errorbox">';
-        $noscript .= '<h2>Erreur : Javascript n\'est pas activé. Cette activité ne pourra pas fonctionner correctement sans Javascript.</h2>';
-        $noscript .= '</div>';
-        $noscript = '</noscript>';
-        $output .= $noscript;
+        $output .= $this->render_from_template('mod_automultiplechoice/noscript', []);
+
+
         return $output;
     }
 
@@ -96,6 +81,9 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Display quiz errors only (special format ?)
+     */
     public function display_errors($errors) {
         echo $this->box_start('errorbox');
         echo '<p>' . get_string('someerrorswerefound') . '</p>';
@@ -142,5 +130,37 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
     public function render_annotation_view(\templatable $page) {
         $data = $page->export_for_template($this);
         return $this->render_from_template('mod_automultiplechoice/annotation', $data);
+    }
+
+    public function render_grading_view(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_automultiplechoice/grading', $data);
+    }
+
+    public function render_questions_view(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_automultiplechoice/questions', $data);
+    }
+
+    public function render_question_chooser(renderable $chooser) {
+        return $this->render_from_template('mod_quiz/question_chooser', $chooser->export_for_template($this));
+    }
+
+    public function render_qbank_chooser(renderable $qbankchooser) {
+        return $this->render_from_template('core_question/qbank_chooser', $qbankchooser->export_for_template($this));
+    }
+
+    /**
+     * Return the contents of the question bank, to be displayed in the question-bank pop-up.
+     *
+     * @param \mod_automultiplechoice\question\bank\custom_view $questionbank the question bank view object.
+     * @param array $pagevars the variables from {@link \question_edit_setup()}.
+     * @return string HTML to output / send back in response to an AJAX request.
+     */
+    public function question_bank_contents(\mod_automultiplechoice\question\bank\custom_view $questionbank, array $pagevars) {
+
+        $qbank = $questionbank->render('editq', $pagevars['qpage'], $pagevars['qperpage'],
+                $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['qbshowtext']);
+        return html_writer::div(html_writer::div($qbank, 'bd'), 'questionbankformforpopup');
     }
 }

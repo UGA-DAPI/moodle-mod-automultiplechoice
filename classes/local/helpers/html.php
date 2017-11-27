@@ -14,13 +14,13 @@ class html {
      * @param string $checks (opt)
      * @return string HTML
      */
-    
 
-    public static function printFormFullQuestions(\mod_automultiplechoice\local\models\quiz $quiz) {
+
+  /*  public static function printFormFullQuestions(\mod_automultiplechoice\local\models\quiz $quiz) {
         require(__DIR__ . './../../../scoring_form.php');
     }
-
-    public static function printTableQuiz(\mod_automultiplechoice\local\models\quiz $quiz, $rows = array('instructions', 'description', 'comment', 'qnumber', 'score', 'scoringset'))
+*/
+    /*public static function printTableQuiz(\mod_automultiplechoice\local\models\quiz $quiz, $rows = array('instructions', 'description', 'comment', 'qnumber', 'score', 'scoringset'))
     {
         $realQNumber = $quiz->questions->count();
         $scoringSet = \mod_automultiplechoice\local\models\scoring_system::read()->getScoringSet($quiz->amcparams->scoringset);
@@ -71,9 +71,9 @@ class html {
             }
         }
         echo '</tbody></table>';
-    }
+    }*/
 
-    protected static function listAnswers($question) {
+    /*protected static function listAnswers($question) {
         global $DB;
         $answers = $DB->get_recordset('question_answers', array('question' => $question->id));
         $html = '<div class="question-answers"><ul>';
@@ -83,7 +83,7 @@ class html {
         }
         $html .= "</ul></div>\n";
         return $html;
-    }
+    }*/
 
-    
+
 }

@@ -70,15 +70,13 @@ class view_controller
     /**
      * Get the tabbed renderer that will replace $OUTPUT.
      *
-     * @param string $currenttab
      * @return \mod_automultiplechoice_renderer
      */
-    public function getRenderer($currenttab = '') {
+    public function getRenderer() {
         global $PAGE;
         $output = $PAGE->get_renderer('mod_automultiplechoice');
         $output->quiz = $this->quiz;
         $output->cm = $this->cm;
-        $output->currenttab = $currenttab;
         return $output;
     }
 }

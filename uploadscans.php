@@ -11,7 +11,7 @@ $quiz = $controller->getQuiz();
 $cm = $controller->getCm();
 $course = $controller->getCourse();
 // Get the main renderer and sets current Tab.
-$output = $controller->getRenderer('uploadscans');
+$output = $controller->getRenderer();
 
 require_capability('mod/automultiplechoice:update', $controller->getContext());
 
@@ -56,13 +56,13 @@ if (isset ($_FILES['scanfile']) ) {
             $errors[] = get_string('uploadscans_file_not_accessible', 'mod_automultiplechoice');
         }
 
-        // This can also generate errors... 
+        // This can also generate errors...
         $uploadprocess->upload($filename);
         $uploaderrors = $uploadprocess->getLastErrors();
 
         array_merge($errors, $uploaderrors);
 
-        $scansStats = $uploadprocess->statScans();
+        $scansStats = $process->statScans();
 
         $nbpages = $uploadprocess->nbPages;
 
@@ -82,7 +82,7 @@ if (isset ($_FILES['scanfile']) ) {
     $nbpages = $uploadprocess->nbPages;
 }
 
-echo $output->header();
+echo $output->header('uploadscans');
 
 $failed = [];
 if (($scansStats) && (($scansStats['count'] - $scansStats['nbidentified']) > 0)) {
@@ -98,7 +98,7 @@ $data = [
     'faileddowloandurl' => $process->getFileUrl($process->normalizeFilename('failed'))->get_path()
 ];
 
-$view = new \mod_automultiplechoice\output\scansupload($quiz, $data);
+$view = new \mod_automultiplechoice\output\view_scansupload($quiz, $data);
 echo $output->render_scansupload_view($view);
 
 echo $OUTPUT->footer();
