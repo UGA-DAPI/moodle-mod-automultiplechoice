@@ -13,12 +13,19 @@ class view_documents implements \renderable, \templatable {
     protected $quiz;
 
     /**
+     *
+     * @var array a set of usefull data
+     */
+    protected $data;
+
+    /**
      * Contruct
      *
      * @param mod_automultiplechoice/local/models/quiz $quiz A quiz
      */
-    public function __construct($quiz) {
+    public function __construct($quiz, $data) {
         $this->quiz = $quiz;
+        $this->data = $data;
     }
 
     /**
@@ -28,16 +35,12 @@ class view_documents implements \renderable, \templatable {
      * @return array
      */
     public function export_for_template(\renderer_base $output) {
-        $controller = new \mod_automultiplechoice\local\controllers\view_controller();
-        $canrestore = has_capability('mod/automultiplechoice:restoreoriginalfile', $controller->getContext());
-        $process = new \mod_automultiplechoice\local\amc\process($this->quiz);
-
         $content = [
             'quiz' => $this->quiz,
-            'ziplink' => $process->getZipLink(),
-            'pdflinks' => $process->getPdfLinks(),
-            'preparetime' => $process->lastlog('prepare:pdf'),
-            'canrestore' => $canrestore
+            'ziplink' => $this->data['ziplink'],
+            'pdflinks' => $this->data['pdflinks'],
+            'canrestore' => $this->data['canrestore'],
+            'canlock' => $this->data['canlock']
         ];
 
         return $content;

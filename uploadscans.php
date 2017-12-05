@@ -6,14 +6,14 @@ global $DB, $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-$controller = new \mod_automultiplechoice\local\controllers\view_controller();
-$quiz = $controller->getQuiz();
-$cm = $controller->getCm();
-$course = $controller->getCourse();
+$sharedservice = new \mod_automultiplechoice\shared_service();
+$quiz = $sharedservice->getQuiz();
+$cm = $sharedservice->getCm();
+$course = $sharedservice->getCourse();
 // Get the main renderer and sets current Tab.
-$output = $controller->getRenderer();
+$output = $sharedservice->getRenderer();
 
-require_capability('mod/automultiplechoice:update', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $sharedservice->getContext());
 
 $PAGE->set_url('/mod/automultiplechoice/uploadscans.php', array('id' => $cm->id));
 
@@ -21,7 +21,6 @@ $PAGE->set_url('/mod/automultiplechoice/uploadscans.php', array('id' => $cm->id)
 $uploadprocess = new \mod_automultiplechoice\local\amc\upload($quiz);
 $process = new \mod_automultiplechoice\local\amc\process($quiz);
 $amclog = new \mod_automultiplechoice\local\amc\logger($quiz->id);
-
 
 
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -42,17 +41,14 @@ $errors = [];
 $uploaded = [];
 
 $nbpages = 0;
-if (isset ($_FILES['scanfile']) ) {
-    //$errors = array();
+if (isset ($_FILES['scanfile'])) {
 
     if ($_FILES['scanfile']['error'] > 0) {
-        //echo $OUTPUT->box(get_string('error') . $_FILES['scanfile']['error'], 'errorbox');
         $errors[] = get_string('error') . $_FILES['scanfile']['error'];
     } else {
         $amclog->write('upload');
         $filename = '/tmp/' . $_FILES['scanfile']['name'];
-        if (!move_uploaded_file($_FILES['scanfile']['tmp_name'], $filename)) { // safer than rename()
-            //error(get_string('uploadscans_file_not_accessible', 'mod_automultiplechoice'));
+        if (!move_uploaded_file($_FILES['scanfile']['tmp_name'], $filename)) {
             $errors[] = get_string('uploadscans_file_not_accessible', 'mod_automultiplechoice');
         }
 
@@ -85,8 +81,19 @@ if (isset ($_FILES['scanfile']) ) {
 echo $output->header('uploadscans');
 
 $failed = [];
+$showsqlitemsg = false;
 if (($scansStats) && (($scansStats['count'] - $scansStats['nbidentified']) > 0)) {
-    $failed = $uploadprocess->get_failed_scans();
+    if (extension_loaded('sqlite3')) {
+        $failedscans = $uploadprocess->get_failed_scans();
+        foreach ($failedscans as $id => $scan) {
+            $failed[] = [
+                'id' => $scan,
+                'link' => $uploadprocess->getFileActionUrl($scan)
+            ];
+        }
+    } else {
+        $showsqlitemsg = true;
+    }
 }
 
 $data = [
@@ -95,7 +102,9 @@ $data = [
     'errors' => $errors,
     'nbpages' => $nbpages,
     'scanfailed' => $failed,
-    'faileddowloandurl' => $process->getFileUrl($process->normalizeFilename('failed'))->get_path()
+    'failedurl' => $process->getFileActionUrl($process->normalizeFilename('failed'))->get_path(),
+    'logs' =>  \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('upload'),
+    'showsqlitemsg' => $showsqlitemsg
 ];
 
 $view = new \mod_automultiplechoice\output\view_scansupload($quiz, $data);

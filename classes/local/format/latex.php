@@ -50,7 +50,7 @@ class latex extends \mod_automultiplechoice\local\format\api
         . ($params->shuffleq ? '%' : '')
         . ",noshuffle% stops the automatic shuffling of the answers for every question\n"
         . ($params->separatesheet ? '' : '%')
-        . ",separateanswersheet"
+        . ",separateanswersheet\n"
         . ($params->separatesheet ? '' : '%')
         . ",automarks";
         $customlayout=$params->customlayout;

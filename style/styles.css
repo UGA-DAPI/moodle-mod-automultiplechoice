@@ -179,7 +179,9 @@ dt:after {
     margin-left:10px!important;
     margin-bottom:10px;
 }
-.amc_thumbnails .thumbnail > img, .amc_thumbnails .thumbnail > a >img {
+.amc_thumbnails .thumbnail > img,
+.amc_thumbnails .thumbnail > a,
+.amc_thumbnails .thumbnail > a > img {
     height:120px;
 }
 
@@ -225,4 +227,12 @@ td, th {
 
 .margin-bottom-xl {
     margin-bottom: 15px;
+}
+
+.student-name-caption {
+  max-height: 50px;
+}
+
+.student-copy-caption {
+  max-height: 95px;
 }

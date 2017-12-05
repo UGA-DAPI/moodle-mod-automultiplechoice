@@ -20,6 +20,15 @@ $string['annotating_corrected_sheets'] = 'Copies corrigées';
 $string['annotating_individual_sheets_available'] = ' copies individuelles annotées disponibles.';
 $string['annotating_update_corrected_sheets'] = 'Mettre à jour les copies corrigées (annotées)';
 $string['annotating_generate_corrected_sheets'] = 'Générer les copies corrigées';
+$string['annotating_sheets_access'] = 'Accès aux copies';
+$string['annotating_allow_access'] = 'Permettre l\'accès de chaque étudiant';
+$string['annotating_copy_only'] = 'À sa copie corrigée annotée';
+$string['annotating_whole_correction'] = 'Au corrigé complet';
+$string['annotating_copy_sending'] = 'Envoi des copies';
+$string['annotating_send_moodle_message'] = 'Envoyer un message';
+$string['annotating_send_moodle_message_title'] = 'Envoyer un message Moodle à chaque étudiant';
+$string['annotating_associate_user'] = 'Associer';
+$string['annotating_copy_without_user'] = 'Copie(s) without user';
 
 // Annotate process.
 $string['annotate_correction_available'] = 'Correction disponible';
@@ -31,6 +40,9 @@ $string['associating_heading'] = 'Association';
 $string['associating_sheets_identified'] = '{$a->automatic} copies automatiquement identifiés, {$a->manualy} copies manuellement identifiées et {$a->unknown} non identifiées.';
 $string['associating_relaunch_association'] = 'Relancer l\'association';
 $string['associating_launch_association'] = 'Lancer l\'association';
+$string['associating_error_note'] = 'Erreur lors du calcul des notes.';
+$string['associating_error_associate'] = 'Erreur(s) lors du processus d\'association.';
+$string['associating_no_data_for_query'] = 'Aucune donnée ne correspond à votre requête...';
 
 // Common.
 $string['unlock_quiz'] = 'Déverrouiller (permettre les modifications du questionnaire)';
@@ -69,6 +81,7 @@ $string['export_file_write_access_error'] = 'Le fichier {$a->file} n\'a pas pu �
 $string['export_file_create_error'] = 'Le fichier n\'a pas pu être recréé. Consultez l\'administrateur.';
 $string['export_dir_access_error'] = 'Le répertoire /exports n\'est pas accessible en écriture. Contactez l\'administrateur.';
 
+
 // Grading.
 $string['grading_relaunch_correction'] = 'Relancer la correction';
 $string['grading_notes'] = 'Notes';
@@ -81,6 +94,7 @@ $string['grading_mean'] = 'Moyenne';
 $string['grading_median'] = 'Médiane';
 $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Intervalle';
+$string['grading_no_stats'] = 'Aucune statistique disponnible actuellement.';
 
 // Logs messages.
 $string['log_process_running'] = 'AMC est déjà en cours d\'exécution depuis {$a->time} minutes.';

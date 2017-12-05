@@ -1,10 +1,10 @@
 <?php
 
-namespace mod_automultiplechoice\local\controllers;
+namespace mod_automultiplechoice;
 
 defined('MOODLE_INTERNAL') || die();
 
-class view_controller
+class shared_service
 {
     /**
      * @var \mod_automultiplechoice\local\models\quiz

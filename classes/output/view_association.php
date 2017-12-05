@@ -39,21 +39,25 @@ class view_association implements \renderable, \templatable {
 
         $associationmodes = [];
         foreach ($this->data['associationmodes'] as $value => $label) {
-            if ($this->data['associationmode'] === $value) {
-                $associationmodes[] = ['value' => $value, 'label' => $label, 'selected' => true];
-            } else {
-                $associationmodes[] = ['value' => $value, 'label' => $label, 'selected' => false];
-            }
+            $selected = $this->data['associationmode'] === $value;
+            $associationmodes[] = ['value' => $value, 'label' => $label, 'selected' => $selected];
         }
 
         $usermodes = [];
         foreach ($this->data['usermodes'] as $value => $label) {
-            if ($this->data['usermode'] === $value) {
-                $usermodes[] = ['value' => $value, 'label' => $label, 'selected' => true];
-            } else {
-                $usermodes[] = ['value' => $value, 'label' => $label, 'selected' => false];
-            }
+            $selected = $this->data['usermode'] === $value;
+            $usermodes[] = ['value' => $value, 'label' => $label, 'selected' => $selected];
         }
+
+        $currentpage =  $this->data['pager']['page'];
+
+        // use core paging_bar
+        $pagingbar = new \paging_bar(
+            $this->data['pager']['pagecount'],
+            $currentpage,
+            $this->data['pager']['perpage'],
+            $this->data['pager']['url']
+        );
 
         $content = [
             'quiz' => $this->quiz,
@@ -64,7 +68,11 @@ class view_association implements \renderable, \templatable {
             'nbcopymanual' => $this->data['nbcopymanual'],
             'nbcopyunknown' => $this->data['nbcopyunknown'],
             'associationmodes' => $associationmodes,
-            'usermodes' => $usermodes
+            'usermodes' => $usermodes,
+            'usersdata' => $this->data['usersdata'], // data to display (allready paginated)
+            'pager' => $output->render($pagingbar),
+            'currentpage' => $currentpage,
+            'addemptyoption' => $this->data['associationmode'] === 'unknown' || $this->data['associationmode'] === 'manual'
         ];
 
         return $content;

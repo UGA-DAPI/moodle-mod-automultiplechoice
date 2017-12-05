@@ -7,29 +7,40 @@ global $DB, $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-$controller = new \mod_automultiplechoice\local\controllers\view_controller();
-$quiz = $controller->getQuiz();
-$cm = $controller->getCm();
-$course = $controller->getCourse();
-$output = $controller->getRenderer();
+$sharedservice = new \mod_automultiplechoice\shared_service();
+$quiz = $sharedservice->getQuiz();
+$cm = $sharedservice->getCm();
+$course = $sharedservice->getCourse();
+$output = $sharedservice->getRenderer();
 
 $action = optional_param('action', '', PARAM_ALPHA);
 $idnumber = optional_param('idnumber', '', PARAM_INT);
 $copy = optional_param('copy', '', PARAM_INT);
 $group = optional_param('group', '', PARAM_INT);
-$page         = optional_param('page', 0, PARAM_INT);
-$perpage      = optional_param('perpage', 20, PARAM_INT);
+$page = optional_param('page', 0, PARAM_INT);
+$perpage = optional_param('perpage', 20, PARAM_INT);
+$shouldassociate = optional_param('associate', false, PARAM_BOOL);
 
-require_capability('mod/automultiplechoice:update', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $sharedservice->getContext());
 
 $PAGE->set_url('/mod/automultiplechoice/annotating.php', array('id' => $cm->id));
 
 $process = new \mod_automultiplechoice\local\amc\annotate($quiz);
+$associateprocess =  new \mod_automultiplechoice\local\amc\associate($quiz);
 
 if ($action === 'annotate') {
     if ($process->amcAnnote()) {
         redirect($PAGE->url);
     }
+} else if ($action === 'set') {
+    $errors = $associateprocess->handle_manual_association($_POST);
+    if (count($errors) > 0) {
+        \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage(
+            'error',
+            get_string('associating_error_associate', 'mod_automultiplechoice')
+        );
+    }
+    redirect($PAGE->url);
 } else if ($action === 'setstudentaccess') {
     $quiz->studentaccess = optional_param('studentaccess', false, PARAM_BOOL);
     $quiz->corrigeaccess = optional_param('corrigeaccess', false, PARAM_BOOL);
@@ -47,29 +58,14 @@ if ($action === 'annotate') {
 }
 
 
+$nbannotatedfiles = $process->countAnnotatedFiles();
 // Output starts here
 echo $output->header('annotating');
 
-
-/*if ($warnings) {
-    echo '<div class="informationbox notifyproblem alert alert-error">';
-    foreach ($warnings as $warning) {
-        echo $warning;
-    }
-
-    echo "<br /><br />";
-    echo $OUTPUT->single_button(
-        new moodle_url(
-            '/mod/automultiplechoice/annotating.php',
-            array( 'a' => $quiz->id, 'action' => 'annotate')
-        ),
-        get_string('annotating_rebuilt_sheets', 'mod_automultiplechoice')
-    );
-    echo "</div>";
-}*/
-
 // Build proper data to pass to the view...
-if ($process->countAnnotatedFiles() > 0) {
+$datatodisplay = [];
+$unknowncopies = [];
+if ($nbannotatedfiles > 0) {
     // Groups are being used.
     $groupmode    = groups_get_activity_groupmode($cm);
     $currentgroup = groups_get_activity_group($cm, true);
@@ -81,118 +77,126 @@ if ($process->countAnnotatedFiles() > 0) {
     $isseparategroups = ($cm->groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context));
 
     $users = amc_get_student_users($cm, true, $group);
+
     $noenrol = false;
     if (count($users) === 0) {
         $noenrol = true;
     } else {
-        $process->get_association();
-        $userscopy = array_flip(array_merge($process->copymanual, $process->copyauto));
+        $associateprocess->get_association();
+        $userscopy = array_flip(array_merge($associateprocess->copymanual, $associateprocess->copyauto));
     }
+
     $url = new moodle_url('annotating.php', array('a' => $quiz->id));
+
+    // Display all available users / copy
+    if (empty($idnumber) && empty($copy)) {
+        if ($noenrol) {
+            $users = array_map('get_code', glob($process->workdir . '/cr/name-*.jpg'));
+        }
+        $usersdisplay = array_slice($users, $page * $perpage, $perpage);
+        foreach ($usersdisplay as $user) {
+            if ($noenrol) {
+                // Display the "Name img" produced by amc
+                $copy = explode('_', $user);
+                $link = new moodle_url(
+                    'annotating.php',
+                    array('a' => $quiz->id, 'copy' => $copy[0], 'idnumber' => $copy[1])
+                );
+                $datatodisplay[] = [
+                    'url' => $process->getFileRealUrl('name-'.$user.".jpg"),
+                    'label' => $user,
+                    'link' => $link->out(false)
+                ];
+            } else if (isset($userscopy[$user->idnumber])) {
+                $name = $userscopy[$user->idnumber]; // on s'en sert pas...
+                // If more than one parameter in url the query params results in ?a=124&amp;idnumber=14985456425... do not ask me why...
+                // So the proper way to do this is to create the moodle_url and then call $url->out(false) method
+                $link =  new moodle_url(
+                    'annotating.php',
+                    array('a' => $quiz->id, 'idnumber' => $user->idnumber)
+                );
+                // Display user full name
+                $datatodisplay[] = [
+                    'label' => $user->lastname . ' ' . $user->firstname,
+                    'link' => $link->out(false)
+                ];
+            }
+        }
+        // Unknown copy(ies)
+        foreach ($associateprocess->copyunknown as $key => $value) {
+            // Display the "Name img" produced by amc
+            $copy = explode('_', $key);
+            $link = new moodle_url(
+                'annotating.php',
+                array('a' => $quiz->id, 'copy' => $copy[0], 'idnumber' => $copy[1], 'associate' => true)
+            );
+            // Get all cr versions
+            $pages = glob($process->workdir . '/cr/corrections/jpg/page-'.$copy[0].'-*-'.$copy[1].'.jpg');
+
+            if (count($pages) > 0 && !empty($pages[0])) {
+                // pick the first one to display a caption
+                $cr = $pages[0];
+                $unknowncopies[] = [
+                    'url' =>  $process->getFileRealUrl(basename($cr)),
+                    'label' => $key,
+                    'link' => $link->out(false)
+                ];
+            }
+        }
+
+    } else { // Only show one user's report
+
+        // When a known student / user is set we do not use the copy parameter...
+        // So we need to retrieve the copy from $userscopy
+        if (!$copy) {
+            $name = $userscopy[$idnumber];
+            list($copy, $number) = explode('_', $name);
+        } else {
+            $number = $idnumber;
+        }
+
+        // Several versions could exist
+        $pages = glob($process->workdir . '/cr/corrections/jpg/page-'.$copy.'-*-'.$number.'.jpg');
+
+        foreach ($pages as $crpage) {
+            $datatodisplay[] = [
+              'url' => $process->getFileRealUrl(basename($crpage)),
+              'label' => basename($crpage),
+              'code' => $copy.'_'.$number
+            ];
+        }
+    }
 }
 
-// $errors = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('annotating');
+$normalizedfilename = $process->normalizeFilename('corrections');
+
 $data = [
     'errors' =>  \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('annotating'),
     'showerrors' => !empty($errors),
-    'nbannotated' => $process->countAnnotatedFiles(),
-    'alreadyannoted' => $process->countAnnotatedFiles() > 0,
-    'correctionfileurl' =>$process->getFileUrl($process->normalizeFilename('corrections')),
-    'correctionfilename' => $process->normalizeFilename('corrections')
+    'nbannotated' => $nbannotatedfiles,
+    'alreadyannoted' => $nbannotatedfiles > 0,
+    'correctionfileurl' => $process->getFileActionUrl($normalizedfilename),
+    'correctionfilename' => $normalizedfilename,
+    'pager' => [
+      'page' => $page,
+      'perpage' => $perpage,
+      'url' => $url,
+      'pagecount' => count($users)
+    ],
+    'usersdata' => $datatodisplay,
+    'students' => amc_get_users_for_select_element($cm, $idnumber, $currentgroup),
+    'idnumber' => $idnumber,
+    'copy' => $copy,
+    'group' => $group,
+    'cm' => $noenrol ? '' : $cm,
+    'groups' => $noenrol ? [] : groups_get_activity_allowed_groups($cm),
+    'isseparategroups' => $isseparategroups,
+    'shouldassociate' => $shouldassociate,
+    'unknowncopies' => $unknowncopies,
+    'unassociatedusers' => amc_get_users_for_select_element($cm, $idnumber, '', array_merge($associateprocess->copyauto, $associateprocess->copymanual))
 ];
 
 // Page content.
 $view = new \mod_automultiplechoice\output\view_annotation($quiz, $data);
 echo $output->render_annotation_view($view);
-
-
-
-if ($process->countAnnotatedFiles() > 0) {
-    /*$url = $process->getFileUrl($process->normalizeFilename('corrections'));
-    echo $OUTPUT->box_start('informationbox well');
-    echo $OUTPUT->heading(get_string('annotating_corrected_sheets', 'mod_automultiplechoice'), 2)
-        . $OUTPUT->heading(get_string('files', 'core'), 3)
-        . \html_writer::link($url, $process->normalizeFilename('corrections'), array('target' => '_blank'));
-    echo "<p><b>" . $process->countAnnotatedFiles() . "</b>" . get_string('annotating_individual_sheets_available', 'mod_automultiplechoice') . "</p>";
-    echo $OUTPUT->single_button(
-        new moodle_url(
-            '/mod/automultiplechoice/annotating.php',
-            array('a' => $quiz->id, 'action' => 'annotate')
-        ),
-        get_string('annotating_update_corrected_sheets', 'mod_automultiplechoice')
-    );*/
-
-    // Groups are being used.
-    $groupmode    = groups_get_activity_groupmode($cm);
-    $currentgroup = groups_get_activity_group($cm, true);
-
-    // To make some other functions work better later.
-    if (!$currentgroup) {
-        $currentgroup = null;
-    }
-    $context = context_module::instance($cm->id);
-    $isseparategroups = ($cm->groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context));
-
-    $users = amc_get_student_users($cm, true, $group);
-    $noenrol = false;
-    if (count($users) === 0) {
-        $noenrol = true;
-    } else {
-        $process->get_association();
-        $userscopy = array_flip(array_merge($process->copymanual, $process->copyauto));
-    }
-    $url = new moodle_url('annotating.php', array('a' => $quiz->id));
-
-    if (empty($idnumber) && empty($copy)) {
-
-        if ($noenrol) {
-             $users = array_map('get_code', glob($process->workdir . '/cr/name-*.jpg'));
-
-        } else {
-            groups_print_activity_menu($cm, $url);
-            echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
-        }
-
-        $paging = new paging_bar(count($users), $page, 20, $url, 'page');
-
-        echo $OUTPUT->render($paging);
-        $usersdisplay = array_slice($users, $page * $perpage, $perpage);
-        echo html_writer::start_div('amc_thumbnails');
-        echo html_writer::start_tag('ul', array('class' => 'thumbnails'));
-        foreach ($usersdisplay as $user) {
-            if (!$noenrol) {
-                if (isset($userscopy[$user->idnumber])) {
-                    $name = $userscopy[$user->idnumber];
-                } else {
-                    $name = "0_0";
-                }
-            } else {
-                $name = $user;
-            }
-            $copy = explode('_', $name);
-            $thumbnailimg = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"), $name);
-            $thumbnailoutput = \html_writer::link(new moodle_url('annotating.php', array('a' => $quiz->id, 'copy'=> $copy[0], 'idnumber' => $copy[1])), $thumbnailimg, array('class' => 'thumbnail'));
-            echo html_writer::tag('li', $thumbnailoutput );
-        }
-        echo html_writer::end_tag('ul');
-        echo html_writer::end_div();
-
-    } else { // Only show one user's report
-
-        if (!$noenrol) {
-            groups_print_activity_menu($cm, $url);
-            echo $output->students_selector($url, $cm, $idnumber, $currentgroup);
-        }
-        if (!$copy) {
-            $name = $userscopy[$idnumber];
-            list($copy, $idnumber) = explode('_', $name);
-        }
-        $pages = glob($process->workdir . '/cr/corrections/jpg/page-'.$copy.'-*-'.$idnumber.'.jpg');
-
-        foreach ($pages as $page) {
-            echo \html_writer::img($process->getFileUrl(basename($page)), $page);
-        }
-    }
-}
-
 echo $output->footer();

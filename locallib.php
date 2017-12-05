@@ -247,33 +247,12 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
     }
 
     $params['contextid'] = $context->id;
-/*
-    if ($extrawheretest) {
-        $extrawheretest = ' AND ' . $extrawheretest;
-    }
-
-    if ($whereorsortparams) {
-        $params = array_merge($params, $whereorsortparams);
-    }
-
-    if (!$sort) {*/
         list($sort, $sortparams) = users_order_by_sql('u');
         $params = array_merge($params, $sortparams);
-  /*  }
-
-    if ($all === null) {
-        // Previously null was used to indicate that parameter was not used.
-        $all = true;
-    }
-    if (!$all and $coursecontext) {*/
-        // Do not use get_enrolled_sql() here for performance reasons.
         $ejoin = "JOIN {user_enrolments} ue ON ue.userid = u.id
                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :ecourseid)";
         $params['ecourseid'] = $coursecontext->instanceid;
-/*    } else {
-        $ejoin = "";
-    }
-*/
+
     $sql = "SELECT DISTINCT $fields, ra.roleid
               FROM {role_assignments} ra
               JOIN {user} u ON u.id = ra.userid
@@ -294,7 +273,17 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
     return $availableusers;
 }
 
-function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude = NULL, $includeall =  false) {
+/**
+ * Returns a select HTML element
+ * @param  [type]  $url        [description]
+ * @param  [type]  $cm         [description]
+ * @param  [type]  $idnumber   [description]
+ * @param  [type]  $groupid    [description]
+ * @param  [type]  $exclude    [description]
+ * @param  boolean $includeall [description]
+ * @return [type]              [description]
+ */
+function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude = null, $includeall = false) {
     global $USER, $CFG;
 
     $codelength = get_config('mod_automultiplechoice', 'amccodelength');
@@ -305,10 +294,10 @@ function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude = NULL
         $idnumber = substr($idnumber,-1*$codelength);//by security
     }
     $menu = array(); // Will be a list of userid => user name
-    if ($exclude and $idnumber){
+    if ($exclude and $idnumber) {
         $exclude= array_diff($exclude, array($idnumber));
     }
-    $users = amc_get_student_users($cm,true, $groupid,$exclude);
+    $users = amc_get_student_users($cm, true, $groupid, $exclude);
     $label = get_string('selectuser', 'automultiplechoice');
     if ($includeall) {
         $menu[0] = get_string('allusers', 'automultiplechoice');
@@ -327,6 +316,46 @@ function amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude = NULL
     return $select;
 }
 
+
+/**
+ * Get course module users and return the result as an array usable in an HTML select element
+ * @param  stdClass $cm       the course module (ie a automultiplechoice instance)
+ * @param  string $idnumber a user id
+ * @param  string $groupid  a group id
+ * @param  Array $exclude  users to exclude
+ * @return Array           an array usable in an HTML select element
+ */
+function amc_get_users_for_select_element($cm, $idnumber, $groupid, $exclude = null) {
+    global $USER, $CFG;
+
+    $codelength = get_config('mod_automultiplechoice', 'amccodelength');
+    if (is_null($idnumber)) {
+        $idnumber = $USER->idnumber;
+    }
+    if (count($idnumber)>$codelength) {
+        $idnumber = substr($idnumber, -1*$codelength);//by security
+    }
+
+    if ($exclude && $idnumber) {
+        $exclude = array_diff($exclude, array($idnumber));
+    }
+    $users = amc_get_student_users($cm, true, $groupid, $exclude);
+    $label = get_string('selectuser', 'automultiplechoice');
+    $menu = [];
+    foreach ($users as $user) {
+        $userfullname = fullname($user);
+        // In case of prefixed student number.
+        $usernumber = substr($user->idnumber, -1*$codelength);
+        $menu[] = [
+          'value' => $user->idnumber,
+          'label' => $userfullname,
+          'selected' => intval($usernumber) === intval($idnumber)
+        ];
+    }
+
+    return $menu;
+}
+
 /**
  * Returns a HTML button.
  *
@@ -342,6 +371,7 @@ function button_back_to_activity($id) {
             . '</div>';
 }
 
+/*
 function displayLockButton(\mod_automultiplechoice\local\models\quiz $quiz) {
     global $OUTPUT;
     if (empty($quiz->errors)) {
@@ -367,20 +397,24 @@ function displayGradeInfo(\mod_automultiplechoice\local\amc\process $process) {
         echo "<div>Correction des copies déjà effectuée le " . $process::isoDate($gradetime) . "</div>\n";
     }
 }
-function backup_source($file){
+*/
+
+
+function backup_source($file) {
      copy ($file,$file.'.orig');
 }
-function restore_source($file){
-    copy ($file,substr($file,-5));
-}
-function get_code($name) {
-    preg_match('/name-(?P<student>[0-9]+):(?P<copy>[0-9]+).jpg$/', $name, $res);
-    return $res['student'].'_'.$res['copy'];
 
+function restore_source($file) {
+    copy ($file,substr($file, -5));
+}
+
+function get_code($name) {
+    preg_match('/name-(?P<student>[0-9]+)[:-](?P<copy>[0-9]+).jpg$/', $name, $res);
+    return $res['student'].'_'.$res['copy'];
 }
 
 
 function get_list_row($list) {
-    preg_match('/(?P<student>[0-9]+):(?P<copy>[0-9]+)\s*(?P<idnumber>[0-9]+)\s*\((?P<status>.*)\)/', $list,$res);
-     return $res;
+    preg_match('/(?P<student>[0-9]+):(?P<copy>[0-9]+)\s*(?P<idnumber>[0-9]+)\s*\((?P<status>.*)\)/', $list, $res);
+    return $res;
 }

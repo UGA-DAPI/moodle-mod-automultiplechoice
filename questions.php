@@ -6,13 +6,13 @@ global $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-$controller = new \mod_automultiplechoice\local\controllers\view_controller();
-$quiz = $controller->getQuiz();
-$cm = $controller->getCm();
-$course = $controller->getCourse();
-$output = $controller->getRenderer();
+$sharedservice = new \mod_automultiplechoice\shared_service();
+$quiz = $sharedservice->getQuiz();
+$cm = $sharedservice->getCm();
+$course = $sharedservice->getCourse();
+$output = $sharedservice->getRenderer();
 
-require_capability('mod/automultiplechoice:addinstance', $controller->getContext());
+require_capability('mod/automultiplechoice:addinstance', $sharedservice->getContext());
 
 // Form submitted?.
 $questions = \mod_automultiplechoice\local\models\question_list::fromForm('question');

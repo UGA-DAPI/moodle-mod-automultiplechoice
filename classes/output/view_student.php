@@ -47,10 +47,10 @@ class view_student implements \renderable, \templatable {
         $anotatedfile = $this->process->getUserAnotatedSheet($this->user->idnumber);
         $content = ['title' => $this->quiz->name];
         if ($this->quiz->studentaccess && $anotatedfile) {
-            $content['corrected'] = $this->process->getFileUrl($anotatedfile);
+            $content['corrected'] = $this->process->getFileActionUrl($anotatedfile);
             if ($this->quiz->corrigeaccess) {
                 $corrige = $this->process->normalizeFilename('corrige');
-                $content['correction'] = $this->process->getFileUrl($corrige);
+                $content['correction'] = $this->process->getFileActionUrl($corrige);
             }
         }
         return $content;

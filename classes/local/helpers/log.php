@@ -165,7 +165,7 @@ class log {
                     if ($this->read('grading') > $associating) {
                         $messages[] = get_string('log_relaunch_association_grading', 'mod_automultiplechoice');
                     }
-                    if (!$this->read('grading') ) {
+                    if (!$this->read('grading')) {
                         $messages[] = get_string('log_sheets_no_grading', 'mod_automultiplechoice');
                     }
                     break;
@@ -227,7 +227,8 @@ class log {
             'annotatePdf',
             'correction',
             'lock',
-            'unlock'
+            'unlock',
+            'manualassoc'
         );
         if (!in_array($action, $valid)) {
             throw new \Exception("The action $action is not valid.");

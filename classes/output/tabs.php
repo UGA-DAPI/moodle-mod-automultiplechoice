@@ -124,7 +124,7 @@ class tabs implements \renderable, \templatable
             'active' => $tabsdata['currenttab'] === 'annotating',
             'inactive' => in_array('annotating', $tabsdata['disabled']),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/annotating.php?a={$this->quiz->id}&page=annotate"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/automultiplechoice/annotating.php?a={$this->quiz->id}"),
             ],
             'title' => get_string('annotating', 'automultiplechoice'),
             'text' => '8. ' . get_string('annotating', 'automultiplechoice'),

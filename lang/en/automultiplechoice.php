@@ -20,6 +20,16 @@ $string['annotating_corrected_sheets'] = 'Corrected sheets';
 $string['annotating_individual_sheets_available'] = ' individual annotated sheets available.';
 $string['annotating_update_corrected_sheets'] = 'Update corrected sheets (annotated)';
 $string['annotating_generate_corrected_sheets'] = 'Generate corrected sheets';
+$string['annotating_sheets_access'] = 'Sheets access';
+$string['annotating_allow_access'] = 'Allow each student to access';
+$string['annotating_copy_only'] = 'The annotated corrected sheet';
+$string['annotating_whole_correction'] = 'The whole correction';
+$string['annotating_copy_sending'] = 'Copy sending';
+$string['annotating_send_moodle_message'] = 'Send a message';
+$string['annotating_send_moodle_message_title'] = 'Send a Moodle message to each student';
+$string['annotating_associate_user'] = 'Associate';
+$string['annotating_copy_without_user'] = 'Sheet(s) without user';
+
 
 // Annotate process.
 $string['annotate_correction_available'] = 'Correction available';
@@ -30,8 +40,10 @@ $string['annotate_correction_link'] = ' at ';
 $string['associating_heading'] = 'Association';
 $string['associating_sheets_identified'] = '{$a->automatic} sheets automaticaly identified, {$a->manualy} sheets manualy identified and {$a->unknown} unknown.';
 $string['associating_relaunch_association'] = 'Relaunch association';
-$string['associating_launch_association'] = 'Launch l\'association';
-
+$string['associating_launch_association'] = 'Launch association';
+$string['associating_error_note'] = 'Error while computing grades.';
+$string['associating_error_associate'] = 'Error(s) while associating.';
+$string['associating_no_data_for_query'] = 'No data for your query...';
 
 // Common.
 $string['unlock_quiz'] = 'Unlock (allow quiz to be updated)';
@@ -82,6 +94,7 @@ $string['grading_mean'] = 'Mean';
 $string['grading_median'] = 'Median';
 $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Range';
+$string['grading_no_stats'] = 'No statistics available yet.';
 
 // Logs messages.
 $string['log_process_running'] = 'AMC is already running since {$a->time} minutes.';
@@ -130,7 +143,7 @@ $string['uploadscans_add_sheets'] = 'Add sheets';
 $string['uploadscans_add_sheets_message'] = 'If you upload new sheets they will be added to the existing ones.';
 $string['uploadscans_no_sheets_uploaded'] = 'No sheet uploaded yet.';
 $string['uploadscans_delete_sheets'] = 'Delete sheets';
-$string['uploadscans_delete_sheets_warn'] = 'You can delete existing uploaded sheets. This action will erase notes. After that you\'ll be able to uplad new scans.';
+$string['uploadscans_delete_sheets_warn'] = 'You can delete existing uploaded sheets. This action will erase notes. After that you\'ll be able to upload new scans.';
 $string['uploadscans_delete_sheets_confirm'] = 'Definitly delete uploaded sheets on the server ?';
 $string['uploadscans_unknown_scans'] = 'Unknown scans';
 $string['uploadscans_delete_unknown_scans'] = 'Delete all unknown scans';

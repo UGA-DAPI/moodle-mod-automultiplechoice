@@ -7,17 +7,19 @@ global $DB, $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-$controller = new \mod_automultiplechoice\local\controllers\view_controller();
-$quiz = $controller->getQuiz();
-$cm = $controller->getCm();
-$course = $controller->getCourse();
-$output = $controller->getRenderer();
+$sharedservice = new \mod_automultiplechoice\shared_service();
+$quiz = $sharedservice->getQuiz();
+$cm = $sharedservice->getCm();
+$course = $sharedservice->getCourse();
+$output = $sharedservice->getRenderer();
 
-require_capability('mod/automultiplechoice:update', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $sharedservice->getContext());
 
 // Handle Form submission.
 $action = optional_param('action', '', PARAM_ALPHA);
 $process = new \mod_automultiplechoice\local\amc\process($quiz);
+
+$errors = [];
 if ($action === 'lock') {
     $quiz->amcparams->locked = true;
     \mod_automultiplechoice\local\helpers\log::build($quiz->id)->write('lock');
@@ -25,6 +27,7 @@ if ($action === 'lock') {
     array_map('backup_source', glob($quiz->getDirName() . '/prepare-source.*'));
     if (!$process->amcMeptex()) {
         $process->errors[] = get_string('documents_meptex_error', 'mod_automultiplechoice');
+        $errors[] = get_string('documents_meptex_error', 'mod_automultiplechoice');
     }
     copy($quiz->getDirName().'/data/capture.sqlite', $quiz->getDirName().'/data/capture.sqlite.orig');
 } else if ($action === 'unlock') {
@@ -54,14 +57,22 @@ $PAGE->set_url('/mod/automultiplechoice/documents.php', array('id' => $cm->id));
 
 echo $output->header('documents');
 
-
 if (!$quiz->isLocked()) {
-  foreach (\mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('pdf') as $warning) {
-      echo $OUTPUT->notification($warning, 'notifyproblem');
-  }
+    foreach (\mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('pdf') as $warning) {
+        echo $OUTPUT->notification($warning, 'notifyproblem');
+    }
 }
 
+$data = [
+  'errors' => $errors,
+  'canrestore' => has_capability('mod/automultiplechoice:restoreoriginalfile', $sharedservice->getContext()),
+  'ziplink' => $process->getZipLink(),
+  'pdflinks' => $process->getPdfLinks(),
+  'canlock' => $quiz->hasDocuments()
+];
+
+
 // Dashboard content.
-$view = new \mod_automultiplechoice\output\view_documents($quiz);
+$view = new \mod_automultiplechoice\output\view_documents($quiz, $data);
 echo $output->render_documents_view($view);
 echo $OUTPUT->footer();

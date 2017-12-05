@@ -26,13 +26,14 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
             new moodle_url('/mod/automultiplechoice/style/styles.css')
         );
         $page->requires->js_call_amd('mod_automultiplechoice/async', 'init');
+        $page->requires->js_call_amd('mod_automultiplechoice/common', 'init');
         parent::__construct($page, $target);
     }
 
     /**
      * Returns the header for all contents of the automultiplechoice module
      *
-     * Default tab set to settings since mod_form.php is using a hack to display tabs ...
+     * Default tab is set to settings since mod_form.php is using a hack to display tabs that does not allow to set the selected tab...
      *
      * @param string $currenttab the tab to set as selected
      * @return string
@@ -66,12 +67,10 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
         }
 
         $output .= $this->render_from_template('mod_automultiplechoice/noscript', []);
-
-
         return $output;
     }
 
-
+    // used in annotating and was used in associating
     public function students_selector($url, $cm, $idnumber, $groupid, $exclude = null) {
 
         $select = amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude);

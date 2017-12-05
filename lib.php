@@ -38,19 +38,17 @@ defined('MOODLE_INTERNAL') || die();
  */
 function automultiplechoice_supports($feature)
 {
-    switch($feature) {
+    switch ($feature) {
+        case FEATURE_GRADE_OUTCOMES:
+        case FEATURE_MOD_INTRO:
+            return false;
 
-    case FEATURE_GRADE_OUTCOMES:
-    case FEATURE_MOD_INTRO:
-        return false;
+        case FEATURE_BACKUP_MOODLE2:
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
 
-    case FEATURE_BACKUP_MOODLE2:
-    case FEATURE_GRADE_HAS_GRADE:
-        return true;
-
-    default:
-        return null;
-
+        default:
+            return null;
     }
 }
 
@@ -66,7 +64,8 @@ function automultiplechoice_supports($feature)
  * @param mod_automultiplechoice_mod_form $mform
  * @return int The id of the newly inserted automultiplechoice record
  */
-function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null) {
+function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null)
+{
     global $DB, $USER;
 
     $automultiplechoice->timecreated = $_SERVER['REQUEST_TIME'];
@@ -97,7 +96,8 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
  * @param mod_automultiplechoice_mod_form $mform
  * @return boolean Success/Fail
  */
-function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null) {
+function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null)
+{
     global $DB;
 
     $quiz = \mod_automultiplechoice\local\models\quiz::findById($automultiplechoice->instance);
@@ -129,7 +129,8 @@ function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_au
  * @param int $id Id of the module instance
  * @return boolean Success/Failure
  */
-function automultiplechoice_delete_instance($id) {
+function automultiplechoice_delete_instance($id)
+{
     global $DB;
 
     $automultiplechoice = $DB->get_record('automultiplechoice', array('id' => $id));
@@ -152,7 +153,8 @@ function automultiplechoice_delete_instance($id) {
  *
  * @return stdClass|null
  */
-function automultiplechoice_user_outline($course, $user, $mod, $automultiplechoice) {
+function automultiplechoice_user_outline($course, $user, $mod, $automultiplechoice)
+{
 
     $return = new stdClass();
     $return->time = 0;
@@ -170,7 +172,8 @@ function automultiplechoice_user_outline($course, $user, $mod, $automultiplechoi
  * @param stdClass $automultiplechoice the module instance record
  * @return void, is supposed to echp directly
  */
-function automultiplechoice_user_complete($course, $user, $mod, $automultiplechoice) {
+function automultiplechoice_user_complete($course, $user, $mod, $automultiplechoice)
+{
 }
 
 /**
@@ -180,7 +183,8 @@ function automultiplechoice_user_complete($course, $user, $mod, $automultiplecho
  *
  * @return boolean
  */
-function automultiplechoice_print_recent_activity($course, $viewfullnames, $timestart) {
+function automultiplechoice_print_recent_activity($course, $viewfullnames, $timestart)
+{
     return false;  //  True if anything was printed, otherwise false
 }
 
@@ -200,7 +204,8 @@ function automultiplechoice_print_recent_activity($course, $viewfullnames, $time
  * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function automultiplechoice_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
+function automultiplechoice_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid = 0, $groupid = 0)
+{
 }
 
 /**
@@ -208,7 +213,8 @@ function automultiplechoice_get_recent_mod_activity(&$activities, &$index, $time
 
  * @return void
  */
-function automultiplechoice_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
+function automultiplechoice_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames)
+{
 }
 
 /**
@@ -219,7 +225,8 @@ function automultiplechoice_print_recent_mod_activity($activity, $courseid, $det
  * @return boolean
  * @todo Finish documenting this function
  **/
-function automultiplechoice_cron () {
+function automultiplechoice_cron()
+{
     return true;
 }
 
@@ -229,7 +236,8 @@ function automultiplechoice_cron () {
  * @example return array('moodle/site:accessallgroups');
  * @return array
  */
-function automultiplechoice_get_extra_capabilities() {
+function automultiplechoice_get_extra_capabilities()
+{
     return array();
 }
 
@@ -248,7 +256,8 @@ function automultiplechoice_get_extra_capabilities() {
  * @param int $automultiplechoiceid ID of an instance of this module
  * @return bool true if the scale is used by the given automultiplechoice instance
  */
-function automultiplechoice_scale_used($automultiplechoiceid, $scaleid) {
+function automultiplechoice_scale_used($automultiplechoiceid, $scaleid)
+{
     return false;
 }
 
@@ -260,7 +269,8 @@ function automultiplechoice_scale_used($automultiplechoiceid, $scaleid) {
  * @param $scaleid int
  * @return boolean true if the scale is used by any automultiplechoice instance
  */
-function automultiplechoice_scale_used_anywhere($scaleid) {
+function automultiplechoice_scale_used_anywhere($scaleid)
+{
     return false;
 }
 
@@ -273,7 +283,8 @@ function automultiplechoice_scale_used_anywhere($scaleid) {
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return void
  */
-function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $grades=null) {
+function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $grades = null)
+{
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
@@ -285,7 +296,7 @@ function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $gra
 
     if ($grades  === 'reset') {
         $item['reset'] = true;
-        $grades = NULL;
+        $grades = null;
     }
 
     grade_update('mod/automultiplechoice', $automultiplechoice->course, 'mod', 'automultiplechoice',
@@ -301,7 +312,8 @@ function automultiplechoice_grade_item_update(stdClass $automultiplechoice, $gra
  * @param int $userid update grade of specific user only, 0 means all participants
  * @return void
  */
-function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid = 0) {
+function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid = 0)
+{
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
     require_once __DIR__ . '/models/AmcProcessGrade.php';
@@ -331,7 +343,8 @@ function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid 
  * @param stdClass $context
  * @return array of [(string)filearea] => (string)description
  */
-function automultiplechoice_get_file_areas($course, $cm, $context) {
+function automultiplechoice_get_file_areas($course, $cm, $context)
+{
     return array();
 }
 
@@ -352,7 +365,8 @@ function automultiplechoice_get_file_areas($course, $cm, $context) {
  * @param string $filename
  * @return file_info instance or null if not found
  */
-function automultiplechoice_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+function automultiplechoice_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename)
+{
     return null;
 }
 
@@ -370,9 +384,10 @@ function automultiplechoice_get_file_info($browser, $areas, $course, $cm, $conte
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  */
-function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
+function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = array())
+{
     global $USER;
-    require_once __DIR__ . '/models/AmcProcessExport.php';
+    //require_once __DIR__ . '/models/AmcProcessExport.php';
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
     }
@@ -382,6 +397,7 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     $filename = rawurldecode(array_pop($args));
     $quiz = \mod_automultiplechoice\local\models\quiz::findById($cm->instance);
     $process = new \mod_automultiplechoice\local\amc\export($quiz);
+
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
     // and corrigé
     if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
@@ -409,12 +425,11 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
         }
     }
     if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
-        if (   $quiz->corrigeaccess && file_exists("cr-".$USER->id.".pdf") )
-            {
+        if ($quiz->corrigeaccess && file_exists("cr-".$USER->id.".pdf")) {
             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
             return true;
-         }
-     }
+        }
+    }
 
     // Then teacher only use cases
     require_capability('mod/automultiplechoice:update', $context);
@@ -422,77 +437,76 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     // whitelist security
     if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) {
         $ret = $process->amcCreatePdf('latex');
-        if ($ret){
+        if ($ret) {
              send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
         return $res;
-     }else if (preg_match('/^corriges-.*\.pdf$/', $filename)) {
+    } elseif (preg_match('/^corriges-.*\.pdf$/', $filename)) {
         $ret = $process->amcCreateCorrection();
-        if ($ret){
+        if ($ret) {
              send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
         return $res;
-     }
-     else if (preg_match('/^failed-.*\.pdf$/', $filename)) {
+    } elseif (preg_match('/^failed-.*\.pdf$/', $filename)) {
         $ret = $process->makeFailedPdf();
-        if ($ret){
+        if ($ret) {
             send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         }
         return $ret;
-     } else if (preg_match('/^sujets-.*\.zip$/', $filename)) {
-         $ret = $process->amcImprime() &&  $process->zip();
-            if ($ret){
-             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/zip') ;
+    } elseif (preg_match('/^sujets-.*\.zip$/', $filename)) {
+        $ret = $process->amcImprime() &&  $process->zip();
+        if ($ret) {
+            send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/zip') ;
         }
-        return $ret;
-     } else if (preg_match('/^corrections-.*\.pdf$/', $filename)) {
+            return $ret;
+    } elseif (preg_match('/^corrections-.*\.pdf$/', $filename)) {
         $ret = $process->amcAnnotePdf();
-        if ($ret){
-        send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-    }
-    return $res;
-     } else if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
+        if ($ret) {
+            send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
+        }
+        return $res;
+    } elseif (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
         send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
         return true;
-    } else if (preg_match('/grades\.csv$/', $filename)) {
+    } elseif (preg_match('/grades\.csv$/', $filename)) {
         $ret = $process->amcExport('csv');
-        if ($ret){
+        if ($ret) {
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
         }
         return $ret;
-     } else if (preg_match('/apogee\.csv$/', $filename)) {
+    } elseif (preg_match('/apogee\.csv$/', $filename)) {
         $ret = $process->writeFileApogeeCsv();
-        if ($ret){
+        if ($ret) {
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
         }
         return $ret;
-    } else if (preg_match('/\.ods$/', $filename)) {
+    } elseif (preg_match('/^name-[0-9]*_[0-9]*\.jpg$/', $filename)) {
+        $filename = preg_replace('/(^name-[0-9]+)_([0-9]*\.jpg$)/', '\1-\2', $filename);
+        send_file($process->workdir . '/cr/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
+        return true;
+    } elseif (preg_match('/^page-[0-9]*-[0-9]*-[0-9]*\.jpg$/', $filename)) {
+        send_file($process->workdir . '/cr/corrections/jpg/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
+        return true;
+    } elseif (preg_match('/\.ods$/', $filename)) {
         $ret = $process->amcExport('ods');
-        if ($ret){
+        if ($ret) {
             send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'application/vnd.oasis.opendocument.spreadsheet') ;
         }
         return $ret;
-    } else if (preg_match('/\.ppm$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/x-portable-pixmap') ;
+    } elseif (preg_match('/\.ppm$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/x-portable-pixmap') ;
         return true;
-    } else if (preg_match('/\.pbm$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/x-portable-bitmap') ;
+    } elseif (preg_match('/\.pbm$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/x-portable-bitmap') ;
         return true;
-    } else if (preg_match('/\.tif[f]*$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/tiff') ;
+    } elseif (preg_match('/\.tif[f]*$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/tiff') ;
         return true;
-    } else if (preg_match('/\.png$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/png') ;
+    } elseif (preg_match('/\.png$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/png') ;
         return true;
-    } else if (preg_match('/\.jp(e|)g$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false,'image/jpeg') ;
-        return true;
-    }else if (preg_match('/^name-[0-9]*_[0-9]*\.jpg$/', $filename)) {
-        $filename=preg_replace('/(^name-[0-9]+)_([0-9]*\.jpg$)/', '\1:\2',  $filename);
-        send_file($process->workdir . '/cr/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
-        return true;
-    }else if (preg_match('/^page-[0-9]*-[0-9]*-[0-9]*\.jpg$/', $filename)) {
-        send_file($process->workdir . '/cr/corrections/jpg/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
+    } elseif (preg_match('/\.jp(e|)g$/', $filename)) {
+        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/jpeg') ;
         return true;
     }
     send_file_not_found();
@@ -512,7 +526,8 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
  * @param stdClass $module
  * @param cm_info $cm
  */
-function automultiplechoice_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
+function automultiplechoice_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm)
+{
 }
 
 /**
@@ -524,10 +539,12 @@ function automultiplechoice_extend_navigation(navigation_node $navref, stdclass 
  * @param settings_navigation $settingsnav {@link settings_navigation}
  * @param navigation_node $automultiplechoicenode {@link navigation_node}
  */
-function automultiplechoice_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $automultiplechoicenode=null) {
+function automultiplechoice_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $automultiplechoicenode = null)
+{
 }
 
-function automultiplechoice_questions_in_use($questionids) {
+function automultiplechoice_questions_in_use($questionids)
+{
     global $DB;
     $records = $DB->get_recordset('automultiplechoice');
     foreach ($records as $record) {
@@ -548,9 +565,10 @@ function automultiplechoice_questions_in_use($questionids) {
  *
  * @param $mform form passed by reference
  */
-function automultiplechoice_reset_course_form_definition(&$mform) {
+function automultiplechoice_reset_course_form_definition(&$mform)
+{
     $mform->addElement('header', 'dataheader', get_string('modulenameplural', 'automultiplechoice'));
-    $mform->addElement('checkbox', 'reset_automultiplechoice', get_string('deleteallentries','automultiplechoice'));
+    $mform->addElement('checkbox', 'reset_automultiplechoice', get_string('deleteallentries', 'automultiplechoice'));
 
     $mform->addElement('checkbox', 'reset_automultiplechoice_documents', get_string('deletenotenrolled', 'automultiplechoice'));
     $mform->disabledIf('reset_automultiplechoice_notenrolled', 'reset_automultiplechoice', 'checked');
@@ -566,7 +584,8 @@ function automultiplechoice_reset_course_form_definition(&$mform) {
  * Course reset form defaults.
  * @return array
  */
-function automultiplechoice_reset_course_form_defaults($course) {
+function automultiplechoice_reset_course_form_defaults($course)
+{
     return array('reset_automultiplechoice'=>0, 'reset_automultiplechoice_scans'=>1, 'reset_automultiplechoice_log'=>1, 'reset_dautomultiplechoice_douments'=>0);
 }
 
@@ -578,7 +597,8 @@ function automultiplechoice_reset_course_form_defaults($course) {
  * @param int $courseid
  * @param string $type optional type
  */
-function automultiplechoice_reset_gradebook($courseid, $type='') {
+function automultiplechoice_reset_gradebook($courseid, $type = '')
+{
     global $CFG, $DB;
 
     $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
@@ -601,7 +621,8 @@ function automultiplechoice_reset_gradebook($courseid, $type='') {
  * @param object $data the data submitted from the reset course.
  * @return array status array
  */
-function automultiplechoice_reset_userdata($data) {
+function automultiplechoice_reset_userdata($data)
+{
     global $CFG, $DB;
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->dirroot.'/rating/lib.php');
@@ -633,7 +654,7 @@ function automultiplechoice_reset_userdata($data) {
         $DB->delete_records_select('data_records', "dataid IN ($alldatassql)", array($data->courseid));
 
         if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
-            foreach ($datas as $dataid=>$unused) {
+            foreach ($datas as $dataid => $unused) {
                 if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
                     continue;
                 }
@@ -698,7 +719,7 @@ function automultiplechoice_reset_userdata($data) {
     // remove all ratings
     if (!empty($data->reset_automultiplechoice_scans)) {
         if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
-            foreach ($datas as $dataid=>$unused) {
+            foreach ($datas as $dataid => $unused) {
                 if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
                     continue;
                 }

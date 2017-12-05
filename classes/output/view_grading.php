@@ -43,7 +43,8 @@ class view_grading implements \renderable, \templatable {
             'nbusersknown' => $this->data['nbusersknown'],
             'nbusersunknown' => $this->data['nbusersunknown'],
             'filesurls' => $this->data['filesurls'],
-            'stats' => $this->data['stats']
+            'stats' => $this->data['stats'],
+            'showstats' => count($this->data['stats'] === 0)
         ];
 
         return $content;

@@ -275,13 +275,16 @@ class process
     }
 
     public function getStats2() {
-        $this->readGrades();
-        $mark = array();
+        $stats = [];
+        if(!$this->readGrades()){
+            return $stats;
+        }
+        $mark = [];
         foreach ($this->grades as $rawmark) {
             $mark[] = $rawmark->rawgrade;
         }
-        $indics = array('size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle');
-        $stats = [];
+        $indics = ['size' => 'effectif', 'mean' => 'moyenne', 'median' => 'médiane', 'mode' => 'mode', 'range' => 'intervalle'];
+
         foreach ($indics as $indicen => $indicfr) {
             $stats[$indicen] = $this->mmmr($mark, $indicen);
         }
@@ -311,7 +314,7 @@ class process
 
         while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== false) {
             $idnumber = $data[$getCol['student.number']];
-            $userid=null;
+            $userid = null;
             $userid = $data[$getCol['moodleid']];
             if ($userid) {
                 $this->usersknown++;
@@ -332,18 +335,14 @@ class process
     }
 
     public function get_known_users() {
-        return $this->usersunknown;
+        return $this->usersknown;
     }
 
     protected static function fopenRead($filename) {
         if (!is_readable($filename)) {
             return false;
         }
-        $handle = fopen($filename, 'r');
-        if (!$handle) {
-            return false;
-        }
-        return $handle;
+        return fopen($filename, 'r');
     }
     /**
      * Computes several statistics indicators from an array
@@ -373,7 +372,7 @@ class process
                 case 'mode':
                     $v = array_count_values($array);
                     arsort($v);
-                    list ($res) = each($v); // read the first key
+                    $res = array_keys($v)[0];
                     break;
                 case 'range':
                     sort($array, SORT_NUMERIC);
@@ -418,11 +417,12 @@ class process
      * @param integer $contextid (opt)
      * @return \moodle_url
      */
-    public function getFileUrl($filename, $forcedld = false, $contextid = null) {
+    public function getFileActionUrl($filename, $forcedld = false, $contextid = null) {
         global $PAGE;
         if (!$contextid) {
             $contextid = $PAGE->context->id;
         }
+
         return \moodle_url::make_pluginfile_url(
                 $contextid,
                 'mod_automultiplechoice',
@@ -433,6 +433,26 @@ class process
                 $forcedld
         );
     }
+
+    public function getFileRealUrl($filename, $forcedld = false, $contextid = null) {
+        global $PAGE;
+        if (!$contextid) {
+            $contextid = $PAGE->context->id;
+        }
+
+        return \moodle_url::make_pluginfile_url(
+          $contextid,
+          'mod_automultiplechoice',
+          '',
+          NULL,
+          '',
+          $this->relworkdir . '/' . ltrim($filename, '/'),
+          $forcedld
+        );
+    }
+
+
+
     protected function get_students_list(){
         if (file_exists($this->workdir . self::PATH_STUDENTLIST_CSV)) {
             return $this->workdir . self::PATH_STUDENTLIST_CSV;
@@ -585,9 +605,9 @@ class process
     }*/
     public function getPdfLinks() {
         return [
-          'sujet' => $this->getFileUrl($this->normalizeFilename('sujet')),
-          'catalog' => $this->getFileUrl($this->normalizeFilename('catalog')),
-          'correction' => $this->getFileUrl($this->normalizeFilename('corriges'))
+          'sujet' => $this->getFileActionUrl($this->normalizeFilename('sujet')),
+          'catalog' => $this->getFileActionUrl($this->normalizeFilename('catalog')),
+          'correction' => $this->getFileActionUrl($this->normalizeFilename('corriges'))
         ];
     }
     /**
@@ -598,9 +618,9 @@ class process
     public function getHtmlPdfLinks() {
         $opts = array('class' => 'btn', 'target' => '_blank');
         $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujet')), get_string('documents', 'mod_automultiplechoice'), $opts),
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('catalog')), get_string('catalog', 'mod_automultiplechoice'), $opts),
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('corriges')), get_string('corrections', 'mod_automultiplechoice'), $opts),
+            \html_writer::link($this->getFileActionUrl($this->normalizeFilename('sujet')), get_string('documents', 'mod_automultiplechoice'), $opts),
+            \html_writer::link($this->getFileActionUrl($this->normalizeFilename('catalog')), get_string('catalog', 'mod_automultiplechoice'), $opts),
+            \html_writer::link($this->getFileActionUrl($this->normalizeFilename('corriges')), get_string('corrections', 'mod_automultiplechoice'), $opts),
         );
 
         $html = '<ul class="amc-files">';
@@ -625,7 +645,7 @@ class process
      */
     public function getHtmlZipLink() {
         $links = array(
-            \html_writer::link($this->getFileUrl($this->normalizeFilename('sujets')), get_string('documents', 'mod_automultiplechoice'), array('class' => 'btn'))
+            \html_writer::link($this->getFileActionUrl($this->normalizeFilename('sujets')), get_string('documents', 'mod_automultiplechoice'), array('class' => 'btn'))
         );
         $html = '<ul class="amc-files">';
         $html .= '<li>';
@@ -636,7 +656,7 @@ class process
         return $html;
     }
     public function getZipLink() {
-        return $this->getFileUrl($this->normalizeFilename('sujets'));
+        return $this->getFileActionUrl($this->normalizeFilename('sujets'));
     }
     /**
      * Initialize the data directory $this->workdir with the template structure.

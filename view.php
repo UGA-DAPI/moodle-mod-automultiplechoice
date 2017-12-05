@@ -9,11 +9,11 @@ require_once(__DIR__ . '/locallib.php');
 
 global $OUTPUT, $PAGE, $CFG;
 
-$controller = new \mod_automultiplechoice\local\controllers\view_controller();
-$quiz = $controller->getQuiz();
-$cm = $controller->getCm();
-$course = $controller->getCourse();
-$output = $controller->getRenderer();
+$sharedservice = new \mod_automultiplechoice\shared_service();
+$quiz = $sharedservice->getQuiz();
+$cm = $sharedservice->getCm();
+$course = $sharedservice->getCourse();
+$output = $sharedservice->getRenderer();
 $process = new \mod_automultiplechoice\local\amc\process($quiz);
 
 if (!count($quiz->questions)) {
@@ -22,7 +22,7 @@ if (!count($quiz->questions)) {
 
 $PAGE->set_url('/mod/automultiplechoice/view.php', array('id' => $cm->id));
 
-$viewcontext = $controller->getContext();
+$viewcontext = $sharedservice->getContext();
 
 // Render header.
 echo $output->header('dashboard');

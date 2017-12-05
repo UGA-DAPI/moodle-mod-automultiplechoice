@@ -2,108 +2,111 @@
 
 require_once(__DIR__ . '/locallib.php');
 
-
-global $DB, $OUTPUT, $PAGE;
-/* @var $DB moodle_database */
+global $OUTPUT, $PAGE;
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-$controller = new \mod_automultiplechoice\local\controllers\view_controller();
-$quiz = $controller->getQuiz();
-$cm = $controller->getCm();
-$course = $controller->getCourse();
-$output = $controller->getRenderer();
+$sharedservice = new \mod_automultiplechoice\shared_service();
+$quiz = $sharedservice->getQuiz();
+$cm = $sharedservice->getCm();
+$course = $sharedservice->getCourse();
+$output = $sharedservice->getRenderer();
 
+// url params
 $action         = optional_param('action', '', PARAM_ALPHA);
 $mode           = optional_param('mode', 'unknown', PARAM_ALPHA);
 $usermode       = optional_param('usermode', 'without', PARAM_ALPHA);
-$idnumber       = optional_param('idnumber', '', PARAM_ALPHA);
-$copy           = optional_param('copy', '', PARAM_INT);
+$idnumber       = optional_param('idnumber', '', PARAM_INT);
 $page           = optional_param('page', 0, PARAM_INT);
-$perpage        = optional_param('perpage', 20, PARAM_INT);
+$perpage        = optional_param('perpage', 20, PARAM_INT); // for pager but no way to set it... maybe just a variable ?
 
-require_capability('mod/automultiplechoice:update', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $sharedservice->getContext());
 
 $PAGE->set_url('/mod/automultiplechoice/associating.php', array('id' => $cm->id));
 
 $url = new moodle_url('associating.php', array('a' => $quiz->id, 'mode' => $mode, 'usermode' => $usermode));
 
-$process = new \mod_automultiplechoice\local\amc\associate($quiz);
+$associateprocess = new \mod_automultiplechoice\local\amc\associate($quiz);
+$process = new \mod_automultiplechoice\local\amc\process($quiz);
+
+// In amc grading is supposed to occure before association but this is not ideal for teachers workflow so this is a "tweak".
+if (!$process->isGraded()) {
+    if ($process->amcNote()) {
+        redirect($PAGE->url);
+    }
+}
 
 if ($action === 'associate') {
-    if ($process->associate()) {
+    $associateprocess->create_student_csv();
+    if (!$process->amcNote()) {
+        \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage(
+            'error',
+            get_string('associating_error_note', 'mod_automultiplechoice')
+        );
+        redirect($url);
+    }
+    if (!$associateprocess->amcAssociation()) {
+        \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage(
+            'error',
+            get_string('associating_error_associate', 'mod_automultiplechoice')
+        );
+        redirect($url);
+    }
+} else if ($action === 'set') {
+    // manual association
+    // I dont understand why it's not possible to use moodle optional_param to read $_POST values
+    $errors = $associateprocess->handle_manual_association($_POST);
+    if (count($errors) > 0) {
+        \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage(
+            'error',
+            get_string('associating_error_associate', 'mod_automultiplechoice')
+        );
         redirect($url);
     }
 }
 
-$process->get_association();
+$associateprocess->get_association();
 
 echo $output->header('associating');
 
 $errors = \mod_automultiplechoice\local\helpers\log::build($quiz->id)->check('associating');
 
-$associationmodes = [
-    'unknown'  => get_string('unknown', 'automultiplechoice'),
-    'manual' => get_string('manual', 'automultiplechoice'),
-    'auto' => get_string('auto', 'automultiplechoice'),
-    'all' => get_string('all')
-];
+$associationmodes = $associateprocess->get_association_modes();
+$usermodes = $associateprocess->get_user_modes();
+$allusersdata = $associateprocess->get_all_users_data($mode);
+$visiblesheets = array_slice($allusersdata, $page * $perpage, $perpage);
+$excludeusers = ($usermode === 'all') ? '' : array_merge($associateprocess->copymanual, $associateprocess->copyauto);
 
-$usermodes = [
-    'without' => get_string('without', 'automultiplechoice'),
-    'all' => get_string('all')
-];
+$usersdata = [];
+foreach ($visiblesheets as $name => $usernumber) {
+    $usersdata[] = [
+      'students' => amc_get_users_for_select_element($cm, $usernumber, '', $excludeusers),
+      'fileurl' => $associateprocess->getFileRealUrl('name-'.$name.".jpg"),
+      'filename' => $name
+    ];
+}
 
 $data = [
     'errors' => $errors,
     'showerrors' => !empty($errors),
-    'isrelaunch' => !empty($errors) || empty($process->copyauto),
-    'nbcopyauto' => count($process->copyauto),
-    'nbcopymanual' => count($process->copymanual),
-    'nbcopyunknown' => count($process->copyunknown),
+    'isrelaunch' => !empty($errors) || !empty($associateprocess->copyauto),
+    'nbcopyauto' => count($associateprocess->copyauto),
+    'nbcopymanual' => count($associateprocess->copymanual),
+    'nbcopyunknown' => count($associateprocess->copyunknown),
     'associationmodes' => $associationmodes,
     'associationmode' => $mode,
     'usermodes' => $usermodes,
-    'usermode' => $usermode
+    'usermode' => $usermode,
+    'usersdata' => $usersdata,
+    'pager' => [
+      'page' => $page,
+      'perpage' => $perpage,
+      'url' => $url,
+      'pagecount' => count($namedisplay)
+    ]
 ];
 
 // Page content.
 $view = new \mod_automultiplechoice\output\view_association($quiz, $data);
 echo $output->render_association_view($view);
-
-
-if ($mode === 'unknown') {
-    $namedisplay = $process->copyunknown;
-} else if ($mode === 'manual') {
-    $namedisplay = $process->copymanual;
-} else if ($mode === 'auto') {
-    $namedisplay = $process->copyauto;
-} else if ($mode === 'all') {
-    $namedisplay = array_merge($process->copyunknown, $process->copymanual, $process->copyauto);
-}
-
-print_r($namedisplay);die;
-
-// $paging = new paging_bar(count($namedisplay), $page, 20, $url, 'page');
-// Last param is default to 'page' so no need to give it to the method;
-$paging = new paging_bar(count($namedisplay), $page, 20, $url);
-
-// https://github.com/moodle/moodle/blob/master/theme/bootstrapbase/templates/block_myoverview/paging-bar.mustache
-
-//echo $OUTPUT->render($selectmode);
-//echo $OUTPUT->render($selectusermode);
-echo $OUTPUT->render($paging);
-$namedisplay = array_slice($namedisplay, $page * $perpage, $perpage);
-$excludeusers = ($usermode === 'all') ? '' : array_merge($process->copymanual, $process->copyauto);
-echo html_writer::start_div('amc_thumbnails');
-echo html_writer::start_tag('ul', array('class' => 'thumbnails'));
-foreach ($namedisplay as $name => $idnumber) {
-    $thumbnailoutput = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"), $name);
-    $thumbnailoutput .= \html_writer::div($output->students_selector($url, $cm, $idnumber, '', $excludeusers ), 'caption');
-    $thumbnaildiv = \html_writer::div($thumbnailoutput, 'thumbnail');
-    echo html_writer::tag('li', $thumbnaildiv );
-}
-echo html_writer::end_tag('ul');
-echo html_writer::end_div();
-
 echo $OUTPUT->footer();

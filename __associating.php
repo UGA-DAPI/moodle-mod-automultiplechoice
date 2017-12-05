@@ -83,13 +83,7 @@ if ($mode === 'unknown') {
     $namedisplay = array_merge($process->copyunknown, $process->copymanual, $process->copyauto);
 }
 
-print_r($process->copyunknown);
 
-print_r($process->copymanual);
-
-print_r($process->copyauto);
-
-print_r($namedisplay);die;
 $optionsusermode = array ('without'  => get_string('without', 'automultiplechoice'),
                   'all'   => get_string('all'));
 
@@ -106,7 +100,7 @@ $excludeusers = ($usermode === 'all') ? '' : array_merge($process->copymanual, $
 echo html_writer::start_div('amc_thumbnails');
 echo html_writer::start_tag('ul', array('class' => 'thumbnails'));
 foreach ($namedisplay as $name => $idnumber) {
-    $thumbnailoutput = \html_writer::img($process->getFileUrl('name-'.$name.".jpg"), $name);
+    $thumbnailoutput = \html_writer::img($process->getFileRealUrl('name-'.$name.".jpg"), $name);
     $thumbnailoutput .= \html_writer::div($output->students_selector($url, $cm, $idnumber, '', $excludeusers ), 'caption');
     $thumbnaildiv = \html_writer::div($thumbnailoutput, 'thumbnail');
     echo html_writer::tag('li', $thumbnaildiv );

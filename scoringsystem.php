@@ -8,12 +8,12 @@ require_once(__DIR__ . '/locallib.php');
 /* @var $PAGE moodle_page */
 /* @var $OUTPUT core_renderer */
 
-$controller = new \mod_automultiplechoice\local\controllers\view_controller();
-$quiz = $controller->getQuiz();
-$cm = $controller->getCm();
-$course = $controller->getCourse();
+$sharedservice = new \mod_automultiplechoice\shared_service();
+$quiz = $sharedservice->getQuiz();
+$cm = $sharedservice->getCm();
+$course = $sharedservice->getCourse();
 
-$output = $controller->getRenderer();
+$output = $sharedservice->getRenderer();
 
 if (!count($quiz->questions)) {
     redirect(new moodle_url('questions.php', array('a' => $quiz->id)));
@@ -51,7 +51,7 @@ if (isset($_POST['score'])) {
     }
 }
 
-require_capability('mod/automultiplechoice:update', $controller->getContext());
+require_capability('mod/automultiplechoice:update', $sharedservice->getContext());
 
 // Output starts here.
 $PAGE->set_url('/mod/automultiplechoice/scoringsystem.php', array('id' => $cm->id));
