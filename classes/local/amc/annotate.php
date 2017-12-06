@@ -116,5 +116,71 @@ class annotate extends \mod_automultiplechoice\local\amc\process {
     }
 
 
+    /**
+     * Build users annotation data
+     * @param  Array $usersdisplay an array of moodle users
+     * @param  Array $userscopy    an array of copies
+     * @param  bool $noenrol      some users are associated to the activity
+     * @return Array               an array of data
+     */
+    public function get_all_users_data($usersdisplay, $userscopy, $noenrol) {
+        $datatodisplay = [];
+        foreach ($usersdisplay as $user) {
+            if ($noenrol) {
+                // Display the "Name img" produced by amc
+                $copy = explode('_', $user);
+                $link = new \moodle_url(
+                    'annotating.php',
+                    array('a' => $this->quiz->id, 'copy' => $copy[0], 'idnumber' => $copy[1])
+                );
+                $datatodisplay[] = [
+                    'url' => $this->getFileRealUrl('name-'.$user.".jpg"),
+                    'label' => $user,
+                    'link' => $link->out(false)
+                ];
+            } else if (isset($userscopy[$user->idnumber])) {
+                // If more than one parameter in url the query params results in ?a=124&amp;idnumber=14985456425... do not ask me why...
+                // So the proper way to do this is to create the moodle_url and then call $url->out(false) method
+                $link =  new \moodle_url(
+                    'annotating.php',
+                    array('a' => $this->quiz->id, 'idnumber' => $user->idnumber)
+                );
+                // Display user full name
+                $datatodisplay[] = [
+                    'label' => $user->lastname . ' ' . $user->firstname,
+                    'link' => $link->out(false)
+                ];
+            } else {
+                $link =  new \moodle_url(
+                    'annotating.php',
+                    array('a' => $this->quiz->id, 'idnumber' => $user->idnumber, 'associate' => true)
+                );
+
+                $datatodisplay[] = [
+                    'label' => $user->lastname . ' ' . $user->firstname,
+                    'link' => $link->out(false)
+                ];
+            }
+        }
+        return $datatodisplay;
+    }
+
+    /**
+     * Retrieve all unknown users name captions produced by amc
+     * @param  array  $unknownusers unassociated sheets array of [copyversion_copynumber] => ''
+     * @return array
+     */
+    public function get_unknown_users_captions(array $unknownusers) {
+        $unknownuserscaptions = [];
+        foreach ($unknownusers as $key => $value) {
+            $unknownuserscaptions[] = [
+                'url' => $this->getFileRealUrl('name-'.$key.".jpg"),
+                'label' => $key
+            ];
+        }
+        return $unknownuserscaptions;
+    }
+
+
 
 }

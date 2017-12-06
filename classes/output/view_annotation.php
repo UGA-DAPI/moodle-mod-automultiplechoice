@@ -56,7 +56,6 @@ class view_annotation implements \renderable, \templatable {
             ];
         }
 
-        // for groupmode === 2 see lib/grouplib.php define('VISIBLEGROUPS', 2);
         $content = [
             'quiz' => $this->quiz,
             'alreadyannoted' => $this->data['alreadyannoted'],
@@ -65,16 +64,17 @@ class view_annotation implements \renderable, \templatable {
             'pager' => $output->render($pagingbar),
             'usersdata' => $this->data['usersdata'],
             'students' => $this->data['students'],
-            'groupselector' => $groupselector,
             'groups' => $groups,
             'groupmode' => $this->data['isseparategroups'] ? get_string('groupsseparate', 'core') : get_string('groupsvisible', 'core'),
             'correctionaccess' => $this->quiz->corrigeaccess,
             'copyaccess' => $this->quiz->studentaccess,
             'shouldassociate' => $this->data['shouldassociate'],
-            'unknowncopies' => $this->data['unknowncopies'],
-            'unassociatedusers' => $this->data['unassociatedusers'],
+            //'unknownuserscaptions' => $this->data['unknownuserscaptions'],
+            //'unassociatedusers' => $this->data['unassociatedusers'],
             'showpager' => $this->data['pager']['pagecount'] > $this->data['pager']['perpage'],
-            'showunknowncopies' => count($this->data['unknowncopies']) > 0 && !$this->data['shouldassociate']
+            'noenrol' => $this->data['noenrol']
+            //'showunknownsheets' => count($this->data['unknownuserscaptions']) > 0 && !$this->data['shouldassociate'],
+            //'username' => $this->data['username']
         ];
 
         return $content;

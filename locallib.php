@@ -184,21 +184,13 @@ function has_students($context) {
  * (and $sort by extension) params according to it, as the first field
  * returned by the database should be unique (ra.id is the best candidate).
  *
- * @param int $roleid (can also be an array of ints!)
- * @param context $context
- * @param bool $parent if true, get list of users assigned in higher context too
- * @param string $fields fields from user (u.) , role assignment (ra) or role (r.)
- * @param string $sort sort from user (u.) , role assignment (ra.) or role (r.).
- *      null => use default sort from users_order_by_sql.
- * @param bool $all true means all, false means limit to enrolled users
- * @param string $group defaults to ''
- * @param mixed $limitfrom defaults to ''
- * @param mixed $limitnum defaults to ''
- * @param string $extrawheretest defaults to ''
- * @param array $whereorsortparams any paramter values used by $sort or $extrawheretest.
+ * @param stdClass $cm mod_automultiplechoice instance
+ * @param bool  $parent
+ * @param string $group
+ * @param bool $exclude
  * @return array
  */
-function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL) {
+function amc_get_student_users($cm, $parent = false, $group = '', $exclude = null) {
     global $DB;
     $codelength = get_config('mod_automultiplechoice', 'amccodelength');
     $allnames = get_all_user_name_fields(true, 'u');
@@ -223,7 +215,7 @@ function amc_get_student_users($cm, $parent = false, $group = '', $exclude=NULL)
         $roleselect = '';
     }
     if ($exclude) {
-        list($idnumbers, $excludeparams) = $DB->get_in_or_equal($exclude, SQL_PARAMS_NAMED, 'excl',false);
+        list($idnumbers, $excludeparams) = $DB->get_in_or_equal($exclude, SQL_PARAMS_NAMED, 'excl', false);
         $idnumberselect = " AND RIGHT(u.idnumber,".$codelength.") $idnumbers ";
         $params = array_merge($params, $excludeparams);
     } else {
