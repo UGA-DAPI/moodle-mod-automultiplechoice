@@ -1,144 +1,148 @@
 {{#showerrors}}
-<div class="informationbox notifyproblem alert alert-danger">
+  <div class="informationbox notifyproblem alert alert-danger">
     <ul>
-    {{#errors}}
+      {{#errors}}
         <li>{{.}}</li>
-    {{/errors}}
+      {{/errors}}
     </ul>
-</div>
+  </div>
 {{/showerrors}}
 
 <div class="box informationbox well">
-    <div class="row margin-bottom-xl">
-      <div class="col-md-4">
-          {{#alreadyannoted}}
-          <h3>{{#str}}annotating_corrected_sheets, mod_automultiplechoice{{/str}}</h3>
-          <h4>{{#str}}files, core{{/str}}</h4>
-          <a href="{{correctionfileurl}}" target="_blank">{{correctionfilename}}</a>
-          <p><b>{{nbannotatedfiles}}</b>{{#str}}annotating_individual_sheets_available, mod_automultiplechoice{{/str}}</p>
-          {{/alreadyannoted}}
-          <form action="annotating.php" method="post">
-              <input type="hidden" name="a" value="{{quiz.id}}" />
-              <input type="hidden" name="action" value="annotate" />
-              <button type="submit" class="btn btn-default">
-                  {{#alreadyannoted}}
-                    {{#str}}annotating_update_corrected_sheets, mod_automultiplechoice{{/str}}
-                  {{/alreadyannoted}}
-                  {{^alreadyannoted}}
-                    {{#str}}annotating_generate_corrected_sheets, mod_automultiplechoice{{/str}}
-                  {{/alreadyannoted}}
-              </button>
-          </form>
-      </div>
+  <div class="row margin-bottom-xl">
+    <div class="col-md-4">
+      {{#alreadyannoted}}
+        <h3>{{#str}}annotating_corrected_sheets, mod_automultiplechoice{{/str}}</h3>
+        <h4>{{#str}}files, core{{/str}}</h4>
+        <a href="{{correctionfileurl}}" target="_blank">{{correctionfilename}}</a>
+        <p>
+          <b>{{nbannotatedfiles}}</b>
+          {{#str}}annotating_individual_sheets_available, mod_automultiplechoice{{/str}}
+        </p>
+      {{/alreadyannoted}}
+      <form action="annotating.php" method="post">
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <input type="hidden" name="action" value="annotate" />
+        <button type="submit" class="btn btn-default">
+            {{#alreadyannoted}}
+                {{#str}}annotating_update_corrected_sheets, mod_automultiplechoice{{/str}}
+            {{/alreadyannoted}}
+            {{^alreadyannoted}}
+                {{#str}}annotating_generate_corrected_sheets, mod_automultiplechoice{{/str}}
+            {{/alreadyannoted}}
+        </button>
+      </form>
+    </div>
 
-      <div class="col-md-4">
-          <h3>{{#str}}annotating_sheets_access, mod_automultiplechoice{{/str}}</h3>
-          <p>{{#str}}annotating_allow_access, mod_automultiplechoice{{/str}}</p>
-          <form action="annotating.php" method="post">
-            <input type="hidden" name="action" value="setstudentaccess"/>
-            <input type="hidden" name="a" value="{{quiz.id}}" />
-            <div class="checkbox">
-              <label class="form-check-label" for="">
+    <div class="col-md-4">
+      <h3>{{#str}}annotating_sheets_access, mod_automultiplechoice{{/str}}</h3>
+      <p>
+        {{#str}}annotating_allow_access, mod_automultiplechoice{{/str}}
+      </p>
+      <form action="annotating.php" method="post">
+        <input type="hidden" name="action" value="setstudentaccess" />
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <div class="checkbox">
+          <label class="form-check-label" for="">
                   <input class="form-check-input" type="checkbox" name="studentaccess" {{#copyaccess}} checked {{/copyaccess}}></input>
                   {{#str}}annotating_copy_only, mod_automultiplechoice{{/str}}
               </label>
-            </div>
-            <div class="checkbox">
-              <label class="form-check-label" for="">
+        </div>
+        <div class="checkbox">
+          <label class="form-check-label" for="">
                   <input class="form-check-input" type="checkbox" name="corrigeaccess" {{#correctionaccess}} checked {{/correctionaccess}}>
                   {{#str}}annotating_whole_correction, mod_automultiplechoice{{/str}}
               </label>
-            </div>
-            <button class="btn btn-default" type="submit">{{#str}} ok, core {{/str}}</button>
-          </form>
-      </div>
-      <div class="col-md-4">
-          <h3>{{#str}}annotating_copy_sending, mod_automultiplechoice{{/str}}</h3>
-          <form action="annotating.php" method="post">
-            <input type="hidden" name="action" value="notification"/>
-            <input type="hidden" name="a" value="{{quiz.id}}" />
-            <button class="btn btn-default" type="submit" title="{{#str}}annotating_send_moodle_message_title, mod_automultiplechoice{{/str}}">
-              <i class="fa fa-envelope"></i>&nbsp;{{#str}}annotating_send_moodle_message, mod_automultiplechoice{{/str}}
-            </button>
-          </form>
-      </div>
+        </div>
+        <button class="btn btn-default" type="submit">{{#str}} ok, core {{/str}}</button>
+      </form>
     </div>
-    <div class="row margin-bottom-xl">
-      <div class="col-md-12">
-        {{#showpager}}
-          <hr/>
-          {{&pager}}
-        {{/showpager}}
-        <hr/>
-        <div class="row">
-          <div class="col-md-12">
-            {{^noenrol}}
-            <form action="annotating.php" class="form-inline" method="get">
-              <input type="hidden" name="a" value="{{quiz.id}}" />
-              <div class="form-group">
-                <label>{{groupmode}}</label>
-                <select class="custom-select form-control submit-on-change" name="group">
+    <div class="col-md-4">
+      <h3>{{#str}}annotating_copy_sending, mod_automultiplechoice{{/str}}</h3>
+      <form action="annotating.php" method="post">
+        <input type="hidden" name="action" value="notification" />
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <button class="btn btn-default" type="submit" title="{{#str}}annotating_send_moodle_message_title, mod_automultiplechoice{{/str}}">
+              <i class="fa fa-envelope"></i>&nbsp;{{#str}}annotating_send_moodle_message, mod_automultiplechoice{{/str}}
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="row margin-bottom-xl">
+    <div class="col-md-12">
+      {{#showpager}}
+        <hr/> {{&pager}}
+      {{/showpager}}
+      <hr/>
+      <div class="row">
+        <div class="col-md-12">
+          {{^noenrol}}
+          <form action="annotating.php" class="form-inline" method="get">
+            <input type="hidden" name="a" value="{{quiz.id}}" />
+            <div class="form-group">
+              <label>{{groupmode}}</label>
+              <select class="custom-select form-control submit-on-change" name="group">
                   <option value="">{{#str}}allparticipants, core{{/str}}</option>
                   {{#groups}}
                     <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
                   {{/groups}}
                 </select>
-              </div>
-              <div class="form-group">
-                <label>{{#str}}selectuser, mod_automultiplechoice{{/str}}</label>
-                <select class="custom-select form-control submit-on-change" name="idnumber">
+            </div>
+            <div class="form-group">
+              <label>{{#str}}selectuser, mod_automultiplechoice{{/str}}</label>
+              <select class="custom-select form-control submit-on-change" name="idnumber">
                   <option value="">{{#str}}all, core{{/str}}</option>
                   {{#students}}
                     <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
                   {{/students}}
                 </select>
-              </div>
-            </form>
-            <hr/>
-            {{/noenrol}}
-            <div class="row amc_thumbnails">
-                {{#usersdata}}
-                  {{#link}}
-                      <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                          <div class="thumbnail">
-                              <a href="{{link}}">
-                                {{#url}}
-                                  <img class="student-name-caption" src="{{url}}" alt="{{label}}"></img>
-                                {{/url}}
-                                {{^url}}
-                                  {{label}}
-                                {{/url}}
-                              </a>
-                          </div>
-                      </div>
-                  {{/link}}
-                  {{^link}}
-                      {{^shouldassociate}}
-                          <div class="col-md-12">
-                            <img class="student-copy" src="{{url}}" title="{{label}}" alt="{{label}}"></img>
-                          </div>
-                      {{/shouldassociate}}
-                      {{#shouldassociate}}
-                          <div class="col-md-12">
-                            <form action="annotating.php" method="post">
-                                <input type="hidden" name="a" value="{{quiz.id}}" />
-                                <input type="hidden" name="action" value="set" />
-                                <input type="hidden" name="file" value="{{label}}" />
-                                <button class="btn btn-link" title="{{#str}} annotating_associate_user, mod_automultiplechoice{{/str}}" type="submit">
-                                    <img class="student-name-caption"  src="{{url}}" alt="{{label}}"></img>
-                                </button>
-                            </form>
-                          </div>
-                      {{/shouldassociate}}
-                    {{/link}}
-                  {{/usersdata}}
             </div>
+          </form>
+          <hr/>
+          {{/noenrol}}
+          <div class="row amc_thumbnails">
+            {{#usersdata}}
+              {{#link}}
+              <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="thumbnail">
+                  <a href="{{link}}">
+                      {{#url}}
+                        <img class="student-name-caption" src="{{url}}" alt="{{label}}"></img>
+                      {{/url}}
+                      {{^url}}
+                        {{label}}
+                      {{/url}}
+                  </a>
+                </div>
+              </div>
+              {{/link}}
+              {{^link}} {{^shouldassociate}}
+              <div class="col-md-12">
+                <img class="student-copy" src="{{url}}" title="{{label}}" alt="{{label}}"></img>
+              </div>
+              {{/shouldassociate}}
+              {{#shouldassociate}}
+                <div class="col-md-12">
+                  <form action="annotating.php" method="post">
+                    <input type="hidden" name="a" value="{{quiz.id}}" />
+                    <input type="hidden" name="action" value="set" />
+                    <input type="hidden" name="file" value="{{label}}" />
+                    <input type="hidden" name="student" value="{{student}}">
+                    <button class="btn btn-link" title="{{#str}} annotating_associate_user, mod_automultiplechoice{{/str}}" type="submit">
+                      <img class="student-name-caption"  src="{{url}}" alt="{{label}}"></img>
+                    </button>
+                  </form>
+                </div>
+              {{/shouldassociate}}
+              {{/link}}
+            {{/usersdata}}
           </div>
         </div>
-        {{#showpager}}
-          <hr/>
-          {{&pager}}
-        {{/showpager}}
       </div>
+      {{#showpager}}
+        <hr/>
+        {{&pager}}
+      {{/showpager}}
     </div>
+  </div>
 </div>

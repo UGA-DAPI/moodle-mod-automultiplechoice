@@ -30,7 +30,6 @@ $string['annotating_send_moodle_message_title'] = 'Send a Moodle message to each
 $string['annotating_associate_user'] = 'Associate';
 $string['annotating_copy_without_user'] = 'Sheet(s) without user';
 
-
 // Annotate process.
 $string['annotate_correction_available'] = 'Correction available';
 $string['annotate_correction_available_body'] = 'Votre copie corrigée est disponible pour le QCM {$a->name}';
@@ -73,6 +72,7 @@ $string['documents_pdf_created'] = 'Created PDF files.';
 $string['documents_zip_archive'] = 'ZIP archive.';
 $string['documents_restore_original_version'] = 'Restore original version';
 $string['documents_mix_answers_and_questions'] = 'Mix questions and answers';
+$string['documents_check_for_subject'] = 'Aucun sujet généré. Veuillez vérifier votre sujet.';
 
 // Export process.
 $string['export_amc_cmd_failed'] = 'Exec of `{$a->cmd}` failed. Is AMC installed ?';
@@ -172,6 +172,17 @@ $string['settings_idnumberprefixes_short'] = 'Prefix for student number';
 $string['settings_idnumberprefixes_full'] = '<p>Prefixes, one per row. Beware of spaces.</p><p>Each prefix will be inserted at the beginning of the student number of each sheet, until the identification of the student among the moodle users (cf LDAP import and idnumber). If the student can not be found, a no prefix identification will be attempted.</p>';
 
 
+
+$string['settings_amcversion_label'] = 'AMC Version / Mode';
+$string['settings_amcversion_description'] = 'Choose AMC version / mode.';
+$string['settings_amcversion_choice_1_label'] = 'Distant';
+$string['settings_amcversion_choice_2_label'] = 'AMC version is prior or equal to 1.2';
+$string['settings_amcversion_choice_3_label'] = 'AMC version is upper than 1.2';
+
+$string['settings_amcapiurl_label'] = 'URL de l\'API AMC';
+$string['settings_amcapiurl_description'] = 'URL à utiliser pour toutes les manipulations AMC.';
+
+
 // Student view.
 $string['studentview_one_corrected_sheet'] = 'You have one corrected sheet:';
 $string['studentview_no_corrected_sheet'] = 'No corrected sheet for this MCQ';
@@ -198,22 +209,27 @@ $string['associating'] = 'Associating';
 $string['grading'] = 'Grading';
 $string['annotating'] = 'Annotating';
 
+
+$string['modform_uselatexfile'] = 'Use a latex file.';
+$string['modform_uselatexfilelabel'] = 'The latex file define AMC and questionnaire parameters.';
+$string['modform_latexfile'] = 'Latex file (*.tex).';
+
 $string['instructionsheader'] = 'Instructions';
-$string['automultiplechoicename'] = 'Nom du questionnaire';
+$string['automultiplechoicename'] = 'Questionnaire name';
 $string['instructions'] = 'Top Instructions';
 $string['description'] = 'Instructions';
-$string['comment'] = 'Commentaire';
+$string['comment'] = 'Comment';
 $string['qnumber'] = 'Nb. questions';
-$string['score'] = 'Points Total';
+$string['score'] = 'Total points';
 
-$string['automultiplechoicename_help'] = 'Le nom complet du questionnaire';
+$string['automultiplechoicename_help'] = 'Complete questionnaire name';
 $string['instructions_help'] = 'The text associated to this will be inserted at the top of the custom instructions.';
-$string['description_help'] = 'La description qui sera imprimée sur chaque questionnaire, contenant l\'introduction et les consignes.';
+$string['description_help'] = 'The description which will be printed on each questionnaire.';
 
 
-$string['comment_help'] = 'Un commentaire pour l\'auteur, qui ne sera pas imprimé.';
-$string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire, pour validation.';
-$string['score_help'] = 'Le score total du questionnaire (en points), pour validation.';
+$string['comment_help'] = 'A comment that won\'t be printed.';
+$string['qnumber_help'] = 'Estimated number of questions for the questionnaire. Used for validation.';
+$string['score_help'] = 'Total score for the questionnnaire (in points). Used for validation.';
 
 $string['amcparams'] = 'AMC Parameters';
 $string['amc_minscore'] = 'Minimal score';

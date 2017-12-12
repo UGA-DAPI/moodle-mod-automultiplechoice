@@ -197,7 +197,9 @@ class log {
                     }
                     break;
                 case 'unlock':
-                    if (\mod_automultiplechoice\local\models\quiz::findById($this->instanceId)->hasScans()) {
+                    $quizrecord = \mod_automultiplechoice\local\models\quiz::findById($this->instanceId);
+                    $quiz =  \mod_automultiplechoice\local\models\quiz::readFromRecord($quizrecord);
+                    if ($quiz->hasScans()) {
                         $messages[] = get_string('log_unlock_uploads_exists', 'mod_automultiplechoice');
                     }
                     break;
@@ -225,7 +227,7 @@ class log {
             'exporting',
             'annotating',
             'annotatePdf',
-            'correction',
+            'corrected',
             'lock',
             'unlock',
             'manualassoc'

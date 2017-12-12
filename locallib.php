@@ -10,17 +10,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-//use \mod\automultiplechoice as amc;
-
 global $DB,$CFG;
 require_once dirname(dirname(__DIR__)) . '/config.php';
 require_once($CFG->libdir . '/formslib.php');
 require_once __DIR__ . '/lib.php';
-//require_once __DIR__ . '/models/Quizz.php';
-//require_once __DIR__ . '/models/AmcProcess.php';
-//require_once __DIR__ . '/components/HtmlHelper.php';
-//require_once __DIR__ . '/components/Controller.php';
+
+
+define('AMC_VERSION_DISTANT', 0);
+define('AMC_VERSION_PRIOR_TO_13', 1);
+define('AMC_VERSION_GREATER_OR_EQUAL_13', 2);
 
 defined('MOODLE_INTERNAL') || die();
 

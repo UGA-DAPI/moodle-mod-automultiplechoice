@@ -249,7 +249,7 @@ class associate extends \mod_automultiplechoice\local\amc\process
             }
 
         } else {
-            $errors[] = 'filename not formated as expected.';
+            $errors[] = 'missing parameter(s) in query.';
         }
 
         return $errors;

@@ -66,7 +66,18 @@ class process
             $this->errors[] = $e->getMessage();
             return null;
         }
+
+        if ($this->quiz->uselatexfile) {
+            if (file_get_contents($this->workdir . "/" . $this->quiz->latexfile)){
+                return $format;
+            } else {
+                $this->errors[] = get_string('process_unable_to_read_file', 'mod_automultiplechoice');
+                return null;
+            }
+        }
+
         $filename = $this->workdir . "/" . $format->getFilename();
+
         if (file_put_contents($filename, $format->getContent())) {
             return $format;
         } else {
@@ -662,7 +673,7 @@ class process
      * Initialize the data directory $this->workdir with the template structure.
      */
     protected function initWorkdir() {
-        if ( ! file_exists($this->workdir) || ! is_dir($this->workdir)) {
+        if (!file_exists($this->workdir) || !is_dir($this->workdir)) {
             $parent = dirname($this->workdir);
             if (!is_dir($parent)) {
                 if (!mkdir($parent, 0777, true)) {

@@ -10,13 +10,19 @@ require_once(__DIR__ . '/locallib.php');
 global $OUTPUT, $PAGE, $CFG;
 
 $sharedservice = new \mod_automultiplechoice\shared_service();
+$sharedservice->parseRequest();
 $quiz = $sharedservice->getQuiz();
 $cm = $sharedservice->getCm();
 $course = $sharedservice->getCourse();
+\require_login($course, true, $cm);
 $output = $sharedservice->getRenderer();
 $process = new \mod_automultiplechoice\local\amc\process($quiz);
 
-if (!count($quiz->questions)) {
+
+$apiurl = get_config('mod_automultiplechoice', 'amcapiurl');
+$PAGE->requires->js_call_amd('mod_automultiplechoice/ajax-test', 'init', [$apiurl, $quiz->id]);
+
+if ($sharedservice->should_redirect_to_questions()) {
     redirect(new moodle_url('questions.php', array('a' => $quiz->id)));
 }
 

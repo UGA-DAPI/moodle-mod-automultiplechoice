@@ -60,26 +60,25 @@ function automultiplechoice_supports($feature)
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object $automultiplechoice An object from the form in mod_form.php
- * @param mod_automultiplechoice_mod_form $mform
+ * @param stdClass $formdata an object representing an automultiplechoice from the form in mod_form.php
  * @return int The id of the newly inserted automultiplechoice record
  */
-function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null)
+function automultiplechoice_add_instance(stdClass $formdata, mod_automultiplechoice_mod_form $mform)
 {
     global $DB, $USER;
 
-    $automultiplechoice->timecreated = $_SERVER['REQUEST_TIME'];
-    $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
-    $automultiplechoice->author = $USER->id;
-    $automultiplechoice->questions = "";
-
-    $params = \mod_automultiplechoice\local\amc\params::fromForm($automultiplechoice->amc);
-    unset($automultiplechoice->amc);
-    $automultiplechoice->amcparams = $params->toJson();
     $quiz = new \mod_automultiplechoice\local\models\quiz();
-    $quiz->readFromRecord($automultiplechoice);
-    if ($quiz->save()) {
-        return $quiz->id;
+    $updated = $quiz->build_from_form($formdata, $mform);
+    $updated->timecreated = $_SERVER['REQUEST_TIME'];
+    $updated->timemodified = $_SERVER['REQUEST_TIME'];
+    $updated->author = $USER->id;
+
+    if (!$updated->uselatexfile && isset($formdata->amc) && !empty($formdata->amc)) {
+        $updated->build_amc_params($formdata->amc);
+    }
+
+    if ($updated->save()) {
+        return $updated->id;
     } else {
         throw new Exception("ERROR");
     }
@@ -92,31 +91,23 @@ function automultiplechoice_add_instance(stdClass $automultiplechoice, mod_autom
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param object $automultiplechoice An object from the form in mod_form.php
- * @param mod_automultiplechoice_mod_form $mform
+ * @param stdClass $formdata An object from the form in mod_form.php
+ * @param mod_automultiplechoice_mod_form $mform the mod_form
  * @return boolean Success/Fail
  */
-function automultiplechoice_update_instance(stdClass $automultiplechoice, mod_automultiplechoice_mod_form $mform = null)
+function automultiplechoice_update_instance(stdClass $formdata, mod_automultiplechoice_mod_form $mform)
 {
     global $DB;
 
-    $quiz = \mod_automultiplechoice\local\models\quiz::findById($automultiplechoice->instance);
-    $quiz->readFromForm($automultiplechoice);
-    $quiz->timemodified = $_SERVER['REQUEST_TIME'];
-    return $quiz->save();
+    $quiz = new \mod_automultiplechoice\local\models\quiz();
+    $updated = $quiz->build_from_form($formdata, $mform);
+    $updated->timemodified = $_SERVER['REQUEST_TIME'];
 
-    $automultiplechoice->timemodified = $_SERVER['REQUEST_TIME'];
-    $automultiplechoice->id = $automultiplechoice->instance;
-
-    $params = \mod_automultiplechoice\local\amc\params::fromForm($automultiplechoice->amc);
-    unset($automultiplechoice->amc);
-    $params->scoringset = $quiz->amcparams->scoringset;
-    $automultiplechoice->amcparams = $params->toJson();
-    if (isset($automultiplechoice->questions)) {
-        unset($automultiplechoice->questions);
+    if (!$updated->uselatexfile && isset($formdata->amc) && !empty($formdata->amc)) {
+        $updated->build_amc_params($formdata->amc);
     }
 
-    return $DB->update_record('automultiplechoice', $automultiplechoice);
+    return $updated->save();
 }
 
 /**
@@ -133,11 +124,10 @@ function automultiplechoice_delete_instance($id)
 {
     global $DB;
 
-    $automultiplechoice = $DB->get_record('automultiplechoice', array('id' => $id));
-    if (! $automultiplechoice) {
+    $automultiplechoice = $DB->get_record('automultiplechoice', array('id' => (int)$id));
+    if (!$automultiplechoice) {
         return false;
     }
-
     # Delete any dependent records here #
     $DB->delete_records('automultiplechoice', array('id' => $automultiplechoice->id));
 
@@ -318,7 +308,7 @@ function automultiplechoice_update_grades(stdClass $automultiplechoice, $userid 
     require_once($CFG->libdir.'/gradelib.php');
     require_once __DIR__ . '/models/AmcProcessGrade.php';
 
-    $quiz = \mod_automultiplechoice\local\models\quizz::buildFromRecord($automultiplechoice);
+    $quiz = \mod_automultiplechoice\local\models\quiz::buildFromRecord($automultiplechoice);
     $process = new \mod_automultiplechoice\local\amc\process($quiz);
     $grades = $process->getMarks();
     if ($userid) {
@@ -395,7 +385,8 @@ function automultiplechoice_pluginfile($course, $cm, $context, $filearea, array 
     require_login($course, true, $cm);
 
     $filename = rawurldecode(array_pop($args));
-    $quiz = \mod_automultiplechoice\local\models\quiz::findById($cm->instance);
+    $quizrecord = \mod_automultiplechoice\local\models\quiz::findById($cm->instance);
+    $quiz = \mod_automultiplechoice\local\models\quiz::buildFromRecord($quizrecord);
     $process = new \mod_automultiplechoice\local\amc\export($quiz);
 
     // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf

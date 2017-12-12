@@ -39,9 +39,26 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'automultiplechoicename', 'automultiplechoice');
 
+
+        // Use a latex file to define the MCQ
+        $mform->addElement(
+            'advcheckbox',
+            'uselatexfile',
+            get_string('modform_uselatexfile', 'mod_automultiplechoice'),
+            get_string('modform_uselatexfilelabel', 'mod_automultiplechoice'),
+            null,
+            [0,1]
+        );
+        $mform->setType('uselatexfile', PARAM_BOOL);
+        // latex file upload
+        $mform->addElement('filepicker', 'latexfile', get_string('modform_latexfile', 'mod_automultiplechoice'), null, ['accepted_types' => 'tex']);
+        $mform->disabledIf('latexfile', 'uselatexfile', 'eq', 0);
+
+
         $mform->addElement('text', 'qnumber', get_string('qnumber', 'automultiplechoice'));
         $mform->setType('qnumber', PARAM_INTEGER);
         $mform->addHelpButton('qnumber', 'qnumber', 'automultiplechoice');
+        $mform->disabledIf('qnumber', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('textarea', 'comment', get_string('comment', 'automultiplechoice'), array('rows'=>'3', 'cols'=>'64'));
         $mform->setType('comment', PARAM_TEXT);
@@ -55,10 +72,11 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         // Instructions
         $mform->addElement('header', 'general', get_string('instructionsheader', 'automultiplechoice'));
-
         $mform->addElement('select', 'instructions', get_string('instructions', 'automultiplechoice'), parse_default_instructions());
         $mform->setType('instructions', PARAM_TEXT);
         $mform->addHelpButton('instructions', 'instructions', 'automultiplechoice');
+        $mform->disabledIf('instructions', 'uselatexfile', 'eq', 1);
+
         $mform->addElement(
             'editor',
             'amc[instructionsprefix]',
@@ -69,18 +87,23 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             )
         );
         $mform->setType('amc[instructionsprefix]', PARAM_RAW);
+        //$mform->disabledIf('amc[instructionsprefix]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('editor', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'6', 'cols'=>'64'));
         $mform->setType('description', PARAM_RAW);
         $mform->addHelpButton('description', 'description', 'automultiplechoice');
+        // $mform->disabledIf('description', 'uselatexfile', 'eq', 1);
+
 
         $mform->addElement('advcheckbox', 'anonymous', get_string('anonymous', 'automultiplechoice'));
 
         $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'automultiplechoice'), array('size' => 64));
         $mform->setType('amc[lstudent]', PARAM_TEXT);
+        $mform->disabledIf('amc[lstudent]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
-            'text', 'amc[lname]',
+            'text',
+            'amc[lname]',
             get_string('amc_lname', 'automultiplechoice'),
             array(
                 'data-std' => get_config('mod_automultiplechoice', 'instructionslnamestd'),
@@ -88,7 +111,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             )
         );
         $mform->setType('amc[lname]', PARAM_TEXT);
-
+        $mform->disabledIf('amc[lname]', 'uselatexfile', 'eq', 1);
 
         // AMC settings
         //-------------------------------------------------------------------------------
@@ -97,6 +120,8 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
 
         $mform->addElement('text', 'amc[copies]', get_string('amc_copies', 'automultiplechoice'));
         $mform->setType('amc[copies]', PARAM_INTEGER);
+        $mform->setDefault('amc[copies]', 1);
+        $mform->disabledIf('amc[copies]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
             'select',
@@ -105,15 +130,19 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             array("Auto", 1, 2)
         );
         $mform->addHelpButton('amc[questionsColumns]', 'amc_questionsColumns', 'automultiplechoice');
+        $mform->disabledIf('amc[questionsColumns]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('amc_shuffleq', 'automultiplechoice'));
         $mform->setType('amc[shuffleq]', PARAM_BOOL);
+        $mform->disabledIf('amc[shuffleq]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('advcheckbox', 'amc[shufflea]', get_string('amc_shufflea', 'automultiplechoice'));
         $mform->setType('amc[shufflea]', PARAM_BOOL);
+        $mform->disabledIf('amc[shufflea]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('advcheckbox', 'amc[separatesheet]', get_string('amc_separatesheet', 'automultiplechoice'));
         $mform->setType('amc[separatesheet]', PARAM_BOOL);
+        $mform->disabledIf('amc[separatesheet]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
             'select',
@@ -122,6 +151,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             array("Auto", 1, 2, 3, 4)
         );
         $mform->disabledIf('amc[answerSheetColumns]', 'amc[separatesheet]', 'eq', 0);
+        $mform->disabledIf('amc[answerSheetColumns]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
             'select',
@@ -130,16 +160,20 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             array("Ne pas afficher", "En début de question", "En fin de question")
         );
         $mform->setType('amc[displaypoints]', PARAM_INTEGER);
+        $mform->disabledIf('amc[displaypoints]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('advcheckbox', 'amc[markmulti]', get_string('amc_markmulti', 'automultiplechoice'));
         $mform->setType('amc[markmulti]', PARAM_BOOL);
+        $mform->disabledIf('amc[markmulti]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('advcheckbox', 'amc[score]', get_string('amc_score', 'automultiplechoice'));
         $mform->setType('amc[score]', PARAM_BOOL);
+        $mform->disabledIf('amc[score]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('textarea', 'amc[customlayout]', get_string('amc_customlayout', 'automultiplechoice'), array('rows'=>'3', 'cols'=>'64'));
         $mform->setType('amc[customlayout]', PARAM_TEXT);
         $mform->addHelpButton('amc[customlayout]', 'amc_customlayout', 'automultiplechoice');
+        $mform->disabledIf('amc[customlayout]', 'uselatexfile', 'eq', 1);
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();
@@ -155,6 +189,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
      */
     function data_preprocessing(&$default_values)
     {
+
         if (isset($default_values['description'])) {
             $default_values['description'] = array('text' => $default_values['description']);
         }
@@ -188,10 +223,14 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                         'amc[score]',
                     )
                 );
-            } else {
+            } else if (!empty($this->current->uselatexfile) && !$this->current->uselatexfile) {
                 // Only add the required rule if the field is not disabled
                 $this->_form->addRule('amc[copies]', null, 'required', null, 'client');
             }
+
+
+
+
             $this->_form->setDefault('instructions', '');
             foreach (parse_default_instructions() as $v) {
                 if ($params->instructionsprefix === $v) {

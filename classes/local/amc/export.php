@@ -27,6 +27,7 @@ class export extends \mod_automultiplechoice\local\amc\process
             return true;
         }
         $format = $this->saveFormat($formatName);
+
         if (!$format) {
             return false;
         }

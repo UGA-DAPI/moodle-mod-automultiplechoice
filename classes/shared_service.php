@@ -2,6 +2,7 @@
 
 namespace mod_automultiplechoice;
 
+// If set could not be loaded via AJAX call ($.ajax->phpajaxhandler->phpclass->call service)
 defined('MOODLE_INTERNAL') || die();
 
 class shared_service
@@ -10,18 +11,20 @@ class shared_service
      * @var \mod_automultiplechoice\local\models\quiz
      */
     public $quiz;
+
     /**
      * @var StdClass
      */
     public $cm;
+
     /**
      * @var StdClass
      */
     public $course;
-    public function __construct() {
-        $this->parseRequest();
-        \require_login($this->course, true, $this->cm);
-    }
+
+    public function __construct() {}
+
+
     /**
      * Parse the parameters "a" and "id".
      *
@@ -34,15 +37,19 @@ class shared_service
         if ($id) {
             $this->cm = \get_coursemodule_from_id('automultiplechoice', $id, 0, false, MUST_EXIST);
             $this->course = $DB->get_record('course', array('id' => $this->cm->course), '*', MUST_EXIST);
-            $this->quiz = \mod_automultiplechoice\local\models\quiz::findById($this->cm->instance);
+            $quizrecord = \mod_automultiplechoice\local\models\quiz::findById($this->cm->instance);
+            $this->quiz = \mod_automultiplechoice\local\models\quiz::buildFromRecord($quizrecord);
         } else if ($a) {
-            $this->quiz = \mod_automultiplechoice\local\models\quiz::findById($a);
+            $quizrecord = \mod_automultiplechoice\local\models\quiz::findById($a);
+            $this->quiz = \mod_automultiplechoice\local\models\quiz::buildFromRecord($quizrecord);
             $this->course = $DB->get_record('course', array('id' => $this->quiz->course), '*', MUST_EXIST);
             $this->cm = \get_coursemodule_from_instance('automultiplechoice', $this->quiz->id, $this->course->id, false, MUST_EXIST);
+
         } else {
             print_error('You must specify a course_module ID or an instance ID');
         }
     }
+
     /**
      * @return \mod_automultiplechoice\local\models\quiz
      */
@@ -78,5 +85,13 @@ class shared_service
         $output->quiz = $this->quiz;
         $output->cm = $this->cm;
         return $output;
+    }
+
+    /**
+     * [should_redirect_to_questions description]
+     * @return boolean true if one should go to question page
+     */
+    public function should_redirect_to_questions() {
+        return !$this->quiz->uselatexfile ? false : count($quiz->questions) > 0;
     }
 }

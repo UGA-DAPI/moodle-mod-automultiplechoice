@@ -2,7 +2,7 @@
 
 class mod_automultiplechoice_renderer extends \plugin_renderer_base {
     /**
-     * @var mod_automultiplechoice\local\models\quizz $quiz an automultiplechoice object.
+     * @var mod_automultiplechoice\local\models\quiz $quiz an automultiplechoice object.
      */
     public $quiz;
 
@@ -18,6 +18,7 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
      * @param string $target one of rendering target constants
      */
     public function __construct(moodle_page $page, $target) {
+
         $page->requires->jquery_plugin('ui-css');
         $page->requires->css(
             new moodle_url('/mod/automultiplechoice/style/jquery.dataTables.css')
@@ -27,6 +28,7 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
         );
         $page->requires->js_call_amd('mod_automultiplechoice/async', 'init');
         $page->requires->js_call_amd('mod_automultiplechoice/common', 'init');
+      
         parent::__construct($page, $target);
     }
 
@@ -84,15 +86,19 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
      * Display quiz errors only (special format ?)
      */
     public function display_errors($errors) {
-        echo $this->box_start('errorbox');
-        echo '<p>' . get_string('someerrorswerefound') . '</p>';
+        echo $this->box_start('errorbox row');
+        echo '<div class="col-md-12">';
+        echo '<h6><em>' . get_string('someerrorswerefound') . '</em></h6>';
+        echo '<div class="alert alert-danger">';
         echo '<dl>';
         foreach ($errors as $field => $error) {
             $field = preg_replace('/^(.+)\[(.+)\]$/', '${1}_${2}', $field);
             echo "<dt>" . get_string($field, 'automultiplechoice') . "</dt>";
             echo "<dd>" . get_string($error, 'automultiplechoice') . "</dd>";
         }
-        echo "</dl>";
+        echo '</dl>';
+        echo '</div>';
+        echo '</div>';
         echo $this->box_end();
     }
 

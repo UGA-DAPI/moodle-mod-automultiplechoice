@@ -46,6 +46,7 @@ class tabs implements \renderable, \templatable
      * @return array
      */
     public function export_for_template(\renderer_base $output) {
+        global $CFG;
         $tabsdata = $this->get_tabs_data($this->quiz, $this->context, $this->selected);
         $tabs = [];
         $dashboard = [
@@ -159,11 +160,13 @@ class tabs implements \renderable, \templatable
               'grading',
               'annotating'
             );
-        } else if (empty($quiz->questions)) {
+        } else if (!$quiz->uselatexfile && empty($quiz->questions)) {
             $currenttab = 'questions';
             $disabled = array('dashboard', 'scoringsystem', 'documents', 'uploadscans', 'associating', 'grading', 'annotating');
         } else if (!$quiz->validate()) {
             $disabled = array('documents', 'uploadscans', 'associating', 'grading', 'annotating');
+        } else if ($quiz->uselatexfile) {
+            $disabled = array('questions', 'scoringsystem');
         } else if (!empty($quiz->errors) || !$quiz->isLocked()) {
             $disabled = array('uploadscans', 'associating', 'grading', 'annotating');
         } else if (!$quiz->hasScans()) {

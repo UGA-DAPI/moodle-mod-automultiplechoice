@@ -13,11 +13,13 @@ class latex extends \mod_automultiplechoice\local\format\api
     protected $tmpDir = '/tmp';
         /** @var \mod\automultiplechoice\ScoringSet */
     private $scoringset;
-        /**
-         * @return string
-         */
+
+    /**
+     * @return string
+     */
     public function getFilename() {
-        return self::FILENAME;
+        // Depending on settings one can use a prebuild latex file...
+        return $this->quiz->uselatexfile ? $this->quiz->latexfile : self::FILENAME;
     }
         /**
          * @return string
@@ -25,6 +27,7 @@ class latex extends \mod_automultiplechoice\local\format\api
     public function getFilterName() {
         return "latex";
     }
+
     public function __construct($quiz = null, $codelength = 8) {
         parent::__construct($quiz, $codelength);
         if (!empty($quiz->id)) {

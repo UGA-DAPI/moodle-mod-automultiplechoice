@@ -8,9 +8,11 @@ global $DB, $OUTPUT, $PAGE;
 /* @var $OUTPUT core_renderer */
 
 $sharedservice = new \mod_automultiplechoice\shared_service();
+$sharedservice->parseRequest();
 $quiz = $sharedservice->getQuiz();
 $cm = $sharedservice->getCm();
 $course = $sharedservice->getCourse();
+\require_login($course, true, $cm);
 $output = $sharedservice->getRenderer();
 $context = $sharedservice->getContext();
 

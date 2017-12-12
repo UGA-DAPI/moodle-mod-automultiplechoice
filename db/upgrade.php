@@ -89,6 +89,43 @@ function xmldb_automultiplechoice_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014101500, 'automultiplechoice');
     }
 
+    if ($oldversion < 2017121000) {
+        $table = new xmldb_table('automultiplechoice');
+        $uselatexfile = new xmldb_field('uselatexfile');
+        $uselatexfile->set_attributes(
+            XMLDB_TYPE_INTEGER,
+            '1',
+            XMLDB_UNSIGNED,
+            XMLDB_NOTNULL,
+            null,
+            0
+        );
+        if (!$dbman->field_exists($table, $uselatexfile)) {
+            $dbman->add_field($table, $uselatexfile);
+        }
+
+        $latexfile = new xmldb_field('latexfile');
+        $latexfile->set_attributes(XMLDB_TYPE_CHAR, '255', null, null, null);
+        if (!$dbman->field_exists($table, $latexfile)) {
+            $dbman->add_field($table, $latexfile);
+        }
+
+        /*$nullablefields = [
+            'qnumber',
+            'score',
+            'amcparams',
+            'questions'
+        ];
+
+        foreach ($nullablefields as $field) {
+            $toupdate = new xmldb_field($field);
+            $dbman->change_field_notnull($table, $toupdate);
+        }*/
+
+
+        upgrade_mod_savepoint(true, 2017121000, 'automultiplechoice');
+    }
+
     // Final return of upgrade result (true, all went good) to Moodle.
     return true;
 }

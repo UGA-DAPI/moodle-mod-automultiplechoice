@@ -36,7 +36,7 @@ class view_dashboard implements \renderable, \templatable {
      * @return array
      */
     public function export_for_template(\renderer_base $output) {
-        $questionscount = $this->quiz->questions->count();
+        $questionscount = $this->quiz->questions ? $this->quiz->questions->count() : 0;
         $scoringset = \mod_automultiplechoice\local\models\scoring_system::read()->get_sets()[$this->quiz->amcparams->scoringset];
         $associate_process = new \mod_automultiplechoice\local\amc\associate($this->quiz);
         $associate_process->get_association();

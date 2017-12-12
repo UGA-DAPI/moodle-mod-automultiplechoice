@@ -81,7 +81,6 @@ $string['export_file_write_access_error'] = 'Le fichier {$a->file} n\'a pas pu �
 $string['export_file_create_error'] = 'Le fichier n\'a pas pu être recréé. Consultez l\'administrateur.';
 $string['export_dir_access_error'] = 'Le répertoire /exports n\'est pas accessible en écriture. Contactez l\'administrateur.';
 
-
 // Grading.
 $string['grading_relaunch_correction'] = 'Relancer la correction';
 $string['grading_notes'] = 'Notes';
@@ -172,6 +171,14 @@ $string['settings_instructions_full'] = 'Elements are separed by a line of at le
 $string['settings_idnumberprefixes_short'] = 'Préfixes du n° d\'étudiant';
 $string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attention aux espaces.</p><p>Chacun des préfixes sera inséré au début du numéro d\'étudiant de chaque copie, jusqu\'à ce que l\'étudiant soit identifié parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber). Si aucun préfixe ne permet de trouver l\'étudiant, une identification sans préfixe sera ensuite testée.</p>';
 
+$string['settings_amcversion_label'] = 'Version / Mode AMC';
+$string['settings_amcversion_description'] = 'Choix de la version ou du mode AMC.';
+$string['settings_amcversion_choice_1_label'] = 'Distant';
+$string['settings_amcversion_choice_2_label'] = 'Version AMC locale antérieure ou égale à 1.2';
+$string['settings_amcversion_choice_3_label'] = 'Version AMC locale supérieure à 1.2';
+
+$string['settings_amcapiurl_label'] = 'URL de l\'API AMC';
+$string['settings_amcapiurl_description'] = 'URL à utiliser pour toutes les manipulations AMC.';
 
 // Student view.
 $string['studentview_one_corrected_sheet'] = 'Vous avez une copie corrigée :';
@@ -199,6 +206,8 @@ $string['associating'] = 'Identification';
 $string['grading'] = 'Notation';
 $string['annotating'] = 'Correction';
 
+
+// MOD_FORM
 $string['instructionsheader'] = 'Rédaction de la consigne';
 $string['automultiplechoicename'] = 'Nom du questionnaire';
 $string['instructions'] = 'Consigne prédéfinie';
@@ -215,6 +224,13 @@ et la consigne Attribution des points sera ajoutée à la fin.';
 $string['comment_help'] = 'Un commentaire pour l\'auteur, qui ne sera pas imprimé.';
 $string['qnumber_help'] = 'Le nombre de questions prévisionnel du questionnaire, pour validation.';
 $string['score_help'] = 'Le score total du questionnaire (en points), pour validation.';
+
+$string['modform_uselatexfile'] = 'Utiliser un fichier latex.';
+$string['modform_uselatexfilelabel'] = 'Le fichier latex défini les paramètres AMC et du questionnaire.';
+$string['modform_latexfile'] = 'Fichier Latex (*.tex).';
+
+
+
 
 $string['amcparams'] = 'Paramètres AMC';
 $string['amc_minscore'] = 'Note minimale';

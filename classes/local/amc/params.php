@@ -2,13 +2,13 @@
 
 namespace mod_automultiplechoice\local\amc;
 
-class  params {
+class params {
     const DISPLAY_POINTS_NO = 0;
     const DISPLAY_POINTS_BEGIN = 1;
     const DISPLAY_POINTS_END = 2;
     const RAND_MINI = 1000;
     const RAND_MAXI = 100000;
-    
+
     public static $scoreRcoundingValues = [
         'n' => "Au plus proche",
         'i' => "Inférieur",
@@ -141,7 +141,7 @@ class  params {
                 $this->$col = (bool) $input[$col];
             }
         }
-        foreach (['lstudent', 'lstudent', 'separatesheet', 'scoringset','customlayout'] as $col) {
+        foreach (['lstudent', 'lname', 'separatesheet', 'scoringset', 'customlayout'] as $col) {
             if (isset($input[$col])) {
                 $this->$col = (string) $input[$col];
             }
@@ -163,7 +163,7 @@ class  params {
                 $this->instructionsprefixformat = (int) $input['instructionsprefixformat'];
             }
         }
-        if (!isset($this->randomseed) ) {
+        if (!isset($this->randomseed)) {
             $this->randomize();
         }
         return $this;
