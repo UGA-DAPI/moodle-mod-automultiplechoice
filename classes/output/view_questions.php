@@ -58,9 +58,6 @@ class view_questions implements \renderable, \templatable {
         }
 
         $courseid = $this->data['courseid'];
-      //  $importfilequestionsnurl = new \moodle_url('/question/import.php', array('courseid' => $courseid));
-      //  print_r($importfilequestionsnurl);die;
-
         $content = [
           'quiz' => $this->quiz,
           'questions' => $questions,

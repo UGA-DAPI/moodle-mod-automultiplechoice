@@ -27,7 +27,7 @@ class mod_automultiplechoice_external extends external_api {
        * @return external_value
        */
       public static function call_amc_returns() {
-        return new external_value(PARAM_TEXT, 'json encoded or simple string response from server');
+        return new external_value(PARAM_TEXT, 'json encoded response from server');
       }
 
       /**
@@ -42,8 +42,6 @@ class mod_automultiplechoice_external extends external_api {
           $action = $requestdata['action'];
           $params = json_decode($requestdata['params']);
 
-
-
           // depending on action call the right process.
           switch($action) {
               case 'hello':
@@ -54,7 +52,7 @@ class mod_automultiplechoice_external extends external_api {
                 $fakeprocess = new \mod_automultiplechoice\local\amc\process($quiz);
                 $result = [
                   'status' => 200,
-                  'error' => [],
+                  'errors' => [],
                   'data' => 'Hello ' . $params->firstname . ' ' . $params->lastname . ' you are accessing the quiz ' . $quiz->name
                 ];
                 return json_encode($result);
