@@ -243,9 +243,6 @@ class quiz
           'timecreated',
           'timemodified'
         ];
-        //echo '<pre>';
-        //print_r($record);die;
-
 
         foreach ($simplevalues as $key) {
             if (isset($record->$key)) {

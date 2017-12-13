@@ -40,8 +40,16 @@ class view_dashboard implements \renderable, \templatable {
         $scoringset = \mod_automultiplechoice\local\models\scoring_system::read()->get_sets()[$this->quiz->amcparams->scoringset];
         $associate_process = new \mod_automultiplechoice\local\amc\associate($this->quiz);
         $associate_process->get_association();
+
+        $helloajaxdata = [
+          'id' => $this->quiz->id,
+          'firstname' => 'Donald',
+          'lastname' => 'Duck'
+        ];
+
         $content = [
           'quiz' => $this->quiz,
+          'hellodata' => json_encode($helloajaxdata),
           'settings' => [
             'title' => get_string('settings'),
             'rows' => [
