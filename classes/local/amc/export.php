@@ -130,7 +130,7 @@ class export extends \mod_automultiplechoice\local\amc\process
     public function amcImprime() {
         $pre = $this->workdir;
         $file = $pre . '/' . $this->normalizeFilename('sujets');
-        if ( file_exists($file)) {
+        if (file_exists($file)) {
             return true;
         }
         if (!is_dir($pre . '/imprime')) {

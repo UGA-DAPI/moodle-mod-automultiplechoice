@@ -87,7 +87,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             )
         );
         $mform->setType('amc[instructionsprefix]', PARAM_RAW);
-        //$mform->disabledIf('amc[instructionsprefix]', 'uselatexfile', 'eq', 1);
+        $mform->disabledIf('amc[instructionsprefix]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('editor', 'description', get_string('description', 'automultiplechoice'), array('rows'=>'6', 'cols'=>'64'));
         $mform->setType('description', PARAM_RAW);
@@ -226,6 +226,10 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
             } else if (!empty($this->current->uselatexfile) && !$this->current->uselatexfile) {
                 // Only add the required rule if the field is not disabled
                 $this->_form->addRule('amc[copies]', null, 'required', null, 'client');
+            }
+            // marche pas
+            if(!empty($this->current->uselatexfile) && $this->current->uselatexfile) {
+                  $this->_form->freeze(['amc[instructionsprefix]']);
             }
 
 

@@ -18,8 +18,10 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
      * @param string $target one of rendering target constants
      */
     public function __construct(moodle_page $page, $target) {
-
+        $page->requires->jquery();
         $page->requires->jquery_plugin('ui-css');
+        $page->requires->jquery_plugin('bootstrap');
+        $page->requires->jquery_plugin('bootstrap-css');
         $page->requires->css(
             new moodle_url('/mod/automultiplechoice/style/jquery.dataTables.css')
         );
@@ -28,7 +30,7 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
         );
         $page->requires->js_call_amd('mod_automultiplechoice/async', 'init');
         $page->requires->js_call_amd('mod_automultiplechoice/common', 'init');
-      
+
         parent::__construct($page, $target);
     }
 
