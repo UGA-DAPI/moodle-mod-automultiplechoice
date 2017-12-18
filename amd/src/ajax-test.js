@@ -1,11 +1,11 @@
 define(['jquery', 'core/str', 'core/notification', 'core/config', 'core/ajax', 'core/templates', 'core/modal_factory'], function ($, str, notification, mdlcfg, ajax, templates, ModalFactory) {
 
     return {
-          init: function (apiUrl, quizId) {
-              this.apiUrl = apiUrl;
-              this.quizId = quizId;
+          init: function () {
+              // will be a constant
+
               // simulate a call to the api at page load
-              this.callAmcApi('hello', {id:4, firstname: 'Mickey', lastname:'Mouse'}, 'hello-ajax-spinner', this.apiUrl, 'ajax-response');
+              this.callAmcApi('hello', {id:4, firstname: 'Mickey', lastname:'Mouse'}, 'hello-ajax-spinner', 'ajax-response');
               $('.btn-call-amc-api').on('click', function(e){
                   this.btnCallAmcApi(e);
               }.bind(this));
@@ -15,38 +15,93 @@ define(['jquery', 'core/str', 'core/notification', 'core/config', 'core/ajax', '
             var action = $(e.target).data('action');
             var spinner = $(e.target).data('spinner-id');
             var params = $(e.target).data('params');
-            this.callAmcApi(action, params, spinner, this.apiUrl);
+            this.callAmcApi(action, params, spinner);
           },
           /**
            * [description]
            * @param  string action  the action to do
            * @param  object params  parameters for the action
            * @param  string spinner id of the spinner to show / hide
-           * @param  string url     url of the api
            * @param  string target  id of container to populate with response data
            * @return {[type]}         [description]
            */
-          callAmcApi: function (action, params, spinner, url, target) {
+          callAmcApi: function (action, params, spinner, target) {
               if(!action || !params || !spinner) {
                 console.log('one or several mandatory parameter(s) missing.');
                 return false;
               }
-              console.log(action, params);
+              // console.log(action, params);
               //$('#' + spinner).show();
-              //$('#ajax-modal').modal('show');
+              //should we use a global modal ? or not ? depending on ajax called via a button or on page load ?
               var modalpromise = ModalFactory.create({
                 title: 'Please wait...',
                 body: templates.render('mod_automultiplechoice/ajaxmodal', {})
-              })
-              .done(function(modal) {
-                // Do what you want with your new modal.
-                this.modal = modal;
-                //console.log('modal', this.modal);
+              }).done(function(modal){
+                  modal.show();
+                  // modal.hide(); // does not work... see modal.js (lib/amd/src/modal.js) and isVisible method... the modal object does not have 'show' class...
+                  console.log(modal.getRoot().attr('class')); // does not have 'show' class (modal moodle-has-zindex) ans so does not hide...
+                  if (!modal.root.hasClass('show')) {
+                      modal.getRoot().addClass('show');
+                  }
+                  $.ajax({
+                      method: 'GET',
+                      url: 'https://en.wikipedia.org/api/rest_v1/feed/announcements',
+                      data: {}
+                  }).done(function(response) {
+                      // $('#' + spinner).hide();
 
-              }.bind(this));
+                      console.log('done', response.announce[0].text);
+                      if(target){
+                        $('#' + target).html(response.announce[0].text);
+                      }
+                      modal.hide();
+                  }).fail(function(jqXHR, textStatus) {
+                      console.log(jqXHR, textStatus);
+                      //$('#' + spinner).hide();
+                      modal.hide();
+                  })
+              });
 
+              /*modalpromise.then(function(modal){
+                  console.log('wtf', modal);
+                  //console.log('modal', this.modal);
+                  modal.show();
+                  console.log(modal.root.attr('class'))
+                  //this.modal = modal.root.addClass('show');
+
+                /*  window.setTimeout(function(){
+                    modal.hide();
+                  }, 5000);*/
+                  /*$.ajax({
+                      method: 'GET', // 'POST'
+                      url: 'https://en.wikipedia.org/api/rest_v1/feed/announcements',
+                      //data: { action: action, data: params }
+                      data: {}
+                  }).done(function(response) {
+                      //$('#' + spinner).hide();
+                      // does not work... but WHY ???
+
+                    //  modal.getRoot().hide();
+                      console.log('done', response.announce[0].text);
+                      if(target){
+                        $('#' + target).html(response.announce[0].text);
+                      }
+                  }).fail(function(jqXHR, textStatus) {
+                      console.log(jqXHR, textStatus);
+                      //$('#' + spinner).hide();
+                      modal.hide();
+                  }).then(function(dd){
+                      console.log('then??', dd);
+                      console.log(modal);
+                      modal.hide();
+                  }.bind(this));
+
+
+              });*/
+
+    /*
               modalpromise.then(function(){
-                if(!url) {
+            if(!url) {
                     this.modal.show();
                     var promises = ajax.call([
                       { methodname: 'mod_automultiplechoice_call_amc', args: { action: action, params:  JSON.stringify(params) } }
@@ -71,33 +126,18 @@ define(['jquery', 'core/str', 'core/notification', 'core/config', 'core/ajax', '
                       }.bind(this)).fail(function(ex){
                         console.log('fail', ex);
                       }.bind(this));
-                      //$('#ajax-modal').hide();
+
                       console.log('should hide modal', this.modal);
 
                     }.bind(this)).fail(function(ex) {
                        console.log('mod_automultiplechoice_call_api failed', ex);
-                       //$('#ajax-modal').hide();
                     }.bind(this));
                 } else {
-                    var testurl = 'https://en.wikipedia.org/api/rest_v1/feed/announcements';
-                    $.ajax({
-                        method: 'GET', // 'POST'
-                        url:  testurl, //url,
-                        //data: { action: action, data: params }
-                        data: {}
-                    }).done(function(response) {
-                          $('#' + spinner).hide();
-                          console.log('done', response);
-                          if(target){
-                            $('#' + target).html(response.data);
-                          }
-                    }).fail(function(jqXHR, textStatus) {
-                          console.log(jqXHR, textStatus);
-                          $('#' + spinner).hide();
-                    });
+                    //var testurl = 'https://en.wikipedia.org/api/rest_v1/feed/announcements';
+
                 }
               }.bind(this));
-
+*/
 
           }
       }

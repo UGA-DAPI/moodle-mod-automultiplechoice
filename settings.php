@@ -9,7 +9,7 @@ if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/automultiplechoice/locallib.php');
 
     $PAGE->requires->js_call_amd('mod_automultiplechoice/settings', 'init', [AMC_VERSION_DISTANT]);
-    
+
     $s = new admin_setting_configtext(
         'xelatexpath',
         get_string('settings_latex_path_short', 'mod_automultiplechoice'),
@@ -19,30 +19,6 @@ if ($ADMIN->fulltree) {
     );
     $s->plugin = 'mod_automultiplechoice';
     $settings->add($s);
-
-    $amcversion = new admin_setting_configselect(
-        'amcversion',
-        get_string('settings_amcversion_label', 'mod_automultiplechoice'),
-        get_string('settings_amcversion_description', 'mod_automultiplechoice'),
-        AMC_VERSION_PRIOR_TO_13,
-        [
-          AMC_VERSION_DISTANT => get_string('settings_amcversion_choice_1_label', 'mod_automultiplechoice'),
-          AMC_VERSION_PRIOR_TO_13 => get_string('settings_amcversion_choice_2_label', 'mod_automultiplechoice'),
-          AMC_VERSION_GREATER_OR_EQUAL_13 => get_string('settings_amcversion_choice_3_label', 'mod_automultiplechoice'),
-        ]
-    );
-    $amcversion->plugin = 'mod_automultiplechoice';
-    $settings->add($amcversion);
-
-    $amcapiurl = new admin_setting_configtext(
-        'amcapiurl',
-        get_string('settings_amcapiurl_label', 'mod_automultiplechoice'),
-        get_string('settings_amcapiurl_description', 'mod_automultiplechoice'),
-        '',
-        PARAM_TEXT
-    );
-    $amcapiurl->plugin = 'mod_automultiplechoice';
-    $settings->add($amcapiurl);
 
     $defaulttpl = __DIR__ . '/amctemplate';
     $s = new admin_setting_configtext(

@@ -54,7 +54,6 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
         $mform->addElement('filepicker', 'latexfile', get_string('modform_latexfile', 'mod_automultiplechoice'), null, ['accepted_types' => 'tex']);
         $mform->disabledIf('latexfile', 'uselatexfile', 'eq', 0);
 
-
         $mform->addElement('text', 'qnumber', get_string('qnumber', 'automultiplechoice'));
         $mform->setType('qnumber', PARAM_INTEGER);
         $mform->addHelpButton('qnumber', 'qnumber', 'automultiplechoice');
@@ -227,14 +226,7 @@ class mod_automultiplechoice_mod_form extends moodleform_mod {
                 // Only add the required rule if the field is not disabled
                 $this->_form->addRule('amc[copies]', null, 'required', null, 'client');
             }
-            // marche pas
-            if(!empty($this->current->uselatexfile) && $this->current->uselatexfile) {
-                  $this->_form->freeze(['amc[instructionsprefix]']);
-            }
-
-
-
-
+          
             $this->_form->setDefault('instructions', '');
             foreach (parse_default_instructions() as $v) {
                 if ($params->instructionsprefix === $v) {
