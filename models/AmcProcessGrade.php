@@ -217,7 +217,7 @@ class AmcProcessGrade extends AmcProcess
 		    );
 	    } else {
 		    $addon = array(
-			    '--modele', 'cr-(N).pdf', // "(ID)" is replaced by the complete name
+			    '--modele', 'cr-(moodleid).pdf', // "(ID)" is replaced by the complete name
 			    '--id-file', $pre. '/student.txt'  , // undocumented option: only work with students whose ID is in this file
 			   // '--csv-build-name', '(nom|id)-(prenom|surname)', // defines the complete name as the columns "id-surname" of the CSV
 		    );

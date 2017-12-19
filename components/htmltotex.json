@@ -138,6 +138,10 @@
         "type": "raw",
         "tex": [" \\\\ ", ""]
     },
+    "u": {
+        "type": "macro",
+        "tex": "underline"
+    },
     "ul": {
         "type": "env",
         "tex": "itemize"
