@@ -12,11 +12,9 @@ $quiz = $sharedservice->getQuiz();
 $cm = $sharedservice->getCm();
 $course = $sharedservice->getCourse();
 \require_login($course, true, $cm);
-
 $output = $sharedservice->getRenderer();
-$thiscontext = $sharedservice->getContext();
 
-require_capability('mod/automultiplechoice:addinstance', $thiscontext);
+require_capability('mod/automultiplechoice:addinstance', $sharedservice->getContext());
 
 // Form submitted?.
 $questions = \mod_automultiplechoice\local\models\question_list::fromForm('question');
@@ -32,41 +30,16 @@ if ($questions) {
 
 $PAGE->set_url('/mod/automultiplechoice/questions.php', array('a' => $quiz->id));
 $PAGE->set_cacheable(false);
-$PAGE->requires->js_call_amd('mod_automultiplechoice/questions', 'init', [$course->id]);
+$PAGE->requires->js_call_amd('mod_automultiplechoice/questions', 'init');
 
 
 // Remove deleted questions.
 $quiz->validate();
 
-//$available_questions = automultiplechoice_list_questions_by_categories($course->id); //automultiplechoice_list_questions($USER, $course);
-//echo '<pre>';
-//print_r($available_questions); die;
+$available_questions = automultiplechoice_list_questions($USER, $course);
 
 echo $output->header('questions');
 
-
-//$contexts = new question_edit_contexts($thiscontext);
-
-//$questionbank = new \mod_automultiplechoice\question\bank\custom_view($contexts, $PAGE->url, $course, $cm, $quiz);
-
-//$questionbank->set_quiz_has_attempts(false);
-//$questionbank->process_actions($PAGE->url, $cm);
-
-//echo $output->question_bank_contents($questionbank, []);
-$data = [
-    'errors' => $quiz->questions->errors,
-    'showerrors' => !empty($quiz->questions->errors),
-    'courseid' => $course->id
-    /*,
-    'availablequestions' => automultiplechoice_list_questions($USER, $course),*/
-];
-
-
-// Page content.
-$view = new \mod_automultiplechoice\output\view_questions($quiz, $data);
-echo $output->render_questions_view($view);
-echo $output->footer();
-/*
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('questionoperations', 'automultiplechoice'));
 $opt = array('class' => 'btn', 'target' => '_blank');
@@ -202,4 +175,5 @@ echo $OUTPUT->heading(get_string('questionselected', 'automultiplechoice'));
 
 <?php
 echo $OUTPUT->box_end();
-*/
+
+echo $output->footer();

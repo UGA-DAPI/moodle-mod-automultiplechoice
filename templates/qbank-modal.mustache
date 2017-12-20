@@ -1,0 +1,34 @@
+{{< core/modal }}
+    {{$title}}{{#str}}questionbank, question{{/str}}{{/title}}
+    {{$body}}
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="onsuccess">
+                {{!categories dropdown}}
+                <div class="form-group">
+                  <label for="categories-select">{{#str}}categories, mod_automultiplechoice{{/str}}</label>
+                  <select id="amc-qbank-categories-select" class="form-control custom-select">
+                      {{!content added via javascript}}
+                  </select>
+                </div>
+                {{!categories dropdown end}}
+                <hr/>
+                {{!questions list}}
+                <table id="amc-qbank-questions" class="table table-striped">
+                    {{!content added via javascript}}
+                </table>
+                {{!questions list end}}
+              </div>
+              <div class="onerror">
+
+              </div>
+            </div>
+          </div>
+        </div>
+    {{/body}}
+    {{$footer}}
+        <button type="button" class="btn btn-primary" data-action="add">{{#str}} add {{/str}}</button>
+        <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel {{/str}}</button>
+    {{/footer}}
+{{/ core/modal }}

@@ -36,9 +36,11 @@ if (isset($_POST['score'])) {
     }
 
     if ($quiz->validate()) {
+      // méthodes à lancer a la sortie de questions (page questions -> save)
         if ($quiz->save()) {
             $process = new \mod_automultiplechoice\local\amc\process($quiz);
             $export = new \mod_automultiplechoice\local\amc\export($quiz);
+
             $res = $process->saveFormat('latex') && $process->amcPrepareBareme();
             if (!$res) {
                  \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage('error', get_string('scoring_scale_extract_error', 'mod_automultiplechoice'));

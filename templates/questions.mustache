@@ -22,6 +22,9 @@
           {{#str}}sortmsg, mod_automultiplechoice{{/str}}
           <strong>{{#str}}sortmsg, mod_automultiplechoice, {{#quote}} {{quiz.qnumber}} {{/quote}}{{/str}}</strong>
       </p>
+      <hr/>
+        <button id="qbank" class="btn btn-default">question bank</button>
+      <hr/>
 
       <form name="questions-form" action="questions.php" method="post">
         <input name="a" value="{{quiz.id}}" type="hidden" />
@@ -34,16 +37,24 @@
             <i class="fa fa-save"></i>&nbsp;{{#str}}savesel, mod_automultiplechoice{{/str}}
           </button>
         </div>
-            <hr/>
+        <hr/>
         <ul id="questions-selected">
           {{#questions}}
-            <li class="ui-state-default" data-qid="{{id}}" id="qsel-{{id}}">
+            <li class="amc-question-selected" data-qid="{{id}}" id="qsel-{{id}}">
                 <div class="row">
                   <div class="col-md-1">
                     <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
                   </div>
-                  <div class="col-md-10">
+                  <div class="col-md-1 counter">
+                    {{!counter}}
+                  </div>
+                  <div class="col-md-7">
                     <label class="question-title">{{name}}</label>
+                  </div>
+                  <div class="col-md-2">
+                    {{^section}}
+                      <input class="form-control" type="number" value="{{score}}" name="score" />
+                    {{/section}}
                   </div>
                   <div class="col-md-1">
                     <button type="button" role="button" class="btn btn-danger" title="{{#str}}remove, core{{/str}}">

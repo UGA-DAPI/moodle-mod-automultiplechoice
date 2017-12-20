@@ -166,8 +166,11 @@ class mod_automultiplechoice_renderer extends \plugin_renderer_base {
      */
     public function question_bank_contents(\mod_automultiplechoice\question\bank\custom_view $questionbank, array $pagevars) {
 
-        $qbank = $questionbank->render('editq', $pagevars['qpage'], $pagevars['qperpage'],
+        /*$qbank = $questionbank->render('editq', $pagevars['qpage'], $pagevars['qperpage'],
                 $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'], $pagevars['qbshowtext']);
+*/
+                $qbank = $questionbank->render('editq', 1, 10,
+                        1, false, true, true);
         return html_writer::div(html_writer::div($qbank, 'bd'), 'questionbankformforpopup');
     }
 }

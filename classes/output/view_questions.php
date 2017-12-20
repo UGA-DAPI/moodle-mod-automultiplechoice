@@ -61,7 +61,7 @@ class view_questions implements \renderable, \templatable {
         $content = [
           'quiz' => $this->quiz,
           'questions' => $questions,
-          'importfilequestionsnurl' => new \moodle_url('/question/import.php', array('courseid' => $courseid)),
+          'importfilequestionsurl' => new \moodle_url('/question/import.php', array('courseid' => $courseid)),
           'importquestionsurl' => new \moodle_url('/local/questionssimplified/edit_wysiwyg.php', array('courseid' => $courseid)),
           'createquestionsurl' =>  new \moodle_url('/local/questionssimplified/edit_standard.php', array('courseid' => $courseid)),
           'questionbankurl' => new \moodle_url('/question/edit.php', array('courseid' => $courseid))

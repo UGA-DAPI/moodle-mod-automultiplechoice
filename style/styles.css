@@ -10,76 +10,26 @@
     width: 49%;
 }
 
-/*
-#questions-part-selecting button {
-    width: 38px;
-}
-#questions-part-selected {
-    float: right;
-    width: 48%;
-}
-#questions-part-selected button[type="submit"] {
-    font-size: 110%;
-    font-weight: bold;
-}
-#questions-part-selected > p > button {
-    margin-left: 30%;
-}
-.datatable-end {
-    clear: both;
-    margin-bottom: 1.5ex;
-}*/
+
 #questions-selected {
-    /*counter-reset: li;*/
+    counter-reset: rownumber;
     list-style: none;
     margin: 0;
     padding: 0;
     width: 100%;
 }
-
-
-/*
-#questions-selected > li {
-    clear: both;
-    max-width: 120ex;
-    line-height: 2.3em;
+.counter:before {
+  counter-increment: rownumber;
+  content: counter(rownumber);
+}
+.amc-question-selected {
+  margin-bottom: 5px;
+  vertical-align: middle;
+  border: 1px solid #aaa;
+  padding: 5px;
+  background-color: #eee;
 }
 
-#questions-selected > li:not(.question-section):before {
-    content: counter(li);
-    counter-increment: li;
-    display: inline-block;
-    position: absolute;
-    margin-left: -2.5em;
-    text-align: center;
-    padding: 2px 4px;
-    height: 1.4em;
-    width: 1.2em;
-    line-height: 1.8em;
-    border: .3em solid #97ceeb;
-    border-radius: 2em;
-    background: #97deeb;
-    color: black;
-    font-weight: bold;
-}
-#questions-selected > li button {
-    float: right;
-}
-#questions-selected label.qscore {
-    float: right;
-}
-#questions-selected label {
-    margin-left: 2ex;
-}
-.question-section label {
-    display: inline-block;
-    width: 6em;
-    vertical-align: top;
-    font-weight: bold;
-}
-.question-section button {
-    height: 14ex;
-}*/
 /* page questions : end */
 
 
@@ -154,15 +104,7 @@ td ul {
     font-size: 200%;
     width: auto;
 }
-/*
-#form-uploadscans > div {
-    width: 80ex;
-    text-align: right;
-}
-#form-uploadscans input#scanfile {
-    width: 50ex;
-}
-*/
+
 dt {
     font-weight: bold;
 }

@@ -19,6 +19,7 @@ require_once __DIR__ . '/lib.php';
 define('AMC_VERSION_DISTANT', 0);
 define('AMC_VERSION_PRIOR_TO_13', 1);
 define('AMC_VERSION_GREATER_OR_EQUAL_13', 2);
+define('AMC_QUESTIONS_TYPES', ['multichoice', 'truefalse']);
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -77,7 +78,7 @@ function automultiplechoice_list_questions($user, $course) {
  * @param object $course Course record
  * @return array List of objects with fields: id, categoryname, title, timemodified
  */
-function automultiplechoice_list_user_questions($user) {
+function automultiplechoice_list_user_questions($user, $course) {
     global $DB, $CFG;
 
     $course_context = context_course::instance($course->id);
@@ -100,6 +101,34 @@ function automultiplechoice_list_user_questions($user) {
             . " ORDER BY qc.sortorder, q.name";
     return $DB->get_records_sql($sql);
 }
+
+function automultiplechoice_list_questions_by_categories(int $categoryid, array $excludeids = []) {
+    global $DB;
+
+    $sql =  'SELECT q.id as id, q.name as name, q.qtype AS type, q.timemodified as qmodified ';
+    $sql .= 'FROM {question} q JOIN {question_categories} qc ON q.category = qc.id ';
+    $sql .= 'WHERE q.hidden = 0 ';
+    $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';
+    $sql .= 'AND qc.id = ' . $categoryid . ' ';
+    // Also need to exclude questions already associated with the amc instance
+    if (count($excludeids) > 0) {
+        $sql .= 'AND q.id NOT IN (' . implode(',', $excludeids) . ') ';
+    }
+    $sql .= 'ORDER BY qc.sortorder, q.name';
+    return $DB->get_records_sql($sql);
+}
+
+function automultiplechoice_list_categories() {
+    global $DB;
+
+    $sql =  'SELECT qc.name AS label, qc.id as value ';
+    $sql .= 'FROM {question_categories} qc ';
+    $sql .= 'ORDER BY qc.sortorder';
+
+    return $DB->get_records_sql($sql);
+}
+
+
 
 /**
  * Parses the config setting 'instructions' to convert it into an associative array (instruction => title).
