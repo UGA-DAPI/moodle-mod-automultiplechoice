@@ -573,7 +573,7 @@ class AmcProcessGrade extends AmcProcess
         global $USER;
         $url = new \moodle_url('/mod/automultiplechoice.php', array('a' => $this->quizz->id));
         
-        $eventdata = new \object();
+        $eventdata = new \stdClass();
         $eventdata->component         = 'mod_automultiplechoice';
         $eventdata->name              = 'anotatedsheet';
         $eventdata->userfrom          = $USER;

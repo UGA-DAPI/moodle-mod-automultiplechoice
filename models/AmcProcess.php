@@ -281,7 +281,7 @@ class AmcProcess
     protected function shellExec($cmd, $params, $output=false) {
         $escapedCmd = escapeshellcmd($cmd);
         $escapedParams = array_map('escapeshellarg', $params);
-        $shellCmd = $escapedCmd . " " . join(" ", $escapedParams);
+        $shellCmd = "PATH=" .$_SERVER['PATH']." ".$escapedCmd . " " . join(" ", $escapedParams);
         $lines = array();
         $returnVal = 0;
         exec($shellCmd, $lines, $returnVal);

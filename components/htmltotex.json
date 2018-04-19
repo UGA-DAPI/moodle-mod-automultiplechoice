@@ -147,11 +147,11 @@
         "tex": "itemize"
     },
     "sup": {
-        "type": "marcro",
-        "tex": "^"
+        "type": "macro",
+        "tex": "textsuperscript"
     },
     "sub": {
-        "type": "marcro",
-        "tex": "_"
+        "type": "macro",
+        "tex": "textsubscript"
     }
 }
