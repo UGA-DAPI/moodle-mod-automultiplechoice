@@ -145,5 +145,13 @@
     "ul": {
         "type": "env",
         "tex": "itemize"
+    },
+    "sup": {
+        "type": "marcro",
+        "tex": "^"
+    },
+    "sub": {
+        "type": "marcro",
+        "tex": "_"
     }
 }
